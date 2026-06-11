@@ -1,0 +1,17 @@
+node_modules
+dist
+dist-ssr
+
+# Local env files
+.env
+*.local
+
+# VCS and editor files
+.git
+.vscode
+.idea
+.DS_Store
+
+# Logs
+logs
+*.log
