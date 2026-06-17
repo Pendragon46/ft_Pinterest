@@ -1,21 +1,13 @@
 build:
-	docker compose build --no-cache
-	@sleep 3
+	docker compose build
 
 start: build
-	docker compose up -d
+	docker compose up -d --build
 
-up:
-	docker compose up -d
-
-down:
+stop:
 	docker compose down
 
-stop: down
-
-restart:
-	docker compose restart
-	@sleep 3
+modify: stop start
 
 logs:
 	docker compose logs -f
@@ -24,11 +16,11 @@ ps:
 	docker compose ps
 
 clean:
-	docker-compose down --remove-orphans
+	docker-compose down -v
 
 fclean: clean
-	docker image prune -a --force
-	docker volume prune --force
-	docker system prune -a --volumes
+	docker system prune -af --volumes
 
-PHONY: build start up down stop restart logs ps clean fclean
+restart: fclean start
+
+PHONY: build start stop modify logs ps clean fclean restart

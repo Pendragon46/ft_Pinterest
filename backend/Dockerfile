@@ -2,9 +2,9 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache bash git curl
+RUN apk add --no-cache bash curl
 
-COPY package.json package-lock.json* ./
+COPY package*.json ./
 
 RUN npm install
 

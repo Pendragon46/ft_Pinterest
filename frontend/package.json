@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.85.2",
-    "axios": "^1.11.0",
-    "framer-motion": "^12.23.12",
+    "@tanstack/react-query": "^5.101.0",
+    "axios": "^1.18.0",
+    "framer-motion": "^12.40.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
-    "react-router-dom": "^7.9.1",
-    "zustand": "^5.0.8"
+    "react-router-dom": "^7.17.0",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
