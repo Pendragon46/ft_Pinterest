@@ -29,7 +29,11 @@ export class UsersController {
   }
 
   @Delete('username/:username')
-  remove(@Param('username') username: string) {
-    return this.usersService.remove(username);
+  removebyUsername(@Param('username') username: string) {
+    return this.usersService.removebyUsername(username);
+  }
+  @Delete(':id')
+  removebyId(@Param('id') id: string) {
+	return this.usersService.removeById(id);
   }
 }
