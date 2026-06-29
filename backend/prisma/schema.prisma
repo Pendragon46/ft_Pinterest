@@ -35,7 +35,8 @@ model Artwork {
   id          String    @id @default(uuid())
   title       String
   description String
-  imageUrl    String
+  imageUrl    String?
+  publicId    String?
   authorId    String
   tags        Tag[]
   author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
