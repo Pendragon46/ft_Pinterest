@@ -46,6 +46,35 @@ export class UsersService {
 	return user;
   }
 
+  async searchUsers(query: string) {
+	try {
+	  const users = await this.prisma.user.findMany({
+		where: {
+		  OR: [
+			{ username: { contains: query, mode: 'insensitive' } },
+			{ fullname: { contains: query, mode: 'insensitive' } },
+		  ],
+		},
+	  });
+  
+	  return users;
+	} catch (error) {
+	  throw new HttpException('Error searching users', HttpStatus.NOT_FOUND);
+	}
+  }
+
+  async findOneById(id: string) {
+	let user =  await this.prisma.user.findUnique({
+		where: {
+			id
+		}
+	})
+	if (!user) {
+	  throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+	}
+	return user;
+  }
+
   async update(id: string, data: Prisma.UserUpdateInput) {
 	let user = await this.prisma.user.findUnique({where: {id}})
 	if (!user) {

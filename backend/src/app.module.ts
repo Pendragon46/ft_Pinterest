@@ -14,9 +14,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
   imports: [PrismaModule, UsersModule, ArtworkModule,
 	CloudinaryModule,
 	ConfigModule.forRoot({ isGlobal: true }),
-	MulterModule.register({
-	storage: memoryStorage(),
-  }),
+	MulterModule.register({	storage: memoryStorage()}),
 	CloudinaryModule],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
