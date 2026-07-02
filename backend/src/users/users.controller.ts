@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 
 @Controller('users')
 export class UsersController {
@@ -29,7 +30,14 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @UseInterceptors(FileInterceptor('file'))
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
+				new ParseFilePipe({
+				validators: [
+				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
+				new FileTypeValidator({ fileType: '(jpg|jpeg|png|gif|webp)' }),
+			],
+		})) file?: Express.Multer.File){
     return this.usersService.update(id, updateUserDto);
   }
 

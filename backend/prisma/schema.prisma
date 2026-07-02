@@ -8,21 +8,22 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  fullname  String?
-  username  String    @unique
-  email     String    @unique
-  password  String
-  bio       String?
-  avatarUrl String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  role      Role      @default(USER)
-  artworks  Artwork[]
-  comments  Comment[]
-  followers Follow[]  @relation("Follower")
-  following Follow[]  @relation("Following")
-  likes     Like[]
+  id             String    @id @default(uuid())
+  fullname       String?
+  username       String    @unique
+  email          String    @unique
+  password       String
+  bio            String?
+  avatarUrl      String    @default("https://res.cloudinary.com/dqerznri9/image/upload/v1782971286/Default_avatar_bnkyia.png")
+  avatarPublicId String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  role           Role      @default(USER)
+  artworks       Artwork[]
+  comments       Comment[]
+  followers      Follow[]  @relation("Follower")
+  following      Follow[]  @relation("Following")
+  likes          Like[]
 }
 
 model Artwork {
