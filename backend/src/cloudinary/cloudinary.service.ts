@@ -33,7 +33,7 @@ export class CloudinaryService {
 	});
   }
 
-  async deleteImage(publicId: string ): Promise<UploadApiResponse> {
+  async deleteImage(publicId: string): Promise<UploadApiResponse> {
 	return new Promise((resolve, reject) => {
 	  v2.uploader.destroy(publicId, (error, result) => {
 		if (error) {

@@ -1,8 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UUID } from 'crypto';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
+import { UploadApiResponse } from 'cloudinary';
 
 @Injectable()
 export class UsersService {
@@ -12,18 +13,19 @@ export class UsersService {
   async create(data: Prisma.UserCreateInput) {
 	let user = await this.prisma.user.findUnique({where: {username: data.username}})
     if (user) {
-      throw new HttpException('Username already taken', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Username already taken');
+
     }
 	user = await this.prisma.user.findUnique({where: {email: data.email}})
 	if (user) {
-	  throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
+	  throw new BadRequestException('Email already exist');
 	}
 	try {
 		return this.prisma.user.create({
 			data
 		})
 	} catch (error) {
-		throw new HttpException('Error creating user', HttpStatus.INTERNAL_SERVER_ERROR);
+		throw new BadRequestException('Error creating user');
 	}
 }
 
@@ -37,7 +39,7 @@ export class UsersService {
 
   }
 
-  async findOne(username: string) {
+  async findOneByUsername(username: string) {
     let user =  await this.prisma.user.findUnique({
 		where: {
 			username
@@ -96,61 +98,64 @@ export class UsersService {
 		}
 	}
 	if (file) {
-		let uploadResult;
-		const oldUser = await this.prisma.user.findUnique({where: {id}});
-		let oldAvatarUrl = oldUser?.avatarPublicId;
-			try {
+		let OldImagePublicId = user.avatarPublicId;
+		let uploadResult: any ;
+
 		try {
-			uploadResult = await this.cloudinaryService.uploadImage(file);
-		} catch  {
-			throw new HttpException('Error uploading image', HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		data.avatarUrl = uploadResult.secure_url;
-		data.avatarPublicId = uploadResult.public_id;
-		try {
-			this.prisma.user.update({
-				where: {
-					id
-				},
-				data
-			})
-			
+			uploadResult= await this.cloudinaryService.uploadImage(file);
+			const updatedUser = await this.prisma.user.update({
+				where: { id },
+				data: {
+					...data,
+					avatarUrl: uploadResult.secure_url,
+					avatarPublicId: uploadResult.public_id,
+				}
+			});
+			if (OldImagePublicId) {
+				await this.cloudinaryService.deleteImage(OldImagePublicId);
+			}
+			return updatedUser;
 		}
 		catch {
-			this.cloudinaryService.deleteImage(uploadResult.public_id);
+			if (uploadResult && uploadResult?.public_id)
+				await this.cloudinaryService.deleteImage(uploadResult.public_id);
 			throw new HttpException('Error updating user', HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if (user.avatarPublicId) {
 	}
-	this.prisma.user.update({
-		where: {
-			id
-		},
-		data
+	return this.prisma.user.update({
+		where: { id },
+		data,
 	})
-  }
+}
 
   async removeById(id: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})
-	if (!user) {
-	  throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-	}	
-	return this.prisma.user.delete({
-		where: {
-			id
-		}
-	})
-  }
-
-  async removebyUsername(username: string) {
-    let user = await this.prisma.user.findUnique({where: {username}})
+	console.log("Removing user:", user);
 	if (!user) {
 	  throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 	}
-	return this.prisma.user.delete({
-		where: {
-			username
-		}
-	})
-  }
+	if (user.avatarPublicId && user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID	) {
+		await this.cloudinaryService.deleteImage(user.avatarPublicId);
+	}
+	const artworks = await this.prisma.artwork.findMany({where: {authorId: id}});
+	for (const artwork of artworks) {
+		if (artwork.publicId) {
+			try {
+				await this.cloudinaryService.deleteImage(artwork.publicId);
+			} catch (error) {
+				throw new BadRequestException(`Failed to delete artwork image with publicId: ${artwork.publicId}`);
+			}
+		}	
+		await this.prisma.artwork.delete({
+			where: {
+				id: artwork.id,
+			},
+	});
 }
+	await this.prisma.user.delete({
+		where: { id },
+	});
+	return { message: 'User and associated artworks deleted successfully' };
+}
+}
+

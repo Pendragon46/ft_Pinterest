@@ -10,7 +10,7 @@ export class ArtworkController {
 
   @Post()
   @UsePipes()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('art'))
   create(
       @Body() createArtworkDto: CreateArtworkDto,
   			@UploadedFile(
@@ -24,9 +24,17 @@ export class ArtworkController {
   }
 
   @Get(':tag')
-  findAll(@Param('tag') tag: string) {
-    return this.artworkService.findAll(tag);
+  findAllByTag(@Param('tag') tag: string) {
+    return this.artworkService.findAllByTag(tag);
   }
+
+  @Get('/artworks/user/:userId')
+  findAllArtworks(@Param('userId') userId: string)
+  {
+	return this.artworkService.findAllArtworks(userId);
+  }
+
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -34,7 +42,7 @@ export class ArtworkController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('art'))
   update(	@Param('id') id: string,
   			@Body() updateArtworkDto: UpdateArtworkDto,
 			@UploadedFile(
@@ -43,6 +51,7 @@ export class ArtworkController {
 				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
 				new FileTypeValidator({ fileType: '(jpg|jpeg|png|gif|webp)' }),
 			],
+			fileIsRequired: false,
 		})) file?: Express.Multer.File) {
     return this.artworkService.update(id, updateArtworkDto, file);
   }
@@ -51,4 +60,9 @@ export class ArtworkController {
   remove(@Param('id') id: string) {
      this.artworkService.remove(id);
   }
+
+  @Delete('/delete/:userid')
+  deleteAllArtworksByUser(@Param('userid') userId: string) {
+	return this.artworkService.deleteAllArtworksByUser(userId);
+	  }
 }

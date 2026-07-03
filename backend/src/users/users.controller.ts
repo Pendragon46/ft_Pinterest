@@ -21,38 +21,30 @@ export class UsersController {
 
   @Get(':id')
   findOneById(@Param('id') id: string) {
-	return this.usersService.findOne(id);
+	return this.usersService.findOneById(id);
   }
 
   @Get('username/:username')
   findOne(@Param('username') username: string) {
-    return this.usersService.findOne(username);
+    return this.usersService.findOneByUsername(username);
   }
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('avatar'))
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
 				new ParseFilePipe({
 				validators: [
 				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
 				new FileTypeValidator({ fileType: '(jpg|jpeg|png|gif|webp)' }),
 			],
+			fileIsRequired: false,
 		})) file?: Express.Multer.File){
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(id,updateUserDto, file);
   }
 
-  @Delete('username/:username')
-  removebyUsername(@Param('username') username: string) {
-    return this.usersService.removebyUsername(username);
-  }
   @Delete(':id')
   removebyId(@Param('id') id: string) {
 	return this.usersService.removeById(id);
-  }
-
-  @Get('search')
-  searchUsers(@Query('query') query: string) {
-	return this.usersService.searchUsers(query);
   }
 }
 

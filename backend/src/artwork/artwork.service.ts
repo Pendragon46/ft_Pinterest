@@ -31,7 +31,7 @@ export class ArtworkService {
 	}
 }
 
-  findAll(tag: string) {
+  findAllByTag(tag: string) {
 	return this.prisma.artwork.findMany({
 		where: {
 			tags: {
@@ -42,6 +42,14 @@ export class ArtworkService {
 		},
 	});
   }
+
+  findAllArtworks(userId: string) {
+	return this.prisma.artwork.findMany({
+		where: {
+			authorId: userId,
+		},
+	});
+}
 
   findOne(id: string) {
 	let artwork = this.prisma.artwork.findUnique({
@@ -120,4 +128,26 @@ export class ArtworkService {
 		},
 	});
   }
+
+  async deleteAllArtworksByUser(userId: string) {
+	const artworks = await this.prisma.artwork.findMany({
+		where: {
+			authorId: userId,
+		},
+	});
+	for (const artwork of artworks) {
+		if (artwork.publicId) {
+			try {
+				await this.cloudinaryService.deleteImage(artwork.publicId);
+			} catch (error) {
+				throw new BadRequestException(`Failed to delete artwork image with publicId: ${artwork.publicId}`);
+			}
+		}
+		await this.prisma.artwork.delete({
+			where: {
+				id: artwork.id,
+			},
+	});
+
+}}
 }

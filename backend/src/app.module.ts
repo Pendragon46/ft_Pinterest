@@ -15,7 +15,8 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 	CloudinaryModule,
 	ConfigModule.forRoot({ isGlobal: true }),
 	MulterModule.register({	storage: memoryStorage()}),
-	CloudinaryModule],
+	CloudinaryModule,
+  ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
 })
