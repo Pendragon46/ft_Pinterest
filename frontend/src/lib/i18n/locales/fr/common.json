@@ -1,0 +1,48 @@
+{
+  "app": {
+    "name": "Atlaas",
+    "tagline": "L'inspiration ne se scrolle pas. Elle se navigue."
+  },
+  "language": {
+    "label": "Langue"
+  },
+  "actions": {
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "cancel": "Annuler",
+    "save": "Enregistrer"
+  },
+  "auth": {
+    "avatarAlt": "Avatar de {{username}}"
+  },
+  "form": {
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "vous@atlaas.app",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "8+ caractères, lettres, chiffres et symboles"
+  },
+  "home": {
+    "title": "Bienvenue sur Atlaas",
+    "subtitle": "Découvrez et explorez les créations."
+  },
+  "login": {
+    "title": "Content de vous revoir",
+    "subtitle": "Connectez-vous pour aimer, enregistrer et créer.",
+    "noAccount": "Nouveau ici ?",
+    "registerLink": "Créer un compte"
+  },
+  "register": {
+    "title": "Créer un compte",
+    "subtitle": "Rejoignez Atlaas et partagez vos créations.",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "loginLink": "Se connecter"
+  },
+  "profile": {
+    "title": "Profil",
+    "subtitle": "Vos œuvres, collections et activité."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "subtitle": "La page que vous cherchez n'existe pas ou a été déplacée."
+  }
+}
