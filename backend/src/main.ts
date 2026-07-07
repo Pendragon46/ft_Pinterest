@@ -12,7 +12,6 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }),
 );
-
   const config = new DocumentBuilder()
 	.setTitle('Pinterest API')
 	.setDescription('The Pinterest API description')

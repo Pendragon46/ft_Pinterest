@@ -1,19 +1,26 @@
-import { IsOptional, IsString, IsUUID } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateArtworkDto {
 	@IsString()
+	@IsNotEmpty()
 	title!: string;
 
 	@IsString()
+	@IsNotEmpty()
 	description!: string;
 
 	@IsString()
 	@IsOptional()
-	imageUrl?: string;
+	mediaUrl?: string;
 
 	@IsString()
 	@IsOptional()
-	publicId?: string;
+	mediapublicId?: string;
+
+	@IsArray()
+	@ArrayNotEmpty()
+	@IsString({ each: true })
+	tags?: string[];
 
 }
 

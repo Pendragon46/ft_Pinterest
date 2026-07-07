@@ -42,7 +42,7 @@ export class UsersController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
 				new ParseFilePipe({
 				validators: [
-				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
+				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }),
 				new FileTypeValidator({ fileType: /(image\/jpg|image\/jpeg|image\/png|image\/webp)/ }),
 			],
 			fileIsRequired: false,

@@ -12,7 +12,7 @@ export class ArtworkController {
   @UsePipes()
   @UseInterceptors(FileInterceptor('art'))
   create(
-      @Body() createArtworkDto: CreateArtworkDto,
+      @Body() data: CreateArtworkDto,
   			@UploadedFile(
 		new ParseFilePipe({
 			validators: [
@@ -20,7 +20,7 @@ export class ArtworkController {
 				new FileTypeValidator ({ fileType: /(image\/jpeg|image\/png|image\/gif|image\/webp|video\/mp4)$/ }),
 			],
 		})) file: Express.Multer.File) {
-	return this.artworkService.create(createArtworkDto, file);
+	return this.artworkService.create(data, file);
   }
 
 
@@ -40,7 +40,7 @@ export class ArtworkController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('art'))
   update(	@Param('id') id: string,
-  			@Body() updateArtworkDto: UpdateArtworkDto,
+  			@Body() data: UpdateArtworkDto,
 			@UploadedFile(
 				new ParseFilePipe({
 				validators: [
@@ -49,7 +49,7 @@ export class ArtworkController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File) {
-    return this.artworkService.update(id, updateArtworkDto, file);
+    return this.artworkService.update(id, data, file);
   }
 
   @Delete(':id')

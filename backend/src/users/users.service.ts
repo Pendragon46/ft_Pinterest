@@ -37,7 +37,12 @@ export class UsersService {
 	}
 
   async findAll() {
-	return this.prisma.user.findMany();
+
+	const users = await this.prisma.user.findMany();
+	if (!users || users.length === 0) {
+	  throw new NotFoundException('No users found');
+	}
+	return users;
   }
 
   async findOneByUsername(username: string) {
@@ -100,12 +105,13 @@ export class UsersService {
 				await this.cloudinaryService.deleteImage(OldImagePublicId);
 				} catch (error) {
 					console.error('Error deleting old avatar', error);
+					throw error;
 				}
 			}
 			return updatedUser;
 		}
 		catch (error){
-			if (uploadResult && uploadResult?.public_id)
+			if (uploadResult?.public_id)
 				await this.cloudinaryService.deleteImage(uploadResult.public_id);
 			throw error;
 		}
@@ -131,11 +137,11 @@ export class UsersService {
 	}
 	const artworks = await this.prisma.artwork.findMany({where: {authorId: id}});
 	for (const artwork of artworks) {
-		if (artwork.publicId) {
+		if (artwork.mediaPublicId) {
 			try {
-				await this.cloudinaryService.deleteImage(artwork.publicId);
+				await this.cloudinaryService.deleteImage(artwork.mediaPublicId);
 			} catch (error) {
-				throw new BadRequestException(`Failed to delete artwork image with publicId: ${artwork.publicId}`);
+				throw new BadRequestException(`Failed to delete artwork image with publicId: ${artwork.mediaPublicId}`);
 			}
 		}	
 }
