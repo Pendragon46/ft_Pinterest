@@ -10,8 +10,16 @@ export class UsersController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @UseInterceptors(FileInterceptor('avatar'))
+  create(@Body() createUserDto: CreateUserDto, @UploadedFile(
+				new ParseFilePipe({
+				validators: [
+				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
+				new FileTypeValidator({ fileType: /(image\/jpg|image\/jpeg|image\/png|image\/webp)/ }),
+			],
+			fileIsRequired: false,
+		})) file?: Express.Multer.File) {
+    return this.usersService.create(createUserDto, file);
   }
 
   @Get()
@@ -35,7 +43,7 @@ export class UsersController {
 				new ParseFilePipe({
 				validators: [
 				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
-				new FileTypeValidator({ fileType: '(jpg|jpeg|png|gif|webp)' }),
+				new FileTypeValidator({ fileType: /(image\/jpg|image\/jpeg|image\/png|image\/webp)/ }),
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File){

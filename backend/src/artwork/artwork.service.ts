@@ -3,6 +3,8 @@ import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '.prisma/client/wasm';
+import { connect } from 'http2';
 
 @Injectable()
 export class ArtworkService {
@@ -10,7 +12,7 @@ export class ArtworkService {
 				private readonly prisma: PrismaService
 	) {}
 
-   async create(createArtworkDto: CreateArtworkDto, file: Express.Multer.File) {
+   async create(data: Prisma.ArtworkCreateWithoutAuthorInput, file: Express.Multer.File) {
      if (!file) {
 	   throw new BadRequestException('File is required');
 	 }
@@ -19,10 +21,14 @@ export class ArtworkService {
 	try {
 		return this.prisma.artwork.create({
 			data: {
-				...createArtworkDto,
+				...data,
 				imageUrl: upload.secure_url,
 				publicId: upload.public_id,
-				authorId: "f01bf0e0-1743-4cbb-9bba-b790e84f08b4",// Replace with the actual user ID from the request context
+				author: {
+					connect:{
+						id :"04132647-2252-45b6-b6df-de23b095a768"// Replace with the actual user ID from the request context
+					}
+				}
 			},
 		});
 	} catch (error) {
@@ -31,17 +37,6 @@ export class ArtworkService {
 	}
 }
 
-  findAllByTag(tag: string) {
-	return this.prisma.artwork.findMany({
-		where: {
-			tags: {
-				some: {
-					content: tag,
-				},
-			},
-		},
-	});
-  }
 
   findAllArtworks(userId: string) {
 	return this.prisma.artwork.findMany({
@@ -63,7 +58,7 @@ export class ArtworkService {
 	return artwork;
   }
 
-  async update(id: string, updateArtworkDto: UpdateArtworkDto, file?: Express.Multer.File) {
+  async update(id: string, updatedata: Prisma.ArtworkUpdateInput, file?: Express.Multer.File) {
 
 	// Check if the artwork exists
 	let artwork = await this.prisma.artwork.findUnique({
@@ -88,8 +83,8 @@ export class ArtworkService {
 	try
 	{
 		const upload = await this.cloudinaryService.uploadImage(file);
-		updateArtworkDto.imageUrl = upload.secure_url;
-		updateArtworkDto.publicId = upload.public_id;
+		updatedata.imageUrl = upload.secure_url;
+		updatedata.publicId = upload.public_id;
 	}
 	catch (error) {
 		throw new BadRequestException('Failed to upload new artwork image');
@@ -99,7 +94,7 @@ export class ArtworkService {
 		where: {
 			id: id,
 		},
-		data: updateArtworkDto,
+		data: updatedata,
 	});
   }
 
