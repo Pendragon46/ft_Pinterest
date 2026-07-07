@@ -112,11 +112,9 @@ export class ArtworkService {
 	if (!artwork) {
 		throw new BadRequestException('Artwork not found');
 	}
-	
-	const publicId = artwork.publicId;
-	if (publicId) {
+	if (artwork.publicId) {
 		try {
-			await this.cloudinaryService.deleteImage(publicId);
+			await this.cloudinaryService.deleteImage(artwork.publicId);
 		} catch (error) {
 			throw new BadRequestException('Failed to delete artwork image from Cloudinary');
 		}
@@ -148,6 +146,7 @@ export class ArtworkService {
 				id: artwork.id,
 			},
 	});
-
-}}
+}
+	return { message: 'All artworks by the user have been deleted successfully' };
+}
 }
