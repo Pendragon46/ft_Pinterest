@@ -3,6 +3,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import { DevNav } from '@/components/dev/DevNav'
 import { Modal } from '@/components/ui/Modal'
+import { DevUiPage } from '@/pages/DevUiPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
@@ -31,6 +32,8 @@ export function AppRouter() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        {/* TEMPORARY: dev-only UI showcase — remove before production. */}
+        <Route path="/dev/ui" element={<DevUiPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
@@ -40,7 +43,7 @@ export function AppRouter() {
           <Route
             path="/login"
             element={
-              <Modal isOpen onClose={closeModal} labelledBy="login-title">
+              <Modal isOpen onClose={closeModal} labelledBy="login-title" size="wide">
                 <LoginPage />
               </Modal>
             }
@@ -48,7 +51,7 @@ export function AppRouter() {
           <Route
             path="/register"
             element={
-              <Modal isOpen onClose={closeModal} labelledBy="register-title">
+              <Modal isOpen onClose={closeModal} labelledBy="register-title" size="wide">
                 <RegisterPage />
               </Modal>
             }

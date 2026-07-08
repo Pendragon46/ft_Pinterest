@@ -1,0 +1,2 @@
+@import "tailwindcss" source(none);
+@source inline("bg-gradient-to-b bg-linear-to-b from-neutral-950 via-[#252c55] to-[#a9b5ea]");

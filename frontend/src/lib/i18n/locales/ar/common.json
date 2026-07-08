@@ -10,7 +10,8 @@
     "signIn": "تسجيل الدخول",
     "signUp": "إنشاء حساب",
     "cancel": "إلغاء",
-    "save": "حفظ"
+    "save": "حفظ",
+    "continueWithGoogle": "المتابعة باستخدام Google"
   },
   "auth": {
     "avatarAlt": "الصورة الرمزية لـ {{username}}"
@@ -19,7 +20,19 @@
     "emailLabel": "البريد الإلكتروني",
     "emailPlaceholder": "you@atlaas.app",
     "passwordLabel": "كلمة المرور",
-    "passwordPlaceholder": "8+ أحرف، حروف وأرقام ورموز"
+    "passwordPlaceholder": "8+ أحرف، حروف وأرقام ورموز",
+    "usernameLabel": "اسم المستخدم",
+    "usernamePlaceholder": "اسمك_المستعار"
+  },
+  "divider": {
+    "or": "أو"
+  },
+  "errors": {
+    "usernameRequired": "اسم المستخدم مطلوب.",
+    "emailRequired": "البريد الإلكتروني مطلوب.",
+    "emailInvalid": "أدخل بريدًا إلكترونيًا صالحًا.",
+    "passwordRequired": "كلمة المرور مطلوبة.",
+    "passwordWeak": "8+ أحرف تتضمن حروفًا كبيرة وصغيرة ورقمًا ورمزًا."
   },
   "home": {
     "title": "مرحبًا بك في Atlaas",
@@ -28,6 +41,7 @@
   "login": {
     "title": "مرحبًا بعودتك",
     "subtitle": "سجّل الدخول للإعجاب والحفظ والإنشاء.",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
     "noAccount": "جديد هنا؟",
     "registerLink": "أنشئ حسابًا"
   },

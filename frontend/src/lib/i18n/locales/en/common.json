@@ -10,7 +10,8 @@
     "signIn": "Sign in",
     "signUp": "Sign up",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "continueWithGoogle": "Continue with Google"
   },
   "auth": {
     "avatarAlt": "{{username}}'s avatar"
@@ -19,7 +20,19 @@
     "emailLabel": "Email",
     "emailPlaceholder": "you@atlaas.app",
     "passwordLabel": "Password",
-    "passwordPlaceholder": "8+ chars, letters, numbers & symbols"
+    "passwordPlaceholder": "8+ chars, letters, numbers & symbols",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "your_handle"
+  },
+  "divider": {
+    "or": "or"
+  },
+  "errors": {
+    "usernameRequired": "Username is required.",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Enter a valid email address.",
+    "passwordRequired": "Password is required.",
+    "passwordWeak": "8+ characters with upper and lower case letters, a number and a symbol."
   },
   "home": {
     "title": "Welcome to Atlaas",
@@ -28,6 +41,7 @@
   "login": {
     "title": "Welcome back",
     "subtitle": "Sign in to like, save and create.",
+    "forgotPassword": "Forgot Password?",
     "noAccount": "New here?",
     "registerLink": "Create an account"
   },

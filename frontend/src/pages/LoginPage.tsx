@@ -1,8 +1,27 @@
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
-// Placeholder — works both full-page and inside the Modal (no overlay here).
-// The real form (validation, OAuth, split-screen design) comes next.
+import { Button } from '@/components/ui/Button'
+import { Divider } from '@/components/ui/Divider'
+import { GoogleIcon } from '@/components/ui/GoogleIcon'
+import { Input } from '@/components/ui/Input'
+import { TextLink } from '@/components/ui/TextLink'
+import { validateEmail, validatePassword } from '@/features/auth/auth.validation'
+import type { AuthErrorKey } from '@/features/auth/auth.validation'
+import { AuthCard } from '@/features/auth/components/AuthCard'
+
+interface LoginErrors {
+  email?: AuthErrorKey
+  password?: AuthErrorKey
+}
+
+// Login screen (Figma design). Two rendering contexts:
+// - modal: we arrived with location.state.background — the Modal provides
+//   the white card, we only render the content;
+// - standalone /login (direct URL, refresh): AuthCard brings its own
+//   centered page chrome.
 export function LoginPage() {
   const { t } = useTranslation('common')
   const location = useLocation()
@@ -11,8 +30,28 @@ export function LoginPage() {
     location.state as { background?: ReturnType<typeof useLocation> } | null
   )?.background
 
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<LoginErrors>({})
+
+  // Validate on submit only; each field clears its own error as soon as it
+  // is edited again (less noisy than validating every keystroke).
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const nextErrors: LoginErrors = {
+      email: validateEmail(email),
+      password: validatePassword(password),
+    }
+    setErrors(nextErrors)
+    if (nextErrors.email || nextErrors.password) return
+
+    // TODO(backend): POST /auth/login with { email, password } through a
+    // TanStack Query mutation, then useAuthStore login(user) — the store
+    // interface is ready (see features/auth/auth.store.ts).
+  }
+
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6 p-6">
+    <AuthCard standalone={!background}>
       <div className="flex flex-col gap-1">
         <h1 id="login-title" className="text-4xl">
           {t('login.title')}
@@ -20,51 +59,62 @@ export function LoginPage() {
         <p className="text-neutral-500">{t('login.subtitle')}</p>
       </div>
 
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault()
-        }}
-      >
-        <label className="flex flex-col gap-1 text-sm text-neutral-700">
-          {t('form.emailLabel')}
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            placeholder={t('form.emailPlaceholder')}
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-base text-neutral-900"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm text-neutral-700">
-          {t('form.passwordLabel')}
-          <input
+      {/* noValidate: we own the validation UX — the browser's native bubbles
+          are not translatable and clash with the design. */}
+      <form noValidate className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        <Input
+          label={t('form.emailLabel')}
+          type="email"
+          name="email"
+          autoComplete="email"
+          placeholder={t('form.emailPlaceholder')}
+          value={email}
+          onChange={(event) => {
+            setEmail(event.target.value)
+            setErrors((prev) => ({ ...prev, email: undefined }))
+          }}
+          error={errors.email ? t(errors.email) : undefined}
+        />
+
+        <div className="flex flex-col gap-2">
+          <Input
+            label={t('form.passwordLabel')}
             type="password"
             name="password"
             autoComplete="current-password"
             placeholder={t('form.passwordPlaceholder')}
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-base text-neutral-900"
+            value={password}
+            onChange={(event) => {
+              setPassword(event.target.value)
+              setErrors((prev) => ({ ...prev, password: undefined }))
+            }}
+            error={errors.password ? t(errors.password) : undefined}
           />
-        </label>
-        <button
-          type="submit"
-          className="rounded-lg bg-neutral-900 px-4 py-2 text-white hover:bg-neutral-800"
-        >
+          {/* Route to build later — the 404 catches it meanwhile (decision D2). */}
+          <TextLink to="/forgot-password" className="self-end">
+            {t('login.forgotPassword')}
+          </TextLink>
+        </div>
+
+        <Button type="submit" fullWidth>
           {t('actions.signIn')}
-        </button>
+        </Button>
       </form>
 
-      <p className="text-sm text-neutral-500">
+      <Divider>{t('divider.or')}</Divider>
+
+      {/* Non-functional UI until the backend OAuth flow exists (Context.MD). */}
+      <Button variant="outline" fullWidth>
+        <GoogleIcon />
+        {t('actions.continueWithGoogle')}
+      </Button>
+
+      <p className="text-center font-serif text-neutral-600">
         {t('login.noAccount')}{' '}
-        <Link
-          to="/register"
-          replace
-          state={{ background }}
-          className="text-neutral-900 underline"
-        >
+        <TextLink to="/register" replace state={{ background }}>
           {t('login.registerLink')}
-        </Link>
+        </TextLink>
       </p>
-    </div>
+    </AuthCard>
   )
 }

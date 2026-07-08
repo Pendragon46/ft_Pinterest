@@ -36,6 +36,9 @@ export function DevNav() {
       <Link to="/nope" className="hover:text-white">
         404 test
       </Link>
+      <Link to="/dev/ui" className="hover:text-white">
+        UI kit
+      </Link>
 
       {/* TEMPORARY: live AuthButton preview + auth-state simulators (no backend). */}
       <span className="ms-auto flex items-center gap-2">

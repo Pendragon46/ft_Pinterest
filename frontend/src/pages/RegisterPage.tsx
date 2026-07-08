@@ -1,17 +1,58 @@
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
-// Placeholder — works both full-page and inside the Modal (no overlay here).
+import { Button } from '@/components/ui/Button'
+import { Divider } from '@/components/ui/Divider'
+import { GoogleIcon } from '@/components/ui/GoogleIcon'
+import { Input } from '@/components/ui/Input'
+import { TextLink } from '@/components/ui/TextLink'
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from '@/features/auth/auth.validation'
+import type { AuthErrorKey } from '@/features/auth/auth.validation'
+import { AuthCard } from '@/features/auth/components/AuthCard'
+
+interface RegisterErrors {
+  username?: AuthErrorKey
+  email?: AuthErrorKey
+  password?: AuthErrorKey
+}
+
+// Register screen — mirrors LoginPage (same shell, same two contexts),
+// plus the username field required by the backend's user model.
 export function RegisterPage() {
   const { t } = useTranslation('common')
   const location = useLocation()
-  // Preserve the background so toggling register ↔ login stays in modal mode.
   const background = (
     location.state as { background?: ReturnType<typeof useLocation> } | null
   )?.background
 
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [errors, setErrors] = useState<RegisterErrors>({})
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const nextErrors: RegisterErrors = {
+      username: validateUsername(username),
+      email: validateEmail(email),
+      password: validatePassword(password),
+    }
+    setErrors(nextErrors)
+    if (nextErrors.username || nextErrors.email || nextErrors.password) return
+
+    // TODO(backend): POST /users exists, but CreateUserDto currently requires
+    // bio and avatarUrl (Prisma marks them optional) — blocked until the DTO
+    // gets @IsOptional() on both. See the backend note in the guide.
+  }
+
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6 p-6">
+    <AuthCard standalone={!background}>
       <div className="flex flex-col gap-1">
         <h1 id="register-title" className="text-4xl">
           {t('register.title')}
@@ -19,51 +60,68 @@ export function RegisterPage() {
         <p className="text-neutral-500">{t('register.subtitle')}</p>
       </div>
 
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(event) => {
-          event.preventDefault()
-        }}
-      >
-        <label className="flex flex-col gap-1 text-sm text-neutral-700">
-          {t('form.emailLabel')}
-          <input
-            type="email"
-            name="email"
-            autoComplete="email"
-            placeholder={t('form.emailPlaceholder')}
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-base text-neutral-900"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-sm text-neutral-700">
-          {t('form.passwordLabel')}
-          <input
-            type="password"
-            name="password"
-            autoComplete="new-password"
-            placeholder={t('form.passwordPlaceholder')}
-            className="rounded-lg border border-neutral-300 px-3 py-2 text-base text-neutral-900"
-          />
-        </label>
-        <button
-          type="submit"
-          className="rounded-lg bg-neutral-900 px-4 py-2 text-white hover:bg-neutral-800"
-        >
+      <form noValidate className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        <Input
+          label={t('form.usernameLabel')}
+          type="text"
+          name="username"
+          autoComplete="username"
+          placeholder={t('form.usernamePlaceholder')}
+          value={username}
+          onChange={(event) => {
+            setUsername(event.target.value)
+            setErrors((prev) => ({ ...prev, username: undefined }))
+          }}
+          error={errors.username ? t(errors.username) : undefined}
+        />
+
+        <Input
+          label={t('form.emailLabel')}
+          type="email"
+          name="email"
+          autoComplete="email"
+          placeholder={t('form.emailPlaceholder')}
+          value={email}
+          onChange={(event) => {
+            setEmail(event.target.value)
+            setErrors((prev) => ({ ...prev, email: undefined }))
+          }}
+          error={errors.email ? t(errors.email) : undefined}
+        />
+
+        <Input
+          label={t('form.passwordLabel')}
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          placeholder={t('form.passwordPlaceholder')}
+          value={password}
+          onChange={(event) => {
+            setPassword(event.target.value)
+            setErrors((prev) => ({ ...prev, password: undefined }))
+          }}
+          error={errors.password ? t(errors.password) : undefined}
+        />
+
+        <Button type="submit" fullWidth>
           {t('actions.signUp')}
-        </button>
+        </Button>
       </form>
 
-      <p className="text-sm text-neutral-500">
+      <Divider>{t('divider.or')}</Divider>
+
+      {/* Non-functional UI until the backend OAuth flow exists (Context.MD). */}
+      <Button variant="outline" fullWidth>
+        <GoogleIcon />
+        {t('actions.continueWithGoogle')}
+      </Button>
+
+      <p className="text-center font-serif text-neutral-600">
         {t('register.haveAccount')}{' '}
-        <Link
-          to="/login"
-          replace
-          state={{ background }}
-          className="text-neutral-900 underline"
-        >
+        <TextLink to="/login" replace state={{ background }}>
           {t('register.loginLink')}
-        </Link>
+        </TextLink>
       </p>
-    </div>
+    </AuthCard>
   )
 }
