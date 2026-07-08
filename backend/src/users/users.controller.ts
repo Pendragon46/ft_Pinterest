@@ -47,12 +47,12 @@ export class UsersController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File){
-    return this.usersService.update(id,updateUserDto, file);
+    return  this.usersService.update(id,updateUserDto, file);
   }
 
   @Delete(':id')
   removebyId(@Param('id') id: string) {
-	return this.usersService.removeById(id);
+	return  this.usersService.removeById(id);
   }
 }
 

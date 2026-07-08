@@ -27,18 +27,18 @@ model User {
 }
 
 model Artwork {
-  id          String    @id @default(uuid())
-  title       String
-  description String
-  mediaUrl    String?
-  mediaPublicId    String?
-  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId    String
-  comments    Comment[]
-  likes       Like[]
-  tags        Tag[]     @relation("ArtworkToTag")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            String    @id @default(uuid())
+  title         String
+  description   String
+  mediaUrl      String?
+  mediaPublicId String?
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId      String
+  comments      Comment[]
+  likes         Like[]
+  tags          Tag[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Like {
@@ -72,9 +72,11 @@ model Follow {
 }
 
 model Tag {
-  id      String    @id @default(uuid())
-  name 		String 	@unique
-  artwork Artwork[] @relation("ArtworkToTag", onDelete: Cascade)
+  id        String    @id @default(uuid())
+  name      String    @unique
+  artworks   Artwork[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 enum Role {

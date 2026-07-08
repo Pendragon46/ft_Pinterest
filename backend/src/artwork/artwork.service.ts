@@ -10,9 +10,61 @@ export class ArtworkService {
 				private readonly prisma: PrismaService
 	) {}
 
+	async deletetagswithoutartworks() {
+		await this.prisma.tag.deleteMany({
+			where: {
+				artworks: {
+					none: {},
+				},
+			},
+		});
+	}
+
+	async Updatedfile(userId: string, file: Express.Multer.File, updatedata: UpdateArtworkDto, oldPublicId: string) {
+
+		let upload;
+		let updatedArtwork;
+		try
+		{
+			const normalizedtags = updatedata.tags?.map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0);
+			upload = await this.cloudinaryService.uploadImage(file);
+			updatedArtwork = await this.prisma.artwork.update({
+			where: {
+				id: userId,
+			},
+			data: {
+				mediaUrl: upload.secure_url,
+				mediaPublicId: upload.public_id,
+				...(normalizedtags && normalizedtags.length > 0 && {
+					tags: {
+						set: [], // Clear existing tags before connecting new ones
+						connectOrCreate: normalizedtags.map(tag => ({
+							where: { name: tag },
+							create: { name: tag },
+						})),
+					},
+				}),
+			},
+		});
+		await this.deletetagswithoutartworks();
+		}
+		catch (error) {
+		if (upload && upload.public_id) {
+			await this.cloudinaryService.deleteImage(upload.public_id);
+		}
+		throw new BadRequestException('Failed to update artwork');
+	}
+		try {
+			await this.cloudinaryService.deleteImage(oldPublicId);
+		} catch (error) {
+			throw new BadRequestException('Failed to delete old artwork image from Cloudinary');
+		}
+		return updatedArtwork
+	}
+	
    async create(data: CreateArtworkDto, file: Express.Multer.File) {
 	// check if the user exists
-	let user ="e3d714f3-1968-4ba8-9f7f-1cfe834f8116";
+	let user ="fddbedaa-70bb-484d-865a-88859715b17b";
 	 // Replace with the actual user ID from the request context
 
 	if (!user) {
@@ -51,7 +103,8 @@ export class ArtworkService {
 			await this.cloudinaryService.deleteImage(upload.public_id);
 		}
 		throw new BadRequestException('Failed to create artwork');
-	}}
+	}
+}
 
 
 
@@ -63,8 +116,8 @@ export class ArtworkService {
 	});
 }
 
-  findOne(id: string) {
-	let artwork = this.prisma.artwork.findUnique({
+  async findOne(id: string) {
+	let artwork = await this.prisma.artwork.findUnique({
 		where: {
 			id: id,
 		},
@@ -77,9 +130,8 @@ export class ArtworkService {
 
   async update(id: string, updatedata: UpdateArtworkDto, file?: Express.Multer.File) {
 
-
-	
 	// Check if the artwork exists
+
 	let artwork = await this.prisma.artwork.findUnique({
 		where: {
 			id: id,
@@ -88,27 +140,19 @@ export class ArtworkService {
 	if (!artwork) {
 		throw new NotFoundException('Artwork not found');
 	}
-
-	
-	const {tags, ...artworkdata} = updatedata;
+	if (file && artwork.mediaPublicId) {
+		return await this.Updatedfile(id, file, updatedata, artwork.mediaPublicId);
+	}
 	const normalizedtags = updatedata.tags?.map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0);
-	// If a new file is provided, upload it to Cloudinary and update the artwork's imageUrl and publicId
-	if (file) {
-		let upload;
-	try
-	{
-		const oldPublicId = artwork.mediaPublicId;
-		upload = await this.cloudinaryService.uploadImage(file);
-		const updatedpost =  await this.prisma.artwork.update({
+
+	return await this.prisma.artwork.update({
 			where: {
 				id: id,
 			},
 			data: {
-				...artworkdata,
-				mediaUrl: upload.secure_url,
-				mediaPublicId: upload.public_id,
 				...(normalizedtags && normalizedtags.length > 0 && {
 					tags: {
+						set: [], // Clear existing tags before connecting new ones
 						connectOrCreate: normalizedtags.map(tag => ({
 							where: { name: tag },
 							create: { name: tag },
@@ -117,41 +161,6 @@ export class ArtworkService {
 				}),
 			},
 		});
-		if (oldPublicId) {
-		try {
-			await this.cloudinaryService.deleteImage(oldPublicId);
-		} catch (error) {
-			console.error('Error deleting old artwork image', error);
-			throw error;
-		}
-		return updatedpost;
-	}
-}
-	catch (error) {
-		if (upload && upload.public_id) {
-			await this.cloudinaryService.deleteImage(upload.public_id);
-		}
-		throw new BadRequestException('Failed to update artwork');
-	}
-	}
-	const result = true && "test";
-	console.log(result);
-	return this.prisma.artwork.update({
-		where: {
-			id: id,
-		},
-		data: {
-			...artworkdata,
-			...(normalizedtags && normalizedtags.length > 0 && {
-				tags: {
-					connectOrCreate: normalizedtags.map(tag => ({
-						where: { name: tag },
-						create: { name: tag },
-					})),
-				},
-			}),
-		}
-	});
   }
 
   async remove(id: string) {
@@ -170,11 +179,13 @@ export class ArtworkService {
 			throw new BadRequestException('Failed to delete artwork image from Cloudinary');
 		}
 	}
-	return this.prisma.artwork.delete({
+	await this.deletetagswithoutartworks();
+	await this.prisma.artwork.delete({
 		where: {
 			id: id,
 		},
 	});
+	return { message: 'Artwork deleted successfully' };
   }
 
   async deleteAllArtworksByUser(userId: string) {
@@ -197,6 +208,7 @@ export class ArtworkService {
 			},
 	});
 }
+	await this.deletetagswithoutartworks();
 	return { message: 'All artworks by the user have been deleted successfully' };
 }
 }

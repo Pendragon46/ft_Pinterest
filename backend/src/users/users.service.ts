@@ -116,7 +116,7 @@ export class UsersService {
 			throw error;
 		}
 	}
-	return this.prisma.user.update({
+	return await this.prisma.user.update({
 		where: { id },
 		data,
 	})
@@ -147,6 +147,13 @@ export class UsersService {
 }
 	await this.prisma.user.delete({
 		where: { id },
+	});
+	await this.prisma.tag.deleteMany({
+		where: {
+			artworks: {
+				none: {},
+			},
+		},
 	});
 	return { message: 'User and associated artworks deleted successfully' };
 }
