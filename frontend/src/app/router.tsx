@@ -1,8 +1,10 @@
 import { useCallback } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
-import { DevNav } from '@/components/dev/DevNav'
+// TEMPORARY: DevNav disabled — re-enable the import and <DevNav /> below together.
+// import { DevNav } from '@/components/dev/DevNav'
 import { Modal } from '@/components/ui/Modal'
+import { ArtworkPage } from '@/pages/ArtworkPage'
 import { DevUiPage } from '@/pages/DevUiPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -24,7 +26,7 @@ export function AppRouter() {
   return (
     <>
       {/* TEMPORARY: remove DevNav before production. */}
-      <DevNav />
+      {/* <DevNav /> */}
 
       {/* Main routes: when a modal is open, keep rendering the background page. */}
       <Routes location={background ?? location}>
@@ -32,6 +34,7 @@ export function AppRouter() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/artwork/:id" element={<ArtworkPage />} />
         {/* TEMPORARY: dev-only UI showcase — remove before production. */}
         <Route path="/dev/ui" element={<DevUiPage />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -40,6 +43,14 @@ export function AppRouter() {
       {/* Modal routes: rendered on top only when we arrived with a background. */}
       {background ? (
         <Routes>
+          <Route
+            path="/artwork/:id"
+            element={
+              <Modal isOpen onClose={closeModal} labelledBy="artwork-title" size="xl">
+                <ArtworkPage />
+              </Modal>
+            }
+          />
           <Route
             path="/login"
             element={

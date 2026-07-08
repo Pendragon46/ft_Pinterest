@@ -7,8 +7,8 @@ interface ModalProps {
   /** id of the element (inside children) that labels the dialog, for aria-labelledby. */
   labelledBy: string
   /** Panel width: 'md' for simple dialogs (default), 'wide' for two-column
-      layouts like the auth screens. */
-  size?: 'md' | 'wide'
+      layouts like the auth screens, 'xl' for the artwork detail. */
+  size?: 'md' | 'wide' | 'xl'
 }
 
 const FOCUSABLE_SELECTOR =
@@ -19,6 +19,7 @@ const FOCUSABLE_SELECTOR =
 const PANEL_SIZE: Record<NonNullable<ModalProps['size']>, string> = {
   md: 'max-w-md',
   wide: 'max-w-4xl',
+  xl: 'max-w-6xl',
 }
 
 // Reusable accessible modal. The panel provides the frame (bg/rounded/shadow);

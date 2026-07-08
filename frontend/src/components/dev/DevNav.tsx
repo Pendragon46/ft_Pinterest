@@ -39,6 +39,16 @@ export function DevNav() {
       <Link to="/dev/ui" className="hover:text-white">
         UI kit
       </Link>
+      {/* Opens the artwork detail as a modal over the current page.
+          w_1_1 is a deterministic non-empty cell (w_0_0 sits in the hero
+          clearing and is intentionally empty). */}
+      <Link
+        to="/artwork/w_1_1"
+        state={{ background: location }}
+        className="hover:text-white"
+      >
+        Artwork
+      </Link>
 
       {/* TEMPORARY: live AuthButton preview + auth-state simulators (no backend). */}
       <span className="ms-auto flex items-center gap-2">

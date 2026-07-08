@@ -3,10 +3,13 @@ import type { ComponentPropsWithoutRef } from 'react'
 import { Spinner } from './Spinner'
 
 type ButtonVariant = 'primary' | 'outline' | 'ghost'
+type ButtonSize = 'sm' | 'md'
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   /** Visual weight: 'primary' main action, 'outline' secondary, 'ghost' discreet. */
   variant?: ButtonVariant
+  /** Padding scale: 'md' (default) for forms, 'sm' for dense toolbars. */
+  size?: ButtonSize
   /** Stretch to the parent's width (auth forms use this). */
   fullWidth?: boolean
   /** Show a spinner and block interaction. The label stays visible so the
@@ -14,10 +17,10 @@ interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   loading?: boolean
 }
 
-// Shape/behavior shared by every variant — variants only swap colors.
-// Focus ring = the project's canonical style (see AuthButton).
+// Shape/behavior shared by every variant — variants only swap colors, sizes
+// only swap padding. Focus ring = the project's canonical style (see AuthButton).
 const BASE =
-  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-3 text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
+  'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
@@ -27,8 +30,14 @@ const VARIANTS: Record<ButtonVariant, string> = {
   ghost: 'text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200',
 }
 
+const SIZES: Record<ButtonSize, string> = {
+  md: 'px-4 py-3 text-base',
+  sm: 'px-4 py-2 text-sm',
+}
+
 export function Button({
   variant = 'primary',
+  size = 'md',
   fullWidth = false,
   loading = false,
   // 'button' by default: inside a <form>, a bare <button> submits it —
@@ -45,7 +54,7 @@ export function Button({
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={`${BASE} ${VARIANTS[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+      className={`${BASE} ${VARIANTS[variant]} ${SIZES[size]} ${fullWidth ? 'w-full' : ''} ${className}`}
       {...rest}
     >
       {loading ? <Spinner /> : null}
