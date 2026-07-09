@@ -9,9 +9,9 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	username!: string;
 
-	@IsString()
-	@IsNotEmpty()
-	email!: string;
+  @IsString()
+  @IsNotEmpty()
+  email!: string;
 
 
 	@IsStrongPassword()
