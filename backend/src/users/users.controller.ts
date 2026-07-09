@@ -11,6 +11,7 @@ export class UsersController {
   @Post()
   @UsePipes(ValidationPipe)
   @UseInterceptors(FileInterceptor('avatar'))
+  // create(@body() createUserdto: CreateUserDto)
   create(@Body() createUserDto: CreateUserDto, @UploadedFile(
 				new ParseFilePipe({
 				validators: [

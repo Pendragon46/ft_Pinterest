@@ -64,8 +64,8 @@ export class ArtworkService {
 	
    async create(data: CreateArtworkDto, file: Express.Multer.File) {
 	// check if the user exists
-	let user ="";
-	 // Replace with the actual user ID from the request context
+	let user ="a55ad01b-78df-4081-b2b1-975831890c17";
+	 // Replace with the actual user ID from the request context and check if the user exists in the database
 	console.log('provide user please');
 	if (!user) {
 		throw new NotFoundException('User not found');

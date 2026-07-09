@@ -7,8 +7,10 @@ import { UploadApiResponse } from 'cloudinary';
 @Injectable()
 export class UsersService {
 	constructor(private readonly prisma: PrismaService,
-				private readonly cloudinaryService: CloudinaryService
+				private readonly cloudinaryService: CloudinaryService,
+
 	){}
+
   async create(data: Prisma.UserCreateInput, file?: Express.Multer.File) {
 	let uploadResult: UploadApiResponse | undefined;
 	let user = await this.prisma.user.findUnique({where: {username: data.username}})
@@ -158,4 +160,5 @@ export class UsersService {
 	return { message: 'User and associated artworks deleted successfully' };
 }
 }
+
 
