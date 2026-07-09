@@ -24,7 +24,7 @@ export class ArtworkController {
   }
 
 
-  @Get('/artworks/user/:userId')
+  @Get('/user/:userId')
   findAllArtworks(@Param('userId') userId: string)
   {
 	return this.artworkService.findAllArtworks(userId);
@@ -54,10 +54,10 @@ export class ArtworkController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-     this.artworkService.remove(id);
+    return this.artworkService.remove(id);
   }
 
-  @Delete('/delete/:userid')
+  @Delete('delete/:userid')
   deleteAllArtworksByUser(@Param('userid') userId: string) {
 	return this.artworkService.deleteAllArtworksByUser(userId);
 	  }

@@ -64,9 +64,9 @@ export class ArtworkService {
 	
    async create(data: CreateArtworkDto, file: Express.Multer.File) {
 	// check if the user exists
-	let user ="fddbedaa-70bb-484d-865a-88859715b17b";
+	let user ="";
 	 // Replace with the actual user ID from the request context
-
+	console.log('provide user please');
 	if (!user) {
 		throw new NotFoundException('User not found');
 	}
@@ -97,6 +97,8 @@ export class ArtworkService {
 					},
 				}),
 			},
+		
+			
 		});
 	} catch (error) {
 		if (upload && upload.public_id) {
@@ -144,7 +146,7 @@ export class ArtworkService {
 		return await this.Updatedfile(id, file, updatedata, artwork.mediaPublicId);
 	}
 	const normalizedtags = updatedata.tags?.map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0);
-
+	this.deletetagswithoutartworks();
 	return await this.prisma.artwork.update({
 			where: {
 				id: id,
