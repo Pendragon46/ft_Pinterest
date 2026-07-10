@@ -1,32 +1,34 @@
+import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import type { AppLanguage } from '@/lib/i18n/config'
 import { useLanguage } from '@/lib/i18n/useLanguage'
 
-// Minimal language selector (native <select>). Swap for the design-system
-// dropdown once it exists. Uses logical spacing so it works in LTR and RTL.
+// Compact language pill (EN/FR/AR); native <select> keeps it keyboard/AT-accessible.
 export function LanguageSwitcher() {
   const { t } = useTranslation('common')
   const { language, languages, setLanguage } = useLanguage()
 
   return (
-    <label className="inline-flex items-center gap-2 text-sm">
-      <span className="text-neutral-500">{t('language.label')}</span>
+    <label className="relative inline-flex items-center">
+      <span className="sr-only">{t('language.label')}</span>
       <select
-        className="rounded-md border border-neutral-300 bg-transparent px-2 py-1"
         value={language}
         onChange={(event) => {
           void setLanguage(event.target.value as AppLanguage)
         }}
+        className="cursor-pointer appearance-none bg-transparent pe-5 text-sm font-medium uppercase text-neutral-900 outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
       >
-        {(Object.entries(languages) as [AppLanguage, string][]).map(
-          ([code, label]) => (
-            <option key={code} value={code}>
-              {label}
-            </option>
-          ),
-        )}
+        {(Object.keys(languages) as AppLanguage[]).map((code) => (
+          <option key={code} value={code}>
+            {code.toUpperCase()}
+          </option>
+        ))}
       </select>
+      <ChevronDown
+        aria-hidden="true"
+        className="pointer-events-none absolute end-0 size-4 text-neutral-500"
+      />
     </label>
   )
 }

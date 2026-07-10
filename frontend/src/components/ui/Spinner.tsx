@@ -1,14 +1,9 @@
 interface SpinnerProps {
-  /** Visual diameter: 'sm' fits inside buttons, 'md' stands alone. */
   size?: 'sm' | 'md'
-  /** Extra utility classes (e.g. a color override). */
   className?: string
 }
 
-// Decorative loading ring. It is aria-hidden because the CALLER owns the
-// accessible state (e.g. Button keeps its visible label and sets aria-busy),
-// so screen readers never announce a lone, meaningless "spinner".
-// motion-reduce: keep spinning (it conveys state) but slow it down.
+// aria-hidden: the caller owns the accessible loading state (e.g. Button's aria-busy).
 export function Spinner({ size = 'sm', className = '' }: SpinnerProps) {
   return (
     <span

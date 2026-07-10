@@ -1,16 +1,14 @@
+import { LocateFixed } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 interface RefocusButtonProps {
-  /** Whether the camera has wandered from home (drives visibility). */
+  /** Camera has wandered from home; drives visibility. */
   visible: boolean
   onClick: () => void
 }
 
-// Screen-fixed pill that flies the camera back to the origin. Always mounted
-// and toggled via opacity/transform so it can fade instead of popping; when
-// hidden it is also removed from the tab order and hidden from assistive tech
-// (pointer-events-none + tabIndex −1 + aria-hidden) so it can't be focused or
-// clicked through.
+// Always mounted, toggled via opacity/transform so it can fade. When hidden it
+// is also removed from the tab order and hidden from assistive tech.
 export function RefocusButton({ visible, onClick }: RefocusButtonProps) {
   const { t } = useTranslation('common')
 
@@ -26,26 +24,8 @@ export function RefocusButton({ visible, onClick }: RefocusButtonProps) {
           : 'pointer-events-none translate-y-3 opacity-0'
       }`}
     >
-      <RefocusIcon />
+      <LocateFixed aria-hidden="true" className="size-4" />
       {t('home.refocus')}
     </button>
-  )
-}
-
-function RefocusIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-4"
-    >
-      <path d="M3 12a9 9 0 1 0 3-6.7" />
-      <path d="M3 4v4h4" />
-    </svg>
   )
 }

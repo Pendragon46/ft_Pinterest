@@ -5,10 +5,8 @@ export const api: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 })
 
-// Intercepteur de requête — emplacement prêt (ex. injecter le token d'auth).
-// À implémenter plus tard.
+// Placeholder request interceptor (e.g. inject auth token).
 api.interceptors.request.use((config) => config)
 
-// Intercepteur de réponse — emplacement prêt (ex. gestion globale des erreurs).
-// À implémenter plus tard.
+// Placeholder response interceptor (e.g. global error handling).
 api.interceptors.response.use((response) => response)

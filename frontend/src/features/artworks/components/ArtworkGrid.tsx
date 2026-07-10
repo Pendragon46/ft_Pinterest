@@ -4,13 +4,9 @@ import { artworkKeys, fetchTileArtworks } from '../artwork.api'
 import type { CanvasArtwork } from '../artwork.types'
 import { ArtworkCard } from './ArtworkCard'
 
-// The safety net from Context.MD's risk note: if the infinite canvas ever
-// eats too much time or trips the zero-console-errors rule, a page can render
-// THIS instead — same data, same ArtworkCard, just a plain masonry column
-// layout with normal scrolling. It is intentionally boring and bulletproof.
-//
-// It reads a small fixed block of tiles around the origin through the exact
-// same query keys as the canvas, so both share one cache with no extra code.
+// Fallback masonry grid (Context.MD risk note) rendered instead of the infinite
+// canvas. Reads a fixed block of tiles around the origin through the same query
+// keys as the canvas, so both share one cache.
 const FALLBACK_TILES: ReadonlyArray<readonly [number, number]> = [
   [-1, -1],
   [0, -1],

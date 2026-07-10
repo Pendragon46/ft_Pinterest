@@ -3,8 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 
 type TextLinkProps = ComponentPropsWithoutRef<typeof Link>
 
-// Inline navigation link with the project's serif accent + canonical focus
-// ring. Wraps react-router's Link, so `to`, `state`, `replace`… all work.
+// Wraps react-router's Link with the project's serif accent + focus ring.
 export function TextLink({ className = '', children, ...rest }: TextLinkProps) {
   return (
     <Link

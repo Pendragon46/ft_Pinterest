@@ -1,6 +1,4 @@
-// TEMPORARY DEV PAGE — visual showcase of every UI component state.
-// Remove this file (plus its route and DevNav link) before production.
-// Labels are hardcoded on purpose: throwaway dev tooling, not product UI.
+// TEMPORARY dev showcase — remove before production. Labels hardcoded on purpose.
 import { useState } from 'react'
 import type { ReactNode } from 'react'
 

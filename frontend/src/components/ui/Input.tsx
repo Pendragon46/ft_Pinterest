@@ -2,20 +2,14 @@ import { useId } from 'react'
 import type { ComponentPropsWithoutRef } from 'react'
 
 interface InputProps extends ComponentPropsWithoutRef<'input'> {
-  /** Visible label — required: a field without a label is not accessible. */
+  /** Visible label — required for accessibility. */
   label: string
-  /** Validation error. Styles the field and is announced via role="alert". */
+  /** Validation error; announced via role="alert". */
   error?: string
-  /** Neutral hint under the field. Hidden while an error is shown. */
+  /** Neutral hint; hidden while an error is shown. */
   helperText?: string
 }
 
-// Labeled text field with built-in error/helper slots.
-// - useId generates a stable id so <label htmlFor> works without the caller
-//   inventing unique ids (no collision even if the form renders twice).
-// - aria-describedby points to the error OR the helper, so screen readers
-//   read the message right after the label and value.
-// - The serif label is the Atlaas form signature (see the Figma design).
 export function Input({
   label,
   error,

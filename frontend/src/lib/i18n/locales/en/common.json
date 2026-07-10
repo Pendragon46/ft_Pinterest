@@ -101,5 +101,21 @@
   "notFound": {
     "title": "Page not found",
     "subtitle": "The page you're looking for doesn't exist or has moved."
+  },
+  "legal": {
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "How Atlaas collects, uses and protects your data. Full policy coming soon."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "subtitle": "The rules for using Atlaas. Full terms coming soon."
+  },
+  "search": {
+    "emptyTitle": "Nothing over here",
+    "emptyBody": "We couldn't find anything for that — try another direction?"
   }
 }

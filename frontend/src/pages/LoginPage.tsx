@@ -11,17 +11,14 @@ import { TextLink } from '@/components/ui/TextLink'
 import { validateEmail, validatePassword } from '@/features/auth/auth.validation'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
+import { useDevSignIn } from '@/features/auth/useDevSignIn'
 
 interface LoginErrors {
   email?: AuthErrorKey
   password?: AuthErrorKey
 }
 
-// Login screen (Figma design). Two rendering contexts:
-// - modal: we arrived with location.state.background — the Modal provides
-//   the white card, we only render the content;
-// - standalone /login (direct URL, refresh): AuthCard brings its own
-//   centered page chrome.
+// Renders as modal (location.state.background) or standalone page.
 export function LoginPage() {
   const { t } = useTranslation('common')
   const location = useLocation()
@@ -33,9 +30,9 @@ export function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<LoginErrors>({})
+  const signIn = useDevSignIn()
 
-  // Validate on submit only; each field clears its own error as soon as it
-  // is edited again (less noisy than validating every keystroke).
+  // Validate on submit; each field clears its own error on edit.
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const nextErrors: LoginErrors = {
@@ -45,9 +42,9 @@ export function LoginPage() {
     setErrors(nextErrors)
     if (nextErrors.email || nextErrors.password) return
 
-    // TODO(backend): POST /auth/login with { email, password } through a
-    // TanStack Query mutation, then useAuthStore login(user) — the store
-    // interface is ready (see features/auth/auth.store.ts).
+    // TODO(backend): POST /auth/login with { email, password } then
+    // useAuthStore.login(user). Dev stopgap below signs in a mock user.
+    signIn(email)
   }
 
   return (
@@ -59,8 +56,7 @@ export function LoginPage() {
         <p className="text-neutral-500">{t('login.subtitle')}</p>
       </div>
 
-      {/* noValidate: we own the validation UX — the browser's native bubbles
-          are not translatable and clash with the design. */}
+      {/* noValidate: we own validation UX (native bubbles aren't translatable). */}
       <form noValidate className="flex flex-col gap-5" onSubmit={handleSubmit}>
         <Input
           label={t('form.emailLabel')}
@@ -103,8 +99,14 @@ export function LoginPage() {
 
       <Divider>{t('divider.or')}</Divider>
 
-      {/* Non-functional UI until the backend OAuth flow exists (Context.MD). */}
-      <Button variant="outline" fullWidth>
+      {/* TODO(backend): real Google OAuth. Dev stopgap signs in a mock user. */}
+      <Button
+        variant="outline"
+        fullWidth
+        onClick={() => {
+          signIn('you@atlaas.app')
+        }}
+      >
         <GoogleIcon />
         {t('actions.continueWithGoogle')}
       </Button>

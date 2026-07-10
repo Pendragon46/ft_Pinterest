@@ -1,11 +1,7 @@
-// The artworks "API" — every read the UI performs goes through here.
-//
-// Today each function resolves from the deterministic mock. The day the
-// backend lands, ONLY the bodies below change (axios calls via lib/axios,
-// wired to TanStack's AbortSignal); the signatures and the query keys stay
-// identical, so nothing else in the app moves. A small artificial latency
-// keeps the async contract honest: loading states are exercised now, not
-// discovered in production.
+// The artworks "API": every read the UI performs goes through here. Today each
+// function resolves from the mock; when the backend lands only the bodies
+// change (signatures and query keys stay identical). The artificial latency
+// keeps loading states exercised.
 
 import { generateComments, generateDetail, generateTile } from './artwork.mock'
 import type { ArtworkComment, ArtworkDetail, CanvasArtwork } from './artwork.types'
@@ -19,9 +15,8 @@ function delay(ms: number): Promise<void> {
   })
 }
 
-/** React Query key factory — the single source of truth for cache keys.
-    Keeping keys here (next to the fetchers) means invalidation code can
-    never drift from fetching code. */
+// React Query key factory — single source of truth for cache keys, kept next
+// to the fetchers so invalidation can't drift from fetching.
 export const artworkKeys = {
   tile: (tx: number, ty: number) => ['artworks', 'tile', tx, ty] as const,
   detail: (id: string) => ['artworks', 'detail', id] as const,

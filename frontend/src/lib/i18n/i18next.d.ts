@@ -1,5 +1,4 @@
-// Makes t('...') keys type-checked against the English resource shape:
-// a typo or a key missing from en/common.json becomes a compile error.
+// Type-checks t() keys against the English resource shape.
 import 'i18next'
 
 import type common from './locales/en/common.json'

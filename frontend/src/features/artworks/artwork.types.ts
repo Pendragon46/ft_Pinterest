@@ -1,14 +1,5 @@
-// Shared shapes for the artworks feature.
-//
-// Two layers, on purpose:
-// - ArtworkSummary / ArtworkDetail / ArtworkComment mirror what the backend
-//   will return (Prisma `Artwork` + aggregated counts + embedded author).
-//   `color` is a TEMPORARY stand-in for `imageUrl` while content is mocked:
-//   when real uploads exist, swap `color` for `imageUrl` here and in the two
-//   places that paint it (ArtworkCard, ArtworkDetail) — nothing else moves.
-// - CanvasArtwork adds the world placement the discovery map needs. The
-//   placement is DATA (it arrives with the artwork), not something the view
-//   computes: the future backend will own the map layout the same way.
+// Shared shapes for the artworks feature. `color` is a temporary stand-in for
+// the future `imageUrl`; CanvasArtwork adds map placement that arrives as data.
 
 export const CATEGORIES = [
   'portrait',
@@ -21,12 +12,10 @@ export const CATEGORIES = [
   'branding',
 ] as const
 
-/** The 8 creative territories of the map — also the i18n keys under
-    `category.*` (categories are a fixed enum, so they ARE translated,
-    unlike free user content such as titles or tags). */
+// Fixed enum → also the i18n keys under `category.*` (so these ARE translated).
 export type Category = (typeof CATEGORIES)[number]
 
-/** How a card was produced/paid — drives the small badge on the card. */
+// How a card was produced/paid — drives the small badge on the card.
 export type ArtworkKind = 'standard' | 'ai' | 'sponsor'
 
 /** Author info embedded in artwork payloads (a subset of User). */
@@ -34,7 +23,6 @@ export interface AuthorSummary {
   id: string
   username: string
   handle: string
-  /** Avatar placeholder color until real avatars ship (mirrors avatarUrl). */
   color: string
 }
 
@@ -44,7 +32,6 @@ export interface ArtworkSummary {
   title: string
   category: Category
   kind: ArtworkKind
-  /** Placeholder visual — stands in for the future `imageUrl`. */
   color: string
   viewCount: number
   likeCount: number
@@ -72,6 +59,6 @@ export interface ArtworkComment {
   author: AuthorSummary
   content: string
   likeCount: number
-  /** Age in hours; 0 = just now. Becomes `createdAt` once the API exists. */
+  // Age in hours; 0 = just now. Becomes `createdAt` once the API exists.
   hoursAgo: number
 }

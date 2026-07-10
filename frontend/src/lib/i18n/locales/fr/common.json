@@ -101,5 +101,21 @@
   "notFound": {
     "title": "Page introuvable",
     "subtitle": "La page que vous cherchez n'existe pas ou a été déplacée."
+  },
+  "legal": {
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "subtitle": "Comment Atlaas collecte, utilise et protège vos données. Politique complète à venir."
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "subtitle": "Les règles d'utilisation d'Atlaas. Conditions complètes à venir."
+  },
+  "search": {
+    "emptyTitle": "Rien par ici",
+    "emptyBody": "Rien trouvé pour ça — essaie une autre direction ?"
   }
 }

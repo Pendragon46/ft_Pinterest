@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Heart, MessageCircle, Bookmark, Share2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/Button'
+import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { Spinner } from '@/components/ui/Spinner'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
@@ -11,14 +13,16 @@ import { useRequireAuth } from '@/features/auth/useRequireAuth'
 import { artworkKeys, fetchArtworkComments } from '../artwork.api'
 import type { ArtworkComment, ArtworkDetail as Detail } from '../artwork.types'
 
+// Lazy so lottie-web is code-split out of the main bundle (loaded on first like).
+const HeartBurst = lazy(() => import('./HeartBurst'))
+
 interface ArtworkDetailProps {
   artwork: Detail
-  /** Provided when shown in the modal (adds a close button). Absent on the
-      standalone page, which has its own navigation. */
+  /** Present only in the modal; adds a close button. */
   onClose?: () => void
 }
 
-// Format big view counts compactly (12000 → "12K"), localized.
+// Localized compact view counts (12000 → "12K").
 function useCompact() {
   const { i18n } = useTranslation()
   return (value: number) =>
@@ -28,10 +32,7 @@ function useCompact() {
     }).format(value)
 }
 
-// The detail view: the artwork on the start side, its metadata + actions +
-// comments on the end side. Actions that mutate (like/save/follow/comment)
-// are gated behind useRequireAuth — signed-out users get the login modal.
-// Counts are static placeholders until the backend exposes real mutations.
+// Mutating actions gated behind useRequireAuth; counts are static placeholders.
 export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const { t } = useTranslation('common')
   const compact = useCompact()
@@ -39,11 +40,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const currentUser = useAuthStore((state) => state.user)
 
   const [liked, setLiked] = useState(false)
+  /** Bumped each time the user likes, to replay the heart burst. */
+  const [likeBurst, setLikeBurst] = useState(0)
   const [saved, setSaved] = useState(false)
   const [following, setFollowing] = useState(false)
   const [shareHint, setShareHint] = useState(false)
   const [draft, setDraft] = useState('')
-  /** Comments the user posted this session (prepended to the fetched list). */
+  /** Comments posted this session, prepended to the fetched list. */
   const [posted, setPosted] = useState<ArtworkComment[]>([])
 
   const commentsQuery = useQuery({
@@ -96,7 +99,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
 
   return (
     <article className="grid max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:grid-cols-[1.15fr_1fr] md:grid-rows-1">
-      {/* Visual side — placeholder color stands in for the future image. */}
+      {/* Placeholder color stands in for the future image. */}
       <div
         className="relative flex h-44 items-end justify-start p-5 md:h-auto"
         style={{ backgroundColor: artwork.color }}
@@ -106,9 +109,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         </span>
       </div>
 
-      {/* Info side. */}
       <div className="flex min-h-0 flex-col">
-        {/* Author + follow + close. */}
         <header className="flex items-center gap-3 border-b border-neutral-100 p-4">
           <span
             aria-hidden="true"
@@ -141,14 +142,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               type="button"
               onClick={onClose}
               aria-label={t('artwork.close')}
-              className="flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+              className="flex cursor-pointer size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
             >
-              <CloseIcon />
+              <X aria-hidden="true" className="size-5" />
             </button>
           ) : null}
         </header>
 
-        {/* Scrollable body: title, meta, tags, actions, comments. */}
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           <h1 id="artwork-title" className="font-serif text-2xl text-neutral-900">
             {artwork.title}
@@ -173,26 +173,38 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             ))}
           </ul>
 
-          {/* Action row. Like/Save toggle locally; counts stay static until
-              the backend owns them. aria-pressed exposes the toggle state. */}
+          {/* Like/Save toggle locally; counts stay static until the backend owns them. */}
           <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-neutral-100 py-3">
             <ActionChip
               active={liked}
               onClick={() => {
                 requireAuth(() => {
-                  setLiked((value) => !value)
+                  const next = !liked
+                  setLiked(next)
+                  if (next) setLikeBurst((count) => count + 1)
                 })
               }}
               label={liked ? t('artwork.liked') : t('artwork.like')}
               count={compact(artwork.likeCount + (liked ? 1 : 0))}
-              icon={<HeartIcon filled={liked} />}
+              icon={
+                <span className="relative inline-flex">
+                  <Heart aria-hidden="true" className={liked ? "size-4 text-red-500" : "size-4"} fill={liked ? "currentColor" : "none"} />
+                  {likeBurst > 0 ? (
+                    <SilentBoundary key={likeBurst}>
+                      <Suspense fallback={null}>
+                        <HeartBurst />
+                      </Suspense>
+                    </SilentBoundary>
+                  ) : null}
+                </span>
+              }
             />
             <ActionChip
               active={false}
               onClick={() => undefined}
               label={t('artwork.commentsTitle')}
               count={compact(artwork.commentCount)}
-              icon={<CommentIcon />}
+              icon={<MessageCircle aria-hidden="true" className="size-4" />}
               as="span"
             />
             <ActionChip
@@ -203,14 +215,14 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                 })
               }}
               label={t('artwork.saved')}
-              icon={<BookmarkIcon filled={saved} />}
+              icon={<Bookmark aria-hidden="true" className="size-4" fill={saved ? "currentColor" : "none"} />}
             />
             <div className="relative ms-auto">
               <ActionChip
                 active={false}
                 onClick={handleShare}
                 label={t('artwork.share')}
-                icon={<ShareIcon />}
+                icon={<Share2 aria-hidden="true" className="size-4" />}
               />
               {shareHint ? (
                 <span
@@ -223,7 +235,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             </div>
           </div>
 
-          {/* Comments. */}
           <section className="mt-4">
             <h2 className="font-sans text-sm font-semibold uppercase tracking-wide text-neutral-500">
               {t('artwork.commentsTitle')}
@@ -261,7 +272,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                         onClick={() => {
                           requireAuth(() => undefined)
                         }}
-                        className="mt-0.5 text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
+                        className="mt-0.5 cursor-pointer text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
                       >
                         {t('artwork.reply')}
                       </button>
@@ -273,7 +284,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           </section>
         </div>
 
-        {/* Composer pinned at the bottom of the info column. */}
         <div className="flex items-center gap-2 border-t border-neutral-100 p-3">
           <input
             type="text"
@@ -322,7 +332,7 @@ function ActionChip({
   icon,
   as = 'button',
 }: ActionChipProps) {
-  const className = `inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors motion-reduce:transition-none ${
+  const className = `inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors motion-reduce:transition-none ${
     active
       ? 'bg-neutral-900 text-white'
       : 'text-neutral-600 hover:bg-neutral-100'
@@ -346,92 +356,5 @@ function ActionChip({
     >
       {content}
     </button>
-  )
-}
-
-// --- Icons (local: single-use, no shared icon system yet) -------------------
-
-function HeartIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor"
-      strokeWidth={2}
-      aria-hidden="true"
-      className="size-4"
-    >
-      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
-    </svg>
-  )
-}
-
-function CommentIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-4"
-    >
-      <path d="M21 11.5a8.5 8.5 0 0 1-11.8 7.8L3 21l1.7-6.2A8.5 8.5 0 1 1 21 11.5z" />
-    </svg>
-  )
-}
-
-function BookmarkIcon({ filled }: { filled: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-4"
-    >
-      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-    </svg>
-  )
-}
-
-function ShareIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      className="size-4"
-    >
-      <circle cx="18" cy="5" r="3" />
-      <circle cx="6" cy="12" r="3" />
-      <circle cx="18" cy="19" r="3" />
-      <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
-    </svg>
-  )
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      aria-hidden="true"
-      className="size-5"
-    >
-      <path d="M6 6l12 12M18 6L6 18" />
-    </svg>
   )
 }

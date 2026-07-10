@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import i18n from '@/lib/i18n'
 
-// Instance unique de QueryClient, stable sur toute la durée de vie de l'app.
+// Single QueryClient, stable for the whole app lifetime.
 const queryClient = new QueryClient()
 
 interface AppProvidersProps {

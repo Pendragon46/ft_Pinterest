@@ -7,7 +7,7 @@ import ar from './locales/ar/common.json'
 import en from './locales/en/common.json'
 import fr from './locales/fr/common.json'
 
-// All translations are bundled (no async backend), so `t()` is ready on first render.
+// Translations are bundled (no async backend), so t() is ready on first render.
 export const resources = {
   en: { common: en },
   fr: { common: fr },
@@ -22,19 +22,18 @@ void i18n
     fallbackLng,
     supportedLngs,
     defaultNS,
-    // React already escapes output — disable i18next's own escaping.
+    // React already escapes output.
     interpolation: { escapeValue: false },
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
       lookupLocalStorage: 'atlaas.lang',
     },
-    // Resources are synchronous, so we don't need a Suspense boundary.
+    // Resources are synchronous — no Suspense boundary needed.
     react: { useSuspense: false },
   })
 
-// Mirror the active language onto <html lang/dir> so CSS logical properties
-// (ps-*/pe-*/ms-*/me-*, text-start/end) flip automatically for RTL languages.
+// Mirror active language onto <html lang/dir> so CSS logical properties flip for RTL.
 function syncHtmlLangDir(lng: string | undefined): void {
   const language = lng ?? fallbackLng
   document.documentElement.lang = language

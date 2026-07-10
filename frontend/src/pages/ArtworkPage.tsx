@@ -8,13 +8,8 @@ import { TextLink } from '@/components/ui/TextLink'
 import { artworkKeys, fetchArtworkDetail } from '@/features/artworks/artwork.api'
 import { ArtworkDetail } from '@/features/artworks/components/ArtworkDetail'
 
-// Artwork detail route. Like the auth pages, it renders in two contexts:
-// - as a modal over the map (opened from a card, with location.state.background)
-//   → the Modal in the router provides the frame, we bring the content;
-// - standalone at /artwork/:id (direct URL, refresh, shared link)
-//   → we bring our own centered page chrome.
-// Either way it always exposes an element with id="artwork-title" so the
-// modal's aria-labelledby resolves even during loading and error states.
+// Renders as modal (location.state.background) or standalone; always exposes
+// id="artwork-title" so the modal's aria-labelledby resolves in every state.
 export function ArtworkPage() {
   const { t } = useTranslation('common')
   const { id = '' } = useParams()
@@ -55,8 +50,7 @@ export function ArtworkPage() {
     content = (
       <ArtworkDetail
         artwork={detailQuery.data}
-        // In modal context, closing steps back in history; standalone has no
-        // overlay to close, so no button is shown.
+        // Modal closes by stepping back in history; standalone has no overlay.
         onClose={background ? () => navigate(-1) : undefined}
       />
     )

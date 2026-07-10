@@ -15,6 +15,7 @@ import {
 } from '@/features/auth/auth.validation'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
+import { useDevSignIn } from '@/features/auth/useDevSignIn'
 
 interface RegisterErrors {
   username?: AuthErrorKey
@@ -22,8 +23,7 @@ interface RegisterErrors {
   password?: AuthErrorKey
 }
 
-// Register screen — mirrors LoginPage (same shell, same two contexts),
-// plus the username field required by the backend's user model.
+// Mirrors LoginPage, plus the username field required by the user model.
 export function RegisterPage() {
   const { t } = useTranslation('common')
   const location = useLocation()
@@ -35,6 +35,7 @@ export function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<RegisterErrors>({})
+  const signIn = useDevSignIn()
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -46,9 +47,9 @@ export function RegisterPage() {
     setErrors(nextErrors)
     if (nextErrors.username || nextErrors.email || nextErrors.password) return
 
-    // TODO(backend): POST /users exists, but CreateUserDto currently requires
-    // bio and avatarUrl (Prisma marks them optional) — blocked until the DTO
-    // gets @IsOptional() on both. See the backend note in the guide.
+    // TODO(backend): POST /users (CreateUserDto needs @IsOptional() on bio &
+    // avatarUrl first). Dev stopgap below signs in a mock user.
+    signIn(email, username)
   }
 
   return (
@@ -110,8 +111,14 @@ export function RegisterPage() {
 
       <Divider>{t('divider.or')}</Divider>
 
-      {/* Non-functional UI until the backend OAuth flow exists (Context.MD). */}
-      <Button variant="outline" fullWidth>
+      {/* TODO(backend): real Google OAuth. Dev stopgap signs in a mock user. */}
+      <Button
+        variant="outline"
+        fullWidth
+        onClick={() => {
+          signIn('you@atlaas.app')
+        }}
+      >
         <GoogleIcon />
         {t('actions.continueWithGoogle')}
       </Button>

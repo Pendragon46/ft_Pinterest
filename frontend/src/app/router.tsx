@@ -1,16 +1,16 @@
 import { useCallback } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
-// TEMPORARY: DevNav disabled — re-enable the import and <DevNav /> below together.
-// import { DevNav } from '@/components/dev/DevNav'
 import { Modal } from '@/components/ui/Modal'
 import { ArtworkPage } from '@/pages/ArtworkPage'
 import { DevUiPage } from '@/pages/DevUiPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { PrivacyPage } from '@/pages/PrivacyPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { RegisterPage } from '@/pages/RegisterPage'
+import { TermsPage } from '@/pages/TermsPage'
 
 export function AppRouter() {
   const location = useLocation()
@@ -25,16 +25,15 @@ export function AppRouter() {
 
   return (
     <>
-      {/* TEMPORARY: remove DevNav before production. */}
-      {/* <DevNav /> */}
-
-      {/* Main routes: when a modal is open, keep rendering the background page. */}
+      {/* Main routes: keep rendering the background page while a modal is open. */}
       <Routes location={background ?? location}>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/artwork/:id" element={<ArtworkPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
         {/* TEMPORARY: dev-only UI showcase — remove before production. */}
         <Route path="/dev/ui" element={<DevUiPage />} />
         <Route path="*" element={<NotFoundPage />} />

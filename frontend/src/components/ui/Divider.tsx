@@ -5,8 +5,7 @@ interface DividerProps {
   children?: ReactNode
 }
 
-// Thin separator. aria-hidden: it is purely visual — the content around it
-// already carries the meaning (two alternative sign-in methods).
+// aria-hidden: purely visual; the surrounding content already carries the meaning.
 export function Divider({ children }: DividerProps) {
   if (!children) {
     return <hr aria-hidden="true" className="border-neutral-200" />

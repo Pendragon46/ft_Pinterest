@@ -6,6 +6,7 @@
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Hedvig Letters Serif', ui-serif, Georgia, serif;
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
 }
 
 *,
@@ -34,5 +35,14 @@ body {
   h6 {
     font-family: var(--font-serif);
     font-weight: 400;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }

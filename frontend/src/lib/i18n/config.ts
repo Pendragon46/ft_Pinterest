@@ -1,5 +1,4 @@
-// Central i18n configuration shared by the init, the switcher and the hook.
-// Add a language here (code + endonym) and drop a matching folder in ./locales.
+// Shared i18n config. Add a language (code + endonym) and a matching ./locales folder.
 export const languageNames = {
   en: 'English',
   fr: 'Français',

@@ -4,20 +4,15 @@ import { Logo } from '@/components/ui/Logo'
 
 interface AuthCardProps {
   children: ReactNode
-  /** true when rendered as a standalone route (no modal behind): the card
-      then brings its own centered page chrome. Inside the Modal, the panel
-      already provides the white card, so only the grid is rendered. */
+  /** Standalone route (no modal behind): the card brings its own centered page chrome. */
   standalone?: boolean
 }
 
-// Two-panel auth shell from the Figma design: brand gradient panel + form
-// column. Pure layout — the pages own the form and its logic.
+// Two-panel auth shell (Figma): brand gradient panel + form column.
 export function AuthCard({ children, standalone = false }: AuthCardProps) {
   const card = (
     <div className="grid w-full md:grid-cols-2 md:p-1">
-      {/* Brand panel: decorative — hidden from assistive tech, and dropped on
-          small screens where the form needs the full width. In RTL the grid
-          columns flip on their own — no extra work needed. */}
+      {/* Decorative brand panel; hidden from AT and dropped on small screens. RTL flips columns automatically. */}
       <div
         aria-hidden="true"
         className="hidden items-center justify-center rounded-xl bg-gradient-to-b from-neutral-950 from-35% via-[#252c55] via-65% to-[#a9b5ea] md:flex"

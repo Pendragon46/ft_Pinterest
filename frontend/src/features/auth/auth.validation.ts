@@ -1,11 +1,4 @@
-// Frontend mirror of the backend validation rules (the subject requires
-// validating on BOTH sides). Source of truth: backend CreateUserDto —
-// @IsStrongPassword() defaults = min 8 chars, at least 1 lowercase,
-// 1 uppercase, 1 number and 1 symbol.
-//
-// Validators return i18n KEYS, not translated strings: they stay pure and
-// testable, and the page translates at render time — so the message switches
-// language live when the user changes locale.
+// Mirrors backend CreateUserDto rules; validators return i18n keys, not strings.
 
 export type AuthErrorKey =
   | 'errors.usernameRequired'
@@ -14,9 +7,7 @@ export type AuthErrorKey =
   | 'errors.passwordRequired'
   | 'errors.passwordWeak'
 
-// Deliberately simple shape check ("something@domain.tld"): the real
-// guarantee is server-side. Stricter email regexes mostly reject valid
-// addresses (false negatives) without adding real safety.
+// Deliberately loose shape check; the real guarantee is server-side.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function validateUsername(value: string): AuthErrorKey | undefined {

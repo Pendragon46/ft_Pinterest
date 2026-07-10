@@ -3,21 +3,15 @@ import type { RefObject } from 'react'
 
 import { CARD_H, CARD_W, CELL_H, CELL_W } from './canvas.constants'
 
-// The zoom-out easter egg: pan far out and the scattered cards resolve into
-// the Atlaas compass mark. Each lit "pixel" is drawn as one card-sized block
-// at an exact grid cell, so — now that the card field is a uniform grid — the
-// mosaic lands precisely where real cards sit: the cards themselves line up
-// into the logo as they fade out (the cross-fade is handled in the camera
-// loop). Everything here is computed ONCE at module load into a fixed rect
-// list; no per-frame work. Opacity is driven imperatively by the camera hook
-// through `layerRef`; this component only ever paints a static SVG.
+// Zoom-out easter egg: scattered cards resolve into the Atlaas compass mark.
+// The mosaic is aligned to grid cells so the cards line up into the logo as
+// they fade out. Geometry is computed once at module load into a fixed rect
+// list; opacity is driven imperatively by the camera hook via `layerRef`.
 
 const VIEW = 48 // logo viewBox the geometry below is expressed in
 
-// Raster resolution. GRID_Y is the vertical pixel count; GRID_X is derived so
-// the mark stays visually square in WORLD pixels despite non-square cells, and
-// forced EVEN so the mosaic straddles the world origin (the hero clearing),
-// exactly like the card grid does.
+// GRID_X is derived to keep the mark visually square in world px despite
+// non-square cells, and forced EVEN so the mosaic straddles the world origin.
 const GRID_Y = 44
 const GRID_X = 2 * Math.round((GRID_Y * CELL_H) / CELL_W / 2)
 
@@ -52,8 +46,7 @@ function inMark(px: number, py: number): boolean {
   })
 }
 
-// Lit pixels → card-sized rects at grid-cell positions, in SVG-local coords
-// (0..SVG_W). The SVG itself is offset to the top-left of the mosaic below.
+// Lit pixels → card-sized rects at grid-cell positions, in SVG-local coords.
 interface Pixel {
   x: number
   y: number
@@ -80,8 +73,7 @@ interface EasterEggLayerProps {
   layerRef: RefObject<HTMLDivElement | null>
 }
 
-// React 19 ref-as-prop (no forwardRef): the parent passes the DOM handle it
-// will drive per-frame. memo because props never change once mounted.
+// React 19 ref-as-prop (no forwardRef); memo because props never change once mounted.
 export const EasterEggLayer = memo(function EasterEggLayer({
   layerRef,
 }: EasterEggLayerProps) {

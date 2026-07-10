@@ -1,5 +1,4 @@
-// TEMPORARY DEV NAVIGATION — remove before production.
-// Labels are hardcoded on purpose: this is a throwaway dev tool, not product UI.
+// TEMPORARY DEV NAVIGATION — remove before production. Labels hardcoded on purpose.
 import { Link, useLocation } from 'react-router-dom'
 
 import { useAuthStore } from '@/features/auth/auth.store'
@@ -39,9 +38,7 @@ export function DevNav() {
       <Link to="/dev/ui" className="hover:text-white">
         UI kit
       </Link>
-      {/* Opens the artwork detail as a modal over the current page.
-          w_1_1 is a deterministic non-empty cell (w_0_0 sits in the hero
-          clearing and is intentionally empty). */}
+      {/* w_1_1 is a deterministic non-empty cell (w_0_0 sits in the empty hero clearing). */}
       <Link
         to="/artwork/w_1_1"
         state={{ background: location }}

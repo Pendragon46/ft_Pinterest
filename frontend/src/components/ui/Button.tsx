@@ -6,19 +6,13 @@ type ButtonVariant = 'primary' | 'outline' | 'ghost'
 type ButtonSize = 'sm' | 'md'
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
-  /** Visual weight: 'primary' main action, 'outline' secondary, 'ghost' discreet. */
   variant?: ButtonVariant
-  /** Padding scale: 'md' (default) for forms, 'sm' for dense toolbars. */
   size?: ButtonSize
-  /** Stretch to the parent's width (auth forms use this). */
   fullWidth?: boolean
-  /** Show a spinner and block interaction. The label stays visible so the
-      button keeps its width and screen readers keep the accessible name. */
+  /** Show a spinner and block interaction; the label stays visible. */
   loading?: boolean
 }
 
-// Shape/behavior shared by every variant — variants only swap colors, sizes
-// only swap padding. Focus ring = the project's canonical style (see AuthButton).
 const BASE =
   'inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none'
 
@@ -40,9 +34,7 @@ export function Button({
   size = 'md',
   fullWidth = false,
   loading = false,
-  // 'button' by default: inside a <form>, a bare <button> submits it —
-  // a classic source of accidental submits (the Google button would submit
-  // the login form otherwise). Submit buttons opt in with type="submit".
+  // Default 'button' so a bare button inside a <form> doesn't submit it.
   type = 'button',
   disabled,
   className = '',

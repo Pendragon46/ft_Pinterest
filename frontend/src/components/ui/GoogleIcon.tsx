@@ -2,9 +2,7 @@ interface GoogleIconProps {
   className?: string
 }
 
-// Google's multicolor "G". The colors are Google's official brand palette
-// and must stay literal (OAuth branding guidelines) — they are NOT theme
-// tokens and must not follow the app's palette.
+// Google's official brand colors — keep literal, do not map to theme tokens.
 export function GoogleIcon({ className = 'size-5' }: GoogleIconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>

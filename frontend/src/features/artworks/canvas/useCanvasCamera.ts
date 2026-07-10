@@ -17,26 +17,10 @@ import {
   WHEEL_ZOOM_INTENSITY,
 } from './canvas.constants'
 
-// The camera of the discovery canvas.
-//
-// THE core decision of the whole page: continuous values (camera position,
-// scale, layer opacities) live in REFS and are written straight to the DOM
-// inside one requestAnimationFrame loop — React renders NOTHING during a
-// pan. React state only holds what changes the RENDERED TREE: the window of
-// visible tiles (integers), and two booleans (easter egg mounted, camera
-// away from home). Those change a few times per second at most, so React
-// work stays negligible while the gesture itself runs at the display's
-// refresh rate.
-//
-// Screen ↔ world: a world point p appears on screen at
-//   screen = viewport/2 + (p − cam) × scale
-// hence the layer transform
-//   translate3d(vw/2 − cam.x·s, vh/2 − cam.y·s, 0) scale(s)
-// and the inverse used for cursor-anchored zoom:
-//   world = cam + (screen − viewport/2) / scale
+// Continuous camera values live in refs and are written to the DOM in one rAF
+// loop; React state holds only the sparse render snapshot. See docs/ARCHITECTURE.md.
 
-/** Inclusive range of tile coordinates to mount (null = no cards at all,
-    e.g. deep in easter-egg territory). */
+/** Inclusive tile-coordinate range to mount (null = no cards at all). */
 export interface TileWindow {
   minTx: number
   maxTx: number
@@ -95,14 +79,11 @@ export function useCanvasCamera() {
   const rafId = useRef<number | null>(null)
   const lastFrame = useRef(0)
   const reducedMotion = useRef(false)
-  // Holds the latest `frame` so the rAF loop can re-schedule itself without
-  // `frame` referencing its own binding (which the linter forbids and which
-  // would also capture a stale closure).
+  // Latest `frame` so the rAF loop can re-schedule without self-referencing
+  // (linter-forbidden and a stale-closure risk).
   const frameRef = useRef<(now: number) => void>(() => {})
 
-  // -------------------------------------------------------------------------
-  // Per-frame sync: DOM writes + sparse React state
-  // -------------------------------------------------------------------------
+  // Per-frame sync: DOM writes + sparse React state.
   const syncFrame = useCallback(() => {
     const { x, y, scale } = cam.current
     const { w, h } = viewport.current
@@ -127,8 +108,7 @@ export function useCanvasCamera() {
       )
     }
 
-    // Derived React state — integers and booleans only, so a plain
-    // comparison tells us whether a re-render is warranted at all.
+    // Derived state is ints/bools only, so a plain comparison gates re-renders.
     let nextWindow: TileWindow | null = null
     if (scale >= CARDS_MIN_SCALE) {
       const halfW = w / 2 / scale
@@ -139,8 +119,7 @@ export function useCanvasCamera() {
         minTy: Math.floor((y - halfH) / TILE_H) - TILE_MARGIN,
         maxTy: Math.floor((y + halfH) / TILE_H) + TILE_MARGIN,
       }
-      // Safety valve: never mount an unbounded number of tiles. With the
-      // current thresholds this can't trigger; it protects future tweaks.
+      // Safety valve: never mount an unbounded number of tiles.
       const count =
         (nextWindow.maxTx - nextWindow.minTx + 1) *
         (nextWindow.maxTy - nextWindow.minTy + 1)
@@ -165,9 +144,7 @@ export function useCanvasCamera() {
     }
   }, [])
 
-  // -------------------------------------------------------------------------
-  // The single rAF loop — runs only while something moves, then stops
-  // -------------------------------------------------------------------------
+  // The single rAF loop — runs only while something moves, then stops.
   const frame = useCallback(
     (now: number) => {
       rafId.current = null
@@ -217,8 +194,7 @@ export function useCanvasCamera() {
     [syncFrame],
   )
 
-  // Keep the ref pointing at the current frame implementation (updated in an
-  // effect, never during render).
+  // Keep the ref pointing at the current frame implementation (in an effect).
   useEffect(() => {
     frameRef.current = frame
   }, [frame])
@@ -243,16 +219,12 @@ export function useCanvasCamera() {
     requestSync()
   }, [requestSync])
 
-  // -------------------------------------------------------------------------
-  // Gestures & environment — one effect, symmetric add/remove (StrictMode-safe)
-  // -------------------------------------------------------------------------
+  // Gestures & environment — one effect, symmetric add/remove (StrictMode-safe).
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
 
-    // Snapshot the mutable refs used by the cleanup, so the linter can prove
-    // the cleanup reads the SAME objects the effect set up (their .current
-    // may change, but the container objects are stable for the effect's life).
+    // Snapshot refs used by cleanup so it reads the same objects the effect set up.
     const activePointers = pointers.current
     const rafHandle = rafId
 
@@ -271,8 +243,7 @@ export function useCanvasCamera() {
     const resizeObserver = new ResizeObserver(measure)
     resizeObserver.observe(el)
 
-    /** Form controls own their own pointer/keyboard interactions. Artwork
-        cards are <a> on purpose — a pan may start on them. */
+    /** Form controls handle their own events; cards are <a> so a pan may start on them. */
     const isFormTarget = (eventTarget: EventTarget | null): boolean =>
       eventTarget instanceof Element &&
       eventTarget.closest('input, textarea, select, button') !== null
@@ -345,9 +316,8 @@ export function useCanvasCamera() {
       const dt = Math.max(1, event.timeStamp - lastMove.current.t)
       dragDistance.current += Math.hypot(dx, dy)
 
-      // Only capture once the press is proven to be a pan: capturing on
-      // pointerdown would retarget the release and eat the click that opens
-      // a card. Under CLICK_SLOP_PX, the tap stays a normal click.
+      // Capture only once the press is proven a pan; capturing on pointerdown
+      // would retarget the release and eat the click that opens a card.
       if (!captured.current && dragDistance.current > CLICK_SLOP_PX) {
         el.setPointerCapture(event.pointerId)
         captured.current = true
@@ -355,8 +325,7 @@ export function useCanvasCamera() {
 
       cam.current.x -= dx / cam.current.scale
       cam.current.y -= dy / cam.current.scale
-      // Low-pass filter — the inertia launches with the RECENT hand speed,
-      // not with one noisy last sample.
+      // Low-pass filter so inertia launches with recent hand speed, not one sample.
       velocity.current.x = 0.75 * velocity.current.x + 0.25 * (dx / dt)
       velocity.current.y = 0.75 * velocity.current.y + 0.25 * (dy / dt)
       lastMove.current = { x: event.clientX, y: event.clientY, t: event.timeStamp }
@@ -380,8 +349,7 @@ export function useCanvasCamera() {
       }
     }
 
-    // Swallow the click that follows a real drag, in capture phase, so a pan
-    // that ends on a card never opens it — while a clean tap still does.
+    // Swallow the click after a real drag (capture phase) so a pan ending on a card doesn't open it.
     const onClickCapture = (event: MouseEvent) => {
       if (dragDistance.current > CLICK_SLOP_PX) {
         event.preventDefault()
@@ -390,9 +358,8 @@ export function useCanvasCamera() {
       }
     }
 
-    // Figma-convention wheel: plain wheel pans, Ctrl/⌘+wheel (and trackpad
-    // pinch, which browsers report as ctrl+wheel) zooms toward the cursor.
-    // Non-passive on purpose: we must preventDefault or the page zooms.
+    // Plain wheel pans; Ctrl/⌘+wheel (and trackpad pinch, reported as ctrl+wheel)
+    // zooms toward the cursor. Non-passive: we must preventDefault or the page zooms.
     const onWheel = (event: WheelEvent) => {
       event.preventDefault()
       target.current = null
@@ -412,8 +379,7 @@ export function useCanvasCamera() {
       }
     }
 
-    // Keyboard support: the canvas is focusable; arrows pan, +/− zoom,
-    // Home/0 recenters. A map you can drive without a pointer.
+    // Keyboard: arrows pan, +/− zoom, Home/0 recenters.
     const onKeyDown = (event: KeyboardEvent) => {
       if (isFormTarget(event.target)) return
       const step = KEY_PAN_STEP / cam.current.scale

@@ -1,17 +1,4 @@
-// Deterministic mock world — the stand-in for the future map API.
-//
-// The whole infinite plane derives from PURE FUNCTIONS of the cell
-// coordinates: same (cx, cy) → same card, forever, with zero storage. That
-// gives an explorable infinite world today, and a clean seam for the backend
-// tomorrow: real HTTP calls will replace these generators behind the SAME
-// signatures in artwork.api.ts, and nothing else in the app moves.
-//
-// Map semantics (the product idea, encoded in data):
-// - DIRECTION = territory: each 45° sector of the compass belongs to one of
-//   the 8 categories, so dragging steadily one way digs into one discipline.
-// - DISTANCE = specialization: placeholder colors are pastel downtown and
-//   drift toward pure, saturated hues in the far niches — the color is the
-//   user's sense of "how deep am I?".
+// Deterministic mock: every cell is a pure function of its (cx, cy).
 
 import { CARD_H, CARD_W, CELL_H, CELL_W, HERO_ZONE, TILE_CELLS } from './canvas/canvas.constants'
 import { CATEGORIES } from './artwork.types'
@@ -24,19 +11,14 @@ import type {
   Category,
 } from './artwork.types'
 
-// ---------------------------------------------------------------------------
-// Seeded randomness
-// ---------------------------------------------------------------------------
-
-/** Mix two integers into one 32-bit seed (splitmix-style avalanche), so that
-    neighbouring cells still get wildly different sequences. */
+// Mix (cx, cy) into a 32-bit seed; avalanche so neighbouring cells diverge.
 function cellSeed(cx: number, cy: number): number {
   let h = (cx * 374761393 + cy * 668265263) | 0
   h = Math.imul(h ^ (h >>> 13), 1274126177)
   return (h ^ (h >>> 16)) >>> 0
 }
 
-/** mulberry32 — tiny, fast, good-enough PRNG. Returns floats in [0, 1). */
+// mulberry32 PRNG → floats in [0, 1).
 function mulberry32(seed: number): () => number {
   let a = seed >>> 0
   return () => {
@@ -55,9 +37,7 @@ function int(rng: () => number, min: number, max: number): number {
   return min + Math.floor(rng() * (max - min + 1))
 }
 
-// ---------------------------------------------------------------------------
-// Content banks — mock DATA, not UI chrome, hence not translated
-// ---------------------------------------------------------------------------
+// Mock DATA, not UI chrome — deliberately not translated.
 
 const AUTHORS: readonly AuthorSummary[] = [
   { id: 'u1', username: 'Sedra Rabe', handle: 'sedra', color: '#3b5bdb' },
@@ -112,13 +92,8 @@ export const SUGGESTED_QUERIES = [
   'Luxury Brand',
 ] as const
 
-// ---------------------------------------------------------------------------
-// Map semantics: direction → category, distance → saturation
-// ---------------------------------------------------------------------------
-
-/** Sector index (0..7) of a cell → which slice of the compass it sits in.
-    +0.5 rotates the seams off the axes so each cardinal direction has one
-    clear owner instead of straddling two categories. */
+// Sector 0..7 of the compass; +0.5 rotates seams off the axes so each
+// cardinal direction has one clear category owner.
 function sectorAt(cx: number, cy: number): number {
   const angle = Math.atan2(cy, cx) // [-π, π]
   return Math.floor(((angle + Math.PI) / (2 * Math.PI)) * 8 + 0.5) % 8
@@ -129,9 +104,8 @@ function categoryAt(cx: number, cy: number): Category {
   return CATEGORIES[sectorAt(cx, cy)]
 }
 
-/** Placeholder color: hue follows the compass angle, saturation and
-    lightness follow the distance — pastel downtown, pure colors far out.
-    This IS the "niche depth" indicator until real images exist. */
+// Placeholder color: hue=angle, saturation/lightness=distance — the "niche
+// depth" indicator until real images exist.
 function colorAt(cx: number, cy: number, rng: () => number): string {
   const distance = Math.hypot(cx, cy) // in cells
   const angle = Math.atan2(cy, cx)
@@ -143,13 +117,7 @@ function colorAt(cx: number, cy: number, rng: () => number): string {
   return `hsl(${hue} ${saturation}% ${lightness}%)`
 }
 
-// ---------------------------------------------------------------------------
-// Generators
-// ---------------------------------------------------------------------------
-
-/** The id ENCODES the cell ("w_cx_cy"): the detail view regenerates the
-    artwork from its id alone — no lookup table, no storage, shareable URLs.
-    The backend will keep opaque UUIDs; only this mock needs the trick. */
+// id encodes the cell ("w_cx_cy") so the detail view regenerates from id alone.
 export function artworkIdAt(cx: number, cy: number): string {
   return `w_${cx}_${cy}`
 }
@@ -174,20 +142,38 @@ function intersectsHeroZone(
   )
 }
 
+export interface CellSlot {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+/** The rect a cell's card occupies, or null if the cell is empty (hero clearing). */
+export function cellSlot(cx: number, cy: number): CellSlot | null {
+  const x = cx * CELL_W - CARD_W / 2
+  const y = cy * CELL_H - CARD_H / 2
+  if (intersectsHeroZone(x, y, CARD_W, CARD_H)) return null
+  return { x, y, width: CARD_W, height: CARD_H }
+}
+
+/** Every card slot of a tile — used to render skeletons while it loads. */
+export function tileSlots(tx: number, ty: number): CellSlot[] {
+  const slots: CellSlot[] = []
+  for (let dy = 0; dy < TILE_CELLS; dy++) {
+    for (let dx = 0; dx < TILE_CELLS; dx++) {
+      const slot = cellSlot(tx * TILE_CELLS + dx, ty * TILE_CELLS + dy)
+      if (slot) slots.push(slot)
+    }
+  }
+  return slots
+}
+
 /** The single card of a cell, or null (empty cell / hero clearing). */
 export function generateCell(cx: number, cy: number): CanvasArtwork | null {
+  const slot = cellSlot(cx, cy)
+  if (!slot) return null
   const rng = mulberry32(cellSeed(cx, cy))
-
-  // Uniform, grid-aligned placement: one identically sized card per cell,
-  // centered in it, so the whole plane reads as a clean grid with even
-  // gutters. Overlaps stay impossible by construction — the card is strictly
-  // inside its own cell and cells are disjoint. The hero clearing is the only
-  // gap: cells whose card would sit under the search overlay are left empty.
-  const width = CARD_W
-  const height = CARD_H
-  const x = cx * CELL_W + (CELL_W - CARD_W) / 2
-  const y = cy * CELL_H + (CELL_H - CARD_H) / 2
-  if (intersectsHeroZone(x, y, width, height)) return null
 
   const kindRoll = rng()
   const kind: ArtworkKind =
@@ -204,10 +190,10 @@ export function generateCell(cx: number, cy: number): CanvasArtwork | null {
     likeCount: Math.round(viewCount * (0.04 + rng() * 0.1)),
     commentCount: int(rng, 2, 24),
     author: pick(rng, AUTHORS),
-    x,
-    y,
-    width,
-    height,
+    x: slot.x,
+    y: slot.y,
+    width: slot.width,
+    height: slot.height,
   }
 }
 
@@ -230,8 +216,7 @@ export function generateDetail(id: string): ArtworkDetail | null {
   const card = generateCell(cell.cx, cell.cy)
   if (!card) return null
 
-  // Fresh sequence (xor'd seed) so detail extras don't disturb — and are not
-  // disturbed by — the exact draw order used for the card itself.
+  // Fresh xor'd seed so detail extras don't perturb the card's draw order.
   const rng = mulberry32(cellSeed(cell.cx, cell.cy) ^ 0x9e3779b9)
   const tags = [...new Set([card.category as string, pick(rng, TAG_BANK), pick(rng, TAG_BANK)])]
 

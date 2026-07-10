@@ -6,24 +6,20 @@ interface ModalProps {
   children: ReactNode
   /** id of the element (inside children) that labels the dialog, for aria-labelledby. */
   labelledBy: string
-  /** Panel width: 'md' for simple dialogs (default), 'wide' for two-column
-      layouts like the auth screens, 'xl' for the artwork detail. */
+  /** Panel width: 'md' (default), 'wide' for auth screens, 'xl' for artwork detail. */
   size?: 'md' | 'wide' | 'xl'
 }
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
-// Named sizes instead of a free className: the design system stays consistent
-// (two widths exist, not fifty) and call sites stay readable.
 const PANEL_SIZE: Record<NonNullable<ModalProps['size']>, string> = {
   md: 'max-w-md',
   wide: 'max-w-4xl',
   xl: 'max-w-6xl',
 }
 
-// Reusable accessible modal. The panel provides the frame (bg/rounded/shadow);
-// the children bring their own padding so they also work rendered full-page.
+// The panel is only the frame; children bring their own padding.
 export function Modal({
   isOpen,
   onClose,
@@ -34,8 +30,7 @@ export function Modal({
   const panelRef = useRef<HTMLDivElement>(null)
   const [entered, setEntered] = useState(false)
 
-  // Move focus into the dialog on open, lock background scroll, and restore
-  // focus to the trigger on close.
+  // Focus into the dialog on open, lock background scroll, restore focus on close.
   useEffect(() => {
     if (!isOpen) return
 
