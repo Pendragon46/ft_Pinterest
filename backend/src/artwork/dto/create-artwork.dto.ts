@@ -22,5 +22,7 @@ export class CreateArtworkDto {
 	@IsString({ each: true })
 	tags?: string[];
 
+//delete this property if you are getting the logged-in user's ID from the JWT token in the request
+	userId!: string; // Add this property to hold the logged-in user's ID
 }
 

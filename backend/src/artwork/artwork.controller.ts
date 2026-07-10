@@ -32,6 +32,7 @@ export class ArtworkController {
     return this.artworkService.findOne(id);
   }
 
+  // change to @Request() req and get the user id from the token JWT
   @Patch(':id')
   @UseInterceptors(FileInterceptor('art'))
   update(	@Param('id') id: string,
@@ -44,16 +45,18 @@ export class ArtworkController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File) {
-    return this.artworkService.update(id, data, file);
+    return this.artworkService.update(id, data, file, data.userId);
   }
 
+  // change to @Request() req and get the user id from the token JWT
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.artworkService.remove(id);
+  remove(@Param('id') id: string, @Body() data: { userId: string }) {
+    return this.artworkService.remove(id, data.userId);
   }
 
-  @Delete('delete/:userid')
-  deleteAllArtworksByUser(@Param('userid') userId: string) {
+  @Delete('deleteall/:userId')
+  deleteAllArtworksByUser(@Param('userId') userId: string) {
 	return this.artworkService.deleteAllArtworksByUser(userId);
-	  }
+  }
+
 }

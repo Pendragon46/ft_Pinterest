@@ -13,7 +13,6 @@ export class LikesController {
 
   @Delete(':artworkId/like')
   remove(@Param('artworkId') artworkId: string, @Body() Body) {
-	console.log('urlok');
     return this.likesService.unlike(artworkId, Body.loggedUser);
   }
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateArtworkDto } from './dto/create-artwork.dto';
@@ -134,8 +134,19 @@ export class ArtworkService {
 	return artwork;
   }
 
-  async update(id: string, updatedata: UpdateArtworkDto, file?: Express.Multer.File) {
+  async update(id: string, updatedata: UpdateArtworkDto, file?: Express.Multer.File, userId?: string) {
 
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId
+		}
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	if (user.id !== userId && user.role !== 'ADMIN') {
+		throw new UnauthorizedException('You are not authorized to update this artwork');
+	}
 	// Check if the artwork exists
 
 	let artwork = await this.prisma.artwork.findUnique({
@@ -169,7 +180,18 @@ export class ArtworkService {
 		});
   }
 
-  async remove(id: string) {
+  async remove(id: string, userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId
+		}
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	if (user.id !== userId && user.role !== 'ADMIN') {
+		throw new UnauthorizedException('You are not authorized to delete this artwork');
+	}
 	const artwork = await this.prisma.artwork.findUnique({
 		where: {
 			id: id,
@@ -185,6 +207,7 @@ export class ArtworkService {
 			throw new BadRequestException('Failed to delete artwork image from Cloudinary');
 		}
 	}
+
 	await this.deletetagswithoutartworks();
 	await this.prisma.artwork.delete({
 		where: {
@@ -195,6 +218,17 @@ export class ArtworkService {
   }
 
   async deleteAllArtworksByUser(userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId
+		}
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	if (user.id !== userId && user.role !== 'ADMIN') {
+		throw new UnauthorizedException('You are not authorized to delete artworks for this user');
+	}
 	const artworks = await this.prisma.artwork.findMany({
 		where: {
 			authorId: userId,

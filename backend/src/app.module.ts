@@ -11,6 +11,7 @@ import { memoryStorage } from 'multer';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FollowModule } from './follow/follow.module';
 import { LikesModule } from './likes/likes.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -20,6 +21,7 @@ import { LikesModule } from './likes/likes.module';
 	CloudinaryModule,
 	FollowModule,
 	LikesModule,
+	CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],
