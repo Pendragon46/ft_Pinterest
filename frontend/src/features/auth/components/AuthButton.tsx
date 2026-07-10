@@ -5,8 +5,9 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../auth.store'
 
 // Shared pill; neutral-500 keeps the white text above WCAG AA contrast.
+// h-10 matches the other floating chrome pills (logo, language, refocus, footer).
 const PILL =
-  'inline-flex items-center rounded-full bg-neutral-500 font-medium text-white transition-colors hover:bg-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2'
+  'inline-flex h-10 items-center rounded-full bg-neutral-500 text-sm font-medium text-white transition-colors hover:bg-neutral-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2'
 
 export function AuthButton() {
   const { t } = useTranslation('common')
@@ -19,7 +20,7 @@ export function AuthButton() {
       <Link
         to="/login"
         state={{ background: location }}
-        className={`${PILL} px-6 py-3`}
+        className={`${PILL} px-4`}
       >
         {t('actions.signIn')}
       </Link>
@@ -28,7 +29,7 @@ export function AuthButton() {
 
   // Logged in → avatar + username pill. Chevron is decorative; click is a no-op for now.
   return (
-    <button type="button" className={`${PILL} gap-2.5 py-1.5 pe-5 ps-1.5`}>
+    <button type="button" className={`${PILL} gap-2 pe-4 ps-1`}>
       {user.avatarUrl ? (
         <img
           src={user.avatarUrl}
