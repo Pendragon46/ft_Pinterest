@@ -157,7 +157,7 @@ export class UsersService {
 			},
 		},
 	});
-	return { message: 'User and associated artworks deleted successfully' };
+	return { message: 'User deleted successfully' };
 }
 }
 
