@@ -3,6 +3,10 @@
     "name": "Atlaas",
     "tagline": "Don't scroll inspiration. Navigate it."
   },
+  "intro": {
+    "wordLead": "Get lost",
+    "wordTrail": "on purpose"
+  },
   "language": {
     "label": "Language"
   },

@@ -184,6 +184,45 @@ no trigger until search actually filters the map (`TODO(backend)` in
 `SearchOverlay`). Keeps the tone + re-offers trending tags instead of a cold
 "No results".
 
+**Intro reveal (`components/IntroReveal.tsx`).** A branded first-load moment: a
+near-black curtain covers the app with a **small solid-white Atlaas mark** on it
+(home hidden). As the mark **swells**, the white fades away to expose a
+logo-shaped hole (an SVG `<mask>`, the real picto) through which the **live
+homepage** shows; the hole then engulfs the screen and the curtain dissolves. Two
+words flank the mark and fly apart during the reveal. Mounted in `App` as a
+sibling of the router, above everything (`z-[100]`). Design choices:
+- **Mask geometry is shared** — the five picto paths live in
+  `ui/atlaasMark.ts` (viewBox, centre, tagged paths) so both the hole and the
+  white cover are the genuine brand mark, not a look-alike. `Logo` keeps its
+  `<img>` (grain filter); this module is the inline-vector variant.
+- **Hole + white cover stay registered** — a `<g fill="white">` painted over the
+  curtain shares the *exact same* per-frame `transform` as the mask hole, so it
+  hides the home precisely; only its opacity fades (over the first ~55 % of the
+  reveal) to expose the home as the mark grows.
+- **One rAF timeline, no animation library** — same idiom as the canvas. The mark
+  `transform` (scale + slight rotation) is set imperatively on refs each frame;
+  words are driven the same way (no per-frame React renders). `framer-motion` is
+  a dep but stays out of the bundle; nothing was added for this.
+- **Words anchor to the viewport centre, not to each other** (`end/start-[calc(50%+…)]`
+  under a forced `dir="ltr"`) so the mark sits dead-centre in the gap whatever the
+  two words' widths. Reading order flips in RTL by swapping which word takes the
+  left/right slot; the fly-apart itself is mirror-symmetric. Text is localised
+  (`intro.wordLead` / `intro.wordTrail`, en/fr/ar).
+- **Coverage is over-scaled** — the mark's solid core (min radius ~27 of 194 mark
+  units) reaches ~1.35× the viewport half-diagonal (`coverScale = halfDiag / 20`),
+  so the whole viewport sits inside the solid core — no black petal-gap wedges at
+  any aspect ratio — and the curtain **crossfades out over the tail** for a soft
+  finish. Viewport is read each frame → resize-safe.
+- **Plays once per tab session** (`sessionStorage`), not skippable (cinematic,
+  runs to the end), `aria-hidden` and non-blocking. `?intro` in the URL forces a
+  replay (dev / demos). Under `prefers-reduced-motion` it degrades to a still
+  branded frame + a plain opacity fade (no scaling, sliding or rotation).
+- **No first-paint flash** — the timeline runs in `useLayoutEffect` and writes the
+  t=0 transform/opacity **before** the browser paints, so the first frame already
+  is the animation's start (not an un-positioned mark in the corner).
+- **Lifecycle-safe** under StrictMode's double-mount: an `alive` flag guards
+  `setState`, and cleanup cancels the rAF (no listeners are registered).
+
 ## Routing & page contexts
 
 Route components render in **two contexts** selected by `location.state.background`:

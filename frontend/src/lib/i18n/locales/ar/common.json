@@ -3,6 +3,10 @@
     "name": "Atlaas",
     "tagline": "لا تتصفّح الإلهام، بل تنقّل فيه."
   },
+  "intro": {
+    "wordLead": "تِه",
+    "wordTrail": "عن قصد"
+  },
   "language": {
     "label": "اللغة"
   },

@@ -3,6 +3,10 @@
     "name": "Atlaas",
     "tagline": "L'inspiration ne se scrolle pas. Elle se navigue."
   },
+  "intro": {
+    "wordLead": "Perds-toi",
+    "wordTrail": "exprès"
+  },
   "language": {
     "label": "Langue"
   },
