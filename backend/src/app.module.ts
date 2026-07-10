@@ -10,6 +10,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { FollowModule } from './follow/follow.module';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -18,6 +19,7 @@ import { FollowModule } from './follow/follow.module';
 	MulterModule.register({	storage: memoryStorage()}),
 	CloudinaryModule,
 	FollowModule,
+	LikesModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService],

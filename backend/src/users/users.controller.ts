@@ -23,6 +23,11 @@ export class UsersController {
     return this.usersService.create(createUserDto, file);
   }
 
+  //change to @Request() req and get the user id from the token JWT
+  @Get('/me')
+  getUserprofile(@Body() Body) {
+	return this.usersService.getUserProfile(Body.loggedUser);
+  }
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -54,6 +59,16 @@ export class UsersController {
   @Delete(':id')
   removebyId(@Param('id') id: string) {
 	return  this.usersService.removeById(id);
+  }
+
+  @Get(':id/artworks')
+  getUserArtworks(@Param('id') id: string) {
+	return this.usersService.getUserArtworks(id);
+  }
+
+  @Get(':id/artworks/liked')
+  getUserLikedArtworks(@Param('id') id: string) {
+	return this.usersService.getUserLikedArtworks(id);
   }
 }
 

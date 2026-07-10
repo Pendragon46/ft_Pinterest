@@ -62,11 +62,15 @@ export class ArtworkService {
 		return updatedArtwork
 	}
 	
-   async create(data: CreateArtworkDto, file: Express.Multer.File) {
-	// check if the user exists
-	let user ="a55ad01b-78df-4081-b2b1-975831890c17";
+   async create(data: CreateArtworkDto, file: Express.Multer.File, userId: string) {
+
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId
+		}
+	});
+
 	 // Replace with the actual user ID from the request context and check if the user exists in the database
-	console.log('provide user please');
 	if (!user) {
 		throw new NotFoundException('User not found');
 	}
@@ -85,7 +89,7 @@ export class ArtworkService {
 				mediaPublicId: upload.public_id,
 				author: {
 					connect:{
-						id : user// Replace with the actual user ID from the request context
+						id : user.id
 					},
 				},
 				...(normalizedtags && normalizedtags.length > 0 && {
@@ -104,10 +108,10 @@ export class ArtworkService {
 		if (upload && upload.public_id) {
 			await this.cloudinaryService.deleteImage(upload.public_id);
 		}
+		console.error('Error creating artwork:', error);
 		throw new BadRequestException('Failed to create artwork');
 	}
 }
-
 
 
   async findAllArtworks(userId: string) {

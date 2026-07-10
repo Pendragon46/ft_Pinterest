@@ -59,6 +59,28 @@ export class UsersService {
 	return user;
   }
 
+  async getUserProfile(userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId,
+		},
+		include: {
+			artworks: true,
+			_count: {
+				select: {
+					artworks: true,
+					followers: true,
+					following: true,
+				},
+			},
+		},
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	return user;
+  }
+
   async findOneById(id: string) {
 	let user =  await this.prisma.user.findUnique({
 		where: {
@@ -123,6 +145,53 @@ export class UsersService {
 		data,
 	})
 }
+
+async getUserArtworks (userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: { id: userId },
+		include: {
+			artworks: { 
+				include: {
+					_count: {
+						select: {
+						likes: true,
+						comments: true,
+					},
+				},
+			},
+		},
+	}});
+	if (!user) {
+	  throw new NotFoundException('User not found');
+	}
+	return user.artworks;
+}
+
+async getUserLikedArtworks(userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: { id: userId },
+	});
+	if (!user) {
+	  throw new NotFoundException('User not found');
+	}
+	const likedArtworks = await this.prisma.like.findMany({
+		where: { userId: userId },
+		include: {
+			artwork: {
+				include: {
+					_count: {
+						select: {
+						likes: true,
+						comments: true,
+					},
+				},
+			},
+		},
+	}});
+	return likedArtworks.map(like => like.artwork);
+}
+							
+
 
   async removeById(id: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})

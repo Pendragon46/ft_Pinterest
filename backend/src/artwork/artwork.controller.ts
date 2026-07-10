@@ -4,14 +4,16 @@ import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 
-@Controller('artwork')
+@Controller('artworks')
 export class ArtworkController {
   constructor(private readonly artworkService: ArtworkService) {}
 
-  @Post()
+  // @Post() Uncomment this line and comment the next line to use the user id from the token JWT
+  @Post('user/:id')
   @UsePipes()
   @UseInterceptors(FileInterceptor('art'))
   create(
+	@Param('id') id: string, // change to @Request() req and get the user id from the token JWT
       @Body() data: CreateArtworkDto,
   			@UploadedFile(
 		new ParseFilePipe({
@@ -20,14 +22,7 @@ export class ArtworkController {
 				new FileTypeValidator ({ fileType: /(image\/jpeg|image\/png|image\/gif|image\/webp|video\/mp4)$/ }),
 			],
 		})) file: Express.Multer.File) {
-	return this.artworkService.create(data, file);
-  }
-
-
-  @Get('/user/:userId')
-  findAllArtworks(@Param('userId') userId: string)
-  {
-	return this.artworkService.findAllArtworks(userId);
+	return this.artworkService.create(data, file, id);
   }
 
 
