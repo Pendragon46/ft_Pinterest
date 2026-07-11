@@ -51,6 +51,9 @@ export interface CanvasArtwork extends ArtworkSummary {
   y: number
   width: number
   height: number
+  /** Niche mode only: the world id to open on click. A niche tiles one item at
+      many positions, so `id` is unique per placement while `sourceId` is stable. */
+  sourceId?: string
 }
 
 /** One comment under an artwork. */

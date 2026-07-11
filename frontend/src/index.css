@@ -7,6 +7,7 @@
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Hedvig Letters Serif', ui-serif, Georgia, serif;
   --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+  --animate-reveal: reveal 0.45s ease-out both;
 }
 
 *,
@@ -46,3 +47,18 @@ body {
     transform: translateX(100%);
   }
 }
+
+/* Centre-out tile reveal (§5.3): a soft fade + blur-up, delayed per tile so the
+   niche content ripples outward from the hero. Only opacity/filter animate, so a
+   card's hover transform is never locked by the animation's fill mode. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+

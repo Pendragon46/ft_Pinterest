@@ -39,7 +39,7 @@ function int(rng: () => number, min: number, max: number): number {
 
 // Mock DATA, not UI chrome — deliberately not translated.
 
-const AUTHORS: readonly AuthorSummary[] = [
+export const AUTHORS: readonly AuthorSummary[] = [
   { id: 'u1', username: 'Sedra Rabe', handle: 'sedra', color: '#3b5bdb' },
   { id: 'u2', username: 'Kai Mori', handle: 'kaimori', color: '#c47b1c' },
   { id: 'u3', username: 'Nova Idris', handle: 'novaidris', color: '#0ca678' },

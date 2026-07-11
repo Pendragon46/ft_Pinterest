@@ -120,6 +120,15 @@
   },
   "search": {
     "emptyTitle": "Nothing over here",
-    "emptyBody": "We couldn't find anything for that — try another direction?"
+    "emptyBody": "We couldn't find anything for that — try another direction?",
+    "searching": "Searching…",
+    "groupDisciplines": "Disciplines",
+    "groupCreators": "Creators",
+    "nearestRegion": "Closest region",
+    "exploringTitle1": "Exploring",
+    "exploringTitle2": "{{niche}} Universe",
+    "whereNext": "You've explored all of {{niche}}. Where next?",
+    "whereNextShort": "Where next?",
+    "refreshNeighbours": "Show other neighbours"
   }
 }

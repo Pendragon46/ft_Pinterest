@@ -5,6 +5,8 @@ import {
   AWAY_DISTANCE,
   CARDS_FADE_START,
   CARDS_MIN_SCALE,
+  CELL_H,
+  CELL_W,
   EGG_FADE_START,
   EGG_FULL_SCALE,
   KEY_PAN_STEP,
@@ -29,8 +31,17 @@ export interface TileWindow {
 }
 
 /** The sparse, render-driving snapshot the hook reports to React. */
+/** Inclusive on-screen cell range (no margin) — the surface the viewport covers. */
+export interface CellRange {
+  minCx: number
+  maxCx: number
+  minCy: number
+  maxCy: number
+}
+
 export interface CanvasView {
   window: TileWindow | null
+  cells: CellRange | null
   showEgg: boolean
   isAway: boolean
 }
@@ -55,6 +66,7 @@ export function useCanvasCamera() {
 
   const [view, setView] = useState<CanvasView>({
     window: null,
+    cells: null,
     showEgg: false,
     isAway: false,
   })
@@ -110,6 +122,7 @@ export function useCanvasCamera() {
 
     // Derived state is ints/bools only, so a plain comparison gates re-renders.
     let nextWindow: TileWindow | null = null
+    let cells: CellRange | null = null
     if (scale >= CARDS_MIN_SCALE) {
       const halfW = w / 2 / scale
       const halfH = h / 2 / scale
@@ -124,6 +137,14 @@ export function useCanvasCamera() {
         (nextWindow.maxTx - nextWindow.minTx + 1) *
         (nextWindow.maxTy - nextWindow.minTy + 1)
       if (count > MAX_TILES) nextWindow = null
+      // On-screen cell range (no margin) — the surface the viewport has covered,
+      // which drives niche completion (§8.1).
+      cells = {
+        minCx: Math.floor((x - halfW) / CELL_W),
+        maxCx: Math.floor((x + halfW) / CELL_W),
+        minCy: Math.floor((y - halfH) / CELL_H),
+        maxCy: Math.floor((y + halfH) / CELL_H),
+      }
     }
     const showEgg = scale < EGG_FADE_START
     const isAway = Math.hypot(x, y) > AWAY_DISTANCE || scale < 0.95
@@ -137,8 +158,28 @@ export function useCanvasCamera() {
         prev.window.maxTx === nextWindow.maxTx &&
         prev.window.minTy === nextWindow.minTy &&
         prev.window.maxTy === nextWindow.maxTy)
-    if (!sameWindow || prev.showEgg !== showEgg || prev.isAway !== isAway) {
-      const next: CanvasView = { window: nextWindow, showEgg, isAway }
+    const sameCells =
+      (prev.cells === null && cells === null) ||
+      (prev.cells !== null &&
+        cells !== null &&
+        prev.cells.minCx === cells.minCx &&
+        prev.cells.maxCx === cells.maxCx &&
+        prev.cells.minCy === cells.minCy &&
+        prev.cells.maxCy === cells.maxCy)
+    if (
+      !sameWindow ||
+      !sameCells ||
+      prev.showEgg !== showEgg ||
+      prev.isAway !== isAway
+    ) {
+      // Reuse window's reference when its values are unchanged (only `cells`
+      // moved) so the tile memo / queries don't re-subscribe on a plain pan.
+      const next: CanvasView = {
+        window: sameWindow ? prev.window : nextWindow,
+        cells,
+        showEgg,
+        isAway,
+      }
       viewRef.current = next
       setView(next)
     }
@@ -207,17 +248,26 @@ export function useCanvasCamera() {
     }
   }, [])
 
+  /** Animate the camera to an arbitrary target (the §5 dive). Instant under
+      reduced motion. */
+  const flyTo = useCallback(
+    (next: Camera) => {
+      velocity.current = { x: 0, y: 0 }
+      if (reducedMotion.current) {
+        cam.current = { ...next }
+        target.current = null
+      } else {
+        target.current = { ...next }
+      }
+      requestSync()
+    },
+    [requestSync],
+  )
+
   /** Animate home: origin, mockup zoom. Instant under reduced motion. */
   const refocus = useCallback(() => {
-    velocity.current = { x: 0, y: 0 }
-    if (reducedMotion.current) {
-      cam.current = { x: 0, y: 0, scale: MAX_SCALE }
-      target.current = null
-    } else {
-      target.current = { x: 0, y: 0, scale: MAX_SCALE }
-    }
-    requestSync()
-  }, [requestSync])
+    flyTo({ x: 0, y: 0, scale: MAX_SCALE })
+  }, [flyTo])
 
   // Gestures & environment — one effect, symmetric add/remove (StrictMode-safe).
   useEffect(() => {
@@ -454,6 +504,7 @@ export function useCanvasCamera() {
     eggLayerRef: eggLayerRef as RefObject<HTMLDivElement | null>,
     view,
     refocus,
+    flyTo,
     requestSync,
   }
 }

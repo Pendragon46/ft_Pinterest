@@ -120,6 +120,15 @@
   },
   "search": {
     "emptyTitle": "لا شيء هنا",
-    "emptyBody": "لم نجد شيئًا لهذا — جرّب اتجاهًا آخر؟"
+    "emptyBody": "لم نجد شيئًا لهذا — جرّب اتجاهًا آخر؟",
+    "searching": "جارٍ البحث…",
+    "groupDisciplines": "التخصصات",
+    "groupCreators": "المبدعون",
+    "nearestRegion": "أقرب منطقة",
+    "exploringTitle1": "استكشاف",
+    "exploringTitle2": "عالم {{niche}}",
+    "whereNext": "لقد استكشفت كل {{niche}}. إلى أين بعد؟",
+    "whereNextShort": "إلى أين بعد؟",
+    "refreshNeighbours": "عرض جيران آخرين"
   }
 }

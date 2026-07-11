@@ -10,11 +10,17 @@ interface ArtworkCardProps {
   artwork: CanvasArtwork
   /** 'canvas' (default): absolute at world coords. 'grid': normal flow (masonry fallback). */
   layout?: CardLayout
+  /** Centre-out delay (ms) for the search-transition reveal wave (§5.3). */
+  revealDelay?: number
 }
 
 // Layout-agnostic: same component in the infinite canvas and the fallback grid.
 // The colored block is a placeholder for the future <img src={imageUrl}>.
-export function ArtworkCard({ artwork, layout = 'canvas' }: ArtworkCardProps) {
+export function ArtworkCard({
+  artwork,
+  layout = 'canvas',
+  revealDelay = 0,
+}: ArtworkCardProps) {
   const { t } = useTranslation('common')
   const location = useLocation()
 
@@ -22,7 +28,7 @@ export function ArtworkCard({ artwork, layout = 'canvas' }: ArtworkCardProps) {
   // a refresh or shared link lands on the standalone page instead.
   return (
     <Link
-      to={`/artwork/${artwork.id}`}
+      to={`/artwork/${artwork.sourceId ?? artwork.id}`}
       state={{ background: location }}
       // No native drag: a card drag must pan the map.
       draggable={false}
@@ -30,11 +36,12 @@ export function ArtworkCard({ artwork, layout = 'canvas' }: ArtworkCardProps) {
         title: artwork.title,
         author: artwork.author.username,
       })}
-      className={`group block overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none ${
+      className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
         layout === 'grid' ? 'relative w-full' : ''
       }`}
       style={{
         backgroundColor: artwork.color,
+        animationDelay: `${revealDelay}ms`,
         ...(layout === 'canvas'
           ? {
               position: 'absolute' as const,
