@@ -67,4 +67,28 @@ export class CommentService {
 	});
 	return { message: 'Comment deleted successfully' };
   }
+
+  async removeComment(artworkId: string, commentId:string, userId:string )
+  {
+	const user = await this.prisma.user.findUnique({
+		where: { id: userId },
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	const comment = await this.prisma.comment.findUnique({
+		where: { id: commentId },
+	});
+	if (!comment) {
+		throw new NotFoundException('Comment not found');
+	}
+	if ((comment.userId !== userId && user.role !== 'ADMIN') || comment.userId !== userId) {
+		console.log(userId + ' create by ' + comment.userId)
+		throw new UnauthorizedException('You are not authorized to delete this comment');
+		
+	}
+	 await this.prisma.comment.delete({
+		where: { id: commentId },
+	});
+  }
 }

@@ -32,6 +32,11 @@ export class ArtworkController {
     return this.artworkService.findOne(id);
   }
 
+  @Get('user/:userId')
+  FindAllArtwork(@Param('id') userId : string){
+	 return this.artworkService.findAllArtworks(userId)
+	}
+
   // change to @Request() req and get the user id from the token JWT
   @Patch(':id')
   @UseInterceptors(FileInterceptor('art'))

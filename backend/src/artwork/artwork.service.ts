@@ -53,13 +53,13 @@ export class ArtworkService {
 			await this.cloudinaryService.deleteImage(upload.public_id);
 		}
 		throw new BadRequestException('Failed to update artwork');
-	}
+		}
 		try {
 			await this.cloudinaryService.deleteImage(oldPublicId);
 		} catch (error) {
 			throw new BadRequestException('Failed to delete old artwork image from Cloudinary');
 		}
-		return updatedArtwork
+		return updatedArtwork;
 	}
 	
    async create(data: CreateArtworkDto, file: Express.Multer.File, userId: string) {
@@ -101,14 +101,12 @@ export class ArtworkService {
 					},
 				}),
 			},
-		
 			
 		});
 	} catch (error) {
 		if (upload && upload.public_id) {
 			await this.cloudinaryService.deleteImage(upload.public_id);
 		}
-		console.error('Error creating artwork:', error);
 		throw new BadRequestException('Failed to create artwork');
 	}
 }
@@ -119,6 +117,9 @@ export class ArtworkService {
 		where: {
 			authorId: userId,
 		},
+		orderBy:{
+			updatedAt : 'desc'
+		}
 	});
 }
 

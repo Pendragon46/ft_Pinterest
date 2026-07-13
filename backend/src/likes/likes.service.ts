@@ -4,7 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class LikesService {
 	constructor(private readonly prisma: PrismaService) {}
-  async like(artworkId: string, userId: string) {
+  async like(artworkId: string, userId : string) {
 	const user = await this.prisma.user.findUnique({
 	  where: { id: userId },
 	});
@@ -37,7 +37,7 @@ export class LikesService {
   async getArtworkLikes(artworkId: string) {
 	const artwork = await this.prisma.artwork.findUnique({
 	  where: { id: artworkId },
-	  include: { likes: true },
+	  include: { likes: true},
 	});
 	if (!artwork) {
 	  throw new NotFoundException('Artwork not found');

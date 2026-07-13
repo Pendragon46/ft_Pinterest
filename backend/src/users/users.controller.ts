@@ -23,11 +23,7 @@ export class UsersController {
     return this.usersService.create(createUserDto, file);
   }
 
-  //change to @Request() req and get the user id from the token JWT
-  @Get('/me')
-  getUserprofile(@Body() Body) {
-	return this.usersService.getUserProfile(Body.loggedUser);
-  }
+ 
   @Get()
   findAll() {
     return this.usersService.findAll();

@@ -29,7 +29,7 @@ model User {
 model Artwork {
   id            String    @id @default(uuid())
   title         String
-  description   String
+  description   String?
   mediaUrl      String?
   mediaPublicId String?
   author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
