@@ -22,10 +22,8 @@ import { HealthModule } from './health/health.module';
 	CloudinaryModule,
 	FollowModule,
 	LikesModule,
-  ],
-  imports: [PrismaModule, UsersModule, HealthModule],
+  HealthModule],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService],
-  providers: [AppService, HealthService],
+  providers: [AppService, CloudinaryService, HealthService],
 })
 export class AppModule {}
