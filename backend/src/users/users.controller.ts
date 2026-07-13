@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 
 @Controller('users')
 export class UsersController {
@@ -9,31 +10,65 @@ export class UsersController {
 
   @Post()
   @UsePipes(ValidationPipe)
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @UseInterceptors(FileInterceptor('avatar'))
+  // create(@body() createUserdto: CreateUserDto)
+  create(@Body() createUserDto: CreateUserDto, @UploadedFile(
+				new ParseFilePipe({
+				validators: [
+				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
+				new FileTypeValidator({ fileType: /(image\/jpg|image\/jpeg|image\/png|image\/webp)/ }),
+			],
+			fileIsRequired: false,
+		})) file?: Express.Multer.File) {
+    return this.usersService.create(createUserDto, file);
   }
 
+  //change to @Request() req and get the user id from the token JWT
+  @Get('/me')
+  getUserprofile(@Body() Body) {
+	return this.usersService.getUserProfile(Body.loggedUser);
+  }
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
+  @Get(':id')
+  findOneById(@Param('id') id: string) {
+	return this.usersService.findOneById(id);
+  }
+
   @Get('username/:username')
   findOne(@Param('username') username: string) {
-    return this.usersService.findOne(username);
+    return this.usersService.findOneByUsername(username);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  @UseInterceptors(FileInterceptor('avatar'))
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
+				new ParseFilePipe({
+				validators: [
+				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }),
+				new FileTypeValidator({ fileType: /(image\/jpg|image\/jpeg|image\/png|image\/webp)/ }),
+			],
+			fileIsRequired: false,
+		})) file?: Express.Multer.File){
+    return  this.usersService.update(id,updateUserDto, file);
   }
 
-  @Delete('username/:username')
-  removebyUsername(@Param('username') username: string) {
-    return this.usersService.removebyUsername(username);
-  }
   @Delete(':id')
   removebyId(@Param('id') id: string) {
-	return this.usersService.removeById(id);
+	return  this.usersService.removeById(id);
+  }
+
+  @Get(':id/artworks')
+  getUserArtworks(@Param('id') id: string) {
+	return this.usersService.getUserArtworks(id);
+  }
+
+  @Get(':id/artworks/liked')
+  getUserLikedArtworks(@Param('id') id: string) {
+	return this.usersService.getUserLikedArtworks(id);
   }
 }
+
