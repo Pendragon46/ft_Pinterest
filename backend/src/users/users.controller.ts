@@ -3,6 +3,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/enums/role.enum';
+import { log } from 'console';
 
 @Controller('users')
 export class UsersController {
@@ -39,6 +42,7 @@ export class UsersController {
     return this.usersService.findOneByUsername(username);
   }
 
+
   @Patch(':id')
   @UseInterceptors(FileInterceptor('avatar'))
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
@@ -49,12 +53,18 @@ export class UsersController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File){
-    return  this.usersService.update(id,updateUserDto, file);
+    return  this.usersService.update(id,updateUserDto, file, updateUserDto.loggedUser);
+  }
+
+  @Patch(':id/roles')
+  @Roles(Role.admin)
+  updateRoles(@Param('id') id: string, @Body() data: { roles: Role}) {
+  return this.usersService.updateRoles(id, data.roles);
   }
 
   @Delete(':id')
-  removebyId(@Param('id') id: string) {
-	return  this.usersService.removeById(id);
+  removebyId(@Param('id') id: string, @Body() data: { loggedUser: string }) {
+	return  this.usersService.removeById(id, data.loggedUser);
   }
 
   @Get(':id/artworks')

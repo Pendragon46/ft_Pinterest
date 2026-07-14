@@ -20,7 +20,7 @@ export class LikesService {
 	const existingLike = await this.prisma.like.findFirst({
 	  where: {
 		artworkId: artworkId,
-		userId: userId,
+		authorId: userId,
 	  },
 	});
 	if (existingLike) {
@@ -33,6 +33,7 @@ export class LikesService {
 	  },
 	});
   }
+
 
   async getArtworkLikes(artworkId: string) {
 	const artwork = await this.prisma.artwork.findUnique({
@@ -55,7 +56,7 @@ export class LikesService {
 	const existingLike = await this.prisma.like.findFirst({
 	  where: {
 		artworkId: artworkId,
-		userId: userId,
+		authorId: userId,
 	  },
 	});
 	if (!existingLike) {

@@ -79,6 +79,7 @@ export class FollowService {
 	return user.following;
   }
 
+  
   async unfollow(currentuser: string, target: string) {
 	//check if the user exists
 	const user = await this.prisma.user.findUnique({

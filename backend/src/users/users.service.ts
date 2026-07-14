@@ -1,8 +1,10 @@
-import { BadRequestException, ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
+import { Role } from '@prisma/client';
+import { stringify } from 'querystring';
 
 @Injectable()
 export class UsersService {
@@ -104,10 +106,15 @@ export class UsersService {
 	return user;
   }
 
-  async update(id: string, data: Prisma.UserUpdateInput, file?: Express.Multer.File) {
+  // get user connected and check if he can update or delete the user
+  async update(id: string, data: Prisma.UserUpdateInput, file?: Express.Multer.File, loggedUserId?: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})
 	if (!user) {
 	  throw new NotFoundException('User not found');
+	}
+	//from req
+	if (id !== loggedUserId && user.roles !== Role.ADMIN) {
+		throw new ForbiddenException('You are not authorized to update this user');
 	}
 	if (data.username) {
 		const existingUser = await this.prisma.user.findUnique({where: {username : data.username as string}})
@@ -186,7 +193,7 @@ async getUserLikedArtworks(userId: string) {
 	  throw new NotFoundException('User not found');
 	}
 	const likedArtworks = await this.prisma.like.findMany({
-		where: { userId: userId },
+		where: { authorId: userId },
 		include: {
 			artwork: {
 				include: {
@@ -203,11 +210,15 @@ async getUserLikedArtworks(userId: string) {
 }
 							
 
-
-  async removeById(id: string) {
+// get user connected and check if he can update or delete the user
+  async removeById(id: string, loggedUserId?: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})
 	if (!user) {
 	  throw new NotFoundException('User not found');
+	}
+	// from req
+	if (id !== loggedUserId && user.roles !== Role.ADMIN) {
+		throw new ForbiddenException('You are not authorized to delete this user');
 	}
 	if (user.avatarPublicId && user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID	) {
 		try {
@@ -239,6 +250,17 @@ async getUserLikedArtworks(userId: string) {
 	});
 	return { message: 'User deleted successfully' };
 }
+
+async updateRoles(id: string, roles: Role) {
+	const user = await this.prisma.user.findUnique({
+		where: { id },
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	return await this.prisma.user.update({
+		where: { id },
+		data: { roles },
+	});
 }
-
-
+}
