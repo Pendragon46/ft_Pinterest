@@ -10,8 +10,8 @@ export interface Niche {
   slug: Category
   /** Internal tags — power tag-proximity neighbours (§8.5); not user-facing. */
   tags: string[]
-  /** World-px point the camera dives toward when entering the niche (§5). */
-  region: { x: number; y: number }
+  /** World-px point whose surrounding cells seed the niche's unique items (§6). */
+  contentAnchor: { x: number; y: number }
   /** 0–360; the niche's colour family (every niche card shares it). */
   hue: number
   /** N unique items — the "unique tile" completion is measured against (§8.1). */

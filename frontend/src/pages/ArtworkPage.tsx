@@ -3,10 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
-import { Spinner } from '@/components/ui/Spinner'
 import { TextLink } from '@/components/ui/TextLink'
 import { artworkKeys, fetchArtworkDetail } from '@/features/artworks/artwork.api'
-import { ArtworkDetail } from '@/features/artworks/components/ArtworkDetail'
+import {
+  ArtworkDetail,
+  ArtworkDetailSkeleton,
+} from '@/features/artworks/components/ArtworkDetail'
 
 // Renders as modal (location.state.background) or standalone; always exposes
 // id="artwork-title" so the modal's aria-labelledby resolves in every state.
@@ -27,14 +29,12 @@ export function ArtworkPage() {
 
   let content: ReactNode
   if (detailQuery.isPending) {
+    // Shape-matched skeleton at the final size, so the modal opens then fills in
+    // (never resizes) and keeps #artwork-title present for aria-labelledby (§3.3).
     content = (
-      <div className="flex min-h-64 items-center justify-center p-10 text-neutral-400">
-        {/* Keep the labelling target present even while loading. */}
-        <h1 id="artwork-title" className="sr-only">
-          {t('artwork.loading')}
-        </h1>
-        <Spinner size="md" />
-      </div>
+      <ArtworkDetailSkeleton
+        onClose={background ? () => navigate(-1) : undefined}
+      />
     )
   } else if (detailQuery.isError || !detailQuery.data) {
     content = (

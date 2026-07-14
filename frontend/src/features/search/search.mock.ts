@@ -63,14 +63,15 @@ const SYNONYMS: Record<Category, string[]> = {
   branding: ['branding', 'brand', 'identity', 'logo'],
 }
 
-/** How far out (world px) the camera dives toward a niche's region (§5). */
-const DIVE_RADIUS = 5 * CELL_W
+/** How far (world px) from the origin each niche samples its base-world content —
+    one anchor per compass direction, so each discipline draws from its own region. */
+const ANCHOR_RADIUS = 5 * CELL_W
 
-function regionFor(index: number): { x: number; y: number } {
+function anchorFor(index: number): { x: number; y: number } {
   const theta = index * (Math.PI / 4) - Math.PI
   return {
-    x: Math.round(Math.cos(theta) * DIVE_RADIUS),
-    y: Math.round(Math.sin(theta) * DIVE_RADIUS),
+    x: Math.round(Math.cos(theta) * ANCHOR_RADIUS),
+    y: Math.round(Math.sin(theta) * ANCHOR_RADIUS),
   }
 }
 
@@ -81,7 +82,7 @@ const NICHE_CONTENT_SIZE = 48
 export const NICHES: Niche[] = CATEGORIES.map((slug, index) => ({
   slug,
   tags: NICHE_TAGS[slug],
-  region: regionFor(index),
+  contentAnchor: anchorFor(index),
   hue: NICHE_HUE[slug],
   contentSize: NICHE_CONTENT_SIZE,
 }))
@@ -197,8 +198,8 @@ export function suggest(term: string): SuggestionGroups {
 export function nicheContent(slug: Category): CanvasArtwork[] {
   const niche = NICHE_BY_SLUG.get(slug)
   if (!niche) return []
-  const baseCx = Math.round(niche.region.x / CELL_W)
-  const baseCy = Math.round(niche.region.y / CELL_H)
+  const baseCx = Math.round(niche.contentAnchor.x / CELL_W)
+  const baseCy = Math.round(niche.contentAnchor.y / CELL_H)
   const cols = 8
   const items: CanvasArtwork[] = []
   // Walk cells until we have exactly contentSize items — a cell landing on the

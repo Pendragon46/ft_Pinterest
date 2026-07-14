@@ -1,25 +1,44 @@
-import { lazy, Suspense, useState } from 'react'
+import { lazy, Suspense, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MessageCircle, Bookmark, Share2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/Button'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
-import { Spinner } from '@/components/ui/Spinner'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
 
-import { artworkKeys, fetchArtworkComments } from '../artwork.api'
-import type { ArtworkComment, ArtworkDetail as Detail } from '../artwork.types'
+import {
+  artworkKeys,
+  fetchArtworkComments,
+  postArtworkComment,
+} from '../artwork.api'
+import type {
+  ArtworkComment,
+  ArtworkDetail as Detail,
+  AuthorSummary,
+} from '../artwork.types'
 
 // Lazy so lottie-web is code-split out of the main bundle (loaded on first like).
 const HeartBurst = lazy(() => import('./HeartBurst'))
+
+// Fixed outer height so the modal frame never changes with comment count (§3.1):
+// mobile fills the viewport, desktop is a stable "~4 comments then scroll" frame.
+// The scroll region absorbs the difference; the frame stays put.
+const SHELL =
+  'grid h-[85svh] max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:h-[40rem] md:grid-cols-[1.15fr_1fr] md:grid-rows-1'
 
 interface ArtworkDetailProps {
   artwork: Detail
   /** Present only in the modal; adds a close button. */
   onClose?: () => void
+}
+
+/** Optimistic-post rollback context: the pre-insert list + the temp row's id. */
+interface CommentPostContext {
+  previous: ArtworkComment[] | undefined
+  tempId: string
 }
 
 // Localized compact view counts (12000 → "12K").
@@ -32,12 +51,14 @@ function useCompact() {
     }).format(value)
 }
 
-// Mutating actions gated behind useRequireAuth; counts are static placeholders.
+// Mutating actions gated behind useRequireAuth. Comment posting is optimistic and
+// cache-backed (§4); like/save/follow stay local toggles until the backend owns them.
 export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const { t } = useTranslation('common')
   const compact = useCompact()
   const requireAuth = useRequireAuth()
   const currentUser = useAuthStore((state) => state.user)
+  const queryClient = useQueryClient()
 
   const [liked, setLiked] = useState(false)
   /** Bumped each time the user likes, to replay the heart burst. */
@@ -46,12 +67,86 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const [following, setFollowing] = useState(false)
   const [shareHint, setShareHint] = useState(false)
   const [draft, setDraft] = useState('')
-  /** Comments posted this session, prepended to the fetched list. */
-  const [posted, setPosted] = useState<ArtworkComment[]>([])
+  const [postStatus, setPostStatus] = useState<'idle' | 'posted' | 'failed'>(
+    'idle',
+  )
+  const composerRef = useRef<HTMLInputElement>(null)
 
   const commentsQuery = useQuery({
     queryKey: artworkKeys.comments(artwork.id),
     queryFn: () => fetchArtworkComments(artwork.id),
+  })
+  // The comments cache is the single source of truth: the list and the count chip
+  // both read it, so an optimistic post can never make them disagree (§7).
+  const comments = commentsQuery.data ?? []
+
+  /** Author stamped on this user's own optimistic comments. */
+  const selfAuthor = (): AuthorSummary | null =>
+    currentUser
+      ? {
+          id: currentUser.id,
+          username: currentUser.username,
+          handle: currentUser.username,
+          color: '#525252',
+        }
+      : null
+
+  // §4: post straight into the comments cache so the write feels local while
+  // detail and comments stay independent queries — optimistic add, rollback on
+  // error (keeping the draft), reconcile the temp row with the server one.
+  const postMutation = useMutation<ArtworkComment, Error, string, CommentPostContext>({
+    mutationFn: (content: string) => {
+      const author = selfAuthor()
+      if (!author) throw new Error('unauthenticated')
+      // TODO(backend): write seam — swap for POST /artworks/:id/comments.
+      return postArtworkComment(artwork.id, { content, author })
+    },
+    onMutate: async (content: string) => {
+      setPostStatus('idle')
+      await queryClient.cancelQueries({
+        queryKey: artworkKeys.comments(artwork.id),
+      })
+      const previous = queryClient.getQueryData<ArtworkComment[]>(
+        artworkKeys.comments(artwork.id),
+      )
+      const tempId = `temp_${Date.now()}`
+      const author = selfAuthor()
+      if (author) {
+        const optimistic: ArtworkComment = {
+          id: tempId,
+          author,
+          content,
+          likeCount: 0,
+          hoursAgo: 0,
+        }
+        queryClient.setQueryData<ArtworkComment[]>(
+          artworkKeys.comments(artwork.id),
+          (old) => [optimistic, ...(old ?? [])],
+        )
+      }
+      return { previous, tempId }
+    },
+    onError: (_error, content, context) => {
+      // Roll the optimistic insert back and hand the draft back — but only if the
+      // composer is empty, so a newer draft typed during the post isn't clobbered.
+      queryClient.setQueryData<ArtworkComment[]>(
+        artworkKeys.comments(artwork.id),
+        (old) =>
+          context?.previous ?? (old ?? []).filter((c) => c.id !== context?.tempId),
+      )
+      setDraft((current) => (current.length > 0 ? current : content))
+      setPostStatus('failed')
+    },
+    onSuccess: () => {
+      // The mock persists the comment, so a refetch returns it: invalidate to
+      // reconcile with the server's canonical list (real id/timestamp) and to
+      // restore anything a mid-load post interrupted — exactly the backend path.
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.comments(artwork.id),
+      })
+      setPostStatus('posted')
+      composerRef.current?.focus()
+    },
   })
 
   const handleShare = () => {
@@ -73,33 +168,30 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     const content = draft.trim()
     if (!content) return
     requireAuth(() => {
-      if (!currentUser) return // type-narrowing; requireAuth guarantees it
-      // TODO(backend): POST /artworks/:id/comments via a TanStack mutation,
-      // then invalidate artworkKeys.comments(id). For now, echo locally.
-      setPosted((prev) => [
-        {
-          id: `local_${Date.now()}`,
-          author: {
-            id: currentUser.id,
-            username: currentUser.username,
-            handle: currentUser.username,
-            color: '#525252',
-          },
-          content,
-          likeCount: 0,
-          hoursAgo: 0,
-        },
-        ...prev,
-      ])
+      if (!selfAuthor()) return // requireAuth guarantees a user; narrow for TS
       setDraft('')
+      postMutation.mutate(content)
     })
   }
 
-  const comments = [...posted, ...(commentsQuery.data ?? [])]
+  const handleReply = (handle: string) => {
+    requireAuth(() => {
+      // Whole-token match so a handle that is a prefix of one already in the draft
+      // (e.g. @sam vs @samuel) isn't wrongly treated as already mentioned.
+      const mention = `@${handle}`
+      setDraft((current) =>
+        current.split(/\s+/).includes(mention) ? current : `${mention} ${current}`,
+      )
+      composerRef.current?.focus()
+    })
+  }
+
+  // Count reads the same cache as the list; hidden while the list is still loading.
+  const commentCount = commentsQuery.isPending ? undefined : compact(comments.length)
 
   return (
-    <article className="grid max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:grid-cols-[1.15fr_1fr] md:grid-rows-1">
-      {/* Placeholder color stands in for the future image. */}
+    <article className={SHELL}>
+      {/* Placeholder color stands in for the future image (§5). */}
       <div
         className="relative flex h-44 items-end justify-start p-5 md:h-auto"
         style={{ backgroundColor: artwork.color }}
@@ -131,6 +223,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             size="sm"
             onClick={() => {
               requireAuth(() => {
+                // TODO(backend): POST/DELETE /users/:id/follow.
                 setFollowing((value) => !value)
               })
             }}
@@ -179,6 +272,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               active={liked}
               onClick={() => {
                 requireAuth(() => {
+                  // TODO(backend): POST/DELETE /artworks/:id/like (server owns count).
                   const next = !liked
                   setLiked(next)
                   if (next) setLikeBurst((count) => count + 1)
@@ -203,7 +297,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               active={false}
               onClick={() => undefined}
               label={t('artwork.commentsTitle')}
-              count={compact(artwork.commentCount)}
+              count={commentCount}
               icon={<MessageCircle aria-hidden="true" className="size-4" />}
               as="span"
             />
@@ -211,10 +305,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               active={saved}
               onClick={() => {
                 requireAuth(() => {
+                  // TODO(backend): POST/DELETE /artworks/:id/save.
                   setSaved((value) => !value)
                 })
               }}
-              label={t('artwork.saved')}
+              label={saved ? t('artwork.saved') : t('artwork.save')}
               icon={<Bookmark aria-hidden="true" className="size-4" fill={saved ? "currentColor" : "none"} />}
             />
             <div className="relative ms-auto">
@@ -240,9 +335,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               {t('artwork.commentsTitle')}
             </h2>
             {commentsQuery.isPending ? (
-              <div className="flex justify-center py-6 text-neutral-400">
-                <Spinner size="md" />
-              </div>
+              <CommentsSkeleton />
+            ) : comments.length === 0 ? (
+              <p className="mt-3 text-sm text-neutral-400">
+                {t('artwork.commentsEmpty')}
+              </p>
             ) : (
               <ul className="mt-3 flex flex-col gap-4">
                 {comments.map((comment) => (
@@ -270,7 +367,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                       <button
                         type="button"
                         onClick={() => {
-                          requireAuth(() => undefined)
+                          handleReply(comment.author.handle)
                         }}
                         className="mt-0.5 cursor-pointer text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
                       >
@@ -284,30 +381,140 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           </section>
         </div>
 
-        <div className="flex items-center gap-2 border-t border-neutral-100 p-3">
-          <input
-            type="text"
-            value={draft}
-            onChange={(event) => {
-              setDraft(event.target.value)
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault()
-                handlePost()
-              }
-            }}
-            placeholder={t('artwork.commentPlaceholder')}
-            aria-label={t('artwork.commentPlaceholder')}
-            className="min-w-0 flex-1 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-400 focus:bg-white motion-reduce:transition-none"
-          />
-          <Button
-            size="sm"
-            onClick={handlePost}
-            disabled={draft.trim().length === 0}
-          >
-            {t('artwork.post')}
-          </Button>
+        <div className="border-t border-neutral-100 p-3">
+          {postStatus === 'failed' ? (
+            <p className="mb-2 px-1 text-xs text-red-600">
+              {t('artwork.commentFailed')}{' '}
+              <button
+                type="button"
+                onClick={handlePost}
+                className="rounded font-medium underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+              >
+                {t('artwork.retry')}
+              </button>
+            </p>
+          ) : null}
+          <div className="flex items-center gap-2">
+            <input
+              ref={composerRef}
+              type="text"
+              value={draft}
+              onChange={(event) => {
+                setDraft(event.target.value)
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault()
+                  handlePost()
+                }
+              }}
+              placeholder={t('artwork.commentPlaceholder')}
+              aria-label={t('artwork.commentPlaceholder')}
+              className="min-w-0 flex-1 rounded-full border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition-colors placeholder:text-neutral-400 focus:border-neutral-400 focus:bg-white motion-reduce:transition-none"
+            />
+            <Button
+              size="sm"
+              onClick={handlePost}
+              loading={postMutation.isPending}
+              disabled={draft.trim().length === 0}
+            >
+              {t('artwork.post')}
+            </Button>
+          </div>
+          {/* Announce the outcome to assistive tech (§7). */}
+          <p role="status" aria-live="polite" className="sr-only">
+            {postStatus === 'posted'
+              ? t('artwork.commentPosted')
+              : postStatus === 'failed'
+                ? t('artwork.commentFailed')
+                : ''}
+          </p>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+// Shimmer placeholder block — same visual language as the canvas SkeletonCell
+// (neutral base + a sweeping highlight), static under reduced motion.
+function SkeletonBlock({ className = '' }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`relative block overflow-hidden bg-neutral-200/80 ${className}`}
+    >
+      <span className="absolute inset-0 animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent motion-reduce:animate-none" />
+    </span>
+  )
+}
+
+// Placeholder comment rows: reserve the same vertical space as real comments so
+// the list doesn't jump when data arrives (§3.3), matching the ~4-comment frame.
+function CommentsSkeleton() {
+  return (
+    <ul className="mt-3 flex flex-col gap-4" aria-hidden="true">
+      {[0, 1, 2, 3].map((row) => (
+        <li key={row} className="flex gap-3">
+          <SkeletonBlock className="size-8 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1 space-y-2 py-1">
+            <SkeletonBlock className="h-3 w-1/3 rounded" />
+            <SkeletonBlock className="h-3 w-3/4 rounded" />
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+/**
+ * Detail skeleton shown while the artwork itself is loading (§3.3). Mirrors the
+ * final two-column shape at the same fixed height, so the modal opens at its final
+ * size and fills in rather than resizing. Keeps `#artwork-title` present (sr-only)
+ * so the modal's `aria-labelledby` resolves during load.
+ */
+export function ArtworkDetailSkeleton({ onClose }: { onClose?: () => void }) {
+  const { t } = useTranslation('common')
+  return (
+    <article className={SHELL}>
+      <SkeletonBlock className="h-44 md:h-auto" />
+      <div className="flex min-h-0 flex-col">
+        <h1 id="artwork-title" className="sr-only">
+          {t('artwork.loading')}
+        </h1>
+        <header className="flex items-center gap-3 border-b border-neutral-100 p-4">
+          <SkeletonBlock className="size-10 shrink-0 rounded-full" />
+          <div className="min-w-0 flex-1 space-y-2">
+            <SkeletonBlock className="h-3.5 w-1/3 rounded" />
+            <SkeletonBlock className="h-3 w-1/4 rounded" />
+          </div>
+          <SkeletonBlock className="h-8 w-20 shrink-0 rounded-full" />
+          {onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label={t('artwork.close')}
+              className="flex cursor-pointer size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+            >
+              <X aria-hidden="true" className="size-5" />
+            </button>
+          ) : null}
+        </header>
+        <div className="min-h-0 flex-1 space-y-3 overflow-hidden p-4">
+          <SkeletonBlock className="h-7 w-2/3 rounded" />
+          <SkeletonBlock className="h-3 w-2/5 rounded" />
+          <SkeletonBlock className="h-3 w-full rounded" />
+          <SkeletonBlock className="h-3 w-4/5 rounded" />
+          <div className="flex gap-2 pt-1">
+            <SkeletonBlock className="h-6 w-16 rounded-full" />
+            <SkeletonBlock className="h-6 w-16 rounded-full" />
+            <SkeletonBlock className="h-6 w-16 rounded-full" />
+          </div>
+          <div className="pt-4">
+            <CommentsSkeleton />
+          </div>
+        </div>
+        <div className="border-t border-neutral-100 p-3">
+          <SkeletonBlock className="h-9 w-full rounded-full" />
         </div>
       </div>
     </article>

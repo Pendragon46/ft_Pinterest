@@ -235,10 +235,21 @@ export function generateDetail(id: string): ArtworkDetail | null {
   }
 }
 
-/** Comment thread for one artwork id (newest first). */
+// In-session store of user-posted comments — the mock's stand-in for server
+// persistence, so a refetch (window focus / invalidation) still returns them.
+// TODO(backend): delete; the server persists comments and GET returns them.
+const postedComments = new Map<string, ArtworkComment[]>()
+
+/** Persist a posted comment so subsequent fetches include it (newest first). */
+export function addPostedComment(id: string, comment: ArtworkComment): void {
+  postedComments.set(id, [comment, ...(postedComments.get(id) ?? [])])
+}
+
+/** Comment thread for one artwork id (newest first): user-posted ⊕ deterministic. */
 export function generateComments(id: string): ArtworkComment[] {
+  const posted = postedComments.get(id) ?? []
   const cell = cellOfId(id)
-  if (!cell) return []
+  if (!cell) return posted
   const rng = mulberry32(cellSeed(cell.cx, cell.cy) ^ 0x85ebca6b)
   const count = int(rng, 2, 6)
   const comments: ArtworkComment[] = []
@@ -253,5 +264,5 @@ export function generateComments(id: string): ArtworkComment[] {
     })
     hoursAgo += int(rng, 1, 9)
   }
-  return comments
+  return [...posted, ...comments]
 }

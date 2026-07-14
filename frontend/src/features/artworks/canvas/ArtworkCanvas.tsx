@@ -37,7 +37,7 @@ export function ArtworkCanvas() {
     requestSync,
   } = useCanvasCamera()
   const searchInputRef = useRef<HTMLInputElement | null>(null)
-  const { niche, enterNiche } = useNiche()
+  const { niche, enterNiche, exitNiche } = useNiche()
   const nicheSlug = niche?.slug ?? null
 
   // The hero never moves (§5.0). Entering a niche reorganises the content in
@@ -188,6 +188,10 @@ export function ArtworkCanvas() {
             inputRef={searchInputRef}
             niche={niche}
             onSubmit={enterNiche}
+            onExit={() => {
+              exitNiche()
+              refocus()
+            }}
           />
         </div>
 

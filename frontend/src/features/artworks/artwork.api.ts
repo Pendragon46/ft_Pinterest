@@ -3,11 +3,22 @@
 // change (signatures and query keys stay identical). The artificial latency
 // keeps loading states exercised.
 
-import { generateComments, generateDetail, generateTile } from './artwork.mock'
-import type { ArtworkComment, ArtworkDetail, CanvasArtwork } from './artwork.types'
+import {
+  addPostedComment,
+  generateComments,
+  generateDetail,
+  generateTile,
+} from './artwork.mock'
+import type {
+  ArtworkComment,
+  ArtworkDetail,
+  AuthorSummary,
+  CanvasArtwork,
+} from './artwork.types'
 
 const TILE_LATENCY_MS = 60
 const DETAIL_LATENCY_MS = 220
+const POST_LATENCY_MS = 260
 
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -49,4 +60,25 @@ export async function fetchArtworkComments(
 ): Promise<ArtworkComment[]> {
   await delay(DETAIL_LATENCY_MS)
   return generateComments(id)
+}
+
+/** Post a comment; the mock echoes it back with a server-shaped id (and a
+    "just now" timestamp). This is the write seam — the caller inserts optimistically
+    and reconciles with what this returns.
+    TODO(backend): POST /artworks/:id/comments → ArtworkComment (server owns id +
+    createdAt); pass the request's AbortSignal through. */
+export async function postArtworkComment(
+  id: string,
+  input: { content: string; author: AuthorSummary },
+): Promise<ArtworkComment> {
+  await delay(POST_LATENCY_MS)
+  const comment: ArtworkComment = {
+    id: `s_${id}_${Date.now()}`,
+    author: input.author,
+    content: input.content,
+    likeCount: 0,
+    hoursAgo: 0,
+  }
+  addPostedComment(id, comment)
+  return comment
 }

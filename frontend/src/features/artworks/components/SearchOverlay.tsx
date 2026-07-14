@@ -20,12 +20,19 @@ interface SearchOverlayProps {
   niche: Niche | null
   /** Submit a resolved term (Enter / Go / tag / suggestion) — same path (§4.5). */
   onSubmit?: (term: string) => void
+  /** Clearing the bar while in a niche returns to the global map (§6.4). */
+  onExit?: () => void
 }
 
 // Hero anchored to the world origin — it pans and zooms with the map. On focus it
 // opens a rich categorised autocomplete below the bar (Search spec §2–4, §7). The
 // tags and dropdown float (absolute) so opening them never shifts the title/bar.
-export function SearchOverlay({ inputRef, niche, onSubmit }: SearchOverlayProps) {
+export function SearchOverlay({
+  inputRef,
+  niche,
+  onSubmit,
+  onExit,
+}: SearchOverlayProps) {
   const { t } = useTranslation('common')
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(false)
@@ -37,9 +44,16 @@ export function SearchOverlay({ inputRef, niche, onSubmit }: SearchOverlayProps)
   const [lastNicheSlug, setLastNicheSlug] = useState<string | null>(null)
   if (nicheSlug !== lastNicheSlug) {
     setLastNicheSlug(nicheSlug)
-    setQuery(niche ? t(`category.${niche.slug}`) : '')
-    setActive(false)
     setHighlight(-1)
+    if (niche) {
+      // Entering a niche: pre-fill with its label and drop focus.
+      setQuery(t(`category.${niche.slug}`))
+      setActive(false)
+    } else {
+      // Leaving (the bar was cleared): empty it but keep the focus state so the
+      // user can type a fresh query straight away without re-focusing.
+      setQuery('')
+    }
   }
 
   const trimmed = query.trim()
@@ -136,8 +150,11 @@ export function SearchOverlay({ inputRef, niche, onSubmit }: SearchOverlayProps)
             type="search"
             value={query}
             onChange={(event) => {
-              setQuery(event.target.value)
+              const value = event.target.value
+              setQuery(value)
               setHighlight(-1)
+              // Emptying the bar while in a niche returns to the global map (§6.4).
+              if (niche && value.trim() === '') onExit?.()
             }}
             onFocus={() => {
               setActive(true)

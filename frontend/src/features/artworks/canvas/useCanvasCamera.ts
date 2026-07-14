@@ -248,8 +248,9 @@ export function useCanvasCamera() {
     }
   }, [])
 
-  /** Animate the camera to an arbitrary target (the §5 dive). Instant under
-      reduced motion. */
+  /** Animate the camera toward a target — the primitive `refocus` builds on.
+      Kept private (the hero stays fixed on search, so nothing else animates the
+      camera). Instant under reduced motion. */
   const flyTo = useCallback(
     (next: Camera) => {
       velocity.current = { x: 0, y: 0 }
@@ -504,7 +505,6 @@ export function useCanvasCamera() {
     eggLayerRef: eggLayerRef as RefObject<HTMLDivElement | null>,
     view,
     refocus,
-    flyTo,
     requestSync,
   }
 }
