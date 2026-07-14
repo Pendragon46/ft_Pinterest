@@ -40,7 +40,11 @@ export class UsersService {
 
   async findAll() {
 
-	const users = await this.prisma.user.findMany();
+	const users = await this.prisma.user.findMany({
+		orderBy: {
+			createdAt: 'desc',
+		},
+	});
 	if (!users || users.length === 0) {
 	  throw new NotFoundException('No users found');
 	}
@@ -48,9 +52,15 @@ export class UsersService {
   }
 
   async findOneByUsername(username: string) {
-    let user =  await this.prisma.user.findUnique({
-		where: {
-			username
+    let user =  await this.prisma.user.findMany({
+		where:{
+			username:{
+				contains: username,
+				mode: 'insensitive',
+			}
+		},
+		orderBy: {
+			username: 'asc',
 		}
 	})
 	if (!user) {
@@ -59,27 +69,28 @@ export class UsersService {
 	return user;
   }
 
-  async getUserProfile(userId: string) {
-	const user = await this.prisma.user.findUnique({
-		where: {
-			id: userId,
-		},
-		include: {
-			artworks: true,
-			_count: {
-				select: {
-					artworks: true,
-					followers: true,
-					following: true,
-				},
-			},
-		},
-	});
-	if (!user) {
-		throw new NotFoundException('User not found');
-	}
-	return user;
-  }
+//   async getUserProfile(userId: string) {
+// 	const user = await this.prisma.user.findUnique({
+// 		where: {
+// 			id: userId,
+// 		},
+// 		include: {
+// 			artworks: true,
+// 			_count: {
+// 				select: {
+// 					artworks: true,
+// 					followers: true,
+// 					following: true,
+// 					role: true,
+// 				},
+// 			},
+// 		},
+// 	});
+// 	if (!user) {
+// 		throw new NotFoundException('User not found');
+// 	}
+// 	return user;
+//   }
 
   async findOneById(id: string) {
 	let user =  await this.prisma.user.findUnique({
