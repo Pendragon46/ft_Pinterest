@@ -14,6 +14,8 @@ import { LikesModule } from './likes/likes.module';
 import { HealthService } from './health/health.service';
 import { HealthModule } from './health/health.module';
 import { CommentModule } from './comment/comment.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles/roles.guard';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -27,6 +29,10 @@ import { CommentModule } from './comment/comment.module';
 	CommentModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService],
+  providers: [AppService, CloudinaryService, HealthService, {
+    provide: APP_GUARD,
+    useClass: RolesGuard,
+  }],
+  
 })
 export class AppModule {}

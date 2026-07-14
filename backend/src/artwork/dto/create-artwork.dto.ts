@@ -21,7 +21,7 @@ export class CreateArtworkDto {
 	mediapublicId?: string;
 
 	@IsArray()
-	@ArrayNotEmpty( { each : true})
+	@ArrayNotEmpty()
 	@IsString({ each: true })
 	tags?: string[];
 

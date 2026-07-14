@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class CommentService {
 	}
 	const artwork = await this.prisma.artwork.findUnique({
 		where: { id: artworkId },
-		include: { comments: true },
+		include: { comments:true },
 	});
 	if (!artwork) {
 		throw new NotFoundException('Artwork not found');
@@ -59,8 +59,8 @@ export class CommentService {
 	if (!comment) {
 		throw new NotFoundException('Comment not found');
 	}
-	if (comment.userId !== userId || user.role !== 'ADMIN') {
-		throw new UnauthorizedException('You are not authorized to delete this comment');
+	if (comment.authorId !== userId && user.roles !== 'ADMIN') {
+		throw new ForbiddenException('You are not authorized to delete this comment');
 	}
 	 await this.prisma.comment.delete({
 		where: { id: id },
@@ -68,6 +68,7 @@ export class CommentService {
 	return { message: 'Comment deleted successfully' };
   }
 
+  
   async removeComment(artworkId: string, commentId:string, userId:string )
   {
 	const user = await this.prisma.user.findUnique({
@@ -82,13 +83,13 @@ export class CommentService {
 	if (!comment) {
 		throw new NotFoundException('Comment not found');
 	}
-	if ((comment.userId !== userId && user.role !== 'ADMIN') || comment.userId !== userId) {
-		console.log(userId + ' create by ' + comment.userId)
-		throw new UnauthorizedException('You are not authorized to delete this comment');
-		
+	if ((comment.authorId !== userId && user.roles !== 'ADMIN')) {
+		console.log(userId + ' create by ' + comment.authorId)
+		throw new ForbiddenException('You are not authorized to delete this comment');
 	}
 	 await this.prisma.comment.delete({
 		where: { id: commentId },
 	});
+	return { message: 'Comment deleted successfully' };
   }
 }

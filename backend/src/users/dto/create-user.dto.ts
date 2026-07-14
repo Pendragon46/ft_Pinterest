@@ -32,4 +32,8 @@ export class CreateUserDto {
 	avatarPublicId!: string;
 
 
+
+	@IsString()
+	@IsOptional()
+	loggedUser!: string; // Add this property to hold the logged-in user's ID
 }
