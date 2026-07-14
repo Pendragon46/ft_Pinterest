@@ -111,6 +111,22 @@ services:
       retries: 3
       start_period: 10s
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ft_pinterest_prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - ft_pinterest-network
+
 networks:
   ft_pinterest-network:
 

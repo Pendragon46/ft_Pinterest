@@ -13,6 +13,8 @@ import { FollowModule } from './follow/follow.module';
 import { LikesModule } from './likes/likes.module';
 import { HealthService } from './health/health.service';
 import { HealthModule } from './health/health.module';
+import { MetricsService } from './metrics/metrics.service';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -22,8 +24,9 @@ import { HealthModule } from './health/health.module';
 	CloudinaryModule,
 	FollowModule,
 	LikesModule,
-  HealthModule],
+  	HealthModule,
+	MetricsModule],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService],
+  providers: [AppService, CloudinaryService, HealthService, MetricsService],
 })
 export class AppModule {}
