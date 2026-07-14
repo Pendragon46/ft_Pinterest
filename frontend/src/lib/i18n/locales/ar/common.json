@@ -107,7 +107,21 @@
   },
   "profile": {
     "title": "الملف الشخصي",
-    "subtitle": "أعمالك ومجموعاتك ونشاطك."
+    "subtitle": "أعمالك ومجموعاتك ونشاطك.",
+    "tabWorks": "الأعمال",
+    "tabLiked": "الإعجابات",
+    "edit": "تعديل الملف",
+    "share": "مشاركة",
+    "likes": "{{likes}} إعجاب",
+    "worksEmptyOwn": "أطلسك فارغ — انشر أول أعمالك.",
+    "worksEmptyOther": "لم ينشر هذا المبدع أي عمل بعد.",
+    "likedEmpty": "لا توجد أعمال أعجبتك بعد.",
+    "loadError": "تعذّر تحميل هذا الملف.",
+    "stats": {
+      "works": "أعمال",
+      "followers": "متابِعون",
+      "following": "يتابع"
+    }
   },
   "notFound": {
     "title": "لقد خرجت عن الخريطة",
@@ -215,5 +229,26 @@
     "whereNext": "لقد استكشفت كل {{niche}}. إلى أين بعد؟",
     "whereNextShort": "إلى أين بعد؟",
     "refreshNeighbours": "عرض جيران آخرين"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "navAccount": "الحساب",
+    "navAppearance": "المظهر",
+    "profileHeading": "الملف الشخصي",
+    "changeAvatar": "تغيير الصورة الرمزية",
+    "displayName": "الاسم المعروض",
+    "username": "اسم المستخدم",
+    "bio": "نبذة",
+    "save": "حفظ التغييرات",
+    "saved": "تم حفظ التغييرات",
+    "emailPasswordHeading": "البريد الإلكتروني وكلمة المرور",
+    "email": "البريد الإلكتروني",
+    "newPassword": "كلمة مرور جديدة",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين.",
+    "appearanceHeading": "المظهر",
+    "language": "اللغة",
+    "theme": "السمة",
+    "themeSoon": "قريبًا"
   }
 }

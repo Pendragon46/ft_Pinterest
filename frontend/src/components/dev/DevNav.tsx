@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 import { useAuthStore } from '@/features/auth/auth.store'
 import { AuthButton } from '@/features/auth/components/AuthButton'
+import { DEFAULT_AVATAR } from '@/lib/avatar'
 
 export function DevNav() {
   const location = useLocation()
@@ -55,11 +56,12 @@ export function DevNav() {
           onClick={() => {
             login({
               id: 'dev-user',
-              username: 'srabeman',
-              email: 'dev@atlaas.app',
-              bio: '',
-              avatarUrl: null,
-              role: 'USER',
+              fullname: 'Sedra Rabe',
+              username: 'sedra',
+              email: 'sedra@atlaas.app',
+              bio: 'Designer exploring the edges of the creative universe.',
+              avatarUrl: DEFAULT_AVATAR,
+              roles: 'USER',
             })
           }}
           className="rounded bg-neutral-700 px-2 py-0.5 hover:bg-neutral-600"

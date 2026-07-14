@@ -107,7 +107,21 @@
   },
   "profile": {
     "title": "Profil",
-    "subtitle": "Vos œuvres, collections et activité."
+    "subtitle": "Vos œuvres, collections et activité.",
+    "tabWorks": "Œuvres",
+    "tabLiked": "Aimés",
+    "edit": "Modifier le profil",
+    "share": "Partager",
+    "likes": "{{likes}} j'aime",
+    "worksEmptyOwn": "Votre atlas est vide — publiez votre première œuvre.",
+    "worksEmptyOther": "Ce créateur n'a pas encore publié d'œuvre.",
+    "likedEmpty": "Aucune œuvre aimée pour l'instant.",
+    "loadError": "Impossible de charger ce profil.",
+    "stats": {
+      "works": "œuvres",
+      "followers": "abonnés",
+      "following": "abonnements"
+    }
   },
   "notFound": {
     "title": "Vous avez quitté la carte",
@@ -215,5 +229,26 @@
     "whereNext": "Tu as tout exploré de {{niche}}. Et après ?",
     "whereNextShort": "Et après ?",
     "refreshNeighbours": "Voir d'autres voisins"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "navAccount": "Compte",
+    "navAppearance": "Apparence",
+    "profileHeading": "Profil",
+    "changeAvatar": "Changer d'avatar",
+    "displayName": "Nom affiché",
+    "username": "Nom d'utilisateur",
+    "bio": "Bio",
+    "save": "Enregistrer les modifications",
+    "saved": "Modifications enregistrées",
+    "emailPasswordHeading": "E-mail et mot de passe",
+    "email": "E-mail",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
+    "appearanceHeading": "Apparence",
+    "language": "Langue",
+    "theme": "Thème",
+    "themeSoon": "Bientôt disponible"
   }
 }

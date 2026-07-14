@@ -81,10 +81,10 @@ export function AuthButton() {
             aria-hidden="true"
             className="flex size-8 items-center justify-center rounded-full bg-neutral-700 text-sm font-semibold text-white"
           >
-            {user.username.charAt(0).toUpperCase()}
+            {(user.fullname ?? user.username).charAt(0).toUpperCase()}
           </span>
         )}
-        <span>{user.username}</span>
+        <span>{user.fullname ?? user.username}</span>
         <ChevronDown
           aria-hidden="true"
           className={`size-4 text-neutral-200 transition-transform motion-reduce:transition-none ${
@@ -101,9 +101,11 @@ export function AuthButton() {
         >
           <div className="px-4 py-3">
             <p className="truncate text-sm font-medium text-neutral-900">
-              {user.username}
+              {user.fullname ?? user.username}
             </p>
-            <p className="truncate text-xs text-neutral-500">{user.email}</p>
+            <p className="truncate text-xs text-neutral-500">
+              @{user.username}
+            </p>
           </div>
           <div aria-hidden="true" className="h-px bg-neutral-100" />
           <Link

@@ -107,7 +107,42 @@
   },
   "profile": {
     "title": "Profile",
-    "subtitle": "Your works, collections and activity."
+    "subtitle": "Your works, collections and activity.",
+    "tabWorks": "Works",
+    "tabLiked": "Liked",
+    "edit": "Edit profile",
+    "share": "Share",
+    "likes": "{{likes}} likes",
+    "worksEmptyOwn": "Your atlas is empty — publish your first work.",
+    "worksEmptyOther": "This creator hasn't published any work yet.",
+    "likedEmpty": "No liked works yet.",
+    "loadError": "Couldn't load this profile.",
+    "stats": {
+      "works": "works",
+      "followers": "followers",
+      "following": "following"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "navAccount": "Account",
+    "navAppearance": "Appearance",
+    "profileHeading": "Profile",
+    "changeAvatar": "Change avatar",
+    "displayName": "Display name",
+    "username": "Username",
+    "bio": "Bio",
+    "save": "Save changes",
+    "saved": "Changes saved",
+    "emailPasswordHeading": "Email & password",
+    "email": "Email",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords don't match.",
+    "appearanceHeading": "Appearance",
+    "language": "Language",
+    "theme": "Theme",
+    "themeSoon": "Coming soon"
   },
   "notFound": {
     "title": "You wandered off the map",

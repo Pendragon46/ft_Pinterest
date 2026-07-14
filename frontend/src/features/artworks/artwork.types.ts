@@ -56,6 +56,19 @@ export interface CanvasArtwork extends ArtworkSummary {
   sourceId?: string
 }
 
+/** A backend-shaped artwork as returned by the user endpoints (profile grids):
+    no canvas coords, no category, no colour — just the persisted fields. */
+export interface ProfileArtwork {
+  id: string
+  title: string
+  /** Optional in Prisma; when null the card shows a neutral placeholder. */
+  mediaUrl?: string | null
+  /** Free user text — never translated. */
+  tags: { name: string }[]
+  /** Prisma `_count` include. */
+  _count: { likes: number; comments: number }
+}
+
 /** One comment under an artwork. */
 export interface ArtworkComment {
   id: string

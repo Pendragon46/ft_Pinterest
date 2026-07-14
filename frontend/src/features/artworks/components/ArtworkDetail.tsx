@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { useCompact } from '@/lib/useCompact'
 
 import {
   artworkKeys,
@@ -39,16 +40,6 @@ interface ArtworkDetailProps {
 interface CommentPostContext {
   previous: ArtworkComment[] | undefined
   tempId: string
-}
-
-// Localized compact view counts (12000 → "12K").
-function useCompact() {
-  const { i18n } = useTranslation()
-  return (value: number) =>
-    new Intl.NumberFormat(i18n.language, {
-      notation: 'compact',
-      maximumFractionDigits: 1,
-    }).format(value)
 }
 
 // Mutating actions gated behind useRequireAuth. Comment posting is optimistic and
