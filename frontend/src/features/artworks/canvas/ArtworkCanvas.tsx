@@ -202,7 +202,13 @@ export function ArtworkCanvas() {
       {/* At 100% of a niche, Refocus morphs into the Where next? crossroads
           (§8.3); it never reverts to plain Refocus while complete (§8.7). */}
       {niche && nicheComplete ? (
-        <Crossroads niche={niche} onPick={enterNiche} />
+        <Crossroads
+          niche={niche}
+          onPick={(slug) => {
+            refocus()
+            enterNiche(slug)
+          }}
+        />
       ) : (
         <RefocusButton visible={view.isAway} onClick={refocus} />
       )}

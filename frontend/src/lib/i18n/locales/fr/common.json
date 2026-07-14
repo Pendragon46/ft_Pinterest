@@ -16,7 +16,8 @@
     "cancel": "Annuler",
     "save": "Enregistrer",
     "continueWithGoogle": "Continuer avec Google",
-    "signOut": "Se déconnecter"
+    "signOut": "Se déconnecter",
+    "dismiss": "Ignorer"
   },
   "auth": {
     "avatarAlt": "Avatar de {{username}}",
@@ -80,7 +81,8 @@
     "commentsEmpty": "Soyez le premier à commenter.",
     "commentPosted": "Commentaire publié.",
     "commentFailed": "Échec de l'envoi du commentaire.",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "unfollow": "Ne plus suivre"
   },
   "category": {
     "portrait": "Portrait",
@@ -248,7 +250,9 @@
     "passwordMismatch": "Les mots de passe ne correspondent pas.",
     "appearanceHeading": "Apparence",
     "language": "Langue",
-    "theme": "Thème",
-    "themeSoon": "Bientôt disponible"
+    "savedShort": "Enregistré"
+  },
+  "toast": {
+    "saveFailed": "Impossible d'enregistrer votre modification."
   }
 }

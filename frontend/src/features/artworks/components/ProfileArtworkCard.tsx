@@ -7,12 +7,17 @@ import type { ProfileArtwork } from '../artwork.types'
 
 interface ProfileArtworkCardProps {
   artwork: ProfileArtwork
+  /** Centre-out reveal-wave delay (ms) for the profile grid (P2b). */
+  revealDelay?: number
 }
 
 // A backend-shaped artwork in a profile grid (fixed aspect, uniform heights — not
 // the canvas masonry). Opens the detail via the same modal-route pattern as
 // ArtworkCard. `mediaUrl` may be null → a neutral placeholder (never a broken img).
-export function ProfileArtworkCard({ artwork }: ProfileArtworkCardProps) {
+export function ProfileArtworkCard({
+  artwork,
+  revealDelay = 0,
+}: ProfileArtworkCardProps) {
   const { t } = useTranslation('common')
   const location = useLocation()
   const compact = useCompact()
@@ -24,7 +29,8 @@ export function ProfileArtworkCard({ artwork }: ProfileArtworkCardProps) {
       to={`/artwork/${artwork.id}`}
       state={{ background: location }}
       draggable={false}
-      className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+      style={{ animationDelay: `${revealDelay}ms` }}
+      className="group block animate-reveal rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none"
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
         {artwork.mediaUrl ? (

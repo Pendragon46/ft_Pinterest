@@ -8,6 +8,7 @@
   --font-serif: 'Hedvig Letters Serif', ui-serif, Georgia, serif;
   --animate-shimmer: shimmer 1.4s ease-in-out infinite;
   --animate-reveal: reveal 0.45s ease-out both;
+  --animate-settle: settle 0.18s ease-out;
 }
 
 *,
@@ -59,6 +60,20 @@ body {
   to {
     opacity: 1;
     filter: blur(0);
+  }
+}
+
+/* Follow-button settle: a brief scale bounce that damps out, confirming the tap
+   landed (P1). The filled→outline swap is the real signal; this just seals it. */
+@keyframes settle {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

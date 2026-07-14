@@ -8,18 +8,22 @@ import { Button } from '@/components/ui/Button'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { useToast } from '@/lib/toast.store'
 import { useCompact } from '@/lib/useCompact'
 
 import {
   artworkKeys,
   fetchArtworkComments,
   postArtworkComment,
+  setArtworkLike,
+  setArtworkSave,
 } from '../artwork.api'
 import type {
   ArtworkComment,
   ArtworkDetail as Detail,
   AuthorSummary,
 } from '../artwork.types'
+import { FollowButton } from './FollowButton'
 
 // Lazy so lottie-web is code-split out of the main bundle (loaded on first like).
 const HeartBurst = lazy(() => import('./HeartBurst'))
@@ -50,12 +54,12 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const requireAuth = useRequireAuth()
   const currentUser = useAuthStore((state) => state.user)
   const queryClient = useQueryClient()
+  const toast = useToast()
 
   const [liked, setLiked] = useState(false)
   /** Bumped each time the user likes, to replay the heart burst. */
   const [likeBurst, setLikeBurst] = useState(0)
   const [saved, setSaved] = useState(false)
-  const [following, setFollowing] = useState(false)
   const [shareHint, setShareHint] = useState(false)
   const [draft, setDraft] = useState('')
   const [postStatus, setPostStatus] = useState<'idle' | 'posted' | 'failed'>(
@@ -127,6 +131,16 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       )
       setDraft((current) => (current.length > 0 ? current : content))
       setPostStatus('failed')
+      toast({
+        variant: 'error',
+        message: t('artwork.commentFailed'),
+        action: {
+          label: t('artwork.retry'),
+          onClick: () => {
+            postMutation.mutate(content)
+          },
+        },
+      })
     },
     onSuccess: () => {
       // The mock persists the comment, so a refetch returns it: invalidate to
@@ -139,6 +153,66 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       composerRef.current?.focus()
     },
   })
+
+  // P0 — like/save are optimistic: flip now, roll back + retry-toast on error. The
+  // count stays local-optimistic and reconciles on the next detail fetch.
+  const applyLike = (next: boolean) => {
+    setLiked(next)
+    if (next) setLikeBurst((count) => count + 1)
+  }
+  const likeMutation = useMutation({
+    mutationFn: (next: boolean) =>
+      setArtworkLike({
+        id: artwork.id,
+        liked: next,
+        loggedUser: currentUser?.id ?? '',
+      }),
+    onError: (_error, next) => {
+      applyLike(!next)
+      toast({
+        variant: 'error',
+        message: t('toast.saveFailed'),
+        action: {
+          label: t('artwork.retry'),
+          onClick: () => {
+            applyLike(next)
+            likeMutation.mutate(next)
+          },
+        },
+      })
+    },
+  })
+  const doLike = (next: boolean) => {
+    applyLike(next)
+    likeMutation.mutate(next)
+  }
+
+  const saveMutation = useMutation({
+    mutationFn: (next: boolean) =>
+      setArtworkSave({
+        id: artwork.id,
+        saved: next,
+        loggedUser: currentUser?.id ?? '',
+      }),
+    onError: (_error, next) => {
+      setSaved(!next)
+      toast({
+        variant: 'error',
+        message: t('toast.saveFailed'),
+        action: {
+          label: t('artwork.retry'),
+          onClick: () => {
+            setSaved(next)
+            saveMutation.mutate(next)
+          },
+        },
+      })
+    },
+  })
+  const doSave = (next: boolean) => {
+    setSaved(next)
+    saveMutation.mutate(next)
+  }
 
   const handleShare = () => {
     // clipboard can reject (permission / insecure context) — never throw.
@@ -209,18 +283,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               @{artwork.author.handle}
             </p>
           </div>
-          <Button
-            variant={following ? 'outline' : 'primary'}
-            size="sm"
-            onClick={() => {
-              requireAuth(() => {
-                // TODO(backend): POST/DELETE /users/:id/follow.
-                setFollowing((value) => !value)
-              })
-            }}
-          >
-            {following ? t('artwork.following') : t('artwork.follow')}
-          </Button>
+          <FollowButton userId={artwork.author.id} />
           {onClose ? (
             <button
               type="button"
@@ -263,10 +326,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               active={liked}
               onClick={() => {
                 requireAuth(() => {
-                  // TODO(backend): POST/DELETE /artworks/:id/like (server owns count).
-                  const next = !liked
-                  setLiked(next)
-                  if (next) setLikeBurst((count) => count + 1)
+                  doLike(!liked)
                 })
               }}
               label={liked ? t('artwork.liked') : t('artwork.like')}
@@ -296,8 +356,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               active={saved}
               onClick={() => {
                 requireAuth(() => {
-                  // TODO(backend): POST/DELETE /artworks/:id/save.
-                  setSaved((value) => !value)
+                  doSave(!saved)
                 })
               }}
               label={saved ? t('artwork.saved') : t('artwork.save')}
@@ -373,18 +432,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         </div>
 
         <div className="border-t border-neutral-100 p-3">
-          {postStatus === 'failed' ? (
-            <p className="mb-2 px-1 text-xs text-red-600">
-              {t('artwork.commentFailed')}{' '}
-              <button
-                type="button"
-                onClick={handlePost}
-                className="rounded font-medium underline hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
-              >
-                {t('artwork.retry')}
-              </button>
-            </p>
-          ) : null}
           <div className="flex items-center gap-2">
             <input
               ref={composerRef}
@@ -412,13 +459,10 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               {t('artwork.post')}
             </Button>
           </div>
-          {/* Announce the outcome to assistive tech (§7). */}
+          {/* Success is announced politely here; failure is announced by the toast
+              (role="alert"), so it isn't duplicated. */}
           <p role="status" aria-live="polite" className="sr-only">
-            {postStatus === 'posted'
-              ? t('artwork.commentPosted')
-              : postStatus === 'failed'
-                ? t('artwork.commentFailed')
-                : ''}
+            {postStatus === 'posted' ? t('artwork.commentPosted') : ''}
           </p>
         </div>
       </div>

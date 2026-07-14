@@ -140,7 +140,7 @@ export function SearchOverlay({
         <form
           role="search"
           onSubmit={handleSubmit}
-          className="flex w-full items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 p-2 transition duration-200 focus-within:border-neutral-300 focus-within:bg-white focus-within:shadow-lg motion-reduce:transition-none"
+          className="flex w-full items-center gap-2 rounded-full border border-neutral-200 bg-neutral-100 p-2 transition duration-200 focus-within:scale-[1.02] focus-within:border-neutral-300 focus-within:bg-white focus-within:shadow-lg motion-reduce:transition-none"
         >
           <span aria-hidden="true" className="ps-2 text-neutral-400">
             <Search aria-hidden="true" className="size-5" />

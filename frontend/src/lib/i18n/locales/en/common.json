@@ -16,7 +16,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "continueWithGoogle": "Continue with Google",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "dismiss": "Dismiss"
   },
   "auth": {
     "avatarAlt": "{{username}}'s avatar",
@@ -59,6 +60,7 @@
     "badgeSponsor": "Sponsor",
     "follow": "Follow",
     "following": "Following",
+    "unfollow": "Unfollow",
     "like": "Like",
     "liked": "Liked",
     "save": "Save",
@@ -134,15 +136,17 @@
     "bio": "Bio",
     "save": "Save changes",
     "saved": "Changes saved",
+    "savedShort": "Saved",
     "emailPasswordHeading": "Email & password",
     "email": "Email",
     "newPassword": "New password",
     "confirmPassword": "Confirm password",
     "passwordMismatch": "Passwords don't match.",
     "appearanceHeading": "Appearance",
-    "language": "Language",
-    "theme": "Theme",
-    "themeSoon": "Coming soon"
+    "language": "Language"
+  },
+  "toast": {
+    "saveFailed": "Couldn't save your change."
   },
   "notFound": {
     "title": "You wandered off the map",

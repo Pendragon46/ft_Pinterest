@@ -74,25 +74,30 @@ function toProfileArtwork(
   }
 }
 
+// Cells spread across the eight compass directions → varied first tags (the world
+// maps each direction to a different discipline).
+const WORK_CELLS: readonly (readonly [number, number])[] = [
+  [4, 0], [3, 3], [0, 4], [-3, 3], [-4, 0], [-3, -3],
+  [0, -4], [3, -3], [5, 2], [-2, 5], [-5, -2], [2, -5],
+]
+const LIKED_CELLS: readonly (readonly [number, number])[] = [
+  [6, 1], [-1, 6], [-6, -1], [1, -6],
+]
+
 export function mockUserWorks(id: string): ProfileArtwork[] {
   if (id !== mockProfile.id) return []
   const works: ProfileArtwork[] = []
-  for (let cy = 2; cy <= 4; cy++) {
-    for (let cx = 2; cx <= 5; cx++) {
-      const work = toProfileArtwork(cx, cy, works.length)
-      if (work) works.push(work)
-    }
-  }
+  WORK_CELLS.forEach(([cx, cy]) => {
+    const work = toProfileArtwork(cx, cy, works.length)
+    if (work) works.push(work)
+  })
   return works
 }
 
 export function mockUserLiked(id: string): ProfileArtwork[] {
   if (id !== mockProfile.id) return []
   const liked: ProfileArtwork[] = []
-  const cells: readonly (readonly [number, number])[] = [
-    [6, 2], [7, 2], [8, 3], [6, 3],
-  ]
-  cells.forEach(([cx, cy], i) => {
+  LIKED_CELLS.forEach(([cx, cy], i) => {
     // The second liked work has no image → exercises the neutral placeholder.
     const work = toProfileArtwork(cx, cy, i + 5, i !== 1)
     if (work) liked.push(work)

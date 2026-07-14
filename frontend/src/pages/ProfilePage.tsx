@@ -222,6 +222,9 @@ export function ProfilePage() {
               tabIndex={0}
               className="mt-6 focus-visible:outline-none"
             >
+              {/* P2a — keyed by tab so the container (not the N cards) cross-fades
+                  on Works↔Liked. */}
+              <div key={tab} className="animate-reveal motion-reduce:animate-none">
               {activeQuery.isPending ? (
                 <div className={GRID}>
                   {Array.from({ length: 8 }).map((_, index) => (
@@ -256,11 +259,16 @@ export function ProfilePage() {
                 </div>
               ) : (
                 <div className={GRID}>
-                  {items.map((artwork) => (
-                    <ProfileArtworkCard key={artwork.id} artwork={artwork} />
+                  {items.map((artwork, index) => (
+                    <ProfileArtworkCard
+                      key={artwork.id}
+                      artwork={artwork}
+                      revealDelay={Math.min(280, index * 30)}
+                    />
                   ))}
                 </div>
               )}
+              </div>
             </div>
           </>
         ) : null}

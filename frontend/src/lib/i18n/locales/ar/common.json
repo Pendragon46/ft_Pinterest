@@ -16,7 +16,8 @@
     "cancel": "إلغاء",
     "save": "حفظ",
     "continueWithGoogle": "المتابعة باستخدام Google",
-    "signOut": "تسجيل الخروج"
+    "signOut": "تسجيل الخروج",
+    "dismiss": "إغلاق"
   },
   "auth": {
     "avatarAlt": "الصورة الرمزية لـ {{username}}",
@@ -80,7 +81,8 @@
     "commentsEmpty": "كن أول من يعلّق.",
     "commentPosted": "تم نشر التعليق.",
     "commentFailed": "تعذّر نشر تعليقك.",
-    "retry": "إعادة المحاولة"
+    "retry": "إعادة المحاولة",
+    "unfollow": "إلغاء المتابعة"
   },
   "category": {
     "portrait": "بورتريه",
@@ -248,7 +250,9 @@
     "passwordMismatch": "كلمتا المرور غير متطابقتين.",
     "appearanceHeading": "المظهر",
     "language": "اللغة",
-    "theme": "السمة",
-    "themeSoon": "قريبًا"
+    "savedShort": "تم الحفظ"
+  },
+  "toast": {
+    "saveFailed": "تعذّر حفظ التغيير."
   }
 }

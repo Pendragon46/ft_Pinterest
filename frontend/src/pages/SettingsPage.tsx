@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { AppHeader } from '@/components/AppHeader'
@@ -176,9 +177,10 @@ export function SettingsPage() {
                   </h2>
                   <div className="flex items-center gap-4">
                     <img
+                      key={avatarPreview}
                       src={avatarPreview}
                       alt=""
-                      className="size-16 rounded-full object-cover"
+                      className="size-16 animate-reveal rounded-full object-cover motion-reduce:animate-none"
                     />
                     <input
                       ref={fileRef}
@@ -231,9 +233,16 @@ export function SettingsPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Button type="submit" loading={profileMutation.isPending}>
-                      {t('settings.save')}
+                      {profileSaved ? (
+                        <>
+                          <Check aria-hidden="true" className="size-4" />
+                          {t('settings.savedShort')}
+                        </>
+                      ) : (
+                        t('settings.save')
+                      )}
                     </Button>
-                    <p role="status" className="text-sm text-green-700">
+                    <p role="status" className="sr-only">
                       {profileSaved ? t('settings.saved') : ''}
                     </p>
                   </div>
@@ -282,9 +291,16 @@ export function SettingsPage() {
                   />
                   <div className="flex items-center gap-3">
                     <Button type="submit" loading={accountMutation.isPending}>
-                      {t('settings.save')}
+                      {accountSaved ? (
+                        <>
+                          <Check aria-hidden="true" className="size-4" />
+                          {t('settings.savedShort')}
+                        </>
+                      ) : (
+                        t('settings.save')
+                      )}
                     </Button>
-                    <p role="status" className="text-sm text-green-700">
+                    <p role="status" className="sr-only">
                       {accountSaved ? t('settings.saved') : ''}
                     </p>
                   </div>
@@ -299,13 +315,6 @@ export function SettingsPage() {
                 <div className="flex items-center justify-between">
                   <span className="text-neutral-900">{t('settings.language')}</span>
                   <LanguageSwitcher />
-                </div>
-                {/* Theme: a documented placeholder — not a functional toggle yet. */}
-                <div className="flex items-center justify-between border-t border-neutral-100 pt-5">
-                  <span className="text-neutral-400">{t('settings.theme')}</span>
-                  <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-400">
-                    {t('settings.themeSoon')}
-                  </span>
                 </div>
               </div>
             )}

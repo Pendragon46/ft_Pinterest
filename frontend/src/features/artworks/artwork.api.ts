@@ -3,6 +3,8 @@
 // change (signatures and query keys stay identical). The artificial latency
 // keeps loading states exercised.
 
+import { maybeFailMutation } from '@/lib/devFail'
+
 import {
   addPostedComment,
   generateComments,
@@ -72,6 +74,7 @@ export async function postArtworkComment(
   input: { content: string; author: AuthorSummary },
 ): Promise<ArtworkComment> {
   await delay(POST_LATENCY_MS)
+  maybeFailMutation()
   const comment: ArtworkComment = {
     id: `s_${id}_${Date.now()}`,
     author: input.author,
@@ -81,4 +84,32 @@ export async function postArtworkComment(
   }
   addPostedComment(id, comment)
   return comment
+}
+
+export interface ArtworkLikeInput {
+  id: string
+  liked: boolean
+  loggedUser: string
+}
+
+/** Toggle a like (optimistic caller). The mock echoes the requested state.
+    TODO(backend): POST/DELETE /artworks/:id/like (body { loggedUser }). */
+export async function setArtworkLike(input: ArtworkLikeInput): Promise<boolean> {
+  await delay(POST_LATENCY_MS)
+  maybeFailMutation()
+  return input.liked
+}
+
+export interface ArtworkSaveInput {
+  id: string
+  saved: boolean
+  loggedUser: string
+}
+
+/** Toggle a save (optimistic caller). The mock echoes the requested state.
+    TODO(backend): POST/DELETE /artworks/:id/save (body { loggedUser }). */
+export async function setArtworkSave(input: ArtworkSaveInput): Promise<boolean> {
+  await delay(POST_LATENCY_MS)
+  maybeFailMutation()
+  return input.saved
 }

@@ -5,6 +5,7 @@
 
 import type { ProfileArtwork } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
+import { maybeFailMutation } from '@/lib/devFail'
 
 import {
   getMockProfile,
@@ -88,6 +89,7 @@ export async function updateProfile(
   input: UpdateProfileInput,
 ): Promise<User> {
   await delay(LATENCY_MS)
+  maybeFailMutation()
   // Send only the changed profile fields (the backend DTO forbids extra keys);
   // `loggedUser` is the auth seam meant for the server, not the client cache.
   const patch: ProfilePatch = {}
@@ -112,8 +114,23 @@ export async function updateAccount(
   input: UpdateAccountInput,
 ): Promise<User> {
   await delay(LATENCY_MS)
+  maybeFailMutation()
   const patch: ProfilePatch = {}
   if (input.email !== undefined) patch.email = input.email
   // A password change is server-only — nothing to reflect in the client cache.
   return updateMockProfile(id, patch)
+}
+
+export interface FollowInput {
+  id: string
+  following: boolean
+  loggedUser: string
+}
+
+/** Follow / unfollow a user (optimistic caller). The mock echoes the requested state.
+    TODO(backend): POST/DELETE /users/:id/follow (body { loggedUser }). */
+export async function setFollow(input: FollowInput): Promise<boolean> {
+  await delay(LATENCY_MS)
+  maybeFailMutation()
+  return input.following
 }
