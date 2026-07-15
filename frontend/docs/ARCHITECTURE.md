@@ -10,15 +10,17 @@ files keep only short labels + `TODO(backend)` markers; the "why" lives here.
 React 19 + TypeScript (strict) + Vite + Tailwind v4. State: Zustand (client),
 TanStack Query (server/cache). Routing: react-router-dom (declarative
 `<Routes>`). i18n: react-i18next. Icons: lucide-react. Animation: lottie-web
-(self-hosted, code-split). Alias `@` → `src`.
+(self-hosted, code-split). HTTP: one axios instance (`lib/http`) with a
+normalised `{ status, message, fieldErrors? }` error. Feedback: a shared toast
+store (`lib/toast.store`). Alias `@` → `src`.
 
 ```
 src/
   app/          providers.tsx, router.tsx
   pages/        one screen per route
-  features/     auth/, artworks/ (+ canvas/) — domain logic + UI
+  features/     auth/, artworks/ (+ canvas/), users/, legal/ — domain logic + UI
   components/   ui/ (design system), dev/ (throwaway tooling)
-  lib/          axios, i18n
+  lib/          http, i18n, toast.store, useCompact, devFail
 ```
 
 Conventions (enforced): **no hardcoded user-facing strings** (all via
@@ -124,8 +126,10 @@ only the mock relies on this.
   translated — unlike free user content (titles, tags), which is not.
 
 **API layer (`artwork.api.ts`):** the only UI read surface. When the backend
-lands only the function bodies change (axios via `lib/axios` + TanStack
-`AbortSignal`); signatures and query keys stay identical. `artworkKeys` is the
+lands only the function bodies change (axios via `lib/http` + TanStack
+`AbortSignal`); signatures and query keys stay identical. See
+[`./BACKEND_INTEGRATION.md`](./BACKEND_INTEGRATION.md) for the seam contract and
+the full endpoint inventory. `artworkKeys` is the
 single source of truth for cache keys, colocated with the fetchers so
 invalidation can't drift. Artificial latency keeps loading states exercised.
 
@@ -138,9 +142,13 @@ invalidation can't drift. Artificial latency keeps loading states exercised.
 - **`ArtworkGrid` is the Context.MD risk-note fallback:** rendered instead of the
   canvas if the canvas gets too costly. It reads a fixed block of tiles through
   the *same* `artworkKeys.tile` keys, sharing one cache with the canvas.
-- **`ArtworkDetail`:** all mutating actions (like/save/follow/comment/reply) are
-  gated behind `useRequireAuth` (signed-out → login modal). Toggles are local
-  state; counts are static until the backend exposes mutations.
+- **`ArtworkDetail`:** all mutating actions (like/save/follow/comment) are gated
+  behind `useRequireAuth` (signed-out → login modal) and run **optimistically**
+  (UX spec P0): the UI flips immediately, the mock mutation fires, and on failure
+  it rolls back through the shared toast with a **Retry** action. Counts stay
+  local-optimistic (reconcile on the next detail fetch). `?failMutations`
+  (`lib/devFail.ts`) forces the mock to reject so the rollback path is testable
+  today. Details in [`./ARTWORK_DETAIL_SPEC.md`](./ARTWORK_DETAIL_SPEC.md).
 
 ## Loading, motion & reward interactions
 
@@ -292,12 +300,21 @@ mutation and delete the hook.
   a deliberate exception to the i18n rule).
 - `features/auth/useDevSignIn.ts` + the `signIn(...)` call sites in Login/Register
   (mock login until the real auth API lands).
+- `lib/devFail.ts` + `?failMutations` — forces mock mutations to reject so the
+  optimistic rollback + toast path is testable now; every call site carries a
+  `TODO(backend)`. Delete with the rest in one pre-submission commit.
 
 ## Still TODO
 
-- Real Privacy Policy + Terms content (pages exist as placeholders; mandatory).
-- `Settings` screen; real `Profile`.
-- Backend wiring at every `TODO(backend)` marker (auth login/register, artwork
-  detail/comments, search, trending).
+- Backend wiring at every `TODO(backend)` marker — see
+  [`./BACKEND_INTEGRATION.md`](./BACKEND_INTEGRATION.md) for the full endpoint
+  inventory (exists / fix-first / missing / product-call) and the wiring order.
+  Highest priority: `GET /auth/me` (unlocks identity, deletes every `loggedUser`).
+- Product calls still open: the Save/Bookmark model (no Prisma model yet) and the
+  detail view-count (no server field — add or drop, don't fake).
 - Wire `SearchEmptyState` + skeleton **tinting** once search filters the map and
   real images land (blur-up / fade-in).
+
+(Done since the first draft: Profile + Settings pages, the shared toast +
+optimistic mutations, `features/users` + `features/legal`, real Privacy/Terms
+content, and the single `lib/http` client.)

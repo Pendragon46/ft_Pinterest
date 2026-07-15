@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, FormEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
@@ -17,6 +17,7 @@ import {
 } from '@/features/auth/auth.validation'
 import { updateAccount, updateProfile, userKeys } from '@/features/users/user.api'
 import { DEFAULT_AVATAR } from '@/lib/avatar'
+import { useToast } from '@/lib/toast.store'
 
 type Section = 'account' | 'appearance'
 
@@ -26,6 +27,11 @@ export function SettingsPage() {
   const login = useAuthStore((state) => state.login)
   const queryClient = useQueryClient()
   const userId = authUser?.id ?? 'dev-user'
+  const toast = useToast()
+  // Auto-clear timers for the "Saved ✓" confirmation, tracked so an overlapping
+  // re-save (or an unmount) cancels the pending one instead of clobbering state.
+  const profileSavedTimer = useRef<number | undefined>(undefined)
+  const accountSavedTimer = useRef<number | undefined>(undefined)
 
   const [section, setSection] = useState<Section>('account')
 
@@ -65,9 +71,23 @@ export function SettingsPage() {
       login(updated) // reflect the new identity in the header/avatar immediately
       void queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
       setProfileSaved(true)
-      window.setTimeout(() => {
+      window.clearTimeout(profileSavedTimer.current)
+      profileSavedTimer.current = window.setTimeout(() => {
         setProfileSaved(false)
       }, 2000)
+    },
+    onError: () => {
+      // A failed save must not be silent — surface it the way like/save/follow do.
+      toast({
+        variant: 'error',
+        message: t('toast.saveFailed'),
+        action: {
+          label: t('artwork.retry'),
+          onClick: () => {
+            profileMutation.mutate()
+          },
+        },
+      })
     },
   })
 
@@ -85,11 +105,33 @@ export function SettingsPage() {
       setAccountSaved(true)
       setPassword('')
       setConfirm('')
-      window.setTimeout(() => {
+      window.clearTimeout(accountSavedTimer.current)
+      accountSavedTimer.current = window.setTimeout(() => {
         setAccountSaved(false)
       }, 2000)
     },
+    onError: () => {
+      toast({
+        variant: 'error',
+        message: t('toast.saveFailed'),
+        action: {
+          label: t('artwork.retry'),
+          onClick: () => {
+            accountMutation.mutate()
+          },
+        },
+      })
+    },
   })
+
+  // Cancel any pending "Saved ✓" reset if the page unmounts first.
+  useEffect(
+    () => () => {
+      window.clearTimeout(profileSavedTimer.current)
+      window.clearTimeout(accountSavedTimer.current)
+    },
+    [],
+  )
 
   const onAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

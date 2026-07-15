@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -37,6 +37,7 @@ export function ProfilePage() {
 
   const [tab, setTab] = useState<Tab>('works')
   const [shareHint, setShareHint] = useState(false)
+  const shareTimerRef = useRef<number | undefined>(undefined)
 
   const profileQuery = useQuery({
     queryKey: userKeys.profile(userId),
@@ -65,7 +66,8 @@ export function ProfilePage() {
       ?.writeText(`${window.location.origin}/profile`)
       .then(() => {
         setShareHint(true)
-        window.setTimeout(() => {
+        window.clearTimeout(shareTimerRef.current)
+        shareTimerRef.current = window.setTimeout(() => {
           setShareHint(false)
         }, 1600)
       })
@@ -73,6 +75,9 @@ export function ProfilePage() {
         /* best-effort */
       })
   }
+
+  // Don't let the share-hint timer fire after the page unmounts.
+  useEffect(() => () => window.clearTimeout(shareTimerRef.current), [])
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'works', label: t('profile.tabWorks') },
@@ -198,7 +203,9 @@ export function ProfilePage() {
                   type="button"
                   role="tab"
                   aria-selected={tab === entry.id}
-                  aria-controls={`profile-panel-${entry.id}`}
+                  aria-controls={
+                    tab === entry.id ? `profile-panel-${entry.id}` : undefined
+                  }
                   tabIndex={tab === entry.id ? 0 : -1}
                   onClick={() => {
                     setTab(entry.id)

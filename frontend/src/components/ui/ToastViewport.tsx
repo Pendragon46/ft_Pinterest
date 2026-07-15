@@ -10,6 +10,8 @@ export function ToastViewport() {
   const { t } = useTranslation('common')
   const toasts = useToastStore((state) => state.toasts)
   const dismiss = useToastStore((state) => state.dismiss)
+  const pause = useToastStore((state) => state.pause)
+  const resume = useToastStore((state) => state.resume)
 
   if (toasts.length === 0) return null
 
@@ -20,6 +22,10 @@ export function ToastViewport() {
           key={toast.id}
           role={toast.variant === 'error' ? 'alert' : 'status'}
           aria-live={toast.variant === 'error' ? 'assertive' : 'polite'}
+          onMouseEnter={pause}
+          onMouseLeave={resume}
+          onFocus={pause}
+          onBlur={resume}
           className="pointer-events-auto flex max-w-sm animate-reveal items-center gap-3 rounded-xl bg-neutral-900 px-4 py-3 text-sm text-white shadow-lg motion-reduce:animate-none"
         >
           <span className="flex-1">{toast.message}</span>

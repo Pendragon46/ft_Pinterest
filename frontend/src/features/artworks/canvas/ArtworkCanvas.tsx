@@ -119,7 +119,11 @@ export function ArtworkCanvas() {
         if (typingElsewhere) return
         event.preventDefault()
         refocus()
-        searchInputRef.current?.focus()
+        // preventScroll: focus's native scroll-into-view fights the camera
+        // fly-home and would leave the bar off-screen; rAF lets refocus settle.
+        requestAnimationFrame(() => {
+          searchInputRef.current?.focus({ preventScroll: true })
+        })
       }
     }
     window.addEventListener('keydown', onKeyDown)

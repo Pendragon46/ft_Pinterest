@@ -16,7 +16,11 @@ interface ShowInput {
   message: string
   variant?: 'default' | 'error'
   action?: ToastAction
-  /** Auto-dismiss after this many ms (0 = keep until dismissed). */
+  /**
+   * Auto-dismiss after this many ms (0 = keep until dismissed). Defaults to 0 for
+   * toasts that carry an `action` — the retry path is the only way to recover a
+   * failed optimistic write, so a timer must never remove it — and 5s otherwise.
+   */
   duration?: number
 }
 
@@ -24,29 +28,72 @@ interface ToastState {
   toasts: Toast[]
   show: (input: ShowInput) => void
   dismiss: (id: number) => void
+  /** Freeze/thaw the auto-dismiss timers while the viewport is hovered or focused. */
+  pause: () => void
+  resume: () => void
 }
 
 let nextId = 1
 const DEFAULT_DURATION = 5000
 
+// Auto-dismiss bookkeeping kept outside React state: each timed toast's intended
+// lifetime and its live timer handle, so timers can be paused (hover/focus) and
+// cancelled (dismiss) individually.
+const lifetimes = new Map<number, number>()
+const timers = new Map<number, number>()
+
+function clearTimer(id: number) {
+  const handle = timers.get(id)
+  if (handle !== undefined) {
+    window.clearTimeout(handle)
+    timers.delete(id)
+  }
+}
+
 // App-wide toast queue. Callers pass already-translated strings; the viewport
 // (mounted once at the app root) renders them. Used for optimistic-rollback
 // "couldn't save — retry" messages and other transient confirmations.
-export const useToastStore = create<ToastState>((set, get) => ({
-  toasts: [],
-  show: ({ message, variant = 'default', action, duration = DEFAULT_DURATION }) => {
-    const id = nextId++
-    set((state) => ({ toasts: [...state.toasts, { id, message, variant, action }] }))
-    if (duration > 0) {
+export const useToastStore = create<ToastState>((set, get) => {
+  const schedule = (id: number, duration: number) => {
+    timers.set(
+      id,
       window.setTimeout(() => {
         get().dismiss(id)
-      }, duration)
-    }
-  },
-  dismiss: (id) => {
-    set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) }))
-  },
-}))
+      }, duration),
+    )
+  }
+  return {
+    toasts: [],
+    show: ({ message, variant = 'default', action, duration }) => {
+      const id = nextId++
+      // Actionable toasts are sticky by default so the retry affordance survives.
+      const ttl = duration ?? (action ? 0 : DEFAULT_DURATION)
+      set((state) => ({
+        toasts: [...state.toasts, { id, message, variant, action }],
+      }))
+      if (ttl > 0) {
+        lifetimes.set(id, ttl)
+        schedule(id, ttl)
+      }
+    },
+    dismiss: (id) => {
+      clearTimer(id)
+      lifetimes.delete(id)
+      set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) }))
+    },
+    // Hovering/focusing the viewport clears every pending timer so a toast can't
+    // vanish mid-read; leaving restarts each remaining toast from its full
+    // lifetime (a safe over-generosity — the point is to not lose it while read).
+    pause: () => {
+      for (const id of Array.from(timers.keys())) clearTimer(id)
+    },
+    resume: () => {
+      for (const [id, duration] of lifetimes) {
+        if (!timers.has(id)) schedule(id, duration)
+      }
+    },
+  }
+})
 
 /** Convenience: the `show` action for firing toasts from components. */
 export function useToast() {

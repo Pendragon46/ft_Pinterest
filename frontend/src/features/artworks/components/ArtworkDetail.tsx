@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MessageCircle, Bookmark, Share2, X } from 'lucide-react'
@@ -66,6 +66,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     'idle',
   )
   const composerRef = useRef<HTMLInputElement>(null)
+  const shareTimerRef = useRef<number | undefined>(undefined)
 
   const commentsQuery = useQuery({
     queryKey: artworkKeys.comments(artwork.id),
@@ -137,6 +138,10 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         action: {
           label: t('artwork.retry'),
           onClick: () => {
+            // Clear the composer only if it still shows this failed comment, so a
+            // retry that succeeds can't leave stale text that invites a re-post —
+            // while a newer draft typed since the failure is preserved.
+            setDraft((current) => (current === content ? '' : current))
             postMutation.mutate(content)
           },
         },
@@ -167,15 +172,23 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         liked: next,
         loggedUser: currentUser?.id ?? '',
       }),
-    onError: (_error, next) => {
-      applyLike(!next)
+    // Flip in onMutate and snapshot the pre-flip value as context, so rollback
+    // restores the exact prior state — never replaying the celebratory burst on an
+    // un-like, and safe if two opposite toggles interleave — rather than inverting
+    // this call's `next`.
+    onMutate: (next: boolean) => {
+      const previous = liked
+      applyLike(next)
+      return { previous }
+    },
+    onError: (_error, next, context) => {
+      setLiked(context?.previous ?? !next)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
         action: {
           label: t('artwork.retry'),
           onClick: () => {
-            applyLike(next)
             likeMutation.mutate(next)
           },
         },
@@ -183,7 +196,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     },
   })
   const doLike = (next: boolean) => {
-    applyLike(next)
     likeMutation.mutate(next)
   }
 
@@ -194,15 +206,19 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         saved: next,
         loggedUser: currentUser?.id ?? '',
       }),
-    onError: (_error, next) => {
-      setSaved(!next)
+    onMutate: (next: boolean) => {
+      const previous = saved
+      setSaved(next)
+      return { previous }
+    },
+    onError: (_error, next, context) => {
+      setSaved(context?.previous ?? !next)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
         action: {
           label: t('artwork.retry'),
           onClick: () => {
-            setSaved(next)
             saveMutation.mutate(next)
           },
         },
@@ -210,7 +226,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     },
   })
   const doSave = (next: boolean) => {
-    setSaved(next)
     saveMutation.mutate(next)
   }
 
@@ -220,7 +235,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       ?.writeText(`${window.location.origin}/artwork/${artwork.id}`)
       .then(() => {
         setShareHint(true)
-        window.setTimeout(() => {
+        window.clearTimeout(shareTimerRef.current)
+        shareTimerRef.current = window.setTimeout(() => {
           setShareHint(false)
         }, 1600)
       })
@@ -228,6 +244,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         /* ignore — sharing is best-effort */
       })
   }
+
+  // Don't let the share-hint timer fire after the detail (often a modal) unmounts.
+  useEffect(() => () => window.clearTimeout(shareTimerRef.current), [])
 
   const handlePost = () => {
     const content = draft.trim()

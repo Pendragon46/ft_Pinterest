@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "verify": "tsc -b && eslint . && node scripts/check-i18n.mjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

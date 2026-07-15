@@ -40,15 +40,22 @@ export function FollowButton({ userId }: FollowButtonProps) {
   const mutation = useMutation({
     mutationFn: (next: boolean) =>
       setFollow({ id: userId, following: next, loggedUser: currentUser?.id ?? '' }),
-    onError: (_error, next) => {
-      setFollowing(!next) // roll back the optimistic flip
+    // Flip in onMutate and snapshot the prior value as context, then restore that
+    // exact value on error (no re-bounce, and safe if opposite toggles interleave)
+    // rather than inverting this call's `next`.
+    onMutate: (next: boolean) => {
+      const previous = following
+      flip(next)
+      return { previous }
+    },
+    onError: (_error, next, context) => {
+      setFollowing(context?.previous ?? !next)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
         action: {
           label: t('artwork.retry'),
           onClick: () => {
-            flip(next)
             mutation.mutate(next)
           },
         },
@@ -58,9 +65,7 @@ export function FollowButton({ userId }: FollowButtonProps) {
 
   const onClick = () => {
     requireAuth(() => {
-      const next = !following
-      flip(next)
-      mutation.mutate(next)
+      mutation.mutate(!following)
     })
   }
 
