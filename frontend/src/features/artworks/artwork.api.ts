@@ -3,6 +3,7 @@
 // change (signatures and query keys stay identical). The artificial latency
 // keeps loading states exercised.
 
+import { addCreatedArtwork, getCreatedDetail } from '@/features/users/user.mock'
 import { maybeFailMutation } from '@/lib/devFail'
 
 import {
@@ -16,6 +17,8 @@ import type {
   ArtworkDetail,
   AuthorSummary,
   CanvasArtwork,
+  MediaType,
+  ProfileArtwork,
 } from './artwork.types'
 
 const TILE_LATENCY_MS = 60
@@ -50,6 +53,9 @@ export async function fetchTileArtworks(
     TODO(backend): GET /artworks/:id → ArtworkDetail (404 if unknown) */
 export async function fetchArtworkDetail(id: string): Promise<ArtworkDetail> {
   await delay(DETAIL_LATENCY_MS)
+  // Works published this session resolve from the created store first (§5).
+  const created = getCreatedDetail(id)
+  if (created) return created
   const detail = generateDetail(id)
   if (!detail) throw new Error(`Artwork not found: ${id}`)
   return detail
@@ -112,4 +118,30 @@ export async function setArtworkSave(input: ArtworkSaveInput): Promise<boolean> 
   await delay(POST_LATENCY_MS)
   maybeFailMutation()
   return input.saved
+}
+
+export interface CreateArtworkInput {
+  file: File
+  mediaType: MediaType
+  title: string
+  description: string
+  tags: string[]
+  userId: string
+}
+
+/** Publish a new artwork; the mock persists it in the session store and returns
+    its profile-grid shape (id lets the caller open the fresh detail).
+    TODO(backend): POST /artworks/user/:userId — multipart/form-data, file field
+    `art` (≤10 MB; jpeg/png/gif/webp/mp4), fields { title, description?, tags[],
+    userId } → Artwork (server owns id, mediaUrl, mediaPublicId, timestamps). On
+    success invalidate userKeys.works(userId) + userKeys.profile(userId). Send
+    tags as repeated `tags` parts and verify a SINGLE tag still parses as an array
+    in Swagger — if it fails @IsArray, the backend needs an @Transform (add to
+    E.2, alongside the broken GET /artworks/user/:userId @Param('id')). */
+export async function createArtwork(
+  input: CreateArtworkInput,
+): Promise<ProfileArtwork> {
+  await delay(POST_LATENCY_MS)
+  maybeFailMutation()
+  return addCreatedArtwork(input)
 }

@@ -34,6 +34,35 @@
     "hidePassword": "إخفاء كلمة المرور",
     "consent": "بالمتابعة، فإنك توافق على <terms>الشروط</terms> و<privacy>سياسة الخصوصية</privacy>."
   },
+  "create": {
+    "title": "نشر عمل",
+    "subtitle": "شارك المجتمع بشيء صنعته.",
+    "cta": "إنشاء",
+    "dropzoneIdle": "اسحب صورة أو فيديو إلى هنا، أو انقر للتصفح",
+    "dropzoneActive": "أفلت للرفع",
+    "dropzoneHint": "JPEG أو PNG أو GIF أو WebP أو MP4 — حتى 10 ميغابايت",
+    "replace": "استبدال",
+    "clear": "مسح",
+    "fieldTitle": "العنوان",
+    "fieldDescription": "الوصف",
+    "fieldTags": "الوسوم",
+    "tagPlaceholder": "أضف وسمًا واضغط Enter",
+    "removeTag": "إزالة الوسم {{tag}}",
+    "publish": "نشر",
+    "cancel": "إلغاء",
+    "published": "تم نشر العمل",
+    "videoBadge": "فيديو",
+    "errors": {
+      "fileRequired": "أضف صورة أو فيديو للنشر.",
+      "fileType": "استخدم ملف JPEG أو PNG أو GIF أو WebP أو MP4.",
+      "fileTooLarge": "يجب أن يكون حجم الملف 10 ميغابايت أو أقل.",
+      "titleRequired": "العنوان مطلوب.",
+      "titleLength": "يجب أن يكون العنوان بين 3 و100 حرفًا.",
+      "descriptionLength": "يجب أن يكون الوصف 2000 حرف أو أقل.",
+      "tagsMin": "أضف وسمًا واحدًا على الأقل.",
+      "tagsMax": "استخدم 5 وسوم كحد أقصى."
+    }
+  },
   "divider": {
     "or": "أو"
   },

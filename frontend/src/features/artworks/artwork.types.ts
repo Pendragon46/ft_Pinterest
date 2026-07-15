@@ -18,6 +18,9 @@ export type Category = (typeof CATEGORIES)[number]
 // How a card was produced/paid — drives the small badge on the card.
 export type ArtworkKind = 'standard' | 'ai' | 'sponsor'
 
+// Uploaded media kind — drives image-vs-video rendering across every surface.
+export type MediaType = 'image' | 'video'
+
 /** Author info embedded in artwork payloads (a subset of User). */
 export interface AuthorSummary {
   id: string
@@ -40,9 +43,15 @@ export interface ArtworkSummary {
 }
 
 /** Full artwork, as shown in the detail modal. */
-export interface ArtworkDetail extends ArtworkSummary {
+export interface ArtworkDetail extends Omit<ArtworkSummary, 'category' | 'kind'> {
+  /** Canvas works carry a discipline + kind; user-created works have neither. */
+  category?: Category
+  kind?: ArtworkKind
   description: string
   tags: string[]
+  /** Present for user-created works (the uploaded file); canvas works use `color`. */
+  mediaUrl?: string | null
+  mediaType?: MediaType
 }
 
 /** An artwork placed on the infinite discovery plane (world pixels). */
@@ -63,6 +72,8 @@ export interface ProfileArtwork {
   title: string
   /** Optional in Prisma; when null the card shows a neutral placeholder. */
   mediaUrl?: string | null
+  /** 'video' cards show a badge + static poster frame (no autoplay in grids). */
+  mediaType?: MediaType
   /** Free user text — never translated. */
   tags: { name: string }[]
   /** Prisma `_count` include. */

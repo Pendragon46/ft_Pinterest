@@ -34,6 +34,35 @@
     "hidePassword": "Hide password",
     "consent": "By continuing, you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>."
   },
+  "create": {
+    "title": "Publish a work",
+    "subtitle": "Share something you made with the community.",
+    "cta": "Create",
+    "dropzoneIdle": "Drag an image or video here, or click to browse",
+    "dropzoneActive": "Drop to upload",
+    "dropzoneHint": "JPEG, PNG, GIF, WebP or MP4 — up to 10 MB",
+    "replace": "Replace",
+    "clear": "Clear",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "fieldTags": "Tags",
+    "tagPlaceholder": "Add a tag and press Enter",
+    "removeTag": "Remove tag {{tag}}",
+    "publish": "Publish",
+    "cancel": "Cancel",
+    "published": "Work published",
+    "videoBadge": "Video",
+    "errors": {
+      "fileRequired": "Add an image or video to publish.",
+      "fileType": "Use a JPEG, PNG, GIF, WebP or MP4 file.",
+      "fileTooLarge": "File must be 10 MB or smaller.",
+      "titleRequired": "A title is required.",
+      "titleLength": "Title must be between 3 and 100 characters.",
+      "descriptionLength": "Description must be 2000 characters or fewer.",
+      "tagsMin": "Add at least one tag.",
+      "tagsMax": "Use at most 5 tags."
+    }
+  },
   "divider": {
     "or": "or"
   },

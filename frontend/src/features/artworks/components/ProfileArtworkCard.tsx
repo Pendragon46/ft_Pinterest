@@ -1,3 +1,4 @@
+import { Video } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -34,15 +35,35 @@ export function ProfileArtworkCard({
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
         {artwork.mediaUrl ? (
-          <img
-            src={artwork.mediaUrl}
-            alt=""
-            loading="lazy"
-            className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-          />
+          artwork.mediaType === 'video' ? (
+            // Static poster frame (preload=metadata) — no autoplay in grids (§5).
+            <video
+              src={artwork.mediaUrl}
+              muted
+              playsInline
+              preload="metadata"
+              className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            />
+          ) : (
+            <img
+              src={artwork.mediaUrl}
+              alt=""
+              loading="lazy"
+              className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+            />
+          )
         ) : (
           <span aria-hidden="true" className="block size-full bg-neutral-200" />
         )}
+        {artwork.mediaType === 'video' ? (
+          <span
+            role="img"
+            aria-label={t('create.videoBadge')}
+            className="absolute end-2 top-2 flex items-center justify-center rounded-full bg-neutral-900/70 p-1.5 text-white backdrop-blur"
+          >
+            <Video aria-hidden="true" className="size-3.5" />
+          </span>
+        ) : null}
       </div>
       <p className="mt-2 truncate font-serif text-neutral-900">{artwork.title}</p>
       <p className="truncate text-sm text-neutral-500">

@@ -34,6 +34,35 @@
     "hidePassword": "Masquer le mot de passe",
     "consent": "En continuant, vous acceptez nos <terms>Conditions</terms> et notre <privacy>Politique de confidentialité</privacy>."
   },
+  "create": {
+    "title": "Publier une œuvre",
+    "subtitle": "Partagez une de vos créations avec la communauté.",
+    "cta": "Créer",
+    "dropzoneIdle": "Glissez une image ou une vidéo ici, ou cliquez pour parcourir",
+    "dropzoneActive": "Déposez pour téléverser",
+    "dropzoneHint": "JPEG, PNG, GIF, WebP ou MP4 — jusqu'à 10 Mo",
+    "replace": "Remplacer",
+    "clear": "Effacer",
+    "fieldTitle": "Titre",
+    "fieldDescription": "Description",
+    "fieldTags": "Étiquettes",
+    "tagPlaceholder": "Ajoutez une étiquette et appuyez sur Entrée",
+    "removeTag": "Retirer l'étiquette {{tag}}",
+    "publish": "Publier",
+    "cancel": "Annuler",
+    "published": "Œuvre publiée",
+    "videoBadge": "Vidéo",
+    "errors": {
+      "fileRequired": "Ajoutez une image ou une vidéo pour publier.",
+      "fileType": "Utilisez un fichier JPEG, PNG, GIF, WebP ou MP4.",
+      "fileTooLarge": "Le fichier doit faire 10 Mo ou moins.",
+      "titleRequired": "Un titre est requis.",
+      "titleLength": "Le titre doit contenir entre 3 et 100 caractères.",
+      "descriptionLength": "La description doit contenir 2000 caractères ou moins.",
+      "tagsMin": "Ajoutez au moins une étiquette.",
+      "tagsMax": "Utilisez au maximum 5 étiquettes."
+    }
+  },
   "divider": {
     "or": "ou"
   },

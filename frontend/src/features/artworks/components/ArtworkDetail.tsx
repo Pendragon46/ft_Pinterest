@@ -276,14 +276,32 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
 
   return (
     <article className={SHELL}>
-      {/* Placeholder color stands in for the future image (§5). */}
+      {/* Media: the uploaded image/video when present, else a colour placeholder
+          standing in for the future image (§5). */}
       <div
-        className="relative flex h-44 items-end justify-start p-5 md:h-auto"
-        style={{ backgroundColor: artwork.color }}
+        className="relative flex h-44 items-end justify-start overflow-hidden p-5 md:h-auto"
+        style={artwork.mediaUrl ? undefined : { backgroundColor: artwork.color }}
       >
-        <span className="font-serif text-sm uppercase tracking-[0.35em] text-white/70">
-          {t(`category.${artwork.category}`)}
-        </span>
+        {artwork.mediaUrl ? (
+          artwork.mediaType === 'video' ? (
+            <video
+              src={artwork.mediaUrl}
+              controls
+              playsInline
+              className="absolute inset-0 size-full bg-black object-contain"
+            />
+          ) : (
+            <img
+              src={artwork.mediaUrl}
+              alt={artwork.title}
+              className="absolute inset-0 size-full object-cover"
+            />
+          )
+        ) : artwork.category ? (
+          <span className="font-serif text-sm uppercase tracking-[0.35em] text-white/70">
+            {t(`category.${artwork.category}`)}
+          </span>
+        ) : null}
       </div>
 
       <div className="flex min-h-0 flex-col">
@@ -327,8 +345,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             {artwork.title}
           </h1>
           <p className="mt-1 text-sm text-neutral-500">
-            {t('artwork.views', { views: compact(artwork.viewCount) })} ·{' '}
-            {t(`category.${artwork.category}`)}
+            {t('artwork.views', { views: compact(artwork.viewCount) })}
+            {artwork.category ? ` · ${t(`category.${artwork.category}`)}` : ''}
           </p>
 
           {artwork.description ? (

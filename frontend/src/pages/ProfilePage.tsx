@@ -12,6 +12,7 @@ import {
   ProfileArtworkCardSkeleton,
 } from '@/features/artworks/components/ProfileArtworkCard'
 import { useAuthStore } from '@/features/auth/auth.store'
+import { useRequireAuth } from '@/features/auth/useRequireAuth'
 import {
   fetchFollowerCount,
   fetchFollowingCount,
@@ -29,6 +30,7 @@ const GRID = 'grid grid-cols-2 gap-x-5 gap-y-6 md:grid-cols-3 xl:grid-cols-4'
 export function ProfilePage() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
+  const requireAuth = useRequireAuth()
   const compact = useCompact()
   const authUser = useAuthStore((state) => state.user)
   // `/profile` shows the signed-in user; `/profile/:userId` shows anyone else
@@ -265,6 +267,19 @@ export function ProfilePage() {
                         : t('profile.worksEmptyOther')
                       : t('profile.likedEmpty')}
                   </p>
+                  {/* The empty-state CTA finally has a destination (§0). */}
+                  {tab === 'works' && isOwnProfile ? (
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        requireAuth(() => {
+                          navigate('/create')
+                        })
+                      }}
+                    >
+                      {t('create.cta')}
+                    </Button>
+                  ) : null}
                 </div>
               ) : (
                 <div className={GRID}>

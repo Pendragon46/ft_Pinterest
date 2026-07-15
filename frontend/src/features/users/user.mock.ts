@@ -6,7 +6,9 @@
 
 import { AUTHORS, generateCell } from '@/features/artworks/artwork.mock'
 import type {
+  ArtworkDetail,
   AuthorSummary,
+  MediaType,
   ProfileArtwork,
 } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
@@ -136,7 +138,9 @@ export function mockUserWorks(id: string): ProfileArtwork[] {
     const work = toProfileArtwork(cx, cy, works.length)
     if (work) works.push(work)
   })
-  return works
+  // Works published this session come first, so a fresh publish is visible atop
+  // the deterministic list (§5).
+  return [...getCreatedWorks(id), ...works]
 }
 
 export function mockUserLiked(id: string): ProfileArtwork[] {
@@ -154,3 +158,89 @@ export function mockUserLiked(id: string): ProfileArtwork[] {
 
 export const MOCK_FOLLOWER_COUNT = 1300
 export const MOCK_FOLLOWING_COUNT = 142
+
+// ── User-created works (session store) ──────────────────────────────────────
+// Stand-in for POST /artworks + persistence: works published this session live
+// here so the whole loop (publish → detail → Profile Works) closes on mocks,
+// prepended ahead of the deterministic list. TODO(backend): delete — the server
+// persists artworks and the user/detail GETs return them.
+
+export interface CreateArtworkMockInput {
+  file: File
+  mediaType: MediaType
+  title: string
+  description: string
+  tags: string[]
+  userId: string
+}
+
+interface CreatedArtwork extends CreateArtworkMockInput {
+  id: string
+  mediaUrl: string
+  author: AuthorSummary
+}
+
+let createdSeq = 0
+const createdWorks: CreatedArtwork[] = []
+
+// The signed-in account as an artwork author (User has no `color` → neutral).
+function selfAsAuthor(): AuthorSummary {
+  return {
+    id: mockProfile.id,
+    username: mockProfile.fullname ?? mockProfile.username,
+    handle: mockProfile.username,
+    color: '#525252',
+  }
+}
+
+function createdToProfileArtwork(work: CreatedArtwork): ProfileArtwork {
+  return {
+    id: work.id,
+    title: work.title,
+    mediaUrl: work.mediaUrl,
+    mediaType: work.mediaType,
+    tags: work.tags.map((name) => ({ name })),
+    _count: { likes: 0, comments: 0 },
+  }
+}
+
+/** Publish a work into the session store; returns its profile-grid shape. The
+    object URL is minted here (not the form's preview URL) so it survives the
+    Create page unmounting right after publish. */
+export function addCreatedArtwork(input: CreateArtworkMockInput): ProfileArtwork {
+  createdSeq += 1
+  const record: CreatedArtwork = {
+    ...input,
+    id: `local_${createdSeq}`,
+    mediaUrl: URL.createObjectURL(input.file),
+    author: selfAsAuthor(),
+  }
+  createdWorks.unshift(record)
+  return createdToProfileArtwork(record)
+}
+
+/** Session-created works for a user, newest first. */
+export function getCreatedWorks(userId: string): ProfileArtwork[] {
+  return createdWorks
+    .filter((work) => work.userId === userId)
+    .map(createdToProfileArtwork)
+}
+
+/** Resolve a `local_*` id to a full detail, or null if it isn't a created work. */
+export function getCreatedDetail(id: string): ArtworkDetail | null {
+  const work = createdWorks.find((entry) => entry.id === id)
+  if (!work) return null
+  return {
+    id: work.id,
+    title: work.title,
+    color: '#e5e5e5', // neutral; the uploaded media is the hero, not a colour
+    viewCount: 0,
+    likeCount: 0,
+    commentCount: 0,
+    author: work.author,
+    description: work.description,
+    tags: work.tags,
+    mediaUrl: work.mediaUrl,
+    mediaType: work.mediaType,
+  }
+}

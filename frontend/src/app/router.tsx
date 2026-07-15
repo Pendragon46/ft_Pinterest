@@ -3,6 +3,7 @@ import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import { Modal } from '@/components/ui/Modal'
 import { ArtworkPage } from '@/pages/ArtworkPage'
+import { CreatePage } from '@/pages/CreatePage'
 import { DevUiPage } from '@/pages/DevUiPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -33,6 +34,7 @@ export function AppRouter() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/:userId" element={<ProfilePage />} />
+        <Route path="/create" element={<CreatePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/artwork/:id" element={<ArtworkPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
