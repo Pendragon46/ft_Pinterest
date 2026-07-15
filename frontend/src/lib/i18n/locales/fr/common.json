@@ -29,7 +29,10 @@
     "passwordLabel": "Mot de passe",
     "passwordPlaceholder": "8+ caractères, lettres, chiffres et symboles",
     "usernameLabel": "Nom d'utilisateur",
-    "usernamePlaceholder": "votre_pseudo"
+    "usernamePlaceholder": "votre_pseudo",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "consent": "En continuant, vous acceptez nos <terms>Conditions</terms> et notre <privacy>Politique de confidentialité</privacy>."
   },
   "divider": {
     "or": "ou"

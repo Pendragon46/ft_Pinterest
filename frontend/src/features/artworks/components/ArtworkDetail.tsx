@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Heart, MessageCircle, Bookmark, Share2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
@@ -287,21 +288,27 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
 
       <div className="flex min-h-0 flex-col">
         <header className="flex items-center gap-3 border-b border-neutral-100 p-4">
-          <span
-            aria-hidden="true"
-            className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
-            style={{ backgroundColor: artwork.author.color }}
+          {/* Avatar + name open the author's profile. */}
+          <Link
+            to={`/profile/${artwork.author.id}`}
+            className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
           >
-            {artwork.author.username.charAt(0).toUpperCase()}
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-serif text-neutral-900">
-              {artwork.author.username}
-            </p>
-            <p className="truncate text-sm text-neutral-500">
-              @{artwork.author.handle}
-            </p>
-          </div>
+            <span
+              aria-hidden="true"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
+              style={{ backgroundColor: artwork.author.color }}
+            >
+              {artwork.author.username.charAt(0).toUpperCase()}
+            </span>
+            <div className="min-w-0">
+              <p className="truncate font-serif text-neutral-900 group-hover:underline">
+                {artwork.author.username}
+              </p>
+              <p className="truncate text-sm text-neutral-500">
+                @{artwork.author.handle}
+              </p>
+            </div>
+          </Link>
           <FollowButton userId={artwork.author.id} />
           {onClose ? (
             <button

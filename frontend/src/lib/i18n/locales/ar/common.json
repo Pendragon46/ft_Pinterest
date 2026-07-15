@@ -29,7 +29,10 @@
     "passwordLabel": "كلمة المرور",
     "passwordPlaceholder": "8+ أحرف، حروف وأرقام ورموز",
     "usernameLabel": "اسم المستخدم",
-    "usernamePlaceholder": "اسمك_المستعار"
+    "usernamePlaceholder": "اسمك_المستعار",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
+    "consent": "بالمتابعة، فإنك توافق على <terms>الشروط</terms> و<privacy>سياسة الخصوصية</privacy>."
   },
   "divider": {
     "or": "أو"

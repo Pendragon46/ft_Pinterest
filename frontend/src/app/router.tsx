@@ -32,6 +32,7 @@ export function AppRouter() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/:userId" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/artwork/:id" element={<ArtworkPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />

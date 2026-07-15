@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
+import { FollowButton } from '@/features/artworks/components/FollowButton'
 import {
   ProfileArtworkCard,
   ProfileArtworkCardSkeleton,
@@ -30,10 +31,12 @@ export function ProfilePage() {
   const navigate = useNavigate()
   const compact = useCompact()
   const authUser = useAuthStore((state) => state.user)
-  // Own profile only this version; identity is a single input so /profile/:username
-  // (other users) is a later extension, not a rewrite.
-  const userId = authUser?.id ?? 'dev-user'
-  const isOwnProfile = true
+  // `/profile` shows the signed-in user; `/profile/:userId` shows anyone else
+  // (e.g. tapping an author in the artwork detail). Same page, one param.
+  const { userId: routeUserId } = useParams()
+  const selfId = authUser?.id ?? 'dev-user'
+  const userId = routeUserId ?? selfId
+  const isOwnProfile = userId === selfId
 
   const [tab, setTab] = useState<Tab>('works')
   const [shareHint, setShareHint] = useState(false)
@@ -62,8 +65,9 @@ export function ProfilePage() {
   })
 
   const handleShare = () => {
+    const path = isOwnProfile ? '/profile' : `/profile/${userId}`
     void navigator.clipboard
-      ?.writeText(`${window.location.origin}/profile`)
+      ?.writeText(`${window.location.origin}${path}`)
       .then(() => {
         setShareHint(true)
         window.clearTimeout(shareTimerRef.current)
@@ -168,9 +172,7 @@ export function ProfilePage() {
                   {t('profile.edit')}
                 </Button>
               ) : (
-                // Follow branch — unreachable until auth exists (isOwnProfile is
-                // always true in this version); wired so adding it later is trivial.
-                <Button size="sm">{t('artwork.follow')}</Button>
+                <FollowButton userId={userId} />
               )}
               <div className="relative">
                 <Button variant="outline" size="sm" onClick={handleShare}>

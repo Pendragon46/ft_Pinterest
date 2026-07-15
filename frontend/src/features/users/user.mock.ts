@@ -4,8 +4,11 @@
 // mock so the detail modal opens with matching content. Swap the api bodies for
 // real fetches later and the UI is unchanged.
 
-import { generateCell } from '@/features/artworks/artwork.mock'
-import type { ProfileArtwork } from '@/features/artworks/artwork.types'
+import { AUTHORS, generateCell } from '@/features/artworks/artwork.mock'
+import type {
+  AuthorSummary,
+  ProfileArtwork,
+} from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
 import { DEFAULT_AVATAR } from '@/lib/avatar'
 
@@ -24,7 +27,11 @@ let mockProfile: User = {
 }
 
 export function getMockProfile(id: string): User | null {
-  return id === mockProfile.id ? { ...mockProfile } : null
+  if (id === mockProfile.id) return { ...mockProfile }
+  // Any canvas author (u1–u8) resolves to a synthesized profile so their page
+  // opens populated from the artwork detail. TODO(backend): GET /users/:id.
+  const author = AUTHORS.find((entry) => entry.id === id)
+  return author ? profileFromAuthor(author) : null
 }
 
 /** The profile fields Settings → Account can edit. */
@@ -51,6 +58,42 @@ const GRADIENTS: readonly (readonly [string, string])[] = [
 function gradientDataUri([a, b]: readonly [string, string]): string {
   const c = (hex: string) => hex.replace('#', '%23')
   return `data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%203'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='${c(a)}'/%3E%3Cstop%20offset='1'%20stop-color='${c(b)}'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='4'%20height='3'%20fill='url(%23g)'/%3E%3C/svg%3E`
+}
+
+// ── Other users (the canvas authors) ────────────────────────────────────────
+// Tapping an author in the detail view opens their profile, so every canvas
+// author must resolve to a populated page. We synthesize one from the
+// AuthorSummary; only the signed-in account (above) is editable.
+
+const AUTHOR_BIOS: readonly string[] = [
+  'Visual artist chasing light and texture.',
+  'Illustrator — coffee, ink, repeat.',
+  'Exploring color, form and quiet moments.',
+  'Designer of small worlds and big skies.',
+  'Photography, collage and happy accidents.',
+  'Making things that move, sometimes literally.',
+  'Type, grids and the space between.',
+  'Painting in pixels since forever.',
+]
+
+// 0-based rank of a known user (the account → 0, else the author's position),
+// or -1 if the id is unknown. Drives a per-user rotation so each grid differs.
+function knownUserIndex(id: string): number {
+  if (id === mockProfile.id) return 0
+  return AUTHORS.findIndex((author) => author.id === id)
+}
+
+function profileFromAuthor(author: AuthorSummary): User {
+  const i = Math.max(0, AUTHORS.indexOf(author))
+  return {
+    id: author.id,
+    fullname: author.username, // AUTHORS.username is the display name…
+    username: author.handle, //   …and handle is the unique @username
+    email: `${author.handle}@atlaas.app`,
+    bio: AUTHOR_BIOS[i % AUTHOR_BIOS.length],
+    avatarUrl: gradientDataUri(GRADIENTS[i % GRADIENTS.length]),
+    roles: 'USER',
+  }
 }
 
 // One backend-shaped artwork from a canvas cell: id + title match the cell, so
@@ -85,9 +128,11 @@ const LIKED_CELLS: readonly (readonly [number, number])[] = [
 ]
 
 export function mockUserWorks(id: string): ProfileArtwork[] {
-  if (id !== mockProfile.id) return []
+  const offset = knownUserIndex(id)
+  if (offset < 0) return []
   const works: ProfileArtwork[] = []
-  WORK_CELLS.forEach(([cx, cy]) => {
+  WORK_CELLS.forEach((_cell, k) => {
+    const [cx, cy] = WORK_CELLS[(k + offset) % WORK_CELLS.length]
     const work = toProfileArtwork(cx, cy, works.length)
     if (work) works.push(work)
   })
@@ -95,9 +140,11 @@ export function mockUserWorks(id: string): ProfileArtwork[] {
 }
 
 export function mockUserLiked(id: string): ProfileArtwork[] {
-  if (id !== mockProfile.id) return []
+  const offset = knownUserIndex(id)
+  if (offset < 0) return []
   const liked: ProfileArtwork[] = []
-  LIKED_CELLS.forEach(([cx, cy], i) => {
+  LIKED_CELLS.forEach((_cell, i) => {
+    const [cx, cy] = LIKED_CELLS[(i + offset) % LIKED_CELLS.length]
     // The second liked work has no image → exercises the neutral placeholder.
     const work = toProfileArtwork(cx, cy, i + 5, i !== 1)
     if (work) liked.push(work)

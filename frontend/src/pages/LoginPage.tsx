@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { useLocation } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
@@ -95,6 +95,18 @@ export function LoginPage() {
         <Button type="submit" fullWidth>
           {t('actions.signIn')}
         </Button>
+
+        {/* Consent microcopy — the links open the real legal pages. */}
+        <p className="text-center text-sm text-neutral-500">
+          <Trans
+            t={t}
+            i18nKey="form.consent"
+            components={{
+              terms: <TextLink to="/terms" />,
+              privacy: <TextLink to="/privacy" />,
+            }}
+          />
+        </p>
       </form>
 
       <Divider>{t('divider.or')}</Divider>

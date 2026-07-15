@@ -29,7 +29,10 @@
     "passwordLabel": "Password",
     "passwordPlaceholder": "8+ chars, letters, numbers & symbols",
     "usernameLabel": "Username",
-    "usernamePlaceholder": "your_handle"
+    "usernamePlaceholder": "your_handle",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "consent": "By continuing, you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>."
   },
   "divider": {
     "or": "or"
