@@ -127,8 +127,27 @@ services:
     networks:
       - ft_pinterest-network
 
+  garfana:
+    image: grafana/grafana-oss:latest
+    container_name: ft_pinterest_grafana
+    restart: always
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - ft_pinterest-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 networks:
   ft_pinterest-network:
 
 volumes:
   postgres_data:
+  grafana_data:
