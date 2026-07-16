@@ -53,18 +53,18 @@ export class UsersController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File){
-    return  this.usersService.update(id,updateUserDto, file, updateUserDto.loggedUser);
+    return  this.usersService.update(id,updateUserDto, file, "34131762-f416-40a9-98fb-95725479dff3");
   }
 
   @Patch(':id/roles')
   @Roles(Role.admin)
-  updateRoles(@Param('id') id: string, @Body() data: { roles: Role}) {
-  return this.usersService.updateRoles(id, data.roles);
+  updateRoles(@Param('id') id: string, @Body() data: { role: Role}) {
+  return this.usersService.updateRoles(id, data.role);
   }
 
   @Delete(':id')
-  removebyId(@Param('id') id: string, @Body() data: { loggedUser: string }) {
-	return  this.usersService.removeById(id, data.loggedUser);
+  removebyId(@Param('id') id: string) {
+	return  this.usersService.removeById(id, "34131762-f416-40a9-98fb-95725479dff3");
   }
 
   @Get(':id/artworks')

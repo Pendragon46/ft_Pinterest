@@ -4,7 +4,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
 import { Role } from '@prisma/client';
-import { stringify } from 'querystring';
 
 @Injectable()
 export class UsersService {
@@ -113,7 +112,7 @@ export class UsersService {
 	  throw new NotFoundException('User not found');
 	}
 	//from req
-	if (id !== loggedUserId && user.roles !== Role.ADMIN) {
+	if (id !== loggedUserId && user.role !== Role.ADMIN) {
 		throw new ForbiddenException('You are not authorized to update this user');
 	}
 	if (data.username) {
@@ -217,7 +216,7 @@ async getUserLikedArtworks(userId: string) {
 	  throw new NotFoundException('User not found');
 	}
 	// from req
-	if (id !== loggedUserId && user.roles !== Role.ADMIN) {
+	if (id !== loggedUserId && user.role !== Role.ADMIN) {
 		throw new ForbiddenException('You are not authorized to delete this user');
 	}
 	if (user.avatarPublicId && user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID	) {
@@ -251,7 +250,7 @@ async getUserLikedArtworks(userId: string) {
 	return { message: 'User deleted successfully' };
 }
 
-async updateRoles(id: string, roles: Role) {
+async updateRoles(id: string, role: Role) {
 	const user = await this.prisma.user.findUnique({
 		where: { id },
 	});
@@ -260,7 +259,7 @@ async updateRoles(id: string, roles: Role) {
 	}
 	return await this.prisma.user.update({
 		where: { id },
-		data: { roles },
+		data: { role },
 	});
 }
 }

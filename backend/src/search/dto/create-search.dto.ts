@@ -1,3 +1,4 @@
+import { Type } from "class-transformer";
 import { IsEnum, IsInt, IsOptional, IsPositive, IsString } from "class-validator";
 import { sort } from "src/enums/sort.enum";
 
@@ -8,19 +9,21 @@ export class CreateSearchDto {
 	@IsOptional()
 	q!:string;
 
+	@IsOptional()
+	@Type(() => Number)
 	@IsInt()
 	@IsPositive()
-	@IsOptional()
-	page!:string;
+	page:number=1;
 
 	@IsEnum(sort)
 	@IsOptional()
-	sort!:sort;
+	sort:sort = sort.RECENT;
 
+	@IsOptional()
+	@Type(() => Number)
 	@IsInt()
 	@IsPositive()
-	@IsOptional()
-	limit!:string;
+	limit:number=10;
 
 
 }

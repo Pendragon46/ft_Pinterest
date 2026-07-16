@@ -19,7 +19,7 @@ export class SearchService {
   async findArtwork(query: CreateSearchDto) {
 	const { q, page, sort, limit } = query;
 	const skip = (Number(page) - 1) * Number(limit);
-	const take = Number(limit);
+	const take = limit ? Number(limit): 10;
 	
 	if (sort !== 'recent' && sort !== 'oldest') {
 		throw new BadRequestException('Invalid sort value');
@@ -50,7 +50,7 @@ export class SearchService {
   async findUser(query: CreateSearchDto) {
 	const { q, page, sort, limit } = query;
 	const skip = (Number(page) - 1) * Number(limit);
-	const take = Number(limit);
+	const take = limit ?Number(limit) : 10;
 	
 	if (sort !== 'recent' && sort !== 'oldest') {
 		throw new BadRequestException('Invalid sort value');
@@ -58,12 +58,11 @@ export class SearchService {
 	if (Number(page) < 1 || Number(limit) < 1) {
 		throw new BadRequestException('Page and limit must be greater than 0');
 	}
-	const artworks = await this.prisma.user.findMany({
+	const user = await this.prisma.user.findMany({
 		where: {
 			...(q ? {
 				OR: [
 					{ username: { contains: q, mode: 'insensitive' } },
-					{ email: { contains: q, mode: 'insensitive' } },
 					{ fullname: { contains: q, mode: 'insensitive' } },
 				],
 			} : {})
@@ -74,13 +73,13 @@ export class SearchService {
 			createdAt: sort === 'recent' ? 'desc' : 'asc',
 		},
 	});
-	return artworks;
+	return user;
   }
   // find tags
   async findTag(query: CreateSearchDto) {
 	const { q, page, sort, limit } = query;
 	const skip = (Number(page) - 1) * Number(limit);
-	const take = Number(limit);
+	const take = limit ? Number(limit): 10;
 	
 	if (sort !== 'recent' && sort !== 'oldest') {
 		throw new BadRequestException('Invalid sort value');
