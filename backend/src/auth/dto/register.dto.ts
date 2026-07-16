@@ -11,15 +11,15 @@ export class RegisterDto {
 	@IsNotEmpty()
 	@MinLength(3)
 	@MaxLength(30)
-	username:	string;
+	username!:	string;
 
 	@IsEmail()
-	@isNotEmpty()
-	email:		string;
+	@IsNotEmpty()
+	email!:		string;
 
 	@IsStrongPassword()
 	@IsNotEmpty()
-	password:	string;
+	password!:	string;
 
 	@IsOptional()
 	@IsString()
