@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 import { Sparkles } from 'lucide-react'
@@ -16,13 +17,27 @@ interface ArtworkCardProps {
 
 // Layout-agnostic: same component in the infinite canvas and the fallback grid.
 // The colored block is a placeholder for the future <img src={imageUrl}>.
-export function ArtworkCard({
+export const ArtworkCard = memo(function ArtworkCard({
   artwork,
   layout = 'canvas',
   revealDelay = 0,
 }: ArtworkCardProps) {
   const { t } = useTranslation('common')
   const location = useLocation()
+
+  // Fold the kind into the accessible name: the Link's aria-label overrides its
+  // descendants, so the Sponsor/AI badges are otherwise never announced (§2.1).
+  const baseLabel = t('artwork.openAria', {
+    title: artwork.title,
+    author: artwork.author.username,
+  })
+  const kindLabel =
+    artwork.kind === 'sponsor'
+      ? t('artwork.badgeSponsor')
+      : artwork.kind === 'ai'
+        ? t('artwork.badgeAi')
+        : ''
+  const ariaLabel = kindLabel ? `${baseLabel}, ${kindLabel}` : baseLabel
 
   // Modal-route pattern: stash the current page so detail opens as an overlay;
   // a refresh or shared link lands on the standalone page instead.
@@ -32,10 +47,7 @@ export function ArtworkCard({
       state={{ background: location }}
       // No native drag: a card drag must pan the map.
       draggable={false}
-      aria-label={t('artwork.openAria', {
-        title: artwork.title,
-        author: artwork.author.username,
-      })}
+      aria-label={ariaLabel}
       className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
         layout === 'grid' ? 'relative w-full' : ''
       }`}
@@ -80,4 +92,4 @@ export function ArtworkCard({
       </span>
     </Link>
   )
-}
+})

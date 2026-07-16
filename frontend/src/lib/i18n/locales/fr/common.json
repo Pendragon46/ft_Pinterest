@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "Atlaas",
-    "tagline": "L'inspiration ne défile pas. Elle se navigue."
+    "name": "Atlaas"
   },
   "intro": {
     "wordLead": "Perds-toi",
@@ -13,8 +12,6 @@
   "actions": {
     "signIn": "Se connecter",
     "signUp": "S'inscrire",
-    "cancel": "Annuler",
-    "save": "Enregistrer",
     "continueWithGoogle": "Continuer avec Google",
     "signOut": "Se déconnecter",
     "dismiss": "Ignorer"
@@ -71,11 +68,10 @@
     "emailRequired": "L'e-mail est requis.",
     "emailInvalid": "Saisissez une adresse e-mail valide.",
     "passwordRequired": "Le mot de passe est requis.",
-    "passwordWeak": "8+ caractères avec majuscules et minuscules, un chiffre et un symbole."
+    "passwordWeak": "8+ caractères avec majuscules et minuscules, un chiffre et un symbole.",
+    "network": "Erreur réseau — vérifiez votre connexion."
   },
   "home": {
-    "title": "Bienvenue sur Atlaas",
-    "subtitle": "Découvrez et explorez les créations.",
     "heroLine1": "L'inspiration ne défile pas.",
     "heroLine2": "Elle se navigue.",
     "searchPlaceholder": "Que cherche-t-on aujourd'hui ?",
@@ -99,7 +95,6 @@
     "share": "Partager",
     "linkCopied": "Lien copié !",
     "commentsTitle": "Commentaires",
-    "commentsCountAria": "{{views}} commentaires",
     "commentPlaceholder": "Ajouter un commentaire…",
     "post": "Publier",
     "reply": "Répondre",
@@ -141,7 +136,6 @@
   },
   "profile": {
     "title": "Profil",
-    "subtitle": "Vos œuvres, collections et activité.",
     "tabWorks": "Œuvres",
     "tabLiked": "Aimés",
     "edit": "Modifier le profil",

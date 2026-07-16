@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "Atlaas",
-    "tagline": "Don't scroll inspiration. Navigate it."
+    "name": "Atlaas"
   },
   "intro": {
     "wordLead": "Get lost",
@@ -13,8 +12,6 @@
   "actions": {
     "signIn": "Sign in",
     "signUp": "Sign up",
-    "cancel": "Cancel",
-    "save": "Save",
     "continueWithGoogle": "Continue with Google",
     "signOut": "Sign out",
     "dismiss": "Dismiss"
@@ -71,11 +68,10 @@
     "emailRequired": "Email is required.",
     "emailInvalid": "Enter a valid email address.",
     "passwordRequired": "Password is required.",
-    "passwordWeak": "8+ characters with upper and lower case letters, a number and a symbol."
+    "passwordWeak": "8+ characters with upper and lower case letters, a number and a symbol.",
+    "network": "Network error — check your connection."
   },
   "home": {
-    "title": "Welcome to Atlaas",
-    "subtitle": "Discover and navigate creative work.",
     "heroLine1": "Don't scroll inspiration.",
     "heroLine2": "Navigate it.",
     "searchPlaceholder": "What are we looking for today?",
@@ -100,7 +96,6 @@
     "share": "Share",
     "linkCopied": "Link copied!",
     "commentsTitle": "Comments",
-    "commentsCountAria": "{{views}} comments",
     "commentPlaceholder": "Add a comment…",
     "post": "Post",
     "reply": "Reply",
@@ -141,7 +136,6 @@
   },
   "profile": {
     "title": "Profile",
-    "subtitle": "Your works, collections and activity.",
     "tabWorks": "Works",
     "tabLiked": "Liked",
     "edit": "Edit profile",

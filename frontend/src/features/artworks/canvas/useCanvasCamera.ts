@@ -87,6 +87,11 @@ export function useCanvasCamera() {
   const pinchLastMid = useRef({ x: 0, y: 0 })
   const lastMove = useRef({ x: 0, y: 0, t: 0 })
   const dragDistance = useRef(0)
+  // Latched at gesture end iff it was a pan/pinch; consumed once by the next
+  // click, then cleared. Replaces persistent dragDistance gating so a touch
+  // gesture ending without a synthesized click can't swallow the first tap on a
+  // control afterwards.
+  const suppressClick = useRef(false)
 
   const rafId = useRef<number | null>(null)
   const lastFrame = useRef(0)
@@ -278,6 +283,9 @@ export function useCanvasCamera() {
     // Snapshot refs used by cleanup so it reads the same objects the effect set up.
     const activePointers = pointers.current
     const rafHandle = rafId
+    // Container rect cached on resize + at pinch start, so a two-finger gesture
+    // never forces a synchronous layout on every pointermove.
+    let containerRect: DOMRect | null = null
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     reducedMotion.current = motionQuery.matches
@@ -288,11 +296,20 @@ export function useCanvasCamera() {
 
     const measure = () => {
       viewport.current = { w: el.clientWidth, h: el.clientHeight }
+      containerRect = el.getBoundingClientRect()
       requestSync()
     }
     measure()
     const resizeObserver = new ResizeObserver(measure)
     resizeObserver.observe(el)
+
+    /** Rebase the pinch baseline to the current first two pointers. */
+    const anchorPinch = () => {
+      const [a, b] = [...pointers.current.values()]
+      if (!a || !b) return
+      pinchLastDist.current = Math.hypot(a.x - b.x, a.y - b.y)
+      pinchLastMid.current = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+    }
 
     /** Form controls handle their own events; cards are <a> so a pan may start on them. */
     const isFormTarget = (eventTarget: EventTarget | null): boolean =>
@@ -314,6 +331,9 @@ export function useCanvasCamera() {
     }
 
     const onPointerDown = (event: PointerEvent) => {
+      // Any new press starts clean: a stale suppress flag from a prior touch
+      // gesture (which may have ended without a click) must not eat this tap.
+      suppressClick.current = false
       if (isFormTarget(event.target)) return
       if (event.pointerType === 'mouse' && event.button !== 0) return
       pointers.current.set(event.pointerId, {
@@ -327,11 +347,11 @@ export function useCanvasCamera() {
         captured.current = false
         dragDistance.current = 0
         lastMove.current = { x: event.clientX, y: event.clientY, t: event.timeStamp }
-      } else if (pointers.current.size === 2) {
-        // Entering pinch: both fingers belong to the gesture from now on.
-        const [a, b] = [...pointers.current.values()]
-        pinchLastDist.current = Math.hypot(a.x - b.x, a.y - b.y)
-        pinchLastMid.current = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
+      } else if (pointers.current.size >= 2) {
+        // Entering (or growing) a pinch: anchor to the current pair and cache
+        // the rect so the move handler never measures layout.
+        containerRect = el.getBoundingClientRect()
+        anchorPinch()
         el.setPointerCapture(event.pointerId)
       }
       requestSync()
@@ -349,8 +369,11 @@ export function useCanvasCamera() {
         const dist = Math.hypot(a.x - b.x, a.y - b.y)
         const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
         if (pinchLastDist.current > 0) {
-          const rect = el.getBoundingClientRect()
-          zoomAtLocal(mid.x - rect.left, mid.y - rect.top, dist / pinchLastDist.current)
+          const rect = containerRect ?? el.getBoundingClientRect()
+          // Clamp the per-frame factor: one noisy sample (fingers momentarily
+          // coincident, or a finger-count change) can't collapse scale in a frame.
+          const factor = clamp(dist / pinchLastDist.current, 0.5, 2)
+          zoomAtLocal(mid.x - rect.left, mid.y - rect.top, factor)
           cam.current.x -= (mid.x - pinchLastMid.current.x) / cam.current.scale
           cam.current.y -= (mid.y - pinchLastMid.current.y) / cam.current.scale
         }
@@ -389,6 +412,9 @@ export function useCanvasCamera() {
         dragging.current = false
         captured.current = false
         pinchLastDist.current = 0
+        // Latch a one-shot click suppression iff this gesture was a pan/pinch,
+        // so only the click synthesized from THIS gesture (if any) is swallowed.
+        suppressClick.current = dragDistance.current > CLICK_SLOP_PX
         if (reducedMotion.current) velocity.current = { x: 0, y: 0 }
         requestSync() // hands over to the inertia
       } else if (pointers.current.size === 1) {
@@ -397,15 +423,20 @@ export function useCanvasCamera() {
         lastMove.current = { x: rest.x, y: rest.y, t: event.timeStamp }
         pinchLastDist.current = 0
         dragging.current = true
+      } else {
+        // ≥2 fingers still down (e.g. 3→2): rebase the pinch to the current pair
+        // so the next move doesn't compare a new pair against a stale baseline.
+        anchorPinch()
       }
     }
 
-    // Swallow the click after a real drag (capture phase) so a pan ending on a card doesn't open it.
+    // Swallow the click synthesized by a real pan/pinch (capture phase) so a
+    // gesture ending on a card doesn't open it — consumed once, then cleared.
     const onClickCapture = (event: MouseEvent) => {
-      if (dragDistance.current > CLICK_SLOP_PX) {
+      if (suppressClick.current) {
         event.preventDefault()
         event.stopPropagation()
-        dragDistance.current = 0
+        suppressClick.current = false
       }
     }
 
@@ -414,7 +445,13 @@ export function useCanvasCamera() {
     const onWheel = (event: WheelEvent) => {
       event.preventDefault()
       target.current = null
-      const unit = event.deltaMode === 1 ? 16 : 1 // lines → px
+      // Delta units → px: pixel (0), line (1, ×16), page (2, × viewport height).
+      const unit =
+        event.deltaMode === 1
+          ? 16
+          : event.deltaMode === 2
+            ? viewport.current.h
+            : 1
       if (event.ctrlKey || event.metaKey) {
         const rect = el.getBoundingClientRect()
         zoomAtLocal(

@@ -27,7 +27,9 @@ import type {
 import { FollowButton } from './FollowButton'
 
 // Lazy so lottie-web is code-split out of the main bundle (loaded on first like).
-const HeartBurst = lazy(() => import('./HeartBurst'))
+const HeartBurst = lazy(() =>
+  import('./HeartBurst').then((m) => ({ default: m.HeartBurst })),
+)
 
 // Fixed outer height so the modal frame never changes with comment count (§3.1):
 // mobile fills the viewport, desktop is a stable "~4 comments then scroll" frame.
@@ -68,6 +70,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   )
   const composerRef = useRef<HTMLInputElement>(null)
   const shareTimerRef = useRef<number | undefined>(undefined)
+  // Guards post-unmount UI side effects (toasts): a mutation that rejects after
+  // the detail (often a modal) closes must not toast on an unrelated page (§1.1).
+  const isMountedRef = useRef(true)
 
   const commentsQuery = useQuery({
     queryKey: artworkKeys.comments(artwork.id),
@@ -124,13 +129,17 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       return { previous, tempId }
     },
     onError: (_error, content, context) => {
-      // Roll the optimistic insert back and hand the draft back — but only if the
-      // composer is empty, so a newer draft typed during the post isn't clobbered.
+      // Cache rollback is cache-level and must run even after unmount, so the
+      // optimistic row can't linger and reappear when the artwork reopens.
       queryClient.setQueryData<ArtworkComment[]>(
         artworkKeys.comments(artwork.id),
         (old) =>
           context?.previous ?? (old ?? []).filter((c) => c.id !== context?.tempId),
       )
+      // UI side effects only while mounted: no toast/retry from a dead surface (§1.1).
+      if (!isMountedRef.current) return
+      // Hand the draft back — but only if the composer is empty, so a newer draft
+      // typed during the post isn't clobbered.
       setDraft((current) => (current.length > 0 ? current : content))
       setPostStatus('failed')
       toast({
@@ -139,6 +148,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         action: {
           label: t('artwork.retry'),
           onClick: () => {
+            if (postMutation.isPending) return // no-op while a post is in flight (§2.5)
             // Clear the composer only if it still shows this failed comment, so a
             // retry that succeeds can't leave stale text that invites a re-post —
             // while a newer draft typed since the failure is preserved.
@@ -183,6 +193,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       return { previous }
     },
     onError: (_error, next, context) => {
+      if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
       setLiked(context?.previous ?? !next)
       toast({
         variant: 'error',
@@ -213,6 +224,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       return { previous }
     },
     onError: (_error, next, context) => {
+      if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
       setSaved(context?.previous ?? !next)
       toast({
         variant: 'error',
@@ -249,7 +261,18 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   // Don't let the share-hint timer fire after the detail (often a modal) unmounts.
   useEffect(() => () => window.clearTimeout(shareTimerRef.current), [])
 
+  // Track mount so a late mutation rejection doesn't toast from a dead surface.
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
+
   const handlePost = () => {
+    // Enter and the retry toast bypass the Post button's disabled state; bail
+    // while a post is in flight so concurrent posts can't clobber each other (§2.5).
+    if (postMutation.isPending) return
     const content = draft.trim()
     if (!content) return
     requireAuth(() => {
@@ -413,9 +436,16 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                 label={t('artwork.share')}
                 icon={<Share2 aria-hidden="true" className="size-4" />}
               />
+              {/* Always-mounted live region so the announcement fires reliably —
+                  SRs skip a region injected together with its text (§2.2). */}
+              <span role="status" aria-live="polite" className="sr-only">
+                {shareHint ? t('artwork.linkCopied') : ''}
+              </span>
+              {/* Visible tooltip for sighted users; decorative (the live region
+                  above carries the announcement). */}
               {shareHint ? (
                 <span
-                  role="status"
+                  aria-hidden="true"
                   className="absolute bottom-full end-0 mb-1 whitespace-nowrap rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
                 >
                   {t('artwork.linkCopied')}

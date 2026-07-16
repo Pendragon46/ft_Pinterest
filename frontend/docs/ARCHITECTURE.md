@@ -135,13 +135,17 @@ invalidation can't drift. Artificial latency keeps loading states exercised.
 
 ## Artwork components (`features/artworks/components/`)
 
-- **`ArtworkCard` is layout-agnostic:** same component in the canvas (absolute
-  world coords) and the grid fallback (`aspectRatio`), switched by `layout`.
-  `draggable={false}` so a drag pans the map (the camera swallows the trailing
-  click). Its `<Link>` stashes `state.background` for the modal-route pattern.
-- **`ArtworkGrid` is the Context.MD risk-note fallback:** rendered instead of the
-  canvas if the canvas gets too costly. It reads a fixed block of tiles through
-  the *same* `artworkKeys.tile` keys, sharing one cache with the canvas.
+- **`ArtworkCard` is layout-agnostic (and `memo`'d):** same component in the canvas
+  (absolute world coords) and a grid layout (`aspectRatio`), switched by `layout`.
+  `memo` + stable query-data refs keep cards from re-rendering on every cell-boundary
+  crossing during a pan. `draggable={false}` so a drag pans the map (the camera
+  swallows the trailing click). Its `<Link>` stashes `state.background` for the
+  modal-route pattern, and its `aria-label` folds in the Sponsor/AI kind so the
+  badge reaches assistive tech (the label would otherwise override the descendants).
+- **Grid fallback removed:** the `ArtworkGrid` risk-note fallback was deleted once
+  the canvas proved stable. The canvas is the sole discovery surface; Profile has
+  its own grid (`ProfileArtworkCard`). `ArtworkCard` stays layout-agnostic, so the
+  net can be re-hung quickly if ever needed.
 - **`ArtworkDetail`:** all mutating actions (like/save/follow/comment) are gated
   behind `useRequireAuth` (signed-out → login modal) and run **optimistically**
   (UX spec P0): the UI flips immediately, the mock mutation fires, and on failure
@@ -186,11 +190,15 @@ itself turns red. Hard-won details:
   StrictMode's double-mount corrupts the second (real) render → nothing shows.
 - **`SilentBoundary`** wraps it: an optional animation must never take the app down.
 - No-op under `prefers-reduced-motion`; the persistent red heart carries the state.
+- **Build-time note (accepted):** `lottie-web` uses a direct `eval` internally, so
+  Rolldown/Vite emits a one-line *direct-eval* build hint. It is **third-party and
+  build-time only** — not runtime console output (what the 42 "zero console errors"
+  rule targets) — and is accepted deliberately; don't chase it.
 
-**Empty search state (`components/SearchEmptyState.tsx`).** Ready but **dormant** —
-no trigger until search actually filters the map (`TODO(backend)` in
-`SearchOverlay`). Keeps the tone + re-offers trending tags instead of a cold
-"No results".
+**Empty search state.** The zero-match case is handled inline by `SearchOverlay`'s
+`NearestRegion` — it points at the nearest region in the product's tone, never a
+cold "No results". (The earlier standalone `SearchEmptyState` component was unused
+and has been removed.)
 
 **Intro reveal (`components/IntroReveal.tsx`).** A branded first-load moment: a
 near-black curtain covers the app with a **small solid-white Atlaas mark** on it
@@ -209,8 +217,8 @@ sibling of the router, above everything (`z-[100]`). Design choices:
   reveal) to expose the home as the mark grows.
 - **One rAF timeline, no animation library** — same idiom as the canvas. The mark
   `transform` (scale + slight rotation) is set imperatively on refs each frame;
-  words are driven the same way (no per-frame React renders). `framer-motion` is
-  a dep but stays out of the bundle; nothing was added for this.
+  words are driven the same way (no per-frame React renders). No animation library
+  is used (`framer-motion` was removed as an unused dependency).
 - **Words anchor to the viewport centre, not to each other** (`end/start-[calc(50%+…)]`
   under a forced `dir="ltr"`) so the mark sits dead-centre in the gap whatever the
   two words' widths. Reading order flips in RTL by swapping which word takes the
@@ -281,7 +289,11 @@ synchronous). Keys must exist in all three files or i18next warns.
 `logout()` — the real `POST /auth/login → User` wires in later without changing
 the interface. `isAuthenticated` is derived (`selectIsAuthenticated`), never
 stored. `useRequireAuth` runs an action if signed in, else opens the login modal
-(stashing the current page as `background`). `User` = the Prisma model minus
+(stashing the current page as `background`). **Page-level gating is unified:** the
+account-owned pages `/create`, `/settings` and own-`/profile` redirect a signed-out
+visitor with `<Navigate to="/login" state={{ background }}>` (so login opens over
+the destination and returns to it after sign-in); a specific `/profile/:userId`
+stays publicly viewable. No `'dev-user'` fallback is ever shown. `User` = the Prisma model minus
 `password` + timestamps. Validators (`auth.validation.ts`) return **i18n keys**
 (so errors switch language live); the password rule mirrors NestJS
 `@IsStrongPassword()` (≥8, lower+upper+digit+symbol); email is a loose shape check
@@ -295,7 +307,6 @@ mutation and delete the hook.
 
 ## Temporary dev surfaces — remove before production
 
-- `components/dev/DevNav.tsx` (auth-state simulators; currently not mounted).
 - `pages/DevUiPage.tsx` + route `/dev/ui` (component showcase; hardcoded labels are
   a deliberate exception to the i18n rule).
 - `features/auth/useDevSignIn.ts` + the `signIn(...)` call sites in Login/Register
@@ -312,8 +323,7 @@ mutation and delete the hook.
   Highest priority: `GET /auth/me` (unlocks identity, deletes every `loggedUser`).
 - Product calls still open: the Save/Bookmark model (no Prisma model yet) and the
   detail view-count (no server field — add or drop, don't fake).
-- Wire `SearchEmptyState` + skeleton **tinting** once search filters the map and
-  real images land (blur-up / fade-in).
+- Skeleton **tinting** once real images land (blur-up / fade-in).
 
 (Done since the first draft: Profile + Settings pages, the shared toast +
 optimistic mutations, `features/users` + `features/legal`, real Privacy/Terms

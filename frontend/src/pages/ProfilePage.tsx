@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
@@ -30,15 +30,16 @@ const GRID = 'grid grid-cols-2 gap-x-5 gap-y-6 md:grid-cols-3 xl:grid-cols-4'
 export function ProfilePage() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
+  const location = useLocation()
   const requireAuth = useRequireAuth()
   const compact = useCompact()
   const authUser = useAuthStore((state) => state.user)
   // `/profile` shows the signed-in user; `/profile/:userId` shows anyone else
   // (e.g. tapping an author in the artwork detail). Same page, one param.
   const { userId: routeUserId } = useParams()
-  const selfId = authUser?.id ?? 'dev-user'
-  const userId = routeUserId ?? selfId
-  const isOwnProfile = userId === selfId
+  const selfId = authUser?.id
+  const userId = routeUserId ?? selfId ?? ''
+  const isOwnProfile = userId !== '' && userId === selfId
 
   const [tab, setTab] = useState<Tab>('works')
   const [shareHint, setShareHint] = useState(false)
@@ -104,6 +105,12 @@ export function ProfilePage() {
   const activeQuery = tab === 'works' ? worksQuery : likedQuery
   const items = activeQuery.data ?? []
   const profile = profileQuery.data
+
+  // Signed-out visit to your OWN profile → sign in first, then return here (§3.2).
+  // A specific /profile/:userId stays publicly viewable.
+  if (!userId) {
+    return <Navigate to="/login" state={{ background: location }} replace />
+  }
 
   return (
     <div className="min-h-svh bg-white">
@@ -180,9 +187,13 @@ export function ProfilePage() {
                 <Button variant="outline" size="sm" onClick={handleShare}>
                   {t('profile.share')}
                 </Button>
+                {/* Always-mounted live region so the announcement fires reliably (§2.2). */}
+                <span role="status" aria-live="polite" className="sr-only">
+                  {shareHint ? t('artwork.linkCopied') : ''}
+                </span>
                 {shareHint ? (
                   <span
-                    role="status"
+                    aria-hidden="true"
                     className="absolute end-0 top-full mt-1 whitespace-nowrap rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
                   >
                     {t('artwork.linkCopied')}

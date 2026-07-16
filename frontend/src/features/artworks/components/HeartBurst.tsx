@@ -9,7 +9,7 @@ const prefersReducedMotion = (): boolean =>
 // One-shot heart burst driven by lottie-web directly (no React wrapper — the
 // wrapper's default export broke under this bundler). Remount with a fresh
 // `key` to replay; removes itself on complete; no-op under reduced motion.
-export default function HeartBurst() {
+export function HeartBurst() {
   const containerRef = useRef<HTMLSpanElement | null>(null)
   const [done, setDone] = useState(prefersReducedMotion)
 

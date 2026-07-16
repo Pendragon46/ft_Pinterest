@@ -41,7 +41,7 @@ export function CreatePage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const authUser = useAuthStore((state) => state.user)
-  const userId = authUser?.id ?? 'dev-user'
+  const userId = authUser?.id ?? ''
 
   const inputRef = useRef<HTMLInputElement>(null)
   const previewUrlRef = useRef<string | null>(null)

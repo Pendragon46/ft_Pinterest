@@ -124,9 +124,9 @@ export function LegalPage({ doc }: LegalPageProps) {
                       goToSection(index)
                     }}
                     aria-current={activeIndex === index ? 'true' : undefined}
-                    className={`w-full border-s-2 py-1.5 ps-3 text-start text-sm transition-colors motion-reduce:transition-none ${
+                    className={`w-full cursor-pointer rounded-sm border-s-2 py-1.5 ps-3 text-start text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none ${
                       activeIndex === index
-                        ? 'border-blue-600 font-medium text-blue-700'
+                        ? 'border-neutral-900 font-medium text-neutral-900'
                         : 'border-transparent text-neutral-400 hover:text-neutral-700'
                     }`}
                   >

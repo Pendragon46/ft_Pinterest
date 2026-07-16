@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
@@ -26,6 +26,14 @@ export function FollowButton({ userId }: FollowButtonProps) {
   const toast = useToast()
   const [following, setFollowing] = useState(false)
   const [bounce, setBounce] = useState(false)
+  // A late follow rejection must not toast after this button unmounts (§1.1).
+  const isMountedRef = useRef(true)
+  useEffect(() => {
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
 
   const flip = (next: boolean) => {
     setFollowing(next)
@@ -49,6 +57,7 @@ export function FollowButton({ userId }: FollowButtonProps) {
       return { previous }
     },
     onError: (_error, next, context) => {
+      if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
       setFollowing(context?.previous ?? !next)
       toast({
         variant: 'error',

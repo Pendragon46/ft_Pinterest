@@ -1,7 +1,6 @@
 {
   "app": {
-    "name": "Atlaas",
-    "tagline": "لا تتصفّح الإلهام، بل تنقّل فيه."
+    "name": "Atlaas"
   },
   "intro": {
     "wordLead": "تِه",
@@ -13,8 +12,6 @@
   "actions": {
     "signIn": "تسجيل الدخول",
     "signUp": "إنشاء حساب",
-    "cancel": "إلغاء",
-    "save": "حفظ",
     "continueWithGoogle": "المتابعة باستخدام Google",
     "signOut": "تسجيل الخروج",
     "dismiss": "إغلاق"
@@ -71,11 +68,10 @@
     "emailRequired": "البريد الإلكتروني مطلوب.",
     "emailInvalid": "أدخل بريدًا إلكترونيًا صالحًا.",
     "passwordRequired": "كلمة المرور مطلوبة.",
-    "passwordWeak": "8+ أحرف تتضمن حروفًا كبيرة وصغيرة ورقمًا ورمزًا."
+    "passwordWeak": "8+ أحرف تتضمن حروفًا كبيرة وصغيرة ورقمًا ورمزًا.",
+    "network": "خطأ في الشبكة — تحقّق من اتصالك."
   },
   "home": {
-    "title": "مرحبًا بك في Atlaas",
-    "subtitle": "اكتشف الأعمال الإبداعية وتنقّل بينها.",
     "heroLine1": "لا تتصفّح الإلهام.",
     "heroLine2": "بل تنقّل فيه.",
     "searchPlaceholder": "عمّ نبحث اليوم؟",
@@ -99,7 +95,6 @@
     "share": "مشاركة",
     "linkCopied": "تم نسخ الرابط!",
     "commentsTitle": "التعليقات",
-    "commentsCountAria": "{{views}} تعليقًا",
     "commentPlaceholder": "أضف تعليقًا…",
     "post": "نشر",
     "reply": "رد",
@@ -141,7 +136,6 @@
   },
   "profile": {
     "title": "الملف الشخصي",
-    "subtitle": "أعمالك ومجموعاتك ونشاطك.",
     "tabWorks": "الأعمال",
     "tabLiked": "الإعجابات",
     "edit": "تعديل الملف",

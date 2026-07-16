@@ -77,10 +77,19 @@ export function Modal({
       const first = focusables[0]
       const last = focusables[focusables.length - 1]
       const active = document.activeElement
-      if (event.shiftKey && active === first) {
-        event.preventDefault()
-        last.focus()
-      } else if (!event.shiftKey && active === last) {
+      // Real containment: wrap not only at the first/last tabbable but whenever
+      // focus sits on something that is NOT a tabbable inside the panel — above
+      // all the panel container itself (the initial focus target, tabIndex=-1),
+      // so Shift+Tab on open can't escape to the background page (which is not
+      // inert). Focus that has slipped to <body> is pulled back the same way.
+      const insideTabbable =
+        active instanceof Node && active !== panel && panel.contains(active)
+      if (event.shiftKey) {
+        if (!insideTabbable || active === first) {
+          event.preventDefault()
+          last.focus()
+        }
+      } else if (!insideTabbable || active === last) {
         event.preventDefault()
         first.focus()
       }
