@@ -37,6 +37,11 @@ export class ArtworkController {
 	 return this.artworkService.findAllArtworks(userId)
 	}
 
+  @Get('feed/:userId')
+  getFeed(@Param('userId') userId: string) {
+	return this.artworkService.getFeed(userId);
+  }
+
   // change to @Request() req and get the user id from the token JWT
   @Patch(':id')
   @UseInterceptors(FileInterceptor('art'))

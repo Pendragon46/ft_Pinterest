@@ -112,6 +112,35 @@ export class ArtworkService {
 }
 
 
+  async getFeed(userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId
+		}
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	const following = await this.prisma.follow.findMany({
+		where: {
+			followerId: userId,
+		},
+		select: {
+			followingId: true,
+		},
+	});
+	const followingIds = following.map(f => f.followingId);
+	const feedArtworks = await this.prisma.artwork.findMany({
+		where: {
+			authorId: { in: followingIds },
+		},
+		orderBy: {
+			updatedAt: 'desc',
+		},
+	});
+	return feedArtworks;
+  }
+
   async findAllArtworks(userId: string) {
 	return await this.prisma.artwork.findMany({
 		where: {
