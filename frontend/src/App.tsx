@@ -1,17 +1,14 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import HomePage from "./pages/HomePage";
-import StatusPage from "./pages/StatusPage";
+import { AppProviders } from '@/app/providers'
+import { AppRouter } from '@/app/router'
+import { IntroReveal } from '@/components/IntroReveal'
 
 function App() {
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/status" element={<StatusPage />} />
-            </Routes>
-        </BrowserRouter>
-    );
+  return (
+    <AppProviders>
+      <AppRouter />
+      <IntroReveal />
+    </AppProviders>
+  )
 }
 
 export default App;

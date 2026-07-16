@@ -18,7 +18,7 @@ model User {
   avatarPublicId String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-  roles          Role      @default(USER)
+  role           Role      @default(USER)
   artworks       Artwork[]
   comments       Comment[]
   followers      Follow[]  @relation("Follower")
@@ -43,7 +43,7 @@ model Artwork {
 
 model Like {
   id        String   @id @default(uuid())
-  authorId    String
+  authorId  String
   artworkId String
   createdAt DateTime @default(now())
   artwork   Artwork  @relation(fields: [artworkId], references: [id], onDelete: Cascade)
@@ -54,7 +54,7 @@ model Like {
 
 model Comment {
   id        String   @id @default(uuid())
-  authorId    String
+  authorId  String
   content   String
   artworkId String
   createdAt DateTime @default(now())
@@ -63,20 +63,21 @@ model Comment {
 }
 
 model Follow {
-  follower    User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
-  followerId  String
- 
+  follower   User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId String
+
   following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
   followingId String
 
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
+
   @@id([followerId, followingId])
 }
 
 model Tag {
   id        String    @id @default(uuid())
   name      String    @unique
-  artworks   Artwork[]
+  artworks  Artwork[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }

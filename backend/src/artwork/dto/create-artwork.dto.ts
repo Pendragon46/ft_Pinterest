@@ -5,7 +5,7 @@ export class CreateArtworkDto {
 	@MaxLength(100, { message: 'Title must be at most 100 characters long' })
 	@IsString()
 	@IsNotEmpty()
-	title!: string;
+	title!: string ;
 
 	@IsString()
 	@IsOptional()

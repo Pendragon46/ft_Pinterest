@@ -14,6 +14,13 @@ export class FollowController {
     return this.followService.follow(Body.loggedUser, id);
   }
 
+//    @Post(':id/follow')
+//   //to change to @Request() req and get the user id from the token JWT
+//   follow(@Param('id') id: string, @Request() req) {
+
+//     return this.followService.follow(req.user.id, id);
+//   }
+
   @Get(':id/followers')
   getFollowers(@Param('id') id: string) {
     return this.followService.getFollowers(id);
@@ -38,4 +45,9 @@ export class FollowController {
   unfollow(@Param('id') id: string,@Body() Body) {
     return this.followService.unfollow(Body.loggedUser,  id);
   }
+
+//   @Delete(':id/unfollow')
+//   unfollow(@Param('id') id: string,@Request() req) {
+//     return this.followService.unfollow(req.user.id,  id);
+//   }
 }

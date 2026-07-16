@@ -35,16 +35,6 @@ export class LikesService {
   }
 
 
-  async getArtworkLikes(artworkId: string) {
-	const artwork = await this.prisma.artwork.findUnique({
-	  where: { id: artworkId },
-	  include: { likes: true},
-	});
-	if (!artwork) {
-	  throw new NotFoundException('Artwork not found');
-	}
-	return artwork.likes;
-  }
 
   async unlike(artworkId: string, userId: string) {
 	const artwork = await this.prisma.artwork.findUnique({

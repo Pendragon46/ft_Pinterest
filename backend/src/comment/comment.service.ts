@@ -59,13 +59,12 @@ export class CommentService {
 	if (!comment) {
 		throw new NotFoundException('Comment not found');
 	}
-	if (comment.authorId !== userId && user.roles !== 'ADMIN') {
+	if (comment.authorId !== userId && user.role !== 'ADMIN') {
 		throw new ForbiddenException('You are not authorized to delete this comment');
 	}
-	 await this.prisma.comment.delete({
+	return await this.prisma.comment.delete({
 		where: { id: id },
 	});
-	return { message: 'Comment deleted successfully' };
   }
 
   
@@ -83,13 +82,12 @@ export class CommentService {
 	if (!comment) {
 		throw new NotFoundException('Comment not found');
 	}
-	if ((comment.authorId !== userId && user.roles !== 'ADMIN')) {
+	if ((comment.authorId !== userId && user.role !== 'ADMIN')) {
 		console.log(userId + ' create by ' + comment.authorId)
 		throw new ForbiddenException('You are not authorized to delete this comment');
 	}
-	 await this.prisma.comment.delete({
+	return await this.prisma.comment.delete({
 		where: { id: commentId },
 	});
-	return { message: 'Comment deleted successfully' };
   }
 }
