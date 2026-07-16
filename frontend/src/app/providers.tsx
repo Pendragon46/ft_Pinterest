@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ToastViewport } from '@/components/ui/ToastViewport'
-import i18n from '@/lib/i18n'
+import { i18n } from '@/lib/i18n'
 
 // Single QueryClient, stable for the whole app lifetime.
 const queryClient = new QueryClient()

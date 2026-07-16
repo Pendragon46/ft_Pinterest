@@ -43,4 +43,4 @@ function syncHtmlLangDir(lng: string | undefined): void {
 syncHtmlLangDir(i18n.resolvedLanguage)
 i18n.on('languageChanged', syncHtmlLangDir)
 
-export default i18n
+export { i18n }
