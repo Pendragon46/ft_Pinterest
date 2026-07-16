@@ -16,6 +16,7 @@ import { HealthModule } from './health/health.module';
 import { CommentModule } from './comment/comment.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles/roles.guard';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -27,6 +28,7 @@ import { RolesGuard } from './roles/roles.guard';
 	LikesModule,
     HealthModule,
 	CommentModule,
+	SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService, HealthService, {
