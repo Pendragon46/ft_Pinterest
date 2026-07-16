@@ -165,6 +165,11 @@ export function SearchOverlay({
             aria-expanded={showDropdown}
             aria-controls="search-suggestions"
             aria-autocomplete="list"
+            // Point the SR at the highlighted option so arrow-key navigation is
+            // announced, not just a visual highlight (§2.3).
+            aria-activedescendant={
+              activeIndex >= 0 ? `search-option-${flat[activeIndex].id}` : undefined
+            }
             placeholder={t('home.searchPlaceholder')}
             aria-label={t('home.searchPlaceholder')}
             className="min-w-0 flex-1 bg-transparent text-base text-neutral-900 outline-none placeholder:text-neutral-400"
@@ -286,6 +291,7 @@ function SuggestionGroup({
             <li key={item.id}>
               <button
                 type="button"
+                id={`search-option-${item.id}`}
                 role="option"
                 aria-selected={isActive}
                 onMouseEnter={() => {
