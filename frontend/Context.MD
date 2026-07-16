@@ -21,7 +21,7 @@ Tagline / product angle: *"Don't scroll inspiration. Navigate it."* — discover
 ## Stack (already installed, versions in package.json)
 - React 19 + TypeScript, **Vite** build
 - **Tailwind CSS v4** — via `@tailwindcss/vite` plugin (NOT the old v3 `tailwind.config.js` + `@tailwind base/...` directives). Activated in CSS with a single line: `@import "tailwindcss";`
-- react-router-dom v7, @tanstack/react-query v5 (server state), zustand v5 (client state), axios, framer-motion v12
+- react-router-dom v7, @tanstack/react-query v5 (server state), zustand v5 (client state), axios, lucide-react (icons), lottie-web (one like-burst). *(framer-motion was removed — unused.)*
 - API base URL via `VITE_API_URL` (env), backend reached at `http://localhost/api` behind nginx
 
 ## Decisions already locked
@@ -59,7 +59,7 @@ Tagline / product angle: *"Don't scroll inspiration. Navigate it."* — discover
 ## ⚠️ Infinite canvas — risk note (read before building it)
 - Earns 0 module points (personal design choice). It's the most expensive component.
 - A badly-done pannable/virtualized canvas spams the console and lags → can trigger the zero-console-errors rejection. The impressive feature can become the failing feature.
-- **Build a fallback**: a plain masonry grid (simple vertical scroll) that renders the same `ArtworkCard`. If the canvas eats too much time or breaks, swap the container, keep the cards. This is WHY `ArtworkCard` (feature) is kept separate from the container that lays it out.
+- **Fallback strategy (historical):** the plan was a plain masonry grid rendering the same `ArtworkCard` if the canvas proved too costly. The canvas shipped and is stable, so the standalone `ArtworkGrid` fallback was **removed as dead code**. `ArtworkCard` stays layout-agnostic (its `grid` layout still works), so the net can be re-hung quickly if ever needed.
 - Sequence: build `ArtworkCard` + data + ui components first, drop them in a simple grid, THEN attempt the canvas.
 
 ## How we work (deadline: ~2 weeks)
@@ -77,4 +77,4 @@ Tailwind v4 installed + activated, Vite plugin wired, `@` alias in place, Vite d
 4. Assemble the **Login** page from them (start here — simplest real screen, establishes the pattern). Wire OAuth button as non-functional UI until backend is ready.
 5. Router + a couple of routes.
 6. Then Profile / Settings / Artwork, reusing components. Privacy/Terms as static pages + Footer.
-7. Home infinite canvas LAST, with the grid fallback ready.
+7. Home infinite canvas LAST (done; the interim grid fallback was removed once the canvas was stable).
