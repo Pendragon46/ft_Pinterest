@@ -67,7 +67,7 @@ Post a new artwork
 ```http
 Post /artworks
 ```
-Get all artworks
+Get artwork by id
 ```http
 Get /artworks/:id
 ```

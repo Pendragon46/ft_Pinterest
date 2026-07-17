@@ -68,7 +68,7 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ### Run with Docker (recommended)
 
 ```bash
-docker compose up --build
+make start
 ```
 
 The app will be available at `http://localhost:3000` (backend) and
