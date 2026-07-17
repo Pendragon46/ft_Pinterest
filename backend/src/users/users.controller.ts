@@ -1,31 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes,
+	ValidationPipe, Req, UseInterceptors, UploadedFile, ParseFilePipe,
+	MaxFileSizeValidator, FileTypeValidator, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum';
-import { log } from 'console';
+import { RolesGuard } from 'src/roles/roles.guard';
+
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  @UsePipes(ValidationPipe)
-  @UseInterceptors(FileInterceptor('avatar'))
-  // create(@body() createUserdto: CreateUserDto)
-  create(@Body() createUserDto: CreateUserDto, @UploadedFile(
-				new ParseFilePipe({
-				validators: [
-				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
-				new FileTypeValidator({ fileType: /(image\/jpg|image\/jpeg|image\/png|image\/webp)/ }),
-			],
-			fileIsRequired: false,
-		})) file?: Express.Multer.File) {
-    return this.usersService.create(createUserDto, file);
+  @Get('me')
+  getCurrentUser(@Req() req) {
+	return this.usersService.getCurrentUser(req.user.id);
   }
-
  
   @Get()
   findAll() {
@@ -45,7 +37,8 @@ export class UsersController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('avatar'))
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
+  update(	@Param('id') id: string, @Body() updateUserDto: UpdateUserDto,
+  			@Req() req, @UploadedFile(
 				new ParseFilePipe({
 				validators: [
 				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }),
@@ -53,18 +46,20 @@ export class UsersController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File){
-    return  this.usersService.update(id,updateUserDto, file, "34131762-f416-40a9-98fb-95725479dff3");
+    return  this.usersService.update(id,updateUserDto, file, req.user.id);
   }
 
   @Patch(':id/roles')
+
+  @UseGuards(RolesGuard)
   @Roles(Role.admin)
   updateRoles(@Param('id') id: string, @Body() data: { role: Role}) {
   return this.usersService.updateRoles(id, data.role);
   }
 
   @Delete(':id')
-  removebyId(@Param('id') id: string) {
-	return  this.usersService.removeById(id, "34131762-f416-40a9-98fb-95725479dff3");
+  removebyId(@Param('id') id: string, @Req() req) {
+	return  this.usersService.removeById(id, req.user.id);
   }
 
   @Get(':id/artworks')

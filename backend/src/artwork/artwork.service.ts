@@ -10,6 +10,10 @@ export class ArtworkService {
 				private readonly prisma: PrismaService
 	) {}
 
+	async findAll() {
+		return await this.prisma.artwork.findMany();
+	}
+
 	async deletetagswithoutartworks() {
 		await this.prisma.tag.deleteMany({
 			where: {
@@ -130,7 +134,7 @@ export class ArtworkService {
 		},
 	});
 	const followingIds = following.map(f => f.followingId);
-	const feedArtworks = await this.prisma.artwork.findMany({
+	let feedArtworks = await this.prisma.artwork.findMany({
 		where: {
 			authorId: { in: followingIds },
 		},
@@ -138,6 +142,9 @@ export class ArtworkService {
 			updatedAt: 'desc',
 		},
 	});
+	if (feedArtworks.length === 0) {
+		feedArtworks = await this.findAll(); // If no artworks from followed users, return all artworks
+	}
 	return feedArtworks;
   }
 
@@ -154,36 +161,26 @@ export class ArtworkService {
 	return artwork;
   }
 
-  async update(id: string, updatedata: UpdateArtworkDto, file?: Express.Multer.File, userId?: string) {
-	const user = await this.prisma.user.findUnique({
-		where: {
-			id: userId
-		}
-	});
-	if (!user) {
-		throw new NotFoundException('User not found');
-	}
-	if (user.id !== userId && user.role !== 'ADMIN') {
-		throw new ForbiddenException('You are not authorized to update this artwork');
-	}
-	// Check if the artwork exists
-
+  async update(artworkId: string, updatedata: UpdateArtworkDto, user: { id: string, role: string }, file?: Express.Multer.File) {
 	let artwork = await this.prisma.artwork.findUnique({
 		where: {
-			id: id,
+			id: artworkId,
 		},
 	});
 	if (!artwork) {
 		throw new NotFoundException('Artwork not found');
 	}
+	if (artwork.authorId !== user.id && user.role !== 'ADMIN') {
+		throw new ForbiddenException('You are not authorized to update this artwork');
+	}
 	if (file && artwork.mediaPublicId) {
-		return await this.Updatedfile(id, file, updatedata, artwork.mediaPublicId);
+		return await this.Updatedfile(artworkId, file, updatedata, artwork.mediaPublicId);
 	}
 	const normalizedtags = updatedata.tags?.map(tag => tag.trim().toLowerCase()).filter(tag => tag.length > 0);
 	this.deletetagswithoutartworks();
 	return await this.prisma.artwork.update({
 			where: {
-				id: id,
+				id: artworkId,
 			},
 			data: {
 				...(normalizedtags && normalizedtags.length > 0 && {
@@ -238,7 +235,7 @@ export class ArtworkService {
 	return { message: 'Artwork deleted successfully' };
   }
 
-  async deleteAllArtworksByUser(userId: string) {
+  async deleteAllArtworksByUser(userId: string, connectedUserId: string) {
 	const user = await this.prisma.user.findUnique({
 		where: {
 			id: userId
@@ -247,7 +244,7 @@ export class ArtworkService {
 	if (!user) {
 		throw new NotFoundException('User not found');
 	}
-	if (user.id !== userId && user.role !== 'ADMIN') {
+	if (user.id !== connectedUserId && user.role !== 'ADMIN') {
 		throw new ForbiddenException('You are not authorized to delete artworks for this user');
 	}
 	const artworks = await this.prisma.artwork.findMany({

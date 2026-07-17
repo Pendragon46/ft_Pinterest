@@ -18,6 +18,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './roles/roles.guard';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -36,7 +37,10 @@ import { SearchModule } from './search/search.module';
   providers: [AppService, CloudinaryService, HealthService, {
     provide: APP_GUARD,
     useClass: RolesGuard,
-  }],
+  }, {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+}],
   
 })
 export class AppModule {}

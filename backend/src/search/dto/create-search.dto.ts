@@ -24,6 +24,4 @@ export class CreateSearchDto {
 	@IsInt()
 	@IsPositive()
 	limit:number=10;
-
-
 }
