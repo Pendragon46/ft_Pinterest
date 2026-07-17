@@ -18,7 +18,12 @@
   },
   "auth": {
     "avatarAlt": "الصورة الرمزية لـ {{username}}",
-    "menuLabel": "قائمة الحساب"
+    "menuLabel": "قائمة الحساب",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+    "emailTaken": "هذا البريد الإلكتروني مسجَّل بالفعل.",
+    "usernameTaken": "اسم المستخدم هذا مستخدَم بالفعل.",
+    "googleSoon": "تسجيل الدخول عبر Google قريبًا.",
+    "loadingSession": "جارٍ استعادة جلستك…"
   },
   "form": {
     "emailLabel": "البريد الإلكتروني",

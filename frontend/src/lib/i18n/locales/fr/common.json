@@ -18,7 +18,12 @@
   },
   "auth": {
     "avatarAlt": "Avatar de {{username}}",
-    "menuLabel": "Menu du compte"
+    "menuLabel": "Menu du compte",
+    "invalidCredentials": "E-mail ou mot de passe incorrect.",
+    "emailTaken": "Cet e-mail est déjà utilisé.",
+    "usernameTaken": "Ce nom d’utilisateur est déjà pris.",
+    "googleSoon": "La connexion Google arrive bientôt.",
+    "loadingSession": "Restauration de votre session…"
   },
   "form": {
     "emailLabel": "E-mail",

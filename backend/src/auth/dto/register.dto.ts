@@ -5,6 +5,7 @@ export class RegisterDto {
 	@IsOptional()
 	@IsString()
 	@MaxLength(50)
+
 	fullname?:	string;
 
 	@IsString()

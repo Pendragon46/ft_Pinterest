@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
 import { Divider } from '@/components/ui/Divider'
 import { GoogleIcon } from '@/components/ui/GoogleIcon'
 import { Input } from '@/components/ui/Input'
 import { TextLink } from '@/components/ui/TextLink'
+import { register as registerRequest, fetchMe } from '@/features/auth/auth.api'
+import { useAuthStore } from '@/features/auth/auth.store'
 import {
   validateEmail,
   validatePassword,
@@ -15,7 +17,9 @@ import {
 } from '@/features/auth/auth.validation'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
-import { useDevSignIn } from '@/features/auth/useDevSignIn'
+import { tokenStore } from '@/features/auth/token'
+import { isApiError } from '@/lib/http'
+import { useToastStore } from '@/lib/toast.store'
 
 interface RegisterErrors {
   username?: AuthErrorKey
@@ -23,21 +27,39 @@ interface RegisterErrors {
   password?: AuthErrorKey
 }
 
+// Backend register conflict keys (auth.emailTaken / auth.usernameTaken) are valid
+// AuthErrorKeys, so a 409 fieldErrors payload maps straight onto the inputs.
+function mapFieldErrors(
+  fieldErrors: Record<string, string> | undefined,
+): RegisterErrors {
+  if (!fieldErrors) return {}
+  const next: RegisterErrors = {}
+  if (fieldErrors.username)
+    next.username = fieldErrors.username as AuthErrorKey
+  if (fieldErrors.email) next.email = fieldErrors.email as AuthErrorKey
+  return next
+}
+
 // Mirrors LoginPage, plus the username field required by the user model.
 export function RegisterPage() {
   const { t } = useTranslation('common')
   const location = useLocation()
+  const navigate = useNavigate()
   const background = (
     location.state as { background?: ReturnType<typeof useLocation> } | null
   )?.background
+  const inModal = Boolean(background)
 
+  const storeLogin = useAuthStore((state) => state.login)
+  const showToast = useToastStore((state) => state.show)
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<RegisterErrors>({})
-  const signIn = useDevSignIn()
+  const [formError, setFormError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const nextErrors: RegisterErrors = {
       username: validateUsername(username),
@@ -47,9 +69,32 @@ export function RegisterPage() {
     setErrors(nextErrors)
     if (nextErrors.username || nextErrors.email || nextErrors.password) return
 
-    // TODO(backend): POST /users (CreateUserDto needs @IsOptional() on bio &
-    // avatarUrl first). Dev stopgap below signs in a mock user.
-    signIn(email, username)
+    setSubmitting(true)
+    setFormError(null)
+    try {
+      // register signs a token, so we can log in without a second round-trip.
+      const token = await registerRequest({ username, email, password })
+      tokenStore.set(token)
+      const user = await fetchMe()
+      storeLogin(user)
+      if (inModal) navigate(-1)
+      else navigate('/')
+    } catch (error) {
+      tokenStore.clear()
+      // 409 → email/username taken, mapped onto the offending field; else global.
+      if (isApiError(error) && error.status === 409 && error.fieldErrors) {
+        setErrors((prev) => ({ ...prev, ...mapFieldErrors(error.fieldErrors) }))
+      } else {
+        setFormError(t('errors.network'))
+      }
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // Google OAuth backend is not built yet (see BACKEND_INTEGRATION §E.3).
+  const handleGoogle = () => {
+    showToast({ message: t('auth.googleSoon') })
   }
 
   return (
@@ -62,6 +107,12 @@ export function RegisterPage() {
       </div>
 
       <form noValidate className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        {formError ? (
+          <p role="alert" className="text-sm text-red-600">
+            {formError}
+          </p>
+        ) : null}
+
         <Input
           label={t('form.usernameLabel')}
           type="text"
@@ -104,7 +155,7 @@ export function RegisterPage() {
           error={errors.password ? t(errors.password) : undefined}
         />
 
-        <Button type="submit" fullWidth>
+        <Button type="submit" fullWidth loading={submitting}>
           {t('actions.signUp')}
         </Button>
 
@@ -123,14 +174,9 @@ export function RegisterPage() {
 
       <Divider>{t('divider.or')}</Divider>
 
-      {/* TODO(backend): real Google OAuth. Dev stopgap signs in a mock user. */}
-      <Button
-        variant="outline"
-        fullWidth
-        onClick={() => {
-          signIn('you@atlaas.app')
-        }}
-      >
+      {/* TODO(backend): real Google OAuth (POST /auth/google, BACKEND_INTEGRATION
+          §E.3). Until it exists the button is honest, not a fake sign-in. */}
+      <Button variant="outline" fullWidth onClick={handleGoogle}>
         <GoogleIcon />
         {t('actions.continueWithGoogle')}
       </Button>

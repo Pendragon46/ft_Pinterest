@@ -88,7 +88,7 @@ function StatusBadge({ value }: { value: string }) {
   );
 }
 
-export default function StatusPage() {
+export function StatusPage() {
   const [health, setHealth] = useState<Health | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
