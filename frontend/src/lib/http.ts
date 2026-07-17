@@ -1,6 +1,9 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
+import { useAuthStore } from '@/features/auth/auth.store'
+import { tokenStore } from '@/features/auth/token'
+
 // The single HTTP client for the whole app. Wiring the backend means swapping
 // each mock fetcher body to call this instance — signatures, query keys and
 // component code never change (see docs/BACKEND_INTEGRATION.md §D.1).
@@ -28,17 +31,35 @@ export function isApiError(value: unknown): value is ApiError {
   )
 }
 
-// TODO(backend): inject the JWT here once POST /auth/login + GET /auth/me land,
-// then delete every `loggedUser` field from mutation bodies (BACKEND_INTEGRATION
-// §D.3). Left as a pass-through so the seam is already in place.
-http.interceptors.request.use((config) => config)
+// Attach the bearer token to every request when one is stored. The identity now
+// travels in the Authorization header, which is why mutation bodies no longer
+// need `loggedUser` (BACKEND_INTEGRATION §D.3).
+http.interceptors.request.use((config) => {
+  const token = tokenStore.get()
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
+
+// Auth endpoints where a 401 means "bad credentials", not "session expired" —
+// clearing the session for these would be wrong (login failure is not a logout).
+const AUTH_ENDPOINTS = ['/auth/login', '/auth/register']
 
 // The one place that turns any transport/HTTP failure into an ApiError, so
 // fetchers and optimistic mutations always reject with the same shape and the
-// toast/form layer can map it to i18n keys uniformly.
+// toast/form layer can map it to i18n keys uniformly. A 401 on a normal request
+// means the token is gone/expired: drop the session so gated pages redirect.
 http.interceptors.response.use(
   (response) => response,
-  (error: unknown) => Promise.reject(normaliseError(error)),
+  (error: unknown) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      const url = error.config?.url ?? ''
+      if (!AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint))) {
+        tokenStore.clear()
+        useAuthStore.getState().logout()
+      }
+    }
+    return Promise.reject(normaliseError(error))
+  },
 )
 
 function normaliseError(error: unknown): ApiError {

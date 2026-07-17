@@ -25,7 +25,7 @@ let mockProfile: User = {
   email: 'sedra@atlaas.app',
   bio: 'Designer exploring the edges of the creative universe.',
   avatarUrl: DEFAULT_AVATAR,
-  roles: 'USER',
+  role: 'USER',
 }
 
 export function getMockProfile(id: string): User | null {
@@ -94,7 +94,7 @@ function profileFromAuthor(author: AuthorSummary): User {
     email: `${author.handle}@atlaas.app`,
     bio: AUTHOR_BIOS[i % AUTHOR_BIOS.length],
     avatarUrl: gradientDataUri(GRADIENTS[i % GRADIENTS.length]),
-    roles: 'USER',
+    role: 'USER',
   }
 }
 

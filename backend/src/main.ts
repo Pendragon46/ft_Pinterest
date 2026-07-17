@@ -7,6 +7,13 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // Behind nginx the frontend and API share an origin, so CORS is a no-op there;
+  // it lets the frontend reach the API directly (e.g. Vite dev on another port).
+  // Bearer tokens, not cookies, carry the session.
+  app.enableCors({
+    origin: process.env.FRONTEND_URL ?? true,
+    credentials: true,
+  });
   app.useGlobalPipes(
   new ValidationPipe({
     whitelist: true,

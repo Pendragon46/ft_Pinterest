@@ -6,6 +6,9 @@ export type AuthErrorKey =
   | 'errors.emailInvalid'
   | 'errors.passwordRequired'
   | 'errors.passwordWeak'
+  // Server-side outcomes surfaced on a field (409 from register).
+  | 'auth.emailTaken'
+  | 'auth.usernameTaken'
 
 // Deliberately loose shape check; the real guarantee is server-side.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
