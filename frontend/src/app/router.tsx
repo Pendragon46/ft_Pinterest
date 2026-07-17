@@ -13,6 +13,7 @@ import { ProfilePage } from '@/pages/ProfilePage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { TermsPage } from '@/pages/TermsPage'
+import { StatusPage } from '@/pages/StatusPage'
 
 export function AppRouter() {
   const location = useLocation()
@@ -39,6 +40,7 @@ export function AppRouter() {
         <Route path="/artwork/:id" element={<ArtworkPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/status" element={<StatusPage />} />
         {/* TEMPORARY: dev-only UI showcase — remove before production. */}
         <Route path="/dev/ui" element={<DevUiPage />} />
         <Route path="*" element={<NotFoundPage />} />
