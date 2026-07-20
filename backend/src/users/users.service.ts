@@ -70,28 +70,27 @@ export class UsersService {
 	return user;
   }
 
-//   async getUserProfile(userId: string) {
-// 	const user = await this.prisma.user.findUnique({
-// 		where: {
-// 			id: userId,
-// 		},
-// 		include: {
-// 			artworks: true,
-// 			_count: {
-// 				select: {
-// 					artworks: true,
-// 					followers: true,
-// 					following: true,
-// 					role: true,
-// 				},
-// 			},
-// 		},
-// 	});
-// 	if (!user) {
-// 		throw new NotFoundException('User not found');
-// 	}
-// 	return user;
-//   }
+  async getCurrentUser(userId: string) {
+	const user = await this.prisma.user.findUnique({
+		where: {
+			id: userId,
+		},
+		include: {
+			artworks: true,
+			_count: {
+				select: {
+					artworks: true,
+					followers: true,
+					following: true,
+				},
+			},
+		},
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	return user;
+  }
 
   async findOneById(id: string) {
 	let user =  await this.prisma.user.findUnique({
@@ -209,14 +208,16 @@ async getUserLikedArtworks(userId: string) {
 }
 							
 
-// get user connected and check if he can update or delete the user
   async removeById(id: string, loggedUserId?: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})
 	if (!user) {
 	  throw new NotFoundException('User not found');
 	}
-	// from req
-	if (id !== loggedUserId && user.role !== Role.ADMIN) {
+	let loggedUser = await this.prisma.user.findUnique({where: {id: loggedUserId}})
+	if (!loggedUser) {
+		throw new NotFoundException('Logged user not found');
+	}
+	if (id !== loggedUserId && loggedUser.role !== Role.ADMIN) {
 		throw new ForbiddenException('You are not authorized to delete this user');
 	}
 	if (user.avatarPublicId && user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID	) {

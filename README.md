@@ -18,6 +18,9 @@
 
   
 ### Database Schema:
+
+![Database Schema](diagram_prisma.png)
+
 ### Features List:
 
 ### Modules:

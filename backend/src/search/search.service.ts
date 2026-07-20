@@ -42,6 +42,14 @@ export class SearchService {
 		orderBy: {
 			createdAt: sort === 'recent' ? 'desc' : 'asc',
 		},
+		include: {
+			_count: {
+				select: {
+					likes: true,
+					comments: true,
+				}
+			}
+		}
 	});
 	return artworks;
   }
