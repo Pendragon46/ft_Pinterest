@@ -8,22 +8,24 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  fullname       String?
-  username       String    @unique
-  email          String    @unique
-  password       String
-  bio            String?
-  avatarUrl      String    @default("https://res.cloudinary.com/i1i52wjs/image/upload/default_avatar_dljkve.png")
-  avatarPublicId String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  role           Role      @default(USER)
-  artworks       Artwork[]
-  comments       Comment[]
-  followers      Follow[]  @relation("Follower")
-  following      Follow[]  @relation("Following")
-  likes          Like[]
+  id				String		@id @default(uuid())
+  fullname			String?
+  username			String		@unique
+  email				String		@unique
+  password			String?
+  provider			Provider	@default(LOCAL)
+  googleId			String?		@unique
+  bio				String?
+  avatarUrl			String		@default("https://res.cloudinary.com/i1i52wjs/image/upload/default_avatar_dljkve.png")
+  avatarPublicId	String?
+  createdAt			DateTime	@default(now())
+  updatedAt			DateTime	@updatedAt
+  role				Role		@default(USER)
+  artworks			Artwork[]
+  comments			Comment[]
+  followers			Follow[]	@relation("Follower")
+  following			Follow[]	@relation("Following")
+  likes				Like[]
 }
 
 model Artwork {
@@ -85,4 +87,9 @@ model Tag {
 enum Role {
   USER
   ADMIN
+}
+
+enum Provider {
+	LOCAL
+	GOOGLE
 }
