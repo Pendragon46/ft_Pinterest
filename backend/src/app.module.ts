@@ -19,6 +19,7 @@ import { RolesGuard } from './roles/roles.guard';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { FriendsModule } from './friends/friends.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -32,6 +33,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 	CommentModule,
 	AuthModule,
 	SearchModule,
+	FriendsModule,
   ],
   controllers: [AppController],
   providers: [AppService, CloudinaryService, HealthService, {
