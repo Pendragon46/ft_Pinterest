@@ -110,6 +110,7 @@
       "error": "تعذّر حذف حسابك. حاول مجددًا."
     }
   },
+  "userModal": { "works": "الأعمال", "followers": "المتابِعون", "following": "المتابَعون", "viewFull": "عرض الملف الكامل", "noWorks": "لا أعمال بعد." },
   "admin": {
     "menuLink": "الإدارة",
     "breadcrumb": { "root": "الإدارة" },

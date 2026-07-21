@@ -15,11 +15,13 @@ interface Props {
   users: AdminUserRow[]
   canAdmin: boolean
   onDelete: (user: AdminUserRow) => void
+  /** Open a user's profile preview (admin quick-view). */
+  onViewProfile: (id: string) => void
 }
 
 // Recherche, filtre, tri et pagination — tout côté client : GET /users renvoie
 // la liste complète, il n'y a pas de pagination serveur.
-export function AdminUsersTable({ users, canAdmin, onDelete }: Props) {
+export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Props) {
   const { t, i18n } = useTranslation('common')
   const [query, setQuery] = useState('')
   const [roleFilter, setRoleFilter] = useState<'ALL' | AppRole>('ALL')
@@ -149,7 +151,13 @@ export function AdminUsersTable({ users, canAdmin, onDelete }: Props) {
                 rows.map((u) => (
                   <tr key={u.id} className="border-b border-neutral-100 last:border-0 hover:bg-neutral-50/60">
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onViewProfile(u.id)
+                        }}
+                        className="group flex items-center gap-3 rounded-lg text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
+                      >
                         {u.avatarUrl ? (
                           <img src={u.avatarUrl} alt="" className="size-9 shrink-0 rounded-full object-cover" />
                         ) : (
@@ -158,10 +166,10 @@ export function AdminUsersTable({ users, canAdmin, onDelete }: Props) {
                           </span>
                         )}
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-neutral-900">{u.fullname ?? u.username}</p>
+                          <p className="truncate font-medium text-neutral-900 group-hover:underline">{u.fullname ?? u.username}</p>
                           <p className="truncate text-xs text-neutral-500">@{u.username}</p>
                         </div>
-                      </div>
+                      </button>
                     </td>
                     <td className="px-4 py-3 text-neutral-600">{u.email}</td>
                     <td className="px-4 py-3"><RoleSelect user={u} canEdit={canAdmin} /></td>

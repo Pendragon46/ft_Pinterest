@@ -110,6 +110,7 @@
       "error": "Couldn't delete your account. Please try again."
     }
   },
+  "userModal": { "works": "Works", "followers": "Followers", "following": "Following", "viewFull": "View full profile", "noWorks": "No artworks yet." },
   "admin": {
     "menuLink": "Administration",
     "breadcrumb": { "root": "Admin" },

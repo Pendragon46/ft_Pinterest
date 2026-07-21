@@ -24,6 +24,7 @@ import { AddUserDialog } from '@/features/admin/AddUserDialog'
 import { AdminStats } from '@/features/admin/AdminStats'
 import { AdminUsersTable } from '@/features/admin/AdminUsersTable'
 import { DeleteUserDialog } from '@/features/admin/DeleteUserDialog'
+import { UserProfileModal } from '@/features/users/UserProfileModal'
 
 export function AdminPage() {
   const { canViewDashboard } = useRole()
@@ -40,6 +41,7 @@ function AdminDashboard() {
   const currentUser = useAuthStore((s) => s.user)
   const [toDelete, setToDelete] = useState<AdminUserRow | null>(null)
   const [addOpen, setAddOpen] = useState(false)
+  const [viewUserId, setViewUserId] = useState<string | null>(null)
 
   const query = useQuery({
     queryKey: adminKeys.users(),
@@ -166,7 +168,12 @@ function AdminDashboard() {
                 ))}
               </div>
             ) : (
-              <AdminUsersTable users={users} canAdmin={canAdmin} onDelete={setToDelete} />
+              <AdminUsersTable
+                users={users}
+                canAdmin={canAdmin}
+                onDelete={setToDelete}
+                onViewProfile={setViewUserId}
+              />
             )}
           </div>
         </main>
@@ -174,6 +181,7 @@ function AdminDashboard() {
 
       <DeleteUserDialog user={toDelete} onClose={() => setToDelete(null)} />
       <AddUserDialog isOpen={addOpen} onClose={() => setAddOpen(false)} />
+      <UserProfileModal userId={viewUserId} onClose={() => setViewUserId(null)} />
     </div>
   )
 }

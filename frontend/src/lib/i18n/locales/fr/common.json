@@ -110,6 +110,7 @@
       "error": "Impossible de supprimer votre compte. Réessayez."
     }
   },
+  "userModal": { "works": "Œuvres", "followers": "Abonnés", "following": "Abonnements", "viewFull": "Voir le profil complet", "noWorks": "Aucune œuvre pour l'instant." },
   "admin": {
     "menuLink": "Administration",
     "breadcrumb": { "root": "Admin" },
