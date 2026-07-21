@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   AlertTriangle,
-  Flag,
+  Image as ImageIcon,
   Plus,
   RefreshCw,
-  Settings,
   Users,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -21,10 +20,13 @@ import { useAuthStore } from '@/features/auth/auth.store'
 import { useRole } from '@/features/auth/useRole'
 import { adminKeys, fetchAllUsers, type AdminUserRow } from '@/features/admin/admin.api'
 import { AddUserDialog } from '@/features/admin/AddUserDialog'
+import { AdminArtworksPanel } from '@/features/admin/AdminArtworksPanel'
 import { AdminStats } from '@/features/admin/AdminStats'
 import { AdminUsersTable } from '@/features/admin/AdminUsersTable'
 import { DeleteUserDialog } from '@/features/admin/DeleteUserDialog'
 import { UserProfileModal } from '@/features/users/UserProfileModal'
+
+type AdminTab = 'users' | 'artworks'
 
 export function AdminPage() {
   const { canViewDashboard } = useRole()
@@ -39,6 +41,7 @@ function AdminDashboard() {
   const { t } = useTranslation('common')
   const { canAdmin } = useRole()
   const currentUser = useAuthStore((s) => s.user)
+  const [tab, setTab] = useState<AdminTab>('users')
   const [toDelete, setToDelete] = useState<AdminUserRow | null>(null)
   const [addOpen, setAddOpen] = useState(false)
   const [viewUserId, setViewUserId] = useState<string | null>(null)
@@ -50,7 +53,11 @@ function AdminDashboard() {
   const users = query.data ?? []
 
   const navItem =
-    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors motion-reduce:transition-none'
+    'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-start text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none'
+  const navState = (active: boolean) =>
+    active ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'
+
+  const tabLabel = tab === 'users' ? t('admin.nav.users') : t('admin.nav.artworks')
 
   return (
     <div className="flex min-h-svh bg-neutral-50">
@@ -68,19 +75,24 @@ function AdminDashboard() {
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
             {t('admin.breadcrumb.root')}
           </p>
-          <span className={`${navItem} bg-neutral-900 text-white`} aria-current="page">
+          <button
+            type="button"
+            onClick={() => setTab('users')}
+            aria-current={tab === 'users' ? 'page' : undefined}
+            className={`${navItem} ${navState(tab === 'users')}`}
+          >
             <Users aria-hidden="true" className="size-4" />
             {t('admin.nav.users')}
-          </span>
-          {/* Not implemented → visibly inert, no dead link. */}
-          <span className={`${navItem} cursor-not-allowed text-neutral-400`} aria-disabled="true" title={t('admin.nav.comingSoon')}>
-            <Flag aria-hidden="true" className="size-4" />
-            {t('admin.nav.reports')}
-          </span>
-          <span className={`${navItem} cursor-not-allowed text-neutral-400`} aria-disabled="true" title={t('admin.nav.comingSoon')}>
-            <Settings aria-hidden="true" className="size-4" />
-            {t('admin.nav.settings')}
-          </span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('artworks')}
+            aria-current={tab === 'artworks' ? 'page' : undefined}
+            className={`${navItem} ${navState(tab === 'artworks')}`}
+          >
+            <ImageIcon aria-hidden="true" className="size-4" />
+            {t('admin.nav.artworks')}
+          </button>
 
           <p className="mt-4 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
             {t('admin.nav.other')}
@@ -113,67 +125,100 @@ function AdminDashboard() {
           <p className="text-sm text-neutral-500">
             <span className="font-semibold text-neutral-900">{t('admin.breadcrumb.root')}</span>
             <span className="mx-2" aria-hidden="true">·</span>
-            {t('admin.nav.users')}
+            {tabLabel}
           </p>
           <AuthButton />
         </header>
+
+        {/* Tabs — visible on mobile where the sidebar is hidden, and a handy
+            switcher on desktop too. */}
+        <div className="flex gap-1 border-b border-neutral-200 bg-white px-4 sm:px-6 lg:hidden">
+          <button
+            type="button"
+            onClick={() => setTab('users')}
+            aria-current={tab === 'users' ? 'page' : undefined}
+            className={`-mb-px border-b-2 px-3 py-3 text-sm font-medium ${tab === 'users' ? 'border-neutral-900 text-neutral-900' : 'border-transparent text-neutral-500'}`}
+          >
+            {t('admin.nav.users')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('artworks')}
+            aria-current={tab === 'artworks' ? 'page' : undefined}
+            className={`-mb-px border-b-2 px-3 py-3 text-sm font-medium ${tab === 'artworks' ? 'border-neutral-900 text-neutral-900' : 'border-transparent text-neutral-500'}`}
+          >
+            {t('admin.nav.artworks')}
+          </button>
+        </div>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="mx-auto flex max-w-6xl flex-col gap-6">
             {/* Title + actions */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h1 className="font-serif text-3xl text-neutral-900 sm:text-4xl">{t('admin.title')}</h1>
-                <p className="mt-1 text-neutral-500">{t('admin.subtitle')}</p>
+                <h1 className="font-serif text-3xl text-neutral-900 sm:text-4xl">
+                  {tab === 'users' ? t('admin.title') : t('admin.artworks.title')}
+                </h1>
+                <p className="mt-1 text-neutral-500">
+                  {tab === 'users' ? t('admin.subtitle') : t('admin.artworks.subtitle')}
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => void query.refetch()}
-                  aria-label={t('admin.refresh')}
-                  className="flex size-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-600 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
-                >
-                  <RefreshCw aria-hidden="true" className={`size-4 ${query.isFetching ? 'animate-spin' : ''}`} />
-                </button>
-                {canAdmin ? (
-                  <Button onClick={() => setAddOpen(true)}>
-                    <Plus aria-hidden="true" className="size-4" />
-                    {t('admin.add.button')}
-                  </Button>
-                ) : null}
-              </div>
+              {tab === 'users' ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => void query.refetch()}
+                    aria-label={t('admin.refresh')}
+                    className="flex size-11 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-600 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+                  >
+                    <RefreshCw aria-hidden="true" className={`size-4 ${query.isFetching ? 'animate-spin' : ''}`} />
+                  </button>
+                  {canAdmin ? (
+                    <Button onClick={() => setAddOpen(true)}>
+                      <Plus aria-hidden="true" className="size-4" />
+                      {t('admin.add.button')}
+                    </Button>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
-            <AdminStats users={users} loading={query.isPending} />
+            {tab === 'users' ? (
+              <>
+                <AdminStats users={users} loading={query.isPending} />
 
-            {query.isError ? (
-              <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-16 text-center">
-                <span className="flex size-14 items-center justify-center rounded-full bg-red-50 text-red-600">
-                  <AlertTriangle aria-hidden="true" className="size-6" />
-                </span>
-                <p className="font-serif text-lg text-neutral-900">{t('admin.error.title')}</p>
-                <p className="text-sm text-neutral-500">{t('admin.error.body')}</p>
-                <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
-                  <RefreshCw aria-hidden="true" className="size-4" />
-                  {t('admin.error.retry')}
-                </Button>
-              </div>
-            ) : query.isPending ? (
-              <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
-                {[0, 1, 2, 3, 4, 5].map((row) => (
-                  <div key={row} className="flex items-center gap-3 border-b border-neutral-100 p-4 last:border-0">
-                    <span className="size-9 shrink-0 animate-pulse rounded-full bg-neutral-200" />
-                    <span className="h-4 flex-1 animate-pulse rounded bg-neutral-200" />
+                {query.isError ? (
+                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-16 text-center">
+                    <span className="flex size-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+                      <AlertTriangle aria-hidden="true" className="size-6" />
+                    </span>
+                    <p className="font-serif text-lg text-neutral-900">{t('admin.error.title')}</p>
+                    <p className="text-sm text-neutral-500">{t('admin.error.body')}</p>
+                    <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
+                      <RefreshCw aria-hidden="true" className="size-4" />
+                      {t('admin.error.retry')}
+                    </Button>
                   </div>
-                ))}
-              </div>
+                ) : query.isPending ? (
+                  <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+                    {[0, 1, 2, 3, 4, 5].map((row) => (
+                      <div key={row} className="flex items-center gap-3 border-b border-neutral-100 p-4 last:border-0">
+                        <span className="size-9 shrink-0 animate-pulse rounded-full bg-neutral-200" />
+                        <span className="h-4 flex-1 animate-pulse rounded bg-neutral-200" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <AdminUsersTable
+                    users={users}
+                    canAdmin={canAdmin}
+                    onDelete={setToDelete}
+                    onViewProfile={setViewUserId}
+                  />
+                )}
+              </>
             ) : (
-              <AdminUsersTable
-                users={users}
-                canAdmin={canAdmin}
-                onDelete={setToDelete}
-                onViewProfile={setViewUserId}
-              />
+              <AdminArtworksPanel canAdmin={canAdmin} />
             )}
           </div>
         </main>

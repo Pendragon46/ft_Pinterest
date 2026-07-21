@@ -114,7 +114,7 @@
   "admin": {
     "menuLink": "Administration",
     "breadcrumb": { "root": "Admin" },
-    "nav": { "users": "Utilisateurs", "reports": "Signalements", "settings": "Paramètres", "comingSoon": "Bientôt disponible", "other": "Autre" },
+    "nav": { "users": "Utilisateurs", "artworks": "Œuvres", "other": "Autre" },
     "title": "Utilisateurs",
     "subtitle": "Gérez les utilisateurs, leurs rôles et leurs accès.",
     "refresh": "Actualiser",
@@ -129,7 +129,8 @@
     "empty": { "title": "Aucun utilisateur trouvé", "body": "Aucun utilisateur ne correspond à votre recherche ou à vos filtres." },
     "error": { "title": "Impossible de charger les utilisateurs", "body": "Une erreur est survenue. Vérifiez votre connexion, puis réessayez.", "retry": "Réessayer", "roleRefused": "Le serveur a refusé ce changement (dernier administrateur ou auto-rétrogradation)." },
     "add": { "button": "Ajouter un utilisateur", "title": "Ajouter un utilisateur", "subtitle": "Créez un compte et attribuez-lui un rôle.", "fullname": "Nom complet", "username": "Nom d'utilisateur", "email": "Adresse e-mail", "password": "Mot de passe", "passwordHint": "8+ caractères, majuscules et minuscules, un chiffre et un symbole.", "role": "Rôle", "cancel": "Annuler", "submit": "Créer l'utilisateur" },
-    "delete": { "title": "Supprimer l'utilisateur ?", "body": "Cette action est irréversible. « {{name}} » (@{{handle}}) perdra définitivement l'accès à son compte et à toutes ses données.", "cancel": "Annuler", "confirm": "Supprimer" }
+    "delete": { "title": "Supprimer l'utilisateur ?", "body": "Cette action est irréversible. « {{name}} » (@{{handle}}) perdra définitivement l'accès à son compte et à toutes ses données.", "cancel": "Annuler", "confirm": "Supprimer" },
+    "artworks": { "title": "Œuvres", "subtitle": "Parcourez et modérez toutes les œuvres publiées.", "search": "Rechercher par titre ou auteur…", "by": "par {{author}}", "empty": "Aucune œuvre trouvée", "delete": "Supprimer l'œuvre", "deleteTitle": "Supprimer l'œuvre ?", "deleteBody": "Cette action est irréversible. « {{title}} » ainsi que tous ses j'aime et commentaires seront supprimés.", "deleteCancel": "Annuler", "deleteConfirm": "Supprimer" }
   },
   "home": {
     "heroLine1": "L'inspiration ne défile pas.",

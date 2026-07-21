@@ -114,7 +114,7 @@
   "admin": {
     "menuLink": "Administration",
     "breadcrumb": { "root": "Admin" },
-    "nav": { "users": "Users", "reports": "Reports", "settings": "Settings", "comingSoon": "Coming soon", "other": "Other" },
+    "nav": { "users": "Users", "artworks": "Artworks", "other": "Other" },
     "title": "Users",
     "subtitle": "Manage users, their roles and access.",
     "refresh": "Refresh",
@@ -129,7 +129,8 @@
     "empty": { "title": "No users found", "body": "No user matches your search or filters." },
     "error": { "title": "Couldn't load users", "body": "Something went wrong. Check your connection and try again.", "retry": "Retry", "roleRefused": "The server refused this change (e.g. last administrator or self-demotion)." },
     "add": { "button": "Add user", "title": "Add a user", "subtitle": "Create an account and assign it a role.", "fullname": "Full name", "username": "Username", "email": "Email address", "password": "Password", "passwordHint": "8+ chars, upper & lower case, a number and a symbol.", "role": "Role", "cancel": "Cancel", "submit": "Create user" },
-    "delete": { "title": "Delete user?", "body": "This is permanent. “{{name}}” (@{{handle}}) will lose access to their account and all their data.", "cancel": "Cancel", "confirm": "Delete" }
+    "delete": { "title": "Delete user?", "body": "This is permanent. “{{name}}” (@{{handle}}) will lose access to their account and all their data.", "cancel": "Cancel", "confirm": "Delete" },
+    "artworks": { "title": "Artworks", "subtitle": "Browse and moderate every published artwork.", "search": "Search by title or author…", "by": "by {{author}}", "empty": "No artworks found", "delete": "Delete artwork", "deleteTitle": "Delete artwork?", "deleteBody": "This is permanent. “{{title}}” and all its likes and comments will be removed.", "deleteCancel": "Cancel", "deleteConfirm": "Delete" }
   },
   "home": {
     "heroLine1": "Don't scroll inspiration.",

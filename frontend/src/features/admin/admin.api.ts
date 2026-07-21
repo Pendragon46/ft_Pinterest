@@ -13,8 +13,35 @@ export interface AdminUserRow {
   _count: { artworks: number; comments: number }
 }
 
+export interface AdminArtworkRow {
+  id: string
+  title: string
+  mediaUrl: string | null
+  createdAt: string
+  authorId: string
+  author?: { id: string; username: string; fullname: string | null }
+  tags?: { name: string }[]
+  _count?: { likes: number; comments: number }
+}
+
 export const adminKeys = {
   users: () => ['admin', 'users'] as const,
+  artworks: () => ['admin', 'artworks'] as const,
+}
+
+/** Toutes les œuvres (pour la modération admin). Réutilise /search/artworks
+    qui renvoie déjà auteur + `_count` ; pagination côté client. */
+export async function fetchAllArtworks(): Promise<AdminArtworkRow[]> {
+  const { data } = await http.get<AdminArtworkRow[]>('/search/artworks', {
+    params: { page: 1, limit: 200, sort: 'recent' },
+  })
+  return data
+}
+
+/** Supprime n'importe quelle œuvre en tant qu'admin (le serveur autorise
+    l'auteur OU un ADMIN, 403 sinon). */
+export async function deleteArtworkAsAdmin(id: string): Promise<void> {
+  await http.delete(`/artworks/${id}`)
 }
 
 /** Liste des comptes. Réservée ADMIN côté serveur : un USER/GUEST reçoit 403,
