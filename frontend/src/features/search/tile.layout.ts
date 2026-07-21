@@ -9,9 +9,15 @@ import {
   CARD_W,
   CELL_H,
   CELL_W,
+  HERO_ZONE,
   TILE_CELLS,
 } from '@/features/artworks/canvas/canvas.constants'
-import { colorFromId, toAuthorSummary, type ServerArtwork } from '@/lib/mappers'
+import {
+  colorFromId,
+  mediaTypeFromUrl,
+  toAuthorSummary,
+  type ServerArtwork,
+} from '@/lib/mappers'
 
 // PRNG à graine (mulberry32). Indispensable : Math.random() ferait varier
 // la mise en page à chaque rendu, et les cartes danseraient sous la caméra.
@@ -38,12 +44,25 @@ export function pageForTile(tx: number, ty: number, totalPages = 5): number {
   return Math.floor(rnd() * totalPages) + 1
 }
 
-/** Nombre de cartes par tuile — une par cellule de la grille. */
-export const ITEMS_PER_TILE = TILE_CELLS * TILE_CELLS
+/** Rectangle (coin haut-gauche) occupé par la carte d'une cellule, ou null si
+    la cellule tombe dans la zone du héros — qu'on garde dégagée, exactement
+    comme le mock. Coordonnées MONDE : la carte est centrée sur le point de
+    grille `(cx·CELL_W, cy·CELL_H)`. */
+function cellSlot(cx: number, cy: number): { x: number; y: number } | null {
+  const x = cx * CELL_W - CARD_W / 2
+  const y = cy * CELL_H - CARD_H / 2
+  const hitsHero =
+    x < HERO_ZONE.x + HERO_ZONE.width &&
+    x + CARD_W > HERO_ZONE.x &&
+    y < HERO_ZONE.y + HERO_ZONE.height &&
+    y + CARD_H > HERO_ZONE.y
+  return hitsHero ? null : { x, y }
+}
 
-/** Place des artworks serveur dans la tuile (tx, ty). Une carte occupe le
-    centre de sa cellule ; la variation de hauteur crée le rythme vertical
-    du mur d'images sans jamais déborder de la cellule. */
+/** Place des artworks serveur dans la tuile (tx, ty). Reproduit la grille du
+    mock : cartes de **taille fixe** (CARD_W × CARD_H) centrées sur leur
+    cellule, et cellules du héros **laissées vides**. Seul le contenu (quelle
+    œuvre dans quelle cellule) vient du serveur. */
 export function layoutTile(
   items: ServerArtwork[],
   slug: Category | undefined,
@@ -52,40 +71,36 @@ export function layoutTile(
 ): CanvasArtwork[] {
   if (items.length === 0) return []
 
-  const rnd = seeded(tileSeed(tx, ty))
-  const originX = tx * CELL_W * TILE_CELLS
-  const originY = ty * CELL_H * TILE_CELLS
-  // Marges internes de la cellule, réparties également.
-  const padX = (CELL_W - CARD_W) / 2
-  const padY = (CELL_H - CARD_H) / 2
-
-  return Array.from({ length: ITEMS_PER_TILE }, (_, i) => {
-    // Si le serveur renvoie moins d'items que de cellules, on boucle :
-    // la tuile reste dense au lieu d'afficher des trous.
-    const src = items[i % items.length]
-    const col = i % TILE_CELLS
-    const row = Math.floor(i / TILE_CELLS)
-
-    // Hauteur entre 72 % et 100 % de la carte de référence.
-    const height = Math.round(CARD_H * (0.72 + rnd() * 0.28))
-
-    return {
-      // `id` unique par emplacement (une œuvre peut se répéter),
-      // `sourceId` stable pour ouvrir la bonne modale au clic.
-      id: `${src.id}@${tx}.${ty}.${i}`,
-      sourceId: src.id,
-      title: src.title,
-      category: (slug ?? 'illustration') as Category,
-      kind: 'standard' as const,
-      color: colorFromId(src.id),
-      viewCount: 0,
-      likeCount: src._count?.likes ?? 0,
-      commentCount: src._count?.comments ?? 0,
-      author: toAuthorSummary(src.author, src.authorId),
-      x: Math.round(originX + col * CELL_W + padX),
-      y: Math.round(originY + row * CELL_H + padY),
-      width: CARD_W,
-      height,
+  const cards: CanvasArtwork[] = []
+  let n = 0 // index dans `items`, avancé seulement pour les cellules remplies
+  for (let row = 0; row < TILE_CELLS; row += 1) {
+    for (let col = 0; col < TILE_CELLS; col += 1) {
+      const slot = cellSlot(tx * TILE_CELLS + col, ty * TILE_CELLS + row)
+      if (!slot) continue // cellule du héros : laissée vide
+      // Si le serveur renvoie moins d'items que de cellules, on boucle.
+      const src = items[n % items.length]
+      n += 1
+      cards.push({
+        // `id` unique par emplacement, `sourceId` stable pour la modale.
+        id: `${src.id}@${tx}.${ty}.${col}.${row}`,
+        sourceId: src.id,
+        title: src.title,
+        category: (slug ?? 'illustration') as Category,
+        kind: 'standard' as const,
+        color: colorFromId(src.id),
+        // Média réel : la carte affiche l'image, pas seulement `color`.
+        mediaUrl: src.mediaUrl,
+        mediaType: mediaTypeFromUrl(src.mediaUrl),
+        viewCount: 0,
+        likeCount: src._count?.likes ?? 0,
+        commentCount: src._count?.comments ?? 0,
+        author: toAuthorSummary(src.author, src.authorId),
+        x: slot.x,
+        y: slot.y,
+        width: CARD_W,
+        height: CARD_H,
+      })
     }
-  })
+  }
+  return cards
 }

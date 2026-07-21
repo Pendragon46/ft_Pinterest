@@ -65,6 +65,27 @@ export const ArtworkCard = memo(function ArtworkCard({
           : { aspectRatio: `${artwork.width} / ${artwork.height}` }),
       }}
     >
+      {/* Uploaded media fills the card; the `color` background shows through
+          only while it loads or when a work has no media. */}
+      {artwork.mediaUrl ? (
+        artwork.mediaType === 'video' ? (
+          <video
+            src={artwork.mediaUrl}
+            muted
+            playsInline
+            preload="metadata"
+            className="absolute inset-0 size-full object-cover"
+          />
+        ) : (
+          <img
+            src={artwork.mediaUrl}
+            alt=""
+            loading="lazy"
+            className="absolute inset-0 size-full object-cover"
+          />
+        )
+      ) : null}
+
       {/* Badges use logical sides so they swap in RTL. */}
       {artwork.kind === 'sponsor' ? (
         <span className="absolute start-3 top-3 rounded-full bg-black/25 px-3 py-1 text-xs font-medium text-white">
