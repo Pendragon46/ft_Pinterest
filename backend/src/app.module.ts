@@ -19,6 +19,9 @@ import { RolesGuard } from './roles/roles.guard';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { FriendsModule } from './friends/friends.module';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { OnlineStatusModule } from './websocket/onlineStatus.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -32,9 +35,11 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 	CommentModule,
 	AuthModule,
 	SearchModule,
+	FriendsModule,
+	OnlineStatusModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService, {
+  providers: [AppService, CloudinaryService, HealthService, WebsocketGateway,{
     provide: APP_GUARD,
     useClass: RolesGuard,
   }, {

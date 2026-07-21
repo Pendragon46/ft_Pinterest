@@ -5,6 +5,7 @@
 ### Resources
  - **NestJS** : [official site documentation ] (https://docs.nestjs.com/)
  - **Prisma** : [official documentation ] (https://www.prisma.io/docs)
+ - **Socket.IO** : [official documentation ] (https://socket.io/docs/v4/)
 ### Team Information:
 ### Project Management:
 ### Technical Stack:

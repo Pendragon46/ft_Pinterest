@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes,
-	ValidationPipe, Req, UseInterceptors, UploadedFile, ParseFilePipe,
+import { Controller, Get, Post, Body, Patch, Param, Delete
+	, Req, UseInterceptors, UploadedFile, ParseFilePipe,
 	MaxFileSizeValidator, FileTypeValidator, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { Roles } from 'src/decorators/roles.decorator';
