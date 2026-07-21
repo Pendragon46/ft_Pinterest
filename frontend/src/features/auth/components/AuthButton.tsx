@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, User as UserIcon } from 'lucide-react'
+import { ChevronDown, LogOut, Plus, Settings, User as UserIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
@@ -119,6 +119,29 @@ export function AuthButton() {
             <UserIcon aria-hidden="true" className="size-4 text-neutral-400" />
             {t('profile.title')}
           </Link>
+          <Link
+            to="/settings"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+            }}
+            className={ITEM}
+          >
+            <Settings aria-hidden="true" className="size-4 text-neutral-400" />
+            {t('settings.title')}
+          </Link>
+          <Link
+            to="/create"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+            }}
+            className={ITEM}
+          >
+            <Plus aria-hidden="true" className="size-4 text-neutral-400" />
+            {t('create.cta')}
+          </Link>
+          <div aria-hidden="true" className="h-px bg-neutral-100" />
           <button
             type="button"
             role="menuitem"
@@ -126,9 +149,9 @@ export function AuthButton() {
               setOpen(false)
               logout()
             }}
-            className={ITEM}
+            className={`${ITEM} text-red-600 hover:bg-red-50 focus-visible:bg-red-50`}
           >
-            <LogOut aria-hidden="true" className="size-4 text-neutral-400" />
+            <LogOut aria-hidden="true" className="size-4 text-red-500" />
             {t('actions.signOut')}
           </button>
         </div>
