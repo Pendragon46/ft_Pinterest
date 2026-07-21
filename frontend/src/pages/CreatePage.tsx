@@ -147,12 +147,12 @@ export function CreatePage() {
         tags: normalizeTags(tags),
         file: file as File,
       }),
-    onSuccess: (created) => {
+    onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: userKeys.works(userId) })
       void queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
       toast({ message: t('create.published') })
-      // Fresh context — standalone detail, no modal background (§0).
-      navigate(`/artwork/${created.id}`)
+      // Land on the author's profile so the fresh work is seen in context.
+      navigate(`/profile/${userId}`)
     },
     onError: () => {
       // Failure keeps the whole form intact; retry re-runs the same publish.
