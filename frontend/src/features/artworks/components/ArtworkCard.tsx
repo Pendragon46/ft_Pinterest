@@ -74,14 +74,17 @@ export const ArtworkCard = memo(function ArtworkCard({
             muted
             playsInline
             preload="metadata"
-            className="absolute inset-0 size-full object-cover"
+            // A native drag on the media would fight the canvas pan.
+            draggable={false}
+            className="pointer-events-none absolute inset-0 size-full object-cover"
           />
         ) : (
           <img
             src={artwork.mediaUrl}
             alt=""
             loading="lazy"
-            className="absolute inset-0 size-full object-cover"
+            draggable={false}
+            className="pointer-events-none absolute inset-0 size-full object-cover"
           />
         )
       ) : null}
