@@ -1,8 +1,4 @@
-import {
-	ConflictException,
-	Injectable,
-	UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -70,7 +66,7 @@ export class AuthService {
 			where: { email: dto.email },
 		});
 
-		if (!user) throw new UnauthorizedException('Invalid credentials');
+		if (!user || !user.password) throw new UnauthorizedException('Invalid credentials');
 
 		const passwordMatch = await bcrypt.compare(dto.password, user.password);
 		if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
@@ -85,5 +81,57 @@ export class AuthService {
 		if (!user) throw new UnauthorizedException('User not found');
 		const { password, ...result } = user;
 		return result;
+	}
+
+	// --- Google additions below ---
+
+	async validateGoogleUser(googleUser: {
+		email: string;
+		fullname?: string;
+		googleId: string;
+		avatarUrl?: string;
+	}): Promise<User> {
+		let user = await this.prisma.user.findUnique({
+			where: { googleId: googleUser.googleId },
+		});
+		if (user) return user;
+
+		user = await this.prisma.user.findUnique({
+			where: { email: googleUser.email },
+		});
+		if (user) {
+			return this.prisma.user.update({
+				where: { id: user.id },
+				data: { googleId: googleUser.googleId, provider: Provider.GOOGLE },
+			});
+		}
+
+		const username = await this.generateUniqueUsername(googleUser.email);
+
+		return this.prisma.user.create({
+			data: {
+				email: googleUser.email,
+				fullname: googleUser.fullname,
+				username,
+				googleId: googleUser.googleId,
+				provider: Provider.GOOGLE,
+				...(googleUser.avatarUrl ? { avatarUrl: googleUser.avatarUrl } : {}),
+			},
+		});
+	}
+
+	async googleLogin(user: User) {
+		return this.signToken(user);
+	}
+
+	private async generateUniqueUsername(email: string): Promise<string> {
+		const base = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
+		let candidate = base;
+		let suffix = 0;
+		while (await this.prisma.user.findUnique({ where: { username: candidate } })) {
+			suffix++;
+			candidate = `${base}${suffix}`;
+		}
+		return candidate;
 	}
 }

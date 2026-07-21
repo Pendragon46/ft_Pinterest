@@ -3,6 +3,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '@prisma/client';
 
 @Controller('auth')
 export class AuthController {
@@ -23,5 +25,15 @@ export class AuthController {
 	@Get('me')
 	async me(@Req() req: { user: { id: string } }) {
 		return this.authService.me(req.user.id);
+	}
+
+	@Get('google')
+	@UseGuards(AuthGuard('google'))
+	async googleAuth() {}
+
+	@Get('google/callback')
+	@UseGuards(AuthGuard('google'))
+	async googleAuthCallback(@Req() req: { user: User }) {
+		return this.authService.googleLogin(req.user);
 	}
 }
