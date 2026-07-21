@@ -197,3 +197,63 @@ Cloudinary du `backend/.env` sont factices. Conséquence :
   `backend/.env` (secrets appartenant à l'équipe — hors périmètre agent, R1).
 Le seeding via Swagger suggéré par la spec emprunte le même chemin → aussi
 bloqué. D'où le seed direct en base pour vérifier la lecture.
+
+## Phase 4 — Upload (code écrit, portes vertes ; runtime bloqué côté backend)
+
+### Tâche 4.1 — Support multipart et validation
+- Statut : terminé
+- Fichiers : `http.ts` (`multipartConfig`, Content-Type undefined pour laisser
+  le navigateur poser le boundary) ; `upload.validation.ts` (créé) ;
+  `locales/{en,fr,ar}/common.json` (`errors.fileTooLarge`, `errors.fileType`).
+- Vérification : `tsc -b` + `eslint` OK ; `check:i18n` → 203 clés × 3 locales.
+- Écart assumé : `validateUpload` renvoie `UploadErrorKey`
+  (`'errors.fileTooLarge' | 'errors.fileType'`) plutôt que `string` — sinon
+  `t(key)` ne type-check pas face aux ressources i18next strictes.
+
+### Tâche 4.2 — Avatar et profil
+- Statut : code terminé ; **runtime bloqué**
+- Fichiers : `user.api.ts` (`updateProfile` multipart/JSON, `updateAccount`
+  JSON ; `loggedUser` retiré ; import mock `updateMockProfile`/`ProfilePatch`
+  supprimé — devenu inutile) ; `SettingsPage.tsx` (state `avatarFile`/
+  `avatarError`, `validateUpload` sur sélection, affichage d'erreur, appels
+  mutations sans `loggedUser`).
+- Vérification portes : `tsc -b` + `eslint` OK.
+- **BLOCAGE runtime n°3 (famille T1)** : `PATCH /users/:id` renvoie **403
+  « not authorized to update this user »** même avec token. Cause :
+  `users.controller.ts:56` passe un **UUID codé en dur**
+  (`"34131762-…"`) comme `loggedUserId`, et le service exige
+  `id === loggedUserId`. Donc PATCH /users n'est **pas** réellement
+  indépendant de T1 (contrairement à la catégorisation §1 de la spec). Le
+  code frontend est correct pour le contrat post-T1 ; il fonctionnera dès que
+  le backend lira `req.user.id`.
+
+### Tâche 4.3 — Création et suppression d'artwork
+- Statut : code terminé ; **runtime bloqué**
+- Fichiers : `artwork.api.ts` (`createArtwork(authorId, input)` multipart champ
+  `art` ; `deleteArtwork(id)` ; import mock `addCreatedArtwork` + types
+  `MediaType`/`ProfileArtwork` retirés) ; `CreatePage.tsx` (appel
+  `createArtwork(userId, {...})`).
+- Vérification portes : `npm run verify` → **exit 0** (tsc + eslint + i18n +
+  build).
+- Écart assumé : la spec demande d'appeler `validateUpload(file,'artwork')`
+  dans `CreatePage`. Or `CreatePage` valide **déjà** le fichier via
+  `validateFile` (artwork.validation) qui gate le bouton Publier. Ajouter
+  `validateUpload` doublonnerait avec un autre espace de clés d'erreur
+  (`create.errors.*` vs `errors.*`). `validateUpload` n'est donc utilisé que
+  par l'avatar (4.2), où aucune validation n'existait. Choix documenté.
+- **Runtime** :
+  - `createArtwork` → `POST /artworks/user/:id` → **400** (Cloudinary
+    placeholder — blocage n°2). Genuinement indépendant de T1 (auteur = param
+    d'URL) mais bloqué par les credentials.
+  - `deleteArtwork` → `DELETE /artworks/:id` (sans body, forme post-T1) →
+    **500** pré-T1 (le contrôleur lit `data.userId` dans le body ; §1 le note
+    mais la spec écrit la forme post-T1). Fonctionnera post-T1.
+
+### Bilan des vérifications runtime
+- **Vérifié de bout en bout** : toutes les **lectures** (Phases 1 & 2) — profil,
+  œuvres, likées, compteurs, recherche, tuiles, détail — sur données réelles.
+- **Non vérifiable dans cet environnement** : toutes les **mutations**
+  (Phases 3 & 4) — bloquées par (a) identité codée en dur / `loggedUser` en
+  body = ticket **T1** non livré, et (b) credentials **Cloudinary** factices.
+  Le code correspondant est écrit pour le contrat cible et passe toutes les
+  portes statiques.

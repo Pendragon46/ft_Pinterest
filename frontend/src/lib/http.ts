@@ -81,3 +81,11 @@ function normaliseError(error: unknown): ApiError {
   }
   return { status: 0, message: 'errors.network' }
 }
+
+// Envoi de fichier. Content-Type à `undefined` pour que l'instance axios
+// n'impose pas son défaut JSON : le navigateur pose alors lui-même
+// « multipart/form-data; boundary=… ». Écrire l'en-tête à la main
+// écraserait ce boundary et le serveur ne pourrait plus découper le corps.
+export const multipartConfig = {
+  headers: { 'Content-Type': undefined },
+} as const

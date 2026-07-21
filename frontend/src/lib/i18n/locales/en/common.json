@@ -74,7 +74,9 @@
     "emailInvalid": "Enter a valid email address.",
     "passwordRequired": "Password is required.",
     "passwordWeak": "8+ characters with upper and lower case letters, a number and a symbol.",
-    "network": "Network error — check your connection."
+    "network": "Network error — check your connection.",
+    "fileTooLarge": "File too large (10 MB maximum).",
+    "fileType": "Unsupported file format."
   },
   "home": {
     "heroLine1": "Don't scroll inspiration.",

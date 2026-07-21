@@ -19,6 +19,7 @@ import {
 import { updateAccount, updateProfile, userKeys } from '@/features/users/user.api'
 import { DEFAULT_AVATAR } from '@/lib/avatar'
 import { useToast } from '@/lib/toast.store'
+import { validateUpload, type UploadErrorKey } from '@/lib/upload.validation'
 
 type Section = 'account' | 'appearance'
 
@@ -45,6 +46,9 @@ export function SettingsPage() {
   const [avatarPreview, setAvatarPreview] = useState(
     authUser?.avatarUrl ?? DEFAULT_AVATAR,
   )
+  // The actual File to upload; null = avatar unchanged (profile saves as JSON).
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarError, setAvatarError] = useState<UploadErrorKey | undefined>()
   const [profileError, setProfileError] = useState<AuthErrorKey | undefined>()
   const [profileSaved, setProfileSaved] = useState(false)
 
@@ -60,17 +64,16 @@ export function SettingsPage() {
   const [accountSaved, setAccountSaved] = useState(false)
 
   const profileMutation = useMutation({
-    // TODO(backend): PATCH /users/:id (multipart if avatar changed).
     mutationFn: () =>
       updateProfile(userId, {
-        loggedUser: userId,
         fullname: fullname.trim() || null,
         username: username.trim(),
         bio: bio.trim() || null,
-        avatarUrl: avatarPreview,
+        avatarFile,
       }),
     onSuccess: (updated) => {
       login(updated) // reflect the new identity in the header/avatar immediately
+      setAvatarFile(null) // avatar persisted; next save is JSON unless re-picked
       void queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
       setProfileSaved(true)
       window.clearTimeout(profileSavedTimer.current)
@@ -94,10 +97,8 @@ export function SettingsPage() {
   })
 
   const accountMutation = useMutation({
-    // TODO(backend): PATCH /users/:id with { email?, password? }.
     mutationFn: () =>
       updateAccount(userId, {
-        loggedUser: userId,
         email: email.trim() !== authUser?.email ? email.trim() : undefined,
         password: password || undefined,
       }),
@@ -138,7 +139,16 @@ export function SettingsPage() {
   const onAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
-    // Mock: preview only. The real save sends multipart/form-data (field `avatar`).
+    // Client-side mirror of the server's ParseFilePipe: a rejected file never
+    // leaves the browser.
+    const error = validateUpload(file, 'avatar')
+    if (error) {
+      setAvatarError(error)
+      return
+    }
+    setAvatarError(undefined)
+    setAvatarFile(file)
+    // Local preview; the real bytes upload as multipart on Save (field `avatar`).
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === 'string') setAvatarPreview(reader.result)
@@ -248,6 +258,11 @@ export function SettingsPage() {
                       {t('settings.changeAvatar')}
                     </Button>
                   </div>
+                  {avatarError ? (
+                    <p role="alert" className="text-sm text-red-600">
+                      {t(avatarError)}
+                    </p>
+                  ) : null}
                   <Input
                     label={t('settings.displayName')}
                     value={fullname}

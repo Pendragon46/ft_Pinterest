@@ -74,7 +74,9 @@
     "emailInvalid": "Saisissez une adresse e-mail valide.",
     "passwordRequired": "Le mot de passe est requis.",
     "passwordWeak": "8+ caractères avec majuscules et minuscules, un chiffre et un symbole.",
-    "network": "Erreur réseau — vérifiez votre connexion."
+    "network": "Erreur réseau — vérifiez votre connexion.",
+    "fileTooLarge": "Fichier trop volumineux (10 Mo maximum).",
+    "fileType": "Format de fichier non pris en charge."
   },
   "home": {
     "heroLine1": "L'inspiration ne défile pas.",

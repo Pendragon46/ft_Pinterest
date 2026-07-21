@@ -141,13 +141,11 @@ export function CreatePage() {
 
   const mutation = useMutation({
     mutationFn: () =>
-      createArtwork({
-        file: file as File,
-        mediaType: mediaType ?? 'image',
+      createArtwork(userId, {
         title: title.trim(),
         description: description.trim(),
         tags: normalizeTags(tags),
-        userId,
+        file: file as File,
       }),
     onSuccess: (created) => {
       void queryClient.invalidateQueries({ queryKey: userKeys.works(userId) })

@@ -1,11 +1,11 @@
 // L'API "users" : toutes les lectures/écritures des pages Profil & Réglages
-// passent par ici. Les lectures appellent le backend NestJS ; les mutations
-// (profil, compte, follow) restent sur mocks jusqu'aux phases 3/4. Signatures
-// et clés de cache inchangées.
+// passent par ici. Lectures + mutations profil/compte appellent le backend
+// NestJS ; `setFollow` reste sur mock jusqu'au ticket T1. Clés de cache
+// inchangées.
 
 import type { ProfileArtwork } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
-import { http } from '@/lib/http'
+import { http, multipartConfig } from '@/lib/http'
 import {
   toProfileArtwork,
   toUser,
@@ -13,7 +13,6 @@ import {
   type ServerUser,
 } from '@/lib/mappers'
 import { maybeFailMutation } from '@/lib/devFail'
-import { updateMockProfile, type ProfilePatch } from './user.mock'
 
 const LATENCY_MS = 200
 
@@ -65,55 +64,63 @@ export async function fetchFollowingCount(id: string): Promise<number> {
 }
 
 // ── Mutations ───────────────────────────────────────────────────────────────
-// The global ValidationPipe uses forbidNonWhitelisted, so bodies carry ONLY the
-// DTO fields + `loggedUser` (the current user's id — the temporary auth seam).
+// Profil et compte passent par le backend ; l'identité voyage dans le token,
+// donc plus de `loggedUser` dans les corps. `setFollow` reste sur mock jusqu'au
+// ticket T1 (la route lit encore `loggedUser` dans le body d'un POST/DELETE).
 
 export interface UpdateProfileInput {
-  loggedUser: string
   fullname?: string | null
   username?: string
   bio?: string | null
-  avatarUrl?: string
+  // Fichier choisi dans le formulaire ; absent si l'avatar est inchangé.
+  avatarFile?: File | null
 }
 
-/** Save Account → Profile.
-    TODO(backend): PATCH /users/:id (multipart/form-data if the avatar changed,
-    else JSON), then invalidate userKeys.profile(id). */
+/** Enregistre le profil. Deux formes selon qu'un fichier accompagne la
+    requête : multipart avec avatar, JSON sinon. On n'envoie que les champs
+    réellement modifiés — forbidNonWhitelisted rejette le reste. */
 export async function updateProfile(
   id: string,
   input: UpdateProfileInput,
 ): Promise<User> {
-  await delay(LATENCY_MS)
-  maybeFailMutation()
-  // Send only the changed profile fields (the backend DTO forbids extra keys);
-  // `loggedUser` is the auth seam meant for the server, not the client cache.
-  const patch: ProfilePatch = {}
-  if (input.fullname !== undefined) patch.fullname = input.fullname
-  if (input.username !== undefined) patch.username = input.username
-  if (input.bio !== undefined) patch.bio = input.bio
-  if (input.avatarUrl !== undefined) patch.avatarUrl = input.avatarUrl
-  return updateMockProfile(id, patch)
+  const { avatarFile, ...fields } = input
+
+  if (avatarFile) {
+    const form = new FormData()
+    // FormData transporte des chaînes : on saute null et undefined, sinon
+    // ils arrivent en « null » littéral côté serveur.
+    Object.entries(fields).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        form.append(key, String(value))
+      }
+    })
+    form.append('avatar', avatarFile)
+
+    const { data } = await http.patch<ServerUser>(
+      `/users/${id}`,
+      form,
+      multipartConfig,
+    )
+    return toUser(data)
+  }
+
+  const { data } = await http.patch<ServerUser>(`/users/${id}`, fields)
+  return toUser(data)
 }
 
 export interface UpdateAccountInput {
-  loggedUser: string
   email?: string
   password?: string
 }
 
-/** Save Account → Email & password.
-    TODO(backend): PATCH /users/:id with { email?, password? } (+ loggedUser),
-    then invalidate userKeys.profile(id). The password is never stored client-side. */
+/** Email et mot de passe. Toujours JSON — aucun fichier ici. Le mot de
+    passe n'est jamais conservé côté client. */
 export async function updateAccount(
   id: string,
   input: UpdateAccountInput,
 ): Promise<User> {
-  await delay(LATENCY_MS)
-  maybeFailMutation()
-  const patch: ProfilePatch = {}
-  if (input.email !== undefined) patch.email = input.email
-  // A password change is server-only — nothing to reflect in the client cache.
-  return updateMockProfile(id, patch)
+  const { data } = await http.patch<ServerUser>(`/users/${id}`, input)
+  return toUser(data)
 }
 
 export interface FollowInput {

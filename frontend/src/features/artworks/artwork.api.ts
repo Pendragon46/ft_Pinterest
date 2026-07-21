@@ -1,10 +1,8 @@
-// The artworks "API": every read the UI performs goes through here. Today each
-// function resolves from the mock; when the backend lands only the bodies
-// change (signatures and query keys stay identical). The artificial latency
-// keeps loading states exercised.
+// L'API "artworks". Tuiles, détail, publication et suppression appellent le
+// backend NestJS. Commentaires et like/save restent sur mocks jusqu'au ticket
+// T1 (identité par token). Signatures et clés de cache inchangées.
 
-import { addCreatedArtwork } from '@/features/users/user.mock'
-import { http } from '@/lib/http'
+import { http, multipartConfig } from '@/lib/http'
 import { layoutTile, pageForTile } from '@/features/search/tile.layout'
 import {
   realArtworkId,
@@ -19,8 +17,6 @@ import type {
   ArtworkDetail,
   AuthorSummary,
   CanvasArtwork,
-  MediaType,
-  ProfileArtwork,
 } from './artwork.types'
 
 const DETAIL_LATENCY_MS = 220
@@ -125,27 +121,46 @@ export async function setArtworkSave(input: ArtworkSaveInput): Promise<boolean> 
 }
 
 export interface CreateArtworkInput {
-  file: File
-  mediaType: MediaType
   title: string
-  description: string
-  tags: string[]
-  userId: string
+  description?: string
+  tags?: string[]
+  file: File
 }
 
-/** Publish a new artwork; the mock persists it in the session store and returns
-    its profile-grid shape (id lets the caller open the fresh detail).
-    TODO(backend): POST /artworks/user/:userId — multipart/form-data, file field
-    `art` (≤10 MB; jpeg/png/gif/webp/mp4), fields { title, description?, tags[],
-    userId } → Artwork (server owns id, mediaUrl, mediaPublicId, timestamps). On
-    success invalidate userKeys.works(userId) + userKeys.profile(userId). Send
-    tags as repeated `tags` parts and verify a SINGLE tag still parses as an array
-    in Swagger — if it fails @IsArray, the backend needs an @Transform (add to
-    E.2, alongside the broken GET /artworks/user/:userId @Param('id')). */
+/** Publie une œuvre. Champ fichier `art`, 10 Mo max, images + mp4.
+    La route porte l'id auteur dans l'URL ; après le ticket T1 elle
+    deviendra POST /artworks et `authorId` disparaîtra — seule cette
+    ligne changera. */
 export async function createArtwork(
+  authorId: string,
   input: CreateArtworkInput,
-): Promise<ProfileArtwork> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  return addCreatedArtwork(input)
+): Promise<ArtworkDetail> {
+  const form = new FormData()
+  form.append('title', input.title)
+  if (input.description) form.append('description', input.description)
+
+  // Un tableau se transmet en répétant la clé : tags=a&tags=b.
+  // class-validator le reconstruit côté Nest. Le DTO impose
+  // ArrayNotEmpty : on n'envoie rien si la liste est vide.
+  input.tags
+    ?.map((t) => t.trim().toLowerCase())
+    .filter((t) => t.length > 0)
+    .forEach((tag) => {
+      form.append('tags', tag)
+    })
+
+  form.append('art', input.file)
+
+  const { data } = await http.post<ServerArtwork>(
+    `/artworks/user/${authorId}`,
+    form,
+    multipartConfig,
+  )
+  return toArtworkDetail(data)
+}
+
+/** Supprime une œuvre. Le serveur vérifie la propriété (403 sinon) et
+    nettoie le média sur Cloudinary. */
+export async function deleteArtwork(id: string): Promise<void> {
+  await http.delete(`/artworks/${realArtworkId(id)}`)
 }
