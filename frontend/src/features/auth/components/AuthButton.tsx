@@ -1,9 +1,10 @@
-import { ChevronDown, LogOut, Plus, Settings, User as UserIcon } from 'lucide-react'
+import { ChevronDown, LogOut, Plus, Settings, Shield, User as UserIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
 import { useAuthStore } from '../auth.store'
+import { useRole } from '../useRole'
 
 // Shared pill; neutral-500 keeps the white text above WCAG AA contrast.
 // h-10 matches the other floating chrome pills (logo, language, refocus, footer).
@@ -19,6 +20,7 @@ export function AuthButton() {
   const location = useLocation()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
+  const { canViewDashboard, canInteract } = useRole()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
@@ -84,7 +86,7 @@ export function AuthButton() {
             {(user.fullname ?? user.username).charAt(0).toUpperCase()}
           </span>
         )}
-        <span className="max-w-[7rem] truncate sm:max-w-[10rem]">
+        <span className="max-w-[2rem] truncate sm:max-w-[1rem]">
           {user.fullname ?? user.username}
         </span>
         <ChevronDown
@@ -132,17 +134,32 @@ export function AuthButton() {
             <Settings aria-hidden="true" className="size-4 text-neutral-400" />
             {t('settings.title')}
           </Link>
-          <Link
-            to="/create"
-            role="menuitem"
-            onClick={() => {
-              setOpen(false)
-            }}
-            className={ITEM}
-          >
-            <Plus aria-hidden="true" className="size-4 text-neutral-400" />
-            {t('create.cta')}
-          </Link>
+          {canInteract ? (
+            <Link
+              to="/create"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false)
+              }}
+              className={ITEM}
+            >
+              <Plus aria-hidden="true" className="size-4 text-neutral-400" />
+              {t('create.cta')}
+            </Link>
+          ) : null}
+          {canViewDashboard ? (
+            <Link
+              to="/admin"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false)
+              }}
+              className={ITEM}
+            >
+              <Shield aria-hidden="true" className="size-4 text-neutral-400" />
+              {t('admin.menuLink')}
+            </Link>
+          ) : null}
           <div aria-hidden="true" className="h-px bg-neutral-100" />
           <button
             type="button"

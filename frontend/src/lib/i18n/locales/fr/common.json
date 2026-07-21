@@ -110,6 +110,26 @@
       "error": "Impossible de supprimer votre compte. Réessayez."
     }
   },
+  "admin": {
+    "menuLink": "Administration",
+    "breadcrumb": { "root": "Admin" },
+    "nav": { "users": "Utilisateurs", "reports": "Signalements", "settings": "Paramètres", "comingSoon": "Bientôt disponible", "other": "Autre" },
+    "title": "Utilisateurs",
+    "subtitle": "Gérez les utilisateurs, leurs rôles et leurs accès.",
+    "refresh": "Actualiser",
+    "stats": { "total": "Total utilisateurs", "admins": "Administrateurs", "members": "Utilisateurs", "guests": "Invités" },
+    "search": { "label": "Rechercher des utilisateurs", "placeholder": "Rechercher par nom, @pseudo ou e-mail…" },
+    "filter": { "role": "Filtrer par rôle", "allRoles": "Tous les rôles" },
+    "sort": { "label": "Trier par", "recent": "Plus récent", "oldest": "Plus ancien", "name": "Nom" },
+    "table": { "user": "Utilisateur", "email": "E-mail", "role": "Rôle", "joined": "Inscription", "updated": "Modifié", "artworks": "Œuvres", "actions": "Actions" },
+    "role": { "user": "Utilisateur", "guest": "Invité", "admin": "Admin" },
+    "action": { "changeRole": "Changer le rôle", "delete": "Supprimer l'utilisateur" },
+    "pagination": { "showing": "Affichage de {{from}} à {{to}} sur {{total}}", "perPage": "{{n}} / page", "previous": "Page précédente", "next": "Page suivante" },
+    "empty": { "title": "Aucun utilisateur trouvé", "body": "Aucun utilisateur ne correspond à votre recherche ou à vos filtres." },
+    "error": { "title": "Impossible de charger les utilisateurs", "body": "Une erreur est survenue. Vérifiez votre connexion, puis réessayez.", "retry": "Réessayer", "roleRefused": "Le serveur a refusé ce changement (dernier administrateur ou auto-rétrogradation)." },
+    "add": { "button": "Ajouter un utilisateur", "title": "Ajouter un utilisateur", "subtitle": "Créez un compte et attribuez-lui un rôle.", "fullname": "Nom complet", "username": "Nom d'utilisateur", "email": "Adresse e-mail", "password": "Mot de passe", "passwordHint": "8+ caractères, majuscules et minuscules, un chiffre et un symbole.", "role": "Rôle", "cancel": "Annuler", "submit": "Créer l'utilisateur" },
+    "delete": { "title": "Supprimer l'utilisateur ?", "body": "Cette action est irréversible. « {{name}} » (@{{handle}}) perdra définitivement l'accès à son compte et à toutes ses données.", "cancel": "Annuler", "confirm": "Supprimer" }
+  },
   "home": {
     "heroLine1": "L'inspiration ne défile pas.",
     "heroLine2": "Elle se navigue.",

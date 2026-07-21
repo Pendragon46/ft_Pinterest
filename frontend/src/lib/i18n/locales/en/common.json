@@ -110,6 +110,26 @@
       "error": "Couldn't delete your account. Please try again."
     }
   },
+  "admin": {
+    "menuLink": "Administration",
+    "breadcrumb": { "root": "Admin" },
+    "nav": { "users": "Users", "reports": "Reports", "settings": "Settings", "comingSoon": "Coming soon", "other": "Other" },
+    "title": "Users",
+    "subtitle": "Manage users, their roles and access.",
+    "refresh": "Refresh",
+    "stats": { "total": "Total users", "admins": "Administrators", "members": "Users", "guests": "Guests" },
+    "search": { "label": "Search users", "placeholder": "Search by name, @handle or email…" },
+    "filter": { "role": "Filter by role", "allRoles": "All roles" },
+    "sort": { "label": "Sort by", "recent": "Newest", "oldest": "Oldest", "name": "Name" },
+    "table": { "user": "User", "email": "Email", "role": "Role", "joined": "Joined", "updated": "Updated", "artworks": "Artworks", "actions": "Actions" },
+    "role": { "user": "User", "guest": "Guest", "admin": "Admin" },
+    "action": { "changeRole": "Change role", "delete": "Delete user" },
+    "pagination": { "showing": "Showing {{from}}–{{to}} of {{total}}", "perPage": "{{n}} / page", "previous": "Previous page", "next": "Next page" },
+    "empty": { "title": "No users found", "body": "No user matches your search or filters." },
+    "error": { "title": "Couldn't load users", "body": "Something went wrong. Check your connection and try again.", "retry": "Retry", "roleRefused": "The server refused this change (e.g. last administrator or self-demotion)." },
+    "add": { "button": "Add user", "title": "Add a user", "subtitle": "Create an account and assign it a role.", "fullname": "Full name", "username": "Username", "email": "Email address", "password": "Password", "passwordHint": "8+ chars, upper & lower case, a number and a symbol.", "role": "Role", "cancel": "Cancel", "submit": "Create user" },
+    "delete": { "title": "Delete user?", "body": "This is permanent. “{{name}}” (@{{handle}}) will lose access to their account and all their data.", "cancel": "Cancel", "confirm": "Delete" }
+  },
   "home": {
     "heroLine1": "Don't scroll inspiration.",
     "heroLine2": "Navigate it.",

@@ -22,6 +22,7 @@ import {
 } from '@/features/artworks/artwork.validation'
 import type { CreateErrorKey } from '@/features/artworks/artwork.validation'
 import { useAuthStore } from '@/features/auth/auth.store'
+import { useRole } from '@/features/auth/useRole'
 import { userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
 
@@ -41,6 +42,7 @@ export function CreatePage() {
   const queryClient = useQueryClient()
   const toast = useToast()
   const authUser = useAuthStore((state) => state.user)
+  const { canInteract } = useRole()
   const userId = authUser?.id ?? ''
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -180,6 +182,10 @@ export function CreatePage() {
   // Signed-out direct visit → sign in first, then return here (§2).
   if (!authUser) {
     return <Navigate to="/login" state={{ background: location }} replace />
+  }
+  // GUEST is read-only — no publishing.
+  if (!canInteract) {
+    return <Navigate to="/" replace />
   }
 
   return (

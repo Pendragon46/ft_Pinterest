@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 
 import { Modal } from '@/components/ui/Modal'
+import { AdminPage } from '@/pages/AdminPage'
 import { ArtworkPage } from '@/pages/ArtworkPage'
 import { CreatePage } from '@/pages/CreatePage'
 import { DevUiPage } from '@/pages/DevUiPage'
@@ -37,6 +38,7 @@ export function AppRouter() {
         <Route path="/profile/:userId" element={<ProfilePage />} />
         <Route path="/create" element={<CreatePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/artwork/:id" element={<ArtworkPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
