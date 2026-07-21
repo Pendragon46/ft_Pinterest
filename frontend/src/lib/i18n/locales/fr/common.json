@@ -78,6 +78,38 @@
     "fileTooLarge": "Fichier trop volumineux (10 Mo maximum).",
     "fileType": "Format de fichier non pris en charge."
   },
+  "gdpr": {
+    "nav": "Confidentialité",
+    "section": {
+      "title": "Mes données & confidentialité",
+      "description": "Consultez, téléchargez ou supprimez les données personnelles que nous détenons."
+    },
+    "view": {
+      "button": "Voir mes données",
+      "loading": "Chargement…",
+      "summary": "{{artworks}} œuvres · {{comments}} commentaires · {{likes}} likes · {{following}} abonnements · {{followers}} abonnés"
+    },
+    "download": {
+      "button": "Télécharger (JSON)",
+      "hint": "Un fichier JSON lisible avec tout ce que nous stockons — jamais votre mot de passe."
+    },
+    "danger": {
+      "title": "Supprimer le compte",
+      "description": "Supprime définitivement votre compte et tout son contenu. Irréversible.",
+      "button": "Supprimer mon compte"
+    },
+    "delete": {
+      "title": "Supprimer votre compte ?",
+      "warning": "Cette action est définitive. Votre compte et tout son contenu seront effacés.",
+      "willDelete": "Vos œuvres, commentaires, likes et abonnements seront tous supprimés.",
+      "confirmLabel": "Saisissez votre nom d'utilisateur ({{username}}) pour confirmer",
+      "confirmPlaceholder": "votre nom d'utilisateur",
+      "cancel": "Annuler",
+      "confirm": "Supprimer le compte",
+      "deleting": "Suppression…",
+      "error": "Impossible de supprimer votre compte. Réessayez."
+    }
+  },
   "home": {
     "heroLine1": "L'inspiration ne défile pas.",
     "heroLine2": "Elle se navigue.",

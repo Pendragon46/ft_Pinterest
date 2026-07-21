@@ -20,8 +20,9 @@ import { updateAccount, updateProfile, userKeys } from '@/features/users/user.ap
 import { DEFAULT_AVATAR } from '@/lib/avatar'
 import { useToast } from '@/lib/toast.store'
 import { validateUpload, type UploadErrorKey } from '@/lib/upload.validation'
+import { DataPrivacySection } from '@/features/gdpr/DataPrivacySection'
 
-type Section = 'account' | 'appearance'
+type Section = 'account' | 'appearance' | 'privacy'
 
 export function SettingsPage() {
   const { t } = useTranslation('common')
@@ -183,6 +184,7 @@ export function SettingsPage() {
 
   const sections: { id: Section; label: string }[] = [
     { id: 'account', label: t('settings.navAccount') },
+    { id: 'privacy', label: t('gdpr.nav') },
     { id: 'appearance', label: t('settings.navAppearance') },
   ]
 
@@ -370,7 +372,7 @@ export function SettingsPage() {
                   </div>
                 </form>
               </div>
-            ) : (
+            ) : section === 'appearance' ? (
               /* Appearance section */
               <div className="flex flex-col gap-5 rounded-2xl border border-neutral-200 p-6">
                 <h2 className="font-serif text-xl text-neutral-900">
@@ -381,6 +383,8 @@ export function SettingsPage() {
                   <LanguageSwitcher />
                 </div>
               </div>
+            ) : (
+              <DataPrivacySection user={authUser} />
             )}
           </div>
         </div>

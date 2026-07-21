@@ -78,6 +78,38 @@
     "fileTooLarge": "File too large (10 MB maximum).",
     "fileType": "Unsupported file format."
   },
+  "gdpr": {
+    "nav": "Privacy",
+    "section": {
+      "title": "Your data & privacy",
+      "description": "Review, download or delete the personal data we hold about you."
+    },
+    "view": {
+      "button": "View my data",
+      "loading": "Loading…",
+      "summary": "{{artworks}} artworks · {{comments}} comments · {{likes}} likes · {{following}} following · {{followers}} followers"
+    },
+    "download": {
+      "button": "Download (JSON)",
+      "hint": "A readable JSON file with everything we store — never your password."
+    },
+    "danger": {
+      "title": "Delete account",
+      "description": "Permanently delete your account and all associated content. This cannot be undone.",
+      "button": "Delete my account"
+    },
+    "delete": {
+      "title": "Delete your account?",
+      "warning": "This is permanent. Your account and all its content will be erased.",
+      "willDelete": "Your artworks, comments, likes and follows will all be removed.",
+      "confirmLabel": "Type your username ({{username}}) to confirm",
+      "confirmPlaceholder": "your username",
+      "cancel": "Cancel",
+      "confirm": "Delete account",
+      "deleting": "Deleting…",
+      "error": "Couldn't delete your account. Please try again."
+    }
+  },
   "home": {
     "heroLine1": "Don't scroll inspiration.",
     "heroLine2": "Navigate it.",
