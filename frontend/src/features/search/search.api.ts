@@ -3,6 +3,8 @@
 // only the bodies change — signatures and query keys stay identical.
 
 import type { CanvasArtwork, Category } from '@/features/artworks/artwork.types'
+import { http } from '@/lib/http'
+import { colorFromId, type ServerUser } from '@/lib/mappers'
 
 import {
   contextualTags,
@@ -14,6 +16,7 @@ import {
 import type {
   NicheNeighbour,
   SearchResolution,
+  Suggestion,
   SuggestionGroups,
 } from './search.types'
 
@@ -39,11 +42,43 @@ export const searchKeys = {
   contextualTags: () => ['search', 'contextual-tags'] as const,
 }
 
-/** Categorised autocomplete for a query.
-    TODO(backend): GET /search/suggest?q= → SuggestionGroups (needs tag exposure). */
-export async function fetchSuggestions(query: string): Promise<SuggestionGroups> {
-  await delay(SUGGEST_LATENCY_MS)
-  return suggest(query)
+// Forme de GET /search : trois listes renvoyées en parallèle.
+interface ServerSearchAll {
+  artworks: { id: string; title: string }[]
+  users: ServerUser[]
+  tags: { id: string; tags?: { name: string }[] }[]
+}
+
+/** Autocomplétion. Le backend fournit une recherche plate ; les
+    disciplines restent résolues côté client (ce sont des niches du module
+    canvas, absentes du modèle serveur), les créateurs viennent de l'API. */
+export async function fetchSuggestions(
+  query: string,
+): Promise<SuggestionGroups> {
+  const local = suggest(query)
+  if (!query.trim()) return local
+
+  try {
+    const { data } = await http.get<ServerSearchAll>('/search', {
+      params: { q: query, page: 1, limit: 5, sort: 'recent' },
+    })
+
+    const creators: Suggestion[] = data.users.map((u) => ({
+      id: `creator-${u.id}`,
+      kind: 'creator',
+      term: u.fullname ?? u.username,
+      username: u.fullname ?? u.username,
+      handle: u.username,
+      previews: [colorFromId(u.id)],
+    }))
+
+    // Disciplines locales (niches) + créateurs réels.
+    return { disciplines: local.disciplines, creators }
+  } catch {
+    // La recherche ne doit jamais casser la barre de saisie : en cas
+    // d'échec réseau on retombe sur les suggestions locales.
+    return local
+  }
 }
 
 /** Resolve a submitted term to a niche (or the nearest region).

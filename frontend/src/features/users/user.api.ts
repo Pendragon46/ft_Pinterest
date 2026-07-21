@@ -1,21 +1,19 @@
-// The users "API": every read/write the profile & settings pages perform goes
-// through here. Today each resolves from the mock; when the NestJS/Prisma backend
-// lands only the bodies change (signatures + query keys stay identical). The
-// mock shapes already mirror the backend (`_count`, minimal DTO bodies, `mediaUrl`).
+// L'API "users" : toutes les lectures/écritures des pages Profil & Réglages
+// passent par ici. Les lectures appellent le backend NestJS ; les mutations
+// (profil, compte, follow) restent sur mocks jusqu'aux phases 3/4. Signatures
+// et clés de cache inchangées.
 
 import type { ProfileArtwork } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
-import { maybeFailMutation } from '@/lib/devFail'
-
+import { http } from '@/lib/http'
 import {
-  getMockProfile,
-  mockUserLiked,
-  mockUserWorks,
-  MOCK_FOLLOWER_COUNT,
-  MOCK_FOLLOWING_COUNT,
-  updateMockProfile,
-  type ProfilePatch,
-} from './user.mock'
+  toProfileArtwork,
+  toUser,
+  type ServerArtwork,
+  type ServerUser,
+} from '@/lib/mappers'
+import { maybeFailMutation } from '@/lib/devFail'
+import { updateMockProfile, type ProfilePatch } from './user.mock'
 
 const LATENCY_MS = 200
 
@@ -34,39 +32,36 @@ export const userKeys = {
   followingCount: (id: string) => ['users', 'followingCount', id] as const,
 }
 
-/** One user's profile.
-    TODO(backend): GET /users/:id → User (404 if unknown). */
+/** Profil d'un user. GET /users/:id → 404 si inconnu (remonté en ApiError). */
 export async function fetchProfile(id: string): Promise<User> {
-  await delay(LATENCY_MS)
-  const profile = getMockProfile(id)
-  if (!profile) throw new Error(`User not found: ${id}`)
-  return profile
+  const { data } = await http.get<ServerUser>(`/users/${id}`)
+  return toUser(data)
 }
 
-/** A user's own works.
-    TODO(backend): GET /users/:id/artworks → Artwork[] (each with `_count`). */
+/** Œuvres publiées. Le backend inclut déjà `_count`. */
 export async function fetchUserWorks(id: string): Promise<ProfileArtwork[]> {
-  await delay(LATENCY_MS)
-  return mockUserWorks(id)
+  const { data } = await http.get<ServerArtwork[]>(`/users/${id}/artworks`)
+  return data.map(toProfileArtwork)
 }
 
-/** A user's liked works.
-    TODO(backend): GET /users/:id/artworks/liked → Artwork[]. */
+/** Œuvres likées. Le service déplie déjà `like.artwork` côté serveur. */
 export async function fetchUserLiked(id: string): Promise<ProfileArtwork[]> {
-  await delay(LATENCY_MS)
-  return mockUserLiked(id)
+  const { data } = await http.get<ServerArtwork[]>(
+    `/users/${id}/artworks/liked`,
+  )
+  return data.map(toProfileArtwork)
 }
 
-/** TODO(backend): GET /users/:id/followers/count → number. */
+/** Nombre d'abonnés. Le backend renvoie un entier nu, pas un objet. */
 export async function fetchFollowerCount(id: string): Promise<number> {
-  await delay(LATENCY_MS)
-  return getMockProfile(id) ? MOCK_FOLLOWER_COUNT : 0
+  const { data } = await http.get<number>(`/users/${id}/followers/count`)
+  return data
 }
 
-/** TODO(backend): GET /users/:id/following/count → number. */
+/** Nombre d'abonnements. Même forme. */
 export async function fetchFollowingCount(id: string): Promise<number> {
-  await delay(LATENCY_MS)
-  return getMockProfile(id) ? MOCK_FOLLOWING_COUNT : 0
+  const { data } = await http.get<number>(`/users/${id}/following/count`)
+  return data
 }
 
 // ── Mutations ───────────────────────────────────────────────────────────────
