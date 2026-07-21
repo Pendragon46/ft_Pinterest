@@ -1,4 +1,4 @@
-import { Controller, Get, Post,Body, Param, Delete,Req } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete,Req } from '@nestjs/common';
 import { FollowService } from './follow.service';
 
 

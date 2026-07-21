@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, Req, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, Req, Patch, ParseUUIDPipe } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 
 @Controller('friends')
@@ -12,7 +12,7 @@ export class FriendsController {
   }
 
   @Patch(':userId/request/accept')
-  acceptFriendship(@Param('id') userId: string,
+  acceptFriendship(@Param('userId') userId: string,
   					@Req() req) {
 	return this.friendsService.acceptFriendship(userId, req.user.id);
   }
@@ -20,11 +20,6 @@ export class FriendsController {
   @Get()
   getFriends(@Req() req) {
 	return this.friendsService.getFriends(req.user.id);
-  }
-
-  @Get(':userId')
-  getFriendsOfUser(@Param('userId') userId: string) {
-	return this.friendsService.getFriendsOfUser(userId);
   }
 
   @Get('requests')
@@ -37,20 +32,27 @@ export class FriendsController {
 	return this.friendsService.getPendingFriendRequests(req.user.id);
   }
 
+   @Get('online')
+   getOnlineFriends(@Req() req) {
+	return this.friendsService.getOnlineFriends(req.user.id);
+  }
+
+   @Get(':userId')
+   getFriendsOfUser(@Param('userId' , ParseUUIDPipe) userId: string) {
+	return this.friendsService.getFriendsOfUser(userId);
+  }
+
    @Delete(':userId/request')
-  rejectFriendship(@Param('id') userId: string,
+   rejectFriendship(@Param('userId', ParseUUIDPipe) userId: string,
   					@Req() req) {
 	return this.friendsService.rejectFriendship(userId, req.user.id);
   }
 
   @Delete(':userId')
-  removeFriend(@Param('userId') userId: string,
+  removeFriend(@Param('userId', ParseUUIDPipe) userId: string,
   					@Req() req) {
 	return this.friendsService.removeFriend(userId, req.user.id);
   }
 
-  @Get('online')
-  getOnlineFriends(@Req() req) {
-	return this.friendsService.getOnlineFriends(req.user.id);
-  }
+ 
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -70,7 +70,7 @@ export class UsersService {
 	return user;
   }
 
-  async getCurrentUser(userId: string) {
+  async getCurrentUser(userId: string) {	
 	const user = await this.prisma.user.findUnique({
 		where: {
 			id: userId,

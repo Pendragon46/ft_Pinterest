@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { FriendsService } from 'src/friends/friends.service';
 
 @Injectable()
 export class OnlineStatusService {
-	constructor(private readonly friendsService
-	) {}
+	constructor() {}
 	private onlineUsers = new Map<string, Set<string>>;
 
 
@@ -37,9 +35,4 @@ export class OnlineStatusService {
 		return Array.from(this.onlineUsers.keys());
 	}
 
-	getOnlineFriends(userId: string){
-		const friends = this.friendsService.getFriends(userId);
-		const onlineFriends = friends.filter(friend => this.isUserOnline(friend.id));
-		return onlineFriends;
-	} 
 }

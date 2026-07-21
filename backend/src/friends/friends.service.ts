@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { OnlineStatusService } from 'src/websocket/online-status.service';
+import { OnlineStatusService } from 'src/websocket/onlineStatus.service';
 
 @Injectable()
 export class FriendsService {
@@ -24,16 +24,18 @@ export class FriendsService {
 			if (Friendship.status === 'PENDING') { throw new BadRequestException('Friend request already sent'); }
 			if (Friendship.status === 'ACCEPTED') { throw new BadRequestException('You are already friends'); }
 		}
-		return await this.Prisma.friendship.create({
+		await this.Prisma.friendship.create({
 			data: {
 				requesterId: ConnectedUserId,
 				addresseeId: addresseUserId,
 				status: 'PENDING',
 			},
 		});
+		return { message: 'Friend request sent' };
 	  }
 
 	  async acceptFriendship(requesterUserId: string, ConnectedUserId: string) {
+		console.log('acceptFriendship called with requesterUserId:', requesterUserId, 'ConnectedUserId:', ConnectedUserId);
 		const Friendship = await this.Prisma.friendship.findUnique({
 			where: {
 				requesterId_addresseeId: {
@@ -44,7 +46,7 @@ export class FriendsService {
 		});
 	  	if (!Friendship) { throw new NotFoundException('Friend request not found'); }
 	  	if (Friendship.status === 'ACCEPTED') { throw new BadRequestException('You are already friends'); }
-	  	return await this.Prisma.friendship.update({
+	  	await this.Prisma.friendship.update({
 			where: {
 				requesterId_addresseeId: {
 					requesterId: requesterUserId,
@@ -53,6 +55,7 @@ export class FriendsService {
 			},
 			data: { status: 'ACCEPTED' },
 		});
+		return { message: 'Friend request accepted' };
 	}
 
 	async rejectFriendship(requesterUserId: string, ConnectedUserId: string) {
@@ -66,7 +69,7 @@ export class FriendsService {
 		});
 	  	if (!Friendship) { throw new NotFoundException('Friend request not found'); }
 		if (Friendship.status === 'ACCEPTED') { throw new BadRequestException('You are already friends'); }
-	  	return await this.Prisma.friendship.delete({
+	  	await this.Prisma.friendship.delete({
 			where: {
 				requesterId_addresseeId: {
 					requesterId: requesterUserId,
@@ -74,6 +77,7 @@ export class FriendsService {
 				},
 			},
 		});
+		return { message: 'Friend request rejected' };
 	}
 
 	//get all friends of a user and return them in an array of user objects
@@ -166,7 +170,9 @@ export class FriendsService {
 		});
 	}
 	
-	getOnlineFriends(userId: string) {
-		return this.onlineStatusService.getOnlineFriends(userId);
+	async getOnlineFriends(userId: string) {
+	const friends = await this.getFriends(userId);
+	const onlineFriends = friends.filter(friend => this.onlineStatusService.isUserOnline(friend.id));
+	return onlineFriends;
 	}
 }

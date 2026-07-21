@@ -413,7 +413,7 @@ Get all friend requests for a user
 GET /friends/requests
 ```
 
-Get Pending friend requests for a user
+Get Pending friend requests sent
 ```http
 GET /friends/requests/pending
 ```

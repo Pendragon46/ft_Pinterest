@@ -21,7 +21,7 @@ import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { FriendsModule } from './friends/friends.module';
 import { WebsocketGateway } from './websocket/websocket.gateway';
-import { OnlineStatusService } from './websocket/online-status.service';
+import { OnlineStatusModule } from './websocket/onlineStatus.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -36,15 +36,16 @@ import { OnlineStatusService } from './websocket/online-status.service';
 	AuthModule,
 	SearchModule,
 	FriendsModule,
+	OnlineStatusModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService, {
+  providers: [AppService, CloudinaryService, HealthService, WebsocketGateway,{
     provide: APP_GUARD,
     useClass: RolesGuard,
   }, {
     provide: APP_GUARD,
     useClass: JwtAuthGuard,
-}, WebsocketGateway, OnlineStatusService],
+}],
   
 })
 export class AppModule {}

@@ -23,5 +23,14 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
+
+  //to authorize connection from another origin, you can use the following code to allow CORS from any origin
+  app.enableCors({
+	origin: '*',
+  });
+  //change to app.enableCors({
+  //origin: 'http://localhost:5173',
+  //credentials: true, // for cookies, session
+  //});
 }
 bootstrap();

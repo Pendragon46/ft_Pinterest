@@ -1,6 +1,6 @@
 import {  WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { OnlineStatusService } from './online-status.service';
+import { OnlineStatusService } from './onlineStatus.service';
 import { JwtService } from '@nestjs/jwt';
 import { FriendsService } from 'src/friends/friends.service';
 
@@ -11,7 +11,7 @@ import { FriendsService } from 'src/friends/friends.service';
 })
 export class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
-	constructor(private readonly onlineStatusService,
+	constructor(private readonly onlineStatusService: OnlineStatusService,
 				private readonly jwtService: JwtService,
 				private readonly friendsService: FriendsService
 
@@ -63,7 +63,6 @@ socket.on('friendStatusChange', (data) => {
 });*/
 	handleConnection(client: Socket) {
 		let token: any;
-		console.log(`Client connected: ${client.id}`);
 		try {
 			token = this.verifyToken(client);
 			if (!token) {
