@@ -26,7 +26,7 @@
     - [] Implement real-time features using WebSockets or similar technology.
     - [] Allow users to interact with other users
 	
-    - [x] Advanced Permission System
+    - [x] Advanced Permission System *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
     - [] Standard user management and authentication
 	- [x] Module of choice (infinite canvas)
 	- [] Monitoring system with Prometheus and Grafana.
@@ -45,6 +45,7 @@
     - [x] Multilingue
     - [x] Support for additional browsers
     - [x] RTL Arabic
+    - [x] GDPR compliance features *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
 	- [] file upload
 	- [] Oauth2.0 authentication with Google or 42 API
 	- [] User activity analytics and insights dashboard
