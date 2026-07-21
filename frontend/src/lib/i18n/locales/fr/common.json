@@ -105,6 +105,7 @@
     "commentPlaceholder": "Ajouter un commentaire…",
     "post": "Publier",
     "reply": "Répondre",
+    "deleteComment": "Supprimer",
     "timeNow": "à l'instant",
     "timeHours": "{{hours}} h",
     "close": "Fermer",

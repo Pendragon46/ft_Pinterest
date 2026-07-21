@@ -14,7 +14,9 @@ import { useCompact } from '@/lib/useCompact'
 
 import {
   artworkKeys,
+  deleteArtworkComment,
   fetchArtworkComments,
+  fetchIsLiked,
   postArtworkComment,
   setArtworkLike,
   setArtworkSave,
@@ -59,7 +61,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const queryClient = useQueryClient()
   const toast = useToast()
 
-  const [liked, setLiked] = useState(false)
+  // Optimistic override; null means "defer to the backend's persisted state".
+  const [likeOverride, setLikeOverride] = useState<boolean | null>(null)
   /** Bumped each time the user likes, to replay the heart burst. */
   const [likeBurst, setLikeBurst] = useState(0)
   const [saved, setSaved] = useState(false)
@@ -82,6 +85,16 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   // both read it, so an optimistic post can never make them disagree (§7).
   const comments = commentsQuery.data ?? []
 
+  // Initial like state from the backend (likes list), so a reload reflects what
+  // is persisted; it seeds the optimistic toggle below.
+  const isLikedQuery = useQuery({
+    queryKey: ['artworks', 'isLiked', artwork.id, currentUser?.id],
+    queryFn: () => fetchIsLiked(artwork.id, currentUser?.id ?? ''),
+    enabled: Boolean(currentUser),
+  })
+  // Derived: an in-flight optimistic choice wins, else the persisted state.
+  const liked = likeOverride ?? isLikedQuery.data ?? false
+
   /** Author stamped on this user's own optimistic comments. */
   const selfAuthor = (): AuthorSummary | null =>
     currentUser
@@ -97,12 +110,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   // detail and comments stay independent queries — optimistic add, rollback on
   // error (keeping the draft), reconcile the temp row with the server one.
   const postMutation = useMutation<ArtworkComment, Error, string, CommentPostContext>({
-    mutationFn: (content: string) => {
-      const author = selfAuthor()
-      if (!author) throw new Error('unauthenticated')
-      // TODO(backend): write seam — swap for POST /artworks/:id/comments.
-      return postArtworkComment(artwork.id, { content, author })
-    },
+    mutationFn: (content: string) =>
+      postArtworkComment(artwork.id, { content }),
     onMutate: async (content: string) => {
       setPostStatus('idle')
       await queryClient.cancelQueries({
@@ -159,11 +168,15 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       })
     },
     onSuccess: () => {
-      // The mock persists the comment, so a refetch returns it: invalidate to
-      // reconcile with the server's canonical list (real id/timestamp) and to
-      // restore anything a mid-load post interrupted — exactly the backend path.
+      // Refetch to reconcile the temp row with the server's canonical comment
+      // (real id/timestamp/author) and restore anything a mid-load post
+      // interrupted.
       void queryClient.invalidateQueries({
         queryKey: artworkKeys.comments(artwork.id),
+      })
+      // The comment count also lives on the detail (once the T2 include lands).
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.detail(artwork.id),
       })
       setPostStatus('posted')
       composerRef.current?.focus()
@@ -173,16 +186,12 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   // P0 — like/save are optimistic: flip now, roll back + retry-toast on error. The
   // count stays local-optimistic and reconciles on the next detail fetch.
   const applyLike = (next: boolean) => {
-    setLiked(next)
+    setLikeOverride(next)
     if (next) setLikeBurst((count) => count + 1)
   }
   const likeMutation = useMutation({
     mutationFn: (next: boolean) =>
-      setArtworkLike({
-        id: artwork.id,
-        liked: next,
-        loggedUser: currentUser?.id ?? '',
-      }),
+      setArtworkLike({ id: artwork.id, liked: next }),
     // Flip in onMutate and snapshot the pre-flip value as context, so rollback
     // restores the exact prior state — never replaying the celebratory burst on an
     // un-like, and safe if two opposite toggles interleave — rather than inverting
@@ -194,7 +203,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     },
     onError: (_error, next, context) => {
       if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
-      setLiked(context?.previous ?? !next)
+      setLikeOverride(context?.previous ?? !next)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
@@ -205,6 +214,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           },
         },
       })
+    },
+    onSettled: () => {
+      // A like changes the detail's count and the "liked" grid on profiles.
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.detail(artwork.id),
+      })
+      void queryClient.invalidateQueries({ queryKey: ['users', 'liked'] })
     },
   })
   const doLike = (next: boolean) => {
@@ -241,6 +257,24 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const doSave = (next: boolean) => {
     saveMutation.mutate(next)
   }
+
+  // Delete one of the user's own comments; the server enforces ownership (403).
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: string) =>
+      deleteArtworkComment(artwork.id, commentId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.comments(artwork.id),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.detail(artwork.id),
+      })
+    },
+    onError: () => {
+      if (!isMountedRef.current) return
+      toast({ variant: 'error', message: t('toast.saveFailed') })
+    },
+  })
 
   const handleShare = () => {
     // clipboard can reject (permission / insecure context) — never throw.
@@ -488,15 +522,29 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                         </span>
                       </p>
                       <p className="text-neutral-700">{comment.content}</p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handleReply(comment.author.handle)
-                        }}
-                        className="mt-0.5 cursor-pointer text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
-                      >
-                        {t('artwork.reply')}
-                      </button>
+                      <div className="mt-0.5 flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleReply(comment.author.handle)
+                          }}
+                          className="cursor-pointer text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
+                        >
+                          {t('artwork.reply')}
+                        </button>
+                        {comment.author.id === currentUser?.id &&
+                        !comment.id.startsWith('temp_') ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              deleteCommentMutation.mutate(comment.id)
+                            }}
+                            className="cursor-pointer text-xs text-neutral-400 transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
+                          >
+                            {t('artwork.deleteComment')}
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
                   </li>
                 ))}

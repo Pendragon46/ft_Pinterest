@@ -1,25 +1,25 @@
-// L'API "artworks". Tuiles, détail, publication et suppression appellent le
-// backend NestJS. Commentaires et like/save restent sur mocks jusqu'au ticket
-// T1 (identité par token). Signatures et clés de cache inchangées.
+// L'API "artworks". Tuiles, détail, publication, suppression, commentaires et
+// likes appellent le backend NestJS. `setArtworkSave` reste sur mock (pas de
+// modèle Save côté serveur). Signatures et clés de cache inchangées.
 
-import { http, multipartConfig } from '@/lib/http'
+import { http, isApiError, multipartConfig } from '@/lib/http'
 import { layoutTile, pageForTile } from '@/features/search/tile.layout'
 import {
   realArtworkId,
+  toArtworkComment,
   toArtworkDetail,
   type ServerArtwork,
+  type ServerComment,
+  type ServerLike,
 } from '@/lib/mappers'
 import { maybeFailMutation } from '@/lib/devFail'
 
-import { addPostedComment, generateComments } from './artwork.mock'
 import type {
   ArtworkComment,
   ArtworkDetail,
-  AuthorSummary,
   CanvasArtwork,
 } from './artwork.types'
 
-const DETAIL_LATENCY_MS = 220
 const POST_LATENCY_MS = 260
 
 function delay(ms: number): Promise<void> {
@@ -61,49 +61,77 @@ export async function fetchArtworkDetail(id: string): Promise<ArtworkDetail> {
   return toArtworkDetail(data)
 }
 
-/** Comments of one artwork, newest first.
-    TODO(backend): GET /artworks/:id/comments → ArtworkComment[] */
+/** Commentaires d'un artwork, du plus récent au plus ancien. Le backend
+    renvoie l'ordre d'insertion : on trie ici. */
 export async function fetchArtworkComments(
   id: string,
 ): Promise<ArtworkComment[]> {
-  await delay(DETAIL_LATENCY_MS)
-  return generateComments(id)
+  const { data } = await http.get<ServerComment[]>(
+    `/artworks/${realArtworkId(id)}/comments`,
+  )
+  return data.map(toArtworkComment).sort((a, b) => a.hoursAgo - b.hoursAgo)
 }
 
-/** Post a comment; the mock echoes it back with a server-shaped id (and a
-    "just now" timestamp). This is the write seam — the caller inserts optimistically
-    and reconciles with what this returns.
-    TODO(backend): POST /artworks/:id/comments → ArtworkComment (server owns id +
-    createdAt); pass the request's AbortSignal through. */
+/** Poste un commentaire. Le DTO serveur attend `comment` ; toute autre clé
+    déclenche un 400 (forbidNonWhitelisted). L'auteur vient du token. */
 export async function postArtworkComment(
   id: string,
-  input: { content: string; author: AuthorSummary },
+  input: { content: string },
 ): Promise<ArtworkComment> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  const comment: ArtworkComment = {
-    id: `s_${id}_${Date.now()}`,
-    author: input.author,
-    content: input.content,
-    likeCount: 0,
-    hoursAgo: 0,
-  }
-  addPostedComment(id, comment)
-  return comment
+  const { data } = await http.post<ServerComment>(
+    `/artworks/${realArtworkId(id)}/comment`,
+    { comment: input.content },
+  )
+  return toArtworkComment(data)
+}
+
+/** Supprime un commentaire. Le serveur vérifie que l'appelant en est
+    l'auteur (ou ADMIN) et renvoie 403 sinon. */
+export async function deleteArtworkComment(
+  artworkId: string,
+  commentId: string,
+): Promise<void> {
+  await http.delete(
+    `/artworks/${realArtworkId(artworkId)}/comment/${commentId}`,
+  )
 }
 
 export interface ArtworkLikeInput {
   id: string
   liked: boolean
-  loggedUser: string
+  // `loggedUser` retiré : le token porte l'identité (ticket T1).
 }
 
-/** Toggle a like (optimistic caller). The mock echoes the requested state.
-    TODO(backend): POST/DELETE /artworks/:id/like (body { loggedUser }). */
-export async function setArtworkLike(input: ArtworkLikeInput): Promise<boolean> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  return input.liked
+/** Bascule un like. Le serveur renvoie 400 quand l'état demandé est déjà en
+    place — de fait idempotent, donc on confirme l'état optimiste plutôt que
+    de faire reculer l'interface. Toute autre erreur remonte. */
+export async function setArtworkLike(
+  input: ArtworkLikeInput,
+): Promise<boolean> {
+  const id = realArtworkId(input.id)
+  try {
+    if (input.liked) {
+      await http.post(`/artworks/${id}/like`)
+    } else {
+      await http.delete(`/artworks/${id}/like`)
+    }
+    return input.liked
+  } catch (error) {
+    if (isApiError(error) && error.status === 400) return input.liked
+    throw error
+  }
+}
+
+/** Ai-je liké cette œuvre ? Pas d'endpoint dédié : on lit la liste des likes
+    et on y cherche l'utilisateur courant. */
+export async function fetchIsLiked(
+  artworkId: string,
+  currentUserId: string,
+): Promise<boolean> {
+  const { data } = await http.get<ServerLike[]>(
+    `/artworks/${realArtworkId(artworkId)}/likes`,
+  )
+  return data.some((like) => like.authorId === currentUserId)
 }
 
 export interface ArtworkSaveInput {
@@ -113,7 +141,7 @@ export interface ArtworkSaveInput {
 }
 
 /** Toggle a save (optimistic caller). The mock echoes the requested state.
-    TODO(backend): POST/DELETE /artworks/:id/save (body { loggedUser }). */
+    Pas de modèle Save côté serveur : reste sur mock (retiré de l'UI en Phase 5). */
 export async function setArtworkSave(input: ArtworkSaveInput): Promise<boolean> {
   await delay(POST_LATENCY_MS)
   maybeFailMutation()

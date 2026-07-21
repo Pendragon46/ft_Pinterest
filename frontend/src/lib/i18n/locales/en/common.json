@@ -106,6 +106,7 @@
     "commentPlaceholder": "Add a comment…",
     "post": "Post",
     "reply": "Reply",
+    "deleteComment": "Delete",
     "timeNow": "now",
     "timeHours": "{{hours}}h",
     "close": "Close",

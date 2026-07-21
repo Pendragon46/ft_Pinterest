@@ -105,6 +105,7 @@
     "commentPlaceholder": "أضف تعليقًا…",
     "post": "نشر",
     "reply": "رد",
+    "deleteComment": "حذف",
     "timeNow": "الآن",
     "timeHours": "{{hours}} س",
     "close": "إغلاق",

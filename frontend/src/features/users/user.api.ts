@@ -5,22 +5,14 @@
 
 import type { ProfileArtwork } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
-import { http, multipartConfig } from '@/lib/http'
+import { http, isApiError, multipartConfig } from '@/lib/http'
 import {
   toProfileArtwork,
   toUser,
   type ServerArtwork,
+  type ServerFollow,
   type ServerUser,
 } from '@/lib/mappers'
-import { maybeFailMutation } from '@/lib/devFail'
-
-const LATENCY_MS = 200
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
 
 // React Query key factory — single source of truth for the users cache keys.
 export const userKeys = {
@@ -64,9 +56,8 @@ export async function fetchFollowingCount(id: string): Promise<number> {
 }
 
 // ── Mutations ───────────────────────────────────────────────────────────────
-// Profil et compte passent par le backend ; l'identité voyage dans le token,
-// donc plus de `loggedUser` dans les corps. `setFollow` reste sur mock jusqu'au
-// ticket T1 (la route lit encore `loggedUser` dans le body d'un POST/DELETE).
+// Profil, compte et follow passent par le backend ; l'identité voyage dans le
+// token, donc plus de `loggedUser` dans les corps.
 
 export interface UpdateProfileInput {
   fullname?: string | null
@@ -126,13 +117,36 @@ export async function updateAccount(
 export interface FollowInput {
   id: string
   following: boolean
-  loggedUser: string
+  // `loggedUser` retiré : identité portée par le token.
 }
 
-/** Follow / unfollow a user (optimistic caller). The mock echoes the requested state.
-    TODO(backend): POST/DELETE /users/:id/follow (body { loggedUser }). */
+/** Suit / ne suit plus un user. 400 si la relation existe déjà, 404 si elle
+    est absente lors d'un unfollow : deux façons de dire « c'est déjà l'état
+    demandé », donc traitées en succès. */
 export async function setFollow(input: FollowInput): Promise<boolean> {
-  await delay(LATENCY_MS)
-  maybeFailMutation()
-  return input.following
+  try {
+    if (input.following) {
+      await http.post(`/users/${input.id}/follow`)
+    } else {
+      await http.delete(`/users/${input.id}/unfollow`)
+    }
+    return input.following
+  } catch (error) {
+    if (isApiError(error) && (error.status === 400 || error.status === 404)) {
+      return input.following
+    }
+    throw error
+  }
+}
+
+/** Est-ce que je suis déjà cet utilisateur ? Le backend renvoie des relations
+    Follow brutes : on cherche la cible dans mes abonnements. */
+export async function fetchIsFollowing(
+  currentUserId: string,
+  targetId: string,
+): Promise<boolean> {
+  const { data } = await http.get<ServerFollow[]>(
+    `/users/${currentUserId}/following`,
+  )
+  return data.some((f) => f.followingId === targetId)
 }

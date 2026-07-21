@@ -257,3 +257,49 @@ bloqué. D'où le seed direct en base pour vérifier la lecture.
   body = ticket **T1** non livré, et (b) credentials **Cloudinary** factices.
   Le code correspondant est écrit pour le contrat cible et passe toutes les
   portes statiques.
+
+## Phase 3 — Like / Commentaire / Follow (câblée)
+
+> Débloquée : le ticket T1 a été implémenté **en local** côté backend (voir
+> `../local_backend_changes.md`, non commité). La Phase 3 frontend, elle, est
+> commitée normalement.
+
+### Tâche 3.1 — Like
+- `artwork.api.ts` : `setArtworkLike({id, liked})` → `POST/DELETE
+  /artworks/:id/like` (400 absorbé en succès, idempotent) ; `loggedUser` retiré ;
+  `fetchIsLiked(artworkId, currentUserId)` → `GET /artworks/:id/likes`.
+- `ArtworkDetail.tsx` : appel sans `loggedUser` ; état initial `liked` dérivé de
+  `fetchIsLiked` (pattern override optimiste `?? query ?? false`, sans setState
+  dans un effet — la règle `react-hooks` l'interdit) ; invalidation
+  `artworkKeys.detail(id)` + `['users','liked']`.
+
+### Tâche 3.2 — Commentaires
+- `artwork.api.ts` : `fetchArtworkComments` (réel + tri) ; `postArtworkComment(id,
+  {content})` → body `{ comment }` (auteur via token) ; `deleteArtworkComment`.
+- `ArtworkDetail.tsx` : mutationFn sans `author` ; bouton **Supprimer** sur ses
+  propres commentaires (comparaison `author.id === currentUser.id`, hors temp
+  optimistes) ; invalidation commentaires + détail. Clé i18n `artwork.deleteComment`
+  ajoutée (en/fr/ar).
+- Écart connu : `GET comments` sans `include:{user}` → l'auteur s'affiche
+  « unknown » (fallback §1.1). Contenu/post/suppression OK.
+
+### Tâche 3.3 — Follow
+- `user.api.ts` : `setFollow({id, following})` → `POST/DELETE` (400/404 absorbés) ;
+  `loggedUser` retiré ; `fetchIsFollowing(currentUserId, targetId)` → `GET
+  /users/:id/following`. Helpers mock (`delay`/`LATENCY_MS`/`maybeFailMutation`)
+  retirés (plus aucune mutation mock dans ce fichier).
+- `FollowButton.tsx` : appel sans `loggedUser` ; état initial dérivé de
+  `fetchIsFollowing` ; invalidation `followerCount(target)` + `followingCount(moi)`.
+- Dépendance backend : le sens abonnés/abonnements était inversé (relations
+  Prisma nommées à l'envers) → corrigé en local (`local_backend_changes.md` §1bis),
+  sinon `fetchIsFollowing` renvoyait toujours `false`.
+
+### Tâche 3.4 — Invalidation des caches
+Intégrée aux `onSettled`/`onSuccess` ci-dessus (like → detail + users/liked ;
+commentaire → comments + detail ; follow → follower/following counts).
+
+### Vérification
+- `npm run verify` → **exit 0** (tsc + eslint + i18n 204 clés × 3 + build).
+- Runtime (curl, backend T1 local) : like/unlike/double-like, comment/delete,
+  follow/unfollow, `fetchIsLiked`/`fetchIsFollowing` — tous vérifiés OK.
+- `setArtworkSave` reste sur mock (pas de modèle Save serveur ; retrait UI = Phase 5).
