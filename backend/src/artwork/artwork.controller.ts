@@ -42,9 +42,6 @@ export class ArtworkController {
     return this.artworkService.findOne(id);
   }
 
-
-  
-
   @Patch(':artworkId')
   @UseInterceptors(FileInterceptor('art'))
   update(	@Param('artworkId') artworkId: string,

@@ -418,6 +418,11 @@ Get Pending friend requests for a user
 GET /friends/requests/pending
 ```
 
+Get online friends for a user
+```http
+GET /friends/online
+```
+
 ### Request Query Parameters
 
 UserId is used because we can't get the friend request from the friendrequestID

@@ -48,4 +48,9 @@ export class FriendsController {
   					@Req() req) {
 	return this.friendsService.removeFriend(userId, req.user.id);
   }
+
+  @Get('online')
+  getOnlineFriends(@Req() req) {
+	return this.friendsService.getOnlineFriends(req.user.id);
+  }
 }

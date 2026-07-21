@@ -86,9 +86,7 @@ export class UsersService {
 			},
 		},
 	});
-	if (!user) {
-		throw new NotFoundException('User not found');
-	}
+	if (!user) {throw new NotFoundException('User not found');}
 	return user;
   }
 
@@ -98,18 +96,14 @@ export class UsersService {
 			id
 		}
 	})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
+	if (!user) {throw new NotFoundException('User not found');}
 	return user;
   }
 
   // get user connected and check if he can update or delete the user
   async update(id: string, data: Prisma.UserUpdateInput, file?: Express.Multer.File, loggedUserId?: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
+	if (!user) {throw new NotFoundException('User not found');}
 	//from req
 	if (id !== loggedUserId && user.role !== Role.ADMIN) {
 		throw new ForbiddenException('You are not authorized to update this user');
@@ -187,9 +181,7 @@ async getUserLikedArtworks(userId: string) {
 	const user = await this.prisma.user.findUnique({
 		where: { id: userId },
 	});
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
+	if (!user) { throw new NotFoundException('User not found');}
 	const likedArtworks = await this.prisma.like.findMany({
 		where: { authorId: userId },
 		include: {
@@ -210,13 +202,9 @@ async getUserLikedArtworks(userId: string) {
 
   async removeById(id: string, loggedUserId?: string) {
 	let user = await this.prisma.user.findUnique({where: {id}})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
+	if (!user) {throw new NotFoundException('User not found');}
 	let loggedUser = await this.prisma.user.findUnique({where: {id: loggedUserId}})
-	if (!loggedUser) {
-		throw new NotFoundException('Logged user not found');
-	}
+	if (!loggedUser) {throw new NotFoundException('Logged user not found');}
 	if (id !== loggedUserId && loggedUser.role !== Role.ADMIN) {
 		throw new ForbiddenException('You are not authorized to delete this user');
 	}
@@ -263,4 +251,5 @@ async updateRoles(id: string, role: Role) {
 		data: { role },
 	});
 }
+
 }

@@ -20,6 +20,8 @@ import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { FriendsModule } from './friends/friends.module';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { OnlineStatusService } from './websocket/online-status.service';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -42,7 +44,7 @@ import { FriendsModule } from './friends/friends.module';
   }, {
     provide: APP_GUARD,
     useClass: JwtAuthGuard,
-}],
+}, WebsocketGateway, OnlineStatusService],
   
 })
 export class AppModule {}

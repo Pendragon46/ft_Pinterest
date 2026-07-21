@@ -1,9 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { OnlineStatusService } from 'src/websocket/online-status.service';
 
 @Injectable()
 export class FriendsService {
-	constructor(private readonly Prisma : PrismaService) {}
+	constructor(private readonly Prisma : PrismaService,
+				private readonly onlineStatusService: OnlineStatusService
+	) {}
   
 	  async requestFriendship(addresseUserId: string, ConnectedUserId: string) {
 		const adresseUser = await this.Prisma.user.findUnique({ where: { id:addresseUserId } });
@@ -73,6 +76,7 @@ export class FriendsService {
 		});
 	}
 
+	//get all friends of a user and return them in an array of user objects
 	async getFriends(ConnectedUserId: string) {
 		const friends = await this.Prisma.friendship.findMany({
 			where: {
@@ -87,7 +91,14 @@ export class FriendsService {
 			},
 		});
 		if (!friends) { throw new NotFoundException('No friends found'); }
-		return friends;
+		const friendUsers = friends.map(friend => {
+			if (friend.requesterId === ConnectedUserId) {
+				return friend.addressee;
+			} else {
+				return friend.requester;
+			}
+		});
+		return friendUsers;
 	}
 
 	async getFriendRequests(ConnectedUserId: string) {
@@ -155,4 +166,7 @@ export class FriendsService {
 		});
 	}
 	
+	getOnlineFriends(userId: string) {
+		return this.onlineStatusService.getOnlineFriends(userId);
+	}
 }
