@@ -84,7 +84,9 @@ export function AuthButton() {
             {(user.fullname ?? user.username).charAt(0).toUpperCase()}
           </span>
         )}
-        <span>{user.fullname ?? user.username}</span>
+        <span className="max-w-[7rem] truncate sm:max-w-[10rem]">
+          {user.fullname ?? user.username}
+        </span>
         <ChevronDown
           aria-hidden="true"
           className={`size-4 text-neutral-200 transition-transform motion-reduce:transition-none ${
