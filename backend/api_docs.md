@@ -383,14 +383,19 @@ Send new friend request
 POST /friends/request/:userId
 ```
 
+Delete friend
+```http
+DELETE /friends/:userId
+```
+
 Accept friend request
 ```http
-POST /friends/accept/:userId
+PATCH /friends/:userId/request/accept
 ```
 
 Reject friend request
 ```http
-POST /friends/reject/:userId
+DELETE /friends/:userId/request
 ```
 
 Get all friends for a user
@@ -415,4 +420,4 @@ GET /friends/requests/pending
 
 ### Request Query Parameters
 
-UserId is used because we can't the requesting friend request from the friendrequestID
+UserId is used because we can't get the friend request from the friendrequestID

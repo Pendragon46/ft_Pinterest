@@ -134,4 +134,25 @@ export class FriendsService {
 		if (!friends) { throw new NotFoundException('No friends found'); }
 		return friends;
 	}
+
+	async removeFriend(friendUserId: string, ConnectedUserId: string) {
+		const Friendship = await this.Prisma.friendship.findFirst({
+			where: {
+				OR: [
+					{ requesterId: ConnectedUserId, addresseeId: friendUserId, status: 'ACCEPTED' },
+					{ requesterId: friendUserId, addresseeId: ConnectedUserId, status: 'ACCEPTED' },
+				],
+			},
+		});
+	  	if (!Friendship) { throw new NotFoundException('Friendship not found'); }
+	  	return await this.Prisma.friendship.delete({
+			where: {
+				requesterId_addresseeId: {
+					requesterId: Friendship.requesterId,
+					addresseeId: Friendship.addresseeId,
+				},
+			},
+		});
+	}
+	
 }
