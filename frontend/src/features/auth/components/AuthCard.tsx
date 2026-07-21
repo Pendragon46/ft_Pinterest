@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { Logo } from '@/components/ui/Logo'
 
 interface AuthCardProps {
@@ -53,7 +54,7 @@ export function AuthCard({ children, standalone = false }: AuthCardProps) {
       {/* Form column: a home-link logo (also the brand on mobile) above the
           vertically-centred form. Grows past the viewport → the page scrolls. */}
       <div className="flex min-h-svh flex-col bg-white">
-        <header className="p-6 sm:p-8">
+        <header className="flex items-center justify-between gap-4 p-6 sm:p-8">
           <Link
             to="/"
             aria-label={t('app.name')}
@@ -61,6 +62,10 @@ export function AuthCard({ children, standalone = false }: AuthCardProps) {
           >
             <Logo withWordmark />
           </Link>
+          {/* Language sits opposite the logo, at the top-end of the page. */}
+          <span className="inline-flex h-10 items-center rounded-full bg-neutral-100 px-3">
+            <LanguageSwitcher />
+          </span>
         </header>
         <div className="flex flex-1 items-center justify-center px-6 pb-12 sm:px-10">
           <div className="flex w-full max-w-md flex-col gap-6">{children}</div>

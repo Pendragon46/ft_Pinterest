@@ -17,7 +17,7 @@ export function HomePage() {
       <ArtworkCanvas />
 
       <header className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-4 p-4">
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto flex items-center gap-2">
           <Link
             to="/"
             aria-label={t('app.name')}
@@ -25,13 +25,12 @@ export function HomePage() {
           >
             <Logo withWordmark />
           </Link>
-        </div>
-
-        {/* Language sits opposite the logo, next to the account menu (top-end). */}
-        <div className="pointer-events-auto flex items-center gap-2">
           <span className="inline-flex h-10 items-center rounded-full bg-white/85 px-3 shadow-sm backdrop-blur">
             <LanguageSwitcher />
           </span>
+        </div>
+
+        <div className="pointer-events-auto">
           <AuthButton />
         </div>
       </header>

@@ -27,12 +27,11 @@ export function AppHeader() {
           >
             <Logo withWordmark />
           </Link>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Language sits opposite the logo, on the end. */}
           <span className="inline-flex h-10 items-center rounded-full bg-neutral-100 px-3">
             <LanguageSwitcher />
           </span>
+        </div>
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Always visible; gated on click (discoverability over surprise, §2). */}
           <button
             type="button"
