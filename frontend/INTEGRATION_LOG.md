@@ -142,3 +142,58 @@ Demande T1 consignée le 2026-07-21.
 - Notes : les recettes navigateur (profil/onglets/recherche à l'écran) restent
   **à valider manuellement** — non exécutables en headless. Les vérifs API
   équivalentes ont été faites par curl (voir 1.2/1.3).
+
+## Tâche 2.1 — Module de disposition des tuiles
+- Statut : terminé
+- Fichiers modifiés : `frontend/src/features/search/tile.layout.ts` (créé)
+- Vérification : `tsc -b` OK / `eslint src` OK ; constantes importées de
+  `canvas.constants.ts` (CELL/CARD/TILE) — non redéfinies.
+- Notes : PRNG mulberry32 à graine `(tx,ty)` → disposition déterministe ;
+  `pageForTile`, `layoutTile`, `ITEMS_PER_TILE` exportés.
+
+## Tâche 2.2 — Tuiles alimentées par le serveur
+- Statut : terminé
+- Fichiers modifiés :
+  - `artwork.api.ts` : `fetchTileArtworks` → `GET /search/artworks` + `layoutTile`
+  - `search.api.ts` : `fetchNicheTile` → `GET /search/tags` (repli niche locale)
+- Vérification : `tsc -b` OK / `eslint src` OK ; `GET /search/artworks` 200,
+  `GET /search/tags?q=portrait` 200, `sort=bogus` → 400 (garde respectée).
+- Notes / écarts :
+  - **Écart vs spec** : le bloc d'imports « avancé » de la spec (2.2 A) liste
+    `realArtworkId/toArtworkComment/toArtworkDetail/ServerComment` — non
+    utilisés en 2.2. Ajoutés **au fur et à mesure** (2.3 pour detail ; les
+    imports commentaires attendront la Phase 3) pour ne pas casser eslint.
+  - Constantes de latence orphelines retirées (`TILE_LATENCY_MS` des deux
+    fichiers) — sinon `no-unused-vars`.
+
+## Tâche 2.3 — Détail d'un artwork
+- Statut : terminé
+- Fichiers modifiés : `artwork.api.ts` (`fetchArtworkDetail` → `GET
+  /artworks/:id` via `realArtworkId` + `toArtworkDetail` ; imports
+  `getCreatedDetail`/`generateDetail` retirés)
+- Vérification : `tsc -b` OK / `eslint src` OK ; id inexistant → **404**
+  structuré (`{message,error,statusCode}`) → devient `ApiError`, pas d'écran
+  blanc.
+- **Vérification données réelles** (Phase 2 de bout en bout) : 2 lignes
+  `Artwork` insérées **directement en base** (via `psql`, car l'upload est
+  bloqué — voir ci-dessous). `GET /artworks/seed-img-1` → objet réel mappé par
+  `toArtworkDetail` (sans include : auteur=authorId, tags=[], counts=0) ;
+  `GET /search/artworks` → 2 items → `layoutTile` ; l'URL `.mp4` détectée
+  `video`. Path lecture canvas/détail prouvé sur formes Prisma réelles.
+- Notes : recette navigateur (clic carte → modale) reste manuelle.
+
+### BLOCAGE infra n°2 — Cloudinary en placeholder (impacte la Phase 4)
+Un seed via `POST /artworks/user/:id` (upload, endpoint sans T1) renvoie
+**400 « Failed to create artwork »**. Cause : `artwork.service.create` fait
+`cloudinaryService.uploadImage(file)` dans un try/catch (un 4xx n'est pas
+loggué en ERROR, d'où l'absence de trace). Diagnostic :
+`CLOUDINARY_CLOUD_NAME = ft_pinterest_cloud_name` = **valeur placeholder**
+(le vrai cloud est `i1i52wjs`, cf. l'avatar par défaut). Les credentials
+Cloudinary du `backend/.env` sont factices. Conséquence :
+- Le **code** frontend de la Phase 4 (createArtwork / avatar / delete) peut être
+  écrit et passer les portes tsc/eslint/build.
+- La **vérification runtime** de l'upload (fichier → URL Cloudinary) restera en
+  échec tant que de vrais credentials Cloudinary ne seront pas fournis dans
+  `backend/.env` (secrets appartenant à l'équipe — hors périmètre agent, R1).
+Le seeding via Swagger suggéré par la spec emprunte le même chemin → aussi
+bloqué. D'où le seed direct en base pour vérifier la lecture.

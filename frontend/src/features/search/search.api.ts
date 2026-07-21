@@ -4,7 +4,7 @@
 
 import type { CanvasArtwork, Category } from '@/features/artworks/artwork.types'
 import { http } from '@/lib/http'
-import { colorFromId, type ServerUser } from '@/lib/mappers'
+import { colorFromId, type ServerArtwork, type ServerUser } from '@/lib/mappers'
 
 import {
   contextualTags,
@@ -13,6 +13,7 @@ import {
   resolveSearch,
   suggest,
 } from './search.mock'
+import { layoutTile } from './tile.layout'
 import type {
   NicheNeighbour,
   SearchResolution,
@@ -22,8 +23,6 @@ import type {
 
 const SUGGEST_LATENCY_MS = 90
 const RESOLVE_LATENCY_MS = 120
-// A touch of latency so the skeleton beat of the search wave is visible (§5.5).
-const TILE_LATENCY_MS = 200
 const NEIGHBOURS_LATENCY_MS = 140
 
 function delay(ms: number): Promise<void> {
@@ -88,15 +87,23 @@ export async function fetchResolution(query: string): Promise<SearchResolution> 
   return resolveSearch(query)
 }
 
-/** Cards of one niche tile (toroidal content).
-    TODO(backend): GET /niche/:slug/map?tx=&ty= → CanvasArtwork[]. */
+/** Cartes d'une tuile de niche. Le slug sert de tag de recherche ; si le
+    serveur ne connaît pas ce tag, on retombe sur la niche locale pour que
+    le canvas reste peuplé. */
 export async function fetchNicheTile(
   slug: string,
   tx: number,
   ty: number,
 ): Promise<CanvasArtwork[]> {
-  await delay(TILE_LATENCY_MS)
-  return nicheTile(slug as Category, tx, ty)
+  try {
+    const { data } = await http.get<ServerArtwork[]>('/search/tags', {
+      params: { q: slug, page: 1, limit: 16, sort: 'recent' },
+    })
+    if (data.length === 0) return nicheTile(slug as Category, tx, ty)
+    return layoutTile(data, slug as Category, tx, ty)
+  } catch {
+    return nicheTile(slug as Category, tx, ty)
+  }
 }
 
 /** Neighbouring niches by tag proximity, closest first.

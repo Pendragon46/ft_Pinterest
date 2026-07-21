@@ -3,15 +3,17 @@
 // change (signatures and query keys stay identical). The artificial latency
 // keeps loading states exercised.
 
-import { addCreatedArtwork, getCreatedDetail } from '@/features/users/user.mock'
+import { addCreatedArtwork } from '@/features/users/user.mock'
+import { http } from '@/lib/http'
+import { layoutTile, pageForTile } from '@/features/search/tile.layout'
+import {
+  realArtworkId,
+  toArtworkDetail,
+  type ServerArtwork,
+} from '@/lib/mappers'
 import { maybeFailMutation } from '@/lib/devFail'
 
-import {
-  addPostedComment,
-  generateComments,
-  generateDetail,
-  generateTile,
-} from './artwork.mock'
+import { addPostedComment, generateComments } from './artwork.mock'
 import type {
   ArtworkComment,
   ArtworkDetail,
@@ -21,7 +23,6 @@ import type {
   ProfileArtwork,
 } from './artwork.types'
 
-const TILE_LATENCY_MS = 60
 const DETAIL_LATENCY_MS = 220
 const POST_LATENCY_MS = 260
 
@@ -39,26 +40,29 @@ export const artworkKeys = {
   comments: (id: string) => ['artworks', 'comments', id] as const,
 }
 
-/** Cards of one map tile.
-    TODO(backend): GET /artworks/map?tx=&ty= → CanvasArtwork[] */
+/** Cartes d'une tuile de la carte. Le backend n'a pas de notion de
+    coordonnées : on demande une page de résultats dérivée de (tx, ty)
+    puis on la dispose côté client. */
 export async function fetchTileArtworks(
   tx: number,
   ty: number,
 ): Promise<CanvasArtwork[]> {
-  await delay(TILE_LATENCY_MS)
-  return generateTile(tx, ty)
+  const page = pageForTile(tx, ty)
+  const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
+    params: { page, limit: 16, sort: 'recent' },
+  })
+  // Base vide ou page au-delà du dernier résultat : tuile vide plutôt
+  // qu'un plantage. Les skeletons prennent le relais visuellement.
+  return layoutTile(data, undefined, tx, ty)
 }
 
-/** One artwork, full.
-    TODO(backend): GET /artworks/:id → ArtworkDetail (404 if unknown) */
+/** Un artwork complet. Sans l'include serveur (ticket T2), les mappers
+    retombent sur des valeurs neutres et la modale s'ouvre quand même. */
 export async function fetchArtworkDetail(id: string): Promise<ArtworkDetail> {
-  await delay(DETAIL_LATENCY_MS)
-  // Works published this session resolve from the created store first (§5).
-  const created = getCreatedDetail(id)
-  if (created) return created
-  const detail = generateDetail(id)
-  if (!detail) throw new Error(`Artwork not found: ${id}`)
-  return detail
+  const { data } = await http.get<ServerArtwork>(
+    `/artworks/${realArtworkId(id)}`,
+  )
+  return toArtworkDetail(data)
 }
 
 /** Comments of one artwork, newest first.
