@@ -3,6 +3,7 @@ import { ArtworkService } from './artwork.service';
 import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('artworks')
 export class ArtworkController {
@@ -22,7 +23,7 @@ export class ArtworkController {
 	return this.artworkService.create(data, file, req.user.id);
   }
 
-
+  @Public()
   @Get()
   findAll() {
 	return this.artworkService.findAll();
@@ -33,10 +34,13 @@ export class ArtworkController {
 	return this.artworkService.getFeed(req.user.id);
   }
 
+  @Public()
   @Get(':id/likes')
    getLikes(@Param('id') id: string) {
 	return  this.artworkService.getArtworkLikes(id);
   }
+
+  @Public()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.artworkService.findOne(id);
@@ -64,7 +68,7 @@ export class ArtworkController {
 
   @Delete(':id')
   remove(@Param('id') id: string, @Req() req) {
-    return this.artworkService.remove(id, req.userId);
+    return this.artworkService.remove(id, req.user.id);
   }
 
 

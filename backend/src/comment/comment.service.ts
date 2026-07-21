@@ -28,13 +28,16 @@ export class CommentService {
   }
 
 
-  async findAll(artworkId: string, userId: string) {
-	const user = await this.prisma.user.findUnique({
-		where: { id: userId },
-	});
-	if (!user) {
-		throw new NotFoundException('User not found');
-	}
+  async findAll(artworkId: string, userId?: string) {
+	if (userId) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  }
+
 	const artwork = await this.prisma.artwork.findUnique({
 		where: { id: artworkId },
 		include: { comments:true },
@@ -42,6 +45,7 @@ export class CommentService {
 	if (!artwork) {
 		throw new NotFoundException('Artwork not found');
 	}
+
 	return artwork.comments;
   }
 

@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Req, Param, Delete } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('artworks')
 export class CommentController {
@@ -21,9 +22,9 @@ export class CommentController {
     return this.commentService.removeComment(artworkId, commentId, req.user.id);
   }
 
-
+ @Public()
  @Get(':artworkId/comments')
   findAll(@Param('artworkId') artworkId: string, @Req() req) {
-	return this.commentService.findAll(artworkId, req.user.id);
+	return this.commentService.findAll(artworkId, req.user?.id);
 }
 }
