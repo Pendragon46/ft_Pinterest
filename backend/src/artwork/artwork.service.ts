@@ -11,7 +11,10 @@ export class ArtworkService {
 	) {}
 
 	async findAll() {
-		return await this.prisma.artwork.findMany();
+		const artwork =  await this.prisma.artwork.findMany();
+		if (artwork.length === 0) {throw new NotFoundException('No artworks found');}
+		return artwork;
+
 	}
 
 	async deletetagswithoutartworks() {

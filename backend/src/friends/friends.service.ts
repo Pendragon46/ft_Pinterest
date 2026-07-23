@@ -7,6 +7,7 @@ export class FriendsService {
 	constructor(private readonly Prisma : PrismaService,
 				private readonly onlineStatusService: OnlineStatusService
 	) {}
+
   
 	  async requestFriendship(addresseUserId: string, ConnectedUserId: string) {
 		const adresseUser = await this.Prisma.user.findUnique({ where: { id:addresseUserId } });
@@ -80,7 +81,6 @@ export class FriendsService {
 		return { message: 'Friend request rejected' };
 	}
 
-	//get all friends of a user and return them in an array of user objects
 	async getFriends(ConnectedUserId: string) {
 		const friends = await this.Prisma.friendship.findMany({
 			where: {
@@ -102,7 +102,8 @@ export class FriendsService {
 				return friend.requester;
 			}
 		});
-		return friendUsers;
+		const result = friendUsers.map(({ password, role, googleId,provider, ...rest }) => rest);
+		return result;
 	}
 
 	async getFriendRequests(ConnectedUserId: string) {
@@ -114,10 +115,22 @@ export class FriendsService {
 			include: {
 				requester: true,
 			},
+			
 		});
-		if (!friendRequests) { throw new NotFoundException('No friend requests found'); }
-		return friendRequests;
+		if (friendRequests.length == 0) { throw new NotFoundException('No friend requests found'); }
+		const result = friendRequests.map(({ requester, ...rest }) => ({
+			...rest,
+			requester: {
+				id: requester.id,
+				username: requester.username,
+				email: requester.email,
+				bio: requester.bio,
+				avatarUrl: requester.avatarUrl,
+			},
+		}));
+		return result;
 	}
+
 
 	async getPendingFriendRequests(ConnectedUserId: string) {
 		const pendingFriendRequests = await this.Prisma.friendship.findMany({
@@ -129,26 +142,20 @@ export class FriendsService {
 				addressee: true,
 			},
 		});
-		if (!pendingFriendRequests) { throw new NotFoundException('No pending friend requests found'); }
-		return pendingFriendRequests;
-	}
-	
-	async getFriendsOfUser(userId: string) {
-		const friends = await this.Prisma.friendship.findMany({
-			where: {
-				OR: [
-					{ requesterId: userId, status: 'ACCEPTED' },
-					{ addresseeId: userId, status: 'ACCEPTED' },
-				],
+		if (pendingFriendRequests.length == 0) { throw new NotFoundException('No pending friend requests found'); }
+		const result = pendingFriendRequests.map(({ addressee, ...rest }) => ({
+			...rest,
+			addressee: {
+				id: addressee.id,
+				username: addressee.username,
+				email: addressee.email,
+				bio: addressee.bio,
+				avatarUrl: addressee.avatarUrl,
 			},
-			include: {
-				requester: true,
-				addressee: true,
-			},
-		});
-		if (!friends) { throw new NotFoundException('No friends found'); }
-		return friends;
+		}));
+		return result;
 	}
+
 
 	async removeFriend(friendUserId: string, ConnectedUserId: string) {
 		const Friendship = await this.Prisma.friendship.findFirst({

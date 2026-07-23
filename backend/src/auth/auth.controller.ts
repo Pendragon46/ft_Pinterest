@@ -5,7 +5,9 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
+import { Public } from 'src/decorators/public.decorator';
 
+@Public()
 @Controller('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService){}

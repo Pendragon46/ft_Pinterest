@@ -39,7 +39,7 @@ export class FriendsController {
 
    @Get(':userId')
    getFriendsOfUser(@Param('userId' , ParseUUIDPipe) userId: string) {
-	return this.friendsService.getFriendsOfUser(userId);
+	return this.friendsService.getFriends(userId);
   }
 
    @Delete(':userId/request')

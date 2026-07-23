@@ -45,6 +45,15 @@ export class UsersService {
 		orderBy: {
 			createdAt: 'desc',
 		},
+		select: {
+			id: true,
+			username: true,
+			email: true,
+			bio: true,
+			avatarUrl: true,
+			role: true,
+			createdAt: true,
+		},
 	});
 	if (!users || users.length === 0) {
 	  throw new NotFoundException('No users found');
@@ -62,7 +71,16 @@ export class UsersService {
 		},
 		orderBy: {
 			username: 'asc',
-		}
+		},
+		select: {
+			id: true,
+			username: true,
+			email: true,
+			bio: true,
+			avatarUrl: true,
+			role: true,
+			createdAt: true,
+		},
 	})
 	if (!user) {
 	  throw new NotFoundException('User not found');
@@ -85,9 +103,11 @@ export class UsersService {
 				},
 			},
 		},
+	
 	});
 	if (!user) {throw new NotFoundException('User not found');}
-	return user;
+	const { password, ...result } = user;
+	return result;
   }
 
   async findOneById(id: string) {
@@ -97,7 +117,8 @@ export class UsersService {
 		}
 	})
 	if (!user) {throw new NotFoundException('User not found');}
-	return user;
+	const { password, ...result } = user;
+	return result;
   }
 
   // get user connected and check if he can update or delete the user
@@ -142,7 +163,8 @@ export class UsersService {
 					throw error;
 				}
 			}
-			return updatedUser;
+			const { password, ...result } = updatedUser;
+			return result;
 		}
 		catch (error){
 			if (uploadResult?.public_id)
@@ -153,6 +175,16 @@ export class UsersService {
 	return await this.prisma.user.update({
 		where: { id },
 		data,
+		select: {
+			id: true,
+			username: true,
+			fullname: true,
+			email: true,
+			bio: true,
+			avatarUrl: true,
+			role: true,
+			createdAt: true,
+		},
 	})
 }
 
@@ -182,21 +214,24 @@ async getUserLikedArtworks(userId: string) {
 		where: { id: userId },
 	});
 	if (!user) { throw new NotFoundException('User not found');}
-	const likedArtworks = await this.prisma.like.findMany({
-		where: { authorId: userId },
-		include: {
-			artwork: {
-				include: {
-					_count: {
-						select: {
-						likes: true,
-						comments: true,
-					},
+	const likedArtworks = await this.prisma.artwork.findMany({
+		where: {
+			likes: {
+				some: {
+					id: userId,
 				},
 			},
 		},
-	}});
-	return likedArtworks.map(like => like.artwork);
+		include: {
+			_count: {
+				select: {
+					likes: true,
+					comments: true,
+				},
+			},
+		},
+	});
+	return likedArtworks;
 }
 							
 
@@ -249,6 +284,16 @@ async updateRoles(id: string, role: Role) {
 	return await this.prisma.user.update({
 		where: { id },
 		data: { role },
+		select: {
+			id: true,
+			username: true,
+			fullname: true,
+			email: true,
+			bio: true,
+			avatarUrl: true,
+			role: true,
+			createdAt: true,
+		}
 	});
 }
 

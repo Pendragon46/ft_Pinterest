@@ -9,7 +9,6 @@ export class CommentController {
 
 
    @Post(':artworkId/comment')
-  //to change to @Request() req and get the user id from the token JWT
   create(@Param('artworkId') artworkId: string,@Body() data:CreateCommentDto,@Req() req) {
     return this.commentService.comment(artworkId, req.user.id, data.comment);
   }

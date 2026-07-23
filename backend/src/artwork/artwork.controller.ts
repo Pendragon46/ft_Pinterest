@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseInterceptors, UploadedFile, FileTypeValidator, ParseFilePipe, MaxFileSizeValidator, } from '@nestjs/common';
+import { Controller,UseGuards, Get, Post, Body, Patch, Param, Delete, Req, UseInterceptors, UploadedFile, FileTypeValidator, ParseFilePipe, MaxFileSizeValidator, } from '@nestjs/common';
 import { ArtworkService } from './artwork.service';
 import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { Public } from 'src/decorators/public.decorator';
+import { Roles } from 'src/decorators/roles.decorator';
+import { RolesGuard } from 'src/roles/roles.guard';
+import { Role } from 'src/enums/role.enum';
 
 @Controller('artworks')
 export class ArtworkController {
@@ -47,6 +50,8 @@ export class ArtworkController {
   }
 
   @Patch(':artworkId')
+  @Roles(Role.user, Role.admin)
+  @UseGuards(RolesGuard)
   @UseInterceptors(FileInterceptor('art'))
   update(	@Param('artworkId') artworkId: string,
   			@Req() req,
@@ -64,12 +69,16 @@ export class ArtworkController {
   }
 
   @Delete(':id')
+   @Roles(Role.user, Role.admin)
+	@UseGuards(RolesGuard)
   remove(@Param('id') id: string, @Req() req) {
     return this.artworkService.remove(id, req.user.id);
   }
 
 
   @Delete('deleteall/:userId')
+  @Roles(Role.user, Role.admin)
+  @UseGuards(RolesGuard)
   deleteAllArtworksByUser(@Param('userId') userId: string, @Req() req) {
 	return this.artworkService.deleteAllArtworksByUser(userId, req.user.id);
   }

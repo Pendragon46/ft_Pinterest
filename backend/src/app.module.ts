@@ -39,10 +39,7 @@ import { OnlineStatusModule } from './websocket/onlineStatus.module';
 	OnlineStatusModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService, WebsocketGateway,{
-    provide: APP_GUARD,
-    useClass: RolesGuard,
-  }, {
+  providers: [AppService, CloudinaryService, HealthService, WebsocketGateway, {
     provide: APP_GUARD,
     useClass: JwtAuthGuard,
 }],

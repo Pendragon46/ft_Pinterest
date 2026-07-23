@@ -35,6 +35,8 @@ export class UsersController {
 
 
   @Patch(':id')
+  @Roles(Role.user, Role.admin)
+  @UseGuards(RolesGuard)
   @UseInterceptors(FileInterceptor('avatar'))
   update(	@Param('id') id: string, @Body() updateUserDto: UpdateUserDto,
   			@Req() req, @UploadedFile(
@@ -49,14 +51,15 @@ export class UsersController {
   }
 
   @Patch(':id/roles')
-
-  @UseGuards(RolesGuard)
   @Roles(Role.admin)
+  @UseGuards(RolesGuard)
   updateRoles(@Param('id') id: string, @Body() data: { role: Role}) {
   return this.usersService.updateRoles(id, data.role);
   }
 
   @Delete(':id')
+	@Roles(Role.user, Role.admin)
+  @UseGuards(RolesGuard)
   removebyId(@Param('id') id: string, @Req() req) {
 	return  this.usersService.removeById(id, req.user.id);
   }

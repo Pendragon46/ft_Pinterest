@@ -1,0 +1,10 @@
+DATABASE_URL=postgresql://postgres:ft_pinterest_password123*@postgres:5432/ft_pinterest
+JWT_SECRET=ft_pinterest_JWT123*
+
+CLOUDINARY_CLOUD_NAME=ft_pinterest_cloud_name
+CLOUDINARY_API_KEY=ft_pinterest_api_key
+CLOUDINARY_API_SECRET=ft_pinterest_api_secret
+
+GOOGLE_CLIENT_ID=194785097911-s84oqenra10okcrpnjpr03m1ib0r4ahq.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
