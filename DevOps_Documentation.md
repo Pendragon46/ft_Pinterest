@@ -109,29 +109,37 @@ Main objectives:
 
 # Installation
 
-Clone the repository
+## Prerequisites
+
+- Docker
+- Docker Compose
+- GNU Make
+
+Clone the repository:
 
 ```bash
 git clone <repository>
 cd ft_pinterest
 ```
 
-Build
+Build and start the project:
 
 ```bash
-docker compose build
+make start
 ```
 
-Start
+Verify that all containers are running:
 
 ```bash
-docker compose up -d
+make ps
 ```
 
-Verify
+Stop the project:
 
 ```bash
-docker compose ps
+make stop
+```
+
 ```
 
 Every container should become **healthy**.
@@ -346,6 +354,11 @@ Each container implements a Docker health check to ensure that services are oper
 curl -k https://localhost:8443/api/health
 ```
 
+Run the custom health verification script:
+
+```bash
+make health
+
 Expected response:
 
 ```json
@@ -380,6 +393,38 @@ backup               healthy
 
 ---
 
+# Status Pages
+
+## Backend Health Endpoint
+
+The backend exposes a health endpoint used by Docker and Nginx.
+
+```text
+https://localhost:8443/api/health
+https://localhost:8443/status
+```
+
+Example response:
+
+```json
+{
+  "status": "ok",
+  "backend": "online",
+  "database": "online",
+  "uptime": 120,
+  "version": "1.0.0"
+}
+```
+
+If PostgreSQL becomes unavailable:
+
+```json
+{
+  "status": "error",
+  "backend": "online",
+  "database": "offline"
+}
+```
 
 # References
 
