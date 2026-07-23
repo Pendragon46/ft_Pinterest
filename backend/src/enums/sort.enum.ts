@@ -1,5 +1,4 @@
-
-export enum sort{
-	RECENT="recent",
-	OLDEST="oldest",
+export enum sort {
+  RECENT = 'recent',
+  OLDEST = 'oldest',
 }

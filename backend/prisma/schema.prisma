@@ -8,24 +8,44 @@ datasource db {
 }
 
 model User {
-  id				String		@id @default(uuid())
-  fullname			String?
-  username			String		@unique
-  email				String		@unique
-  password			String?
-  provider			Provider	@default(LOCAL)
-  googleId			String?		@unique
-  bio				String?
-  avatarUrl			String		@default("https://res.cloudinary.com/i1i52wjs/image/upload/default_avatar_dljkve.png")
-  avatarPublicId	String?
-  createdAt			DateTime	@default(now())
-  updatedAt			DateTime	@updatedAt
-  role				Role		@default(USER)
-  artworks			Artwork[]
-  comments			Comment[]
-  followers			Follow[]	@relation("Follower")
-  following			Follow[]	@relation("Following")
-  likes				Like[]
+  id                  String       @id @default(uuid())
+  fullname            String?
+  username            String       @unique
+  email               String       @unique
+  password            String?
+  provider            Provider     @default(LOCAL)
+  googleId            String?      @unique
+  bio                 String?
+  avatarUrl           String       @default("https://res.cloudinary.com/i1i52wjs/image/upload/default_avatar_dljkve.png")
+  avatarPublicId      String?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  role                Role         @default(USER)
+  artworks            Artwork[]
+  comments            Comment[]
+  followers           Follow[]     @relation("Follower")
+  following           Follow[]     @relation("Following")
+  likes               Like[]
+  friendshipsSent     friendship[] @relation("Requester")
+  friendshipsReceived friendship[] @relation("Addressee")
+}
+
+model friendship {
+  requesterId String
+  addresseeId String
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  requester User @relation("Requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("Addressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@id([requesterId, addresseeId])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
 }
 
 model Artwork {
@@ -65,13 +85,12 @@ model Comment {
 }
 
 model Follow {
-  follower   User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
-  followerId String
-
-  following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+  followerId  String
   followingId String
+  createdAt   DateTime @default(now())
+  follower    User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followingId])
 }
@@ -91,6 +110,6 @@ enum Role {
 }
 
 enum Provider {
-	LOCAL
-	GOOGLE
+  LOCAL
+  GOOGLE
 }

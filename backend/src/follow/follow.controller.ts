@@ -1,16 +1,13 @@
-import { Controller, Get, Post,Body, Param, Delete,Req } from '@nestjs/common';
+import { Controller, Get, Post, Param, Delete, Req } from '@nestjs/common';
 import { FollowService } from './follow.service';
 import { Public } from 'src/decorators/public.decorator';
 
-
 @Controller('users')
 export class FollowController {
-
   constructor(private readonly followService: FollowService) {}
 
-   @Post(':id/follow')
+  @Post(':id/follow')
   follow(@Param('id') id: string, @Req() req) {
-
     return this.followService.follow(req.user.id, id);
   }
 
@@ -29,7 +26,7 @@ export class FollowController {
   @Public()
   @Get(':id/followers/count')
   async getFollowersCount(@Param('id') id: string) {
-	return await this.followService.getFollowerscount(id);
+    return await this.followService.getFollowerscount(id);
   }
 
   @Public()
@@ -39,8 +36,7 @@ export class FollowController {
   }
 
   @Delete(':id/unfollow')
-  unfollow(@Param('id') id: string,@Req() req) {
-    return this.followService.unfollow(req.user.id,  id);
+  unfollow(@Param('id') id: string, @Req() req) {
+    return this.followService.unfollow(req.user.id, id);
   }
-
 }

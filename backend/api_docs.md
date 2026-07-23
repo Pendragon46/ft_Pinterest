@@ -376,3 +376,53 @@ GET /search/tags?q=tag&&page=n&&limit=n&&sort=recent|oldest
 | sort | string | ❌ | Sort order (recent or oldest, default: recent) |
 
 
+# Friends
+
+Send new friend request
+```http
+POST /friends/request/:userId
+```
+
+Delete friend
+```http
+DELETE /friends/:userId
+```
+
+Accept friend request
+```http
+PATCH /friends/:userId/request/accept
+```
+
+Reject friend request
+```http
+DELETE /friends/:userId/request
+```
+
+Get all friends for a user
+```http
+GET /friends
+```
+
+Get all friend for a user
+```http
+GET /friends/:userId
+```
+
+Get all friend requests for a user
+```http
+GET /friends/requests
+```
+
+Get Pending friend requests sent
+```http
+GET /friends/requests/pending
+```
+
+Get online friends for a user
+```http
+GET /friends/online
+```
+
+### Request Query Parameters
+
+UserId is used because we can't get the friend request from the friendrequestID

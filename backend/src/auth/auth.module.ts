@@ -9,14 +9,15 @@ import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
-	PrismaModule,
-	PassportModule,
-	JwtModule.register({
-		secret: process.env.JWT_SECRET,
-		signOptions: {expiresIn: '7d' },
-	})
+    PrismaModule,
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '7d' },
+    }),
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy],
-  controllers: [AuthController]
+  controllers: [AuthController],
+  exports: [JwtModule],
 })
 export class AuthModule {}
