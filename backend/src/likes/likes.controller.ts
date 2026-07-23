@@ -7,13 +7,11 @@ export class LikesController {
 
   @Post(':artworkId/like')
   create(@Param('artworkId') artworkId: string, @Req() req) {
-    return this.likesService.like(artworkId, req.user.id );
+    return this.likesService.like(artworkId, req.user.id);
   }
-
 
   @Delete(':artworkId/like')
   remove(@Param('artworkId') artworkId: string, @Req() req) {
-    return this.likesService.unlike(artworkId, req.user.id );
+    return this.likesService.unlike(artworkId, req.user.id);
   }
-
 }
