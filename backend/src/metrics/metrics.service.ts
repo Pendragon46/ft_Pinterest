@@ -3,17 +3,29 @@ import * as client from 'prom-client';
 
 @Injectable()
 export class MetricsService {
-    private readonly register = new client.Registry();
+  private readonly register = new client.Registry();
 
-    constructor() {
-        client.collectDefaultMetrics({ register: this.register });
-    }
+  readonly httpRequestsTotal = new client.Counter({
+    name: 'http_requests_total',
+    help: 'Total HTTP requests',
+    registers: [this.register],
+  });
 
-    getMetrics() {
-        return this.register.metrics();
-    }
+  constructor() {
+    client.collectDefaultMetrics({
+      register: this.register,
+    });
+  }
 
-    getContentType() {
-        return this.register.contentType;
-    }
+  async getMetrics(): Promise<string> {
+    return this.register.metrics();
+  }
+
+  getContentType(): string {
+    return this.register.contentType;
+  }
+
+    incrementHttpRequests(): void {
+    this.httpRequestsTotal.inc();
+  }
 }

@@ -15,6 +15,8 @@ import { HealthService } from './health/health.service';
 import { HealthModule } from './health/health.module';
 import { MetricsService } from './metrics/metrics.service';
 import { MetricsModule } from './metrics/metrics.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MetricsInterceptor } from './metrics/metrics.interceptor';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -27,6 +29,6 @@ import { MetricsModule } from './metrics/metrics.module';
   	HealthModule,
 	MetricsModule],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService, MetricsService],
+  providers: [AppService, CloudinaryService, HealthService, { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor }],
 })
 export class AppModule {}

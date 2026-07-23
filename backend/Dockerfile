@@ -2,7 +2,7 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-RUN apk add --no-cache bash curl
+RUN apk add --no-cache bash curl netcat-openbsd
 
 COPY package*.json ./
 
@@ -12,6 +12,9 @@ COPY . .
 
 RUN npx prisma generate
 
+COPY docker-entrypoint.sh .
+RUN chmod +x docker-entrypoint.sh
+
 EXPOSE 3000
 
-CMD ["npm", "run", "start:dev"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
