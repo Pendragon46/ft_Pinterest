@@ -28,6 +28,10 @@ interface RegisterErrors {
   password?: AuthErrorKey
 }
 
+// Hold the submit button in its loading state for at least this long so a fast
+// register still reads as "loading…" before the welcome reveal takes over.
+const MIN_SUBMIT_MS = 600
+
 // Backend register conflict keys (auth.emailTaken / auth.usernameTaken) are valid
 // AuthErrorKeys, so a 409 fieldErrors payload maps straight onto the inputs.
 function mapFieldErrors(
@@ -71,12 +75,19 @@ export function RegisterPage() {
 
     setSubmitting(true)
     setFormError(null)
+    const startedAt = Date.now()
     try {
       // register signs a token, so we can log in without a second round-trip.
       const token = await registerRequest({ username, email, password })
       tokenStore.set(token)
       const user = await fetchMe()
       storeLogin(user)
+      const elapsed = Date.now() - startedAt
+      if (elapsed < MIN_SUBMIT_MS) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, MIN_SUBMIT_MS - elapsed),
+        )
+      }
       useIntroStore.getState().playWelcome(formatShortName(user))
       if (inModal) navigate(-1)
       else navigate('/')

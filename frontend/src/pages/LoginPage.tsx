@@ -23,6 +23,10 @@ interface LoginErrors {
   password?: AuthErrorKey
 }
 
+// Hold the submit button in its loading state for at least this long so a fast
+// login still reads as "loading…" before the welcome reveal takes over.
+const MIN_SUBMIT_MS = 600
+
 // Renders as modal (location.state.background) or standalone page.
 export function LoginPage() {
   const { t } = useTranslation('common')
@@ -53,11 +57,18 @@ export function LoginPage() {
 
     setSubmitting(true)
     setFormError(null)
+    const startedAt = Date.now()
     try {
       const token = await loginRequest(email, password)
       tokenStore.set(token)
       const user = await fetchMe()
       storeLogin(user)
+      const elapsed = Date.now() - startedAt
+      if (elapsed < MIN_SUBMIT_MS) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, MIN_SUBMIT_MS - elapsed),
+        )
+      }
       useIntroStore.getState().playWelcome(formatShortName(user))
       if (inModal) navigate(-1)
       else navigate('/')
