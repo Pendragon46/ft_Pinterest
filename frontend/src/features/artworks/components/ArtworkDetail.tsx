@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, MessageCircle, Bookmark, Share2, X } from 'lucide-react'
+import { Heart, MessageCircle, Share2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -19,7 +19,6 @@ import {
   fetchIsLiked,
   postArtworkComment,
   setArtworkLike,
-  setArtworkSave,
 } from '../artwork.api'
 import type {
   ArtworkComment,
@@ -65,7 +64,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const [likeOverride, setLikeOverride] = useState<boolean | null>(null)
   /** Bumped each time the user likes, to replay the heart burst. */
   const [likeBurst, setLikeBurst] = useState(0)
-  const [saved, setSaved] = useState(false)
   const [shareHint, setShareHint] = useState(false)
   const [draft, setDraft] = useState('')
   const [postStatus, setPostStatus] = useState<'idle' | 'posted' | 'failed'>(
@@ -225,37 +223,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   })
   const doLike = (next: boolean) => {
     likeMutation.mutate(next)
-  }
-
-  const saveMutation = useMutation({
-    mutationFn: (next: boolean) =>
-      setArtworkSave({
-        id: artwork.id,
-        saved: next,
-        loggedUser: currentUser?.id ?? '',
-      }),
-    onMutate: (next: boolean) => {
-      const previous = saved
-      setSaved(next)
-      return { previous }
-    },
-    onError: (_error, next, context) => {
-      if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
-      setSaved(context?.previous ?? !next)
-      toast({
-        variant: 'error',
-        message: t('toast.saveFailed'),
-        action: {
-          label: t('artwork.retry'),
-          onClick: () => {
-            saveMutation.mutate(next)
-          },
-        },
-      })
-    },
-  })
-  const doSave = (next: boolean) => {
-    saveMutation.mutate(next)
   }
 
   // Delete one of the user's own comments; the server enforces ownership (403).

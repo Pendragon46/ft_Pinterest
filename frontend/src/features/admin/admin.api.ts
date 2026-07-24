@@ -70,17 +70,30 @@ export interface CreateUserInput {
   role: AppRole
 }
 
-/** Crée un compte via l'inscription (POST /users, public) puis applique le
-    rôle choisi si ce n'est pas USER. Le backend n'a pas d'endpoint dédié à la
-    création par un admin — on réutilise l'inscription. */
+/** Décode le `sub` (id) d'un JWT sans dépendance (base64url). */
+function jwtSub(token: string): string | null {
+  try {
+    const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+    const padded = b64.padEnd(b64.length + ((4 - (b64.length % 4)) % 4), '=')
+    return (JSON.parse(atob(padded)) as { sub?: string })?.sub ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Crée un compte via l'inscription (POST /auth/register, public) puis applique
+    le rôle choisi si ce n'est pas USER. Le backend n'a pas d'endpoint dédié à la
+    création par un admin — on réutilise l'inscription. Le rôle est posé avec le
+    token admin courant (intercepteur), l'id venant du JWT du nouveau compte. */
 export async function createUserAsAdmin(input: CreateUserInput): Promise<void> {
-  const { data } = await http.post<{ id: string }>('/users', {
+  const { data } = await http.post<{ access_token: string }>('/auth/register', {
     fullname: input.fullname,
     username: input.username,
     email: input.email,
     password: input.password,
   })
-  if (input.role !== 'USER' && data?.id) {
-    await http.patch(`/users/${data.id}/roles`, { role: input.role })
+  if (input.role !== 'USER' && data?.access_token) {
+    const id = jwtSub(data.access_token)
+    if (id) await http.patch(`/users/${id}/roles`, { role: input.role })
   }
 }

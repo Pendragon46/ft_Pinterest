@@ -1,6 +1,5 @@
 // L'API "artworks". Tuiles, détail, publication, suppression, commentaires et
-// likes appellent le backend NestJS. `setArtworkSave` reste sur mock (pas de
-// modèle Save côté serveur). Signatures et clés de cache inchangées.
+// likes appellent le backend NestJS. Signatures et clés de cache inchangées.
 
 import { http, isApiError, multipartConfig } from '@/lib/http'
 import { layoutTile, pageForTile } from '@/features/search/tile.layout'
@@ -12,21 +11,12 @@ import {
   type ServerComment,
   type ServerLike,
 } from '@/lib/mappers'
-import { maybeFailMutation } from '@/lib/devFail'
 
 import type {
   ArtworkComment,
   ArtworkDetail,
   CanvasArtwork,
 } from './artwork.types'
-
-const POST_LATENCY_MS = 260
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
 
 // React Query key factory — single source of truth for cache keys, kept next
 // to the fetchers so invalidation can't drift from fetching.
@@ -134,20 +124,6 @@ export async function fetchIsLiked(
   return data.some((like) => like.authorId === currentUserId)
 }
 
-export interface ArtworkSaveInput {
-  id: string
-  saved: boolean
-  loggedUser: string
-}
-
-/** Toggle a save (optimistic caller). The mock echoes the requested state.
-    Pas de modèle Save côté serveur : reste sur mock (retiré de l'UI en Phase 5). */
-export async function setArtworkSave(input: ArtworkSaveInput): Promise<boolean> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  return input.saved
-}
-
 export interface CreateArtworkInput {
   title: string
   description?: string
@@ -156,11 +132,8 @@ export interface CreateArtworkInput {
 }
 
 /** Publie une œuvre. Champ fichier `art`, 10 Mo max, images + mp4.
-    La route porte l'id auteur dans l'URL ; après le ticket T1 elle
-    deviendra POST /artworks et `authorId` disparaîtra — seule cette
-    ligne changera. */
+    Le nouveau backend dérive l'auteur du token : POST /artworks. */
 export async function createArtwork(
-  authorId: string,
   input: CreateArtworkInput,
 ): Promise<ArtworkDetail> {
   const form = new FormData()
@@ -180,7 +153,7 @@ export async function createArtwork(
   form.append('art', input.file)
 
   const { data } = await http.post<ServerArtwork>(
-    `/artworks/user/${authorId}`,
+    `/artworks`,
     form,
     multipartConfig,
   )
