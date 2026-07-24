@@ -47,8 +47,6 @@ export class UsersService {
   }
 
   async findAll() {
-    // Réservé ADMIN (garde dans le contrôleur). Renvoie les champs attendus par la
-    // table d'administration côté frontend (sans password), liste vide tolérée.
     return await this.prisma.user.findMany({
       orderBy: {
         createdAt: 'desc',
@@ -141,8 +139,7 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // On vérifie le rôle de l'ACTEUR (appelant), pas celui de la cible :
-    // sinon un USER pourrait modifier un compte ADMIN.
+    // Rôle de l'acteur, pas de la cible (sinon un USER pourrait éditer un ADMIN).
     if (id !== loggedUserId) {
       const actor = await this.prisma.user.findUnique({
         where: { id: loggedUserId },
@@ -364,8 +361,7 @@ export class UsersService {
     });
   }
 
-  // Export RGPD : toutes les données personnelles du compte, sans le mot de passe.
-  // Le document correspond au type `GdprExport` du frontend (features/gdpr/gdpr.types.ts).
+  // Export RGPD (type GdprExport côté frontend), sans le mot de passe.
   async exportUserData(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

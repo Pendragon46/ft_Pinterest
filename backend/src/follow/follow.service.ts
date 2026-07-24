@@ -38,9 +38,7 @@ export class FollowService {
     });
   }
 
-  // Le schéma nomme les relations à l'envers : `user.followers` (relation "Follower")
-  // = les comptes que l'utilisateur SUIT ; `user.following` (relation "Following")
-  // = les ABONNÉS de l'utilisateur. Chaque getter est donc mappé sur la bonne relation.
+  // Relations inversées dans le schéma : user.followers = comptes suivis, user.following = abonnés.
   async getFollowers(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },

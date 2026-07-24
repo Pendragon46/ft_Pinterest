@@ -26,8 +26,7 @@ export const ArtworkCard = memo(function ArtworkCard({
   const location = useLocation()
   const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Lecture au survol/focus (Pinterest-like) ; pause + retour au début en sortie.
-  // No-op pour les images (ref null).
+  // Lecture au survol/focus ; no-op pour les images (ref null).
   const playHover = () => {
     void videoRef.current?.play().catch(() => {})
   }

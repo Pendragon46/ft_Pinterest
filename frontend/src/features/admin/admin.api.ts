@@ -29,8 +29,7 @@ export const adminKeys = {
   artworks: () => ['admin', 'artworks'] as const,
 }
 
-/** Toutes les œuvres (pour la modération admin). Réutilise /search/artworks
-    qui renvoie déjà auteur + `_count` ; pagination côté client. */
+/** Toutes les œuvres (modération admin) — réutilise /search/artworks. */
 export async function fetchAllArtworks(): Promise<AdminArtworkRow[]> {
   const { data } = await http.get<AdminArtworkRow[]>('/search/artworks', {
     params: { page: 1, limit: 200, sort: 'recent' },
@@ -38,21 +37,18 @@ export async function fetchAllArtworks(): Promise<AdminArtworkRow[]> {
   return data
 }
 
-/** Supprime n'importe quelle œuvre en tant qu'admin (le serveur autorise
-    l'auteur OU un ADMIN, 403 sinon). */
+/** Supprime n'importe quelle œuvre (admin autorisé, 403 sinon). */
 export async function deleteArtworkAsAdmin(id: string): Promise<void> {
   await http.delete(`/artworks/${id}`)
 }
 
-/** Liste des comptes. Réservée ADMIN côté serveur : un USER (ou visiteur) reçoit 403,
-    que l'UI masque déjà le lien ou non. */
+/** Liste des comptes (ADMIN only, 403 sinon). */
 export async function fetchAllUsers(): Promise<AdminUserRow[]> {
   const { data } = await http.get<AdminUserRow[]>('/users')
   return data
 }
 
-/** Change le rôle d'un compte. Le serveur refuse l'auto-rétrogradation et la
-    suppression du dernier administrateur (403). */
+/** Change le rôle (403 si auto-rétrogradation ou dernier admin). */
 export async function updateUserRole(id: string, role: AppRole): Promise<void> {
   await http.patch(`/users/${id}/roles`, { role })
 }
@@ -81,10 +77,7 @@ function jwtSub(token: string): string | null {
   }
 }
 
-/** Crée un compte via l'inscription (POST /auth/register, public) puis applique
-    le rôle choisi si ce n'est pas USER. Le backend n'a pas d'endpoint dédié à la
-    création par un admin — on réutilise l'inscription. Le rôle est posé avec le
-    token admin courant (intercepteur), l'id venant du JWT du nouveau compte. */
+/** Crée un compte via l'inscription, puis applique le rôle si ≠ USER (id lu dans le JWT). */
 export async function createUserAsAdmin(input: CreateUserInput): Promise<void> {
   const { data } = await http.post<{ access_token: string }>('/auth/register', {
     fullname: input.fullname,

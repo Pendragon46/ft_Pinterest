@@ -26,8 +26,7 @@ import {
 
 const PAGE = 12
 
-// Onglet « Œuvres » du dashboard admin : liste toutes les œuvres et permet à
-// un admin de supprimer n'importe laquelle (le backend l'autorise, 403 sinon).
+// Onglet « Œuvres » du dashboard : liste + suppression admin.
 export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
   const { t } = useTranslation('common')
   const qc = useQueryClient()

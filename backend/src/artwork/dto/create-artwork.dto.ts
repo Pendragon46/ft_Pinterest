@@ -31,8 +31,7 @@ export class CreateArtworkDto {
   @IsOptional()
   mediapublicId?: string;
 
-  // multipart envoie une valeur unique comme string ; on la normalise en tableau
-  // pour ne pas faire échouer @IsArray (undefined reste undefined = optionnel).
+  // multipart : une valeur unique arrive en string → normalisée en tableau pour @IsArray.
   @Transform(({ value }) =>
     value === undefined || Array.isArray(value) ? value : [value],
   )

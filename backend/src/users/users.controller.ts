@@ -31,8 +31,7 @@ export class UsersController {
     return this.usersService.getCurrentUser(req.user.id);
   }
 
-  // Export RGPD des données de l'utilisateur connecté (tous rôles, GUEST inclus, via le
-  // JwtAuthGuard global). Placé avant @Get(':id') pour ne pas être capturé comme un id.
+  // Avant @Get(':id') pour que "me/export" ne soit pas pris pour un id.
   @Get('me/export')
   exportMyData(@Req() req) {
     return this.usersService.exportUserData(req.user.id);

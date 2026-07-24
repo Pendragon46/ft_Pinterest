@@ -82,9 +82,7 @@ export function colorFromId(id: string): string {
     vidéo, dont le rendu diffère sur toutes les surfaces. */
 export function mediaTypeFromUrl(url?: string | null): MediaType {
   if (!url) return 'image'
-  // Cloudinary encode le type dans le chemin (/video/upload/) et ne met pas
-  // d'extension sur l'URL de livraison : on teste d'abord le chemin, puis
-  // l'extension en repli (autres hébergeurs / fichiers locaux).
+  // Cloudinary : type dans le chemin (/video/upload/), pas d'extension ; repli sur l'extension.
   if (/\/video\/(upload|fetch)\//i.test(url)) return 'video'
   return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(url) ? 'video' : 'image'
 }
