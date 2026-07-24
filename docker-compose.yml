@@ -154,6 +154,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      # - ./monitoring/grafana/provisioning/alerting:/etc/grafana/provisioning/alerting:ro
       - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
     depends_on:
       - prometheus
@@ -205,20 +206,23 @@ services:
       timeout: 10s
       retries: 3
 
-  webhook_receiver:
-    image: mendhak/http-https-echo:34
-    container_name: ft_pinterest_webhook
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: ft_pinterest_alertmanager
     restart: always
     expose:
-      - "8080"
+      - "9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
     networks:
       - ft_pinterest-network
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9093/-/ready"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
 
 networks:
   ft_pinterest-network:
