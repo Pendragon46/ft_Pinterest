@@ -18,6 +18,15 @@ groups:
         annotations:
           summary: "PostgreSQL not reachable"
           description: "PostgreSQL database is down"
+
+      - alert: PostgresExporterDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL Exporter not reachable"
+          description: "PostgreSQL Exporter is down"
         
       - alert: NodeExporterDown
         expr: up{job="node"} == 0

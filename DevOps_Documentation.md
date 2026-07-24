@@ -148,6 +148,8 @@ Every container should become **healthy**.
 
 # Monitoring
 
+Prometheus collects application and infrastructure metrics, while Grafana provides dashboards for real-time monitoring.
+
 ## Prometheus
 
 Prometheus scrapes metrics from:
@@ -170,9 +172,7 @@ monitoring/alert_rules.yml
 
 ---
 
-## Grafana
-
-Grafana visualizes Prometheus metrics through dashboards.
+## Grafana Dashboard
 
 Implemented panels:
 
@@ -183,9 +183,16 @@ Implemented panels:
 - Disk usage
 - HTTP requests
 
+Grafana is automatically provisioned with:
+
+- Prometheus datasource
+- ft_pinterest dashboard
+
+Dashboard and datasource are automatically restored on a fresh installation. User settings and alerts are persisted in the `grafana_data` Docker volume.
+
 ---
 
-# Alerting
+## Alerting
 
 Implemented alerts:
 
@@ -198,13 +205,39 @@ Implemented alerts:
 
 ---
 
-# Verification
+## Verification
 
-## Backend
+### Backend
 
 ```bash
-curl https://localhost:8443/api/health -k
+curl -k https://localhost:8443/api/health
 ```
+
+### Frontend
+
+```bash
+curl -k https://localhost:8443/
+```
+
+### Prometheus
+
+```bash
+curl -k https://localhost:8443/prometheus/-/healthy
+```
+
+### Grafana
+
+```bash
+curl -k https://localhost:8443/grafana/api/health
+```
+
+### Docker Health Status
+
+```bash
+make ps
+```
+
+All containers should have the `healthy` status.
 
 ---
 
