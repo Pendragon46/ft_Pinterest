@@ -70,7 +70,8 @@ export function AuthButton() {
         }}
         aria-haspopup="menu"
         aria-expanded={open}
-        className={`${PILL} gap-2 pe-4 ps-1`}
+        aria-label={user.fullname ?? user.username}
+        className={`${PILL} gap-2 ps-1 pe-2 sm:pe-4`}
       >
         {user.avatarUrl ? (
           <img
@@ -86,7 +87,7 @@ export function AuthButton() {
             {(user.fullname ?? user.username).charAt(0).toUpperCase()}
           </span>
         )}
-        <span className="max-w-[2rem] truncate sm:max-w-[1rem]">
+        <span className="hidden max-w-[9rem] truncate sm:inline">
           {user.fullname ?? user.username}
         </span>
         <ChevronDown
