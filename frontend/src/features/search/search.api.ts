@@ -1,6 +1,7 @@
-// The search "API": every read the search UI performs goes through here. Today
-// each function resolves from the mock; when the backend lands (Search spec §13)
-// only the bodies change — signatures and query keys stay identical.
+// The search "API": every read the search UI performs goes through here.
+// Suggestions, niche tiles and trending tags hit the backend (with a local
+// fallback); niche resolution and neighbours are client-side by design — a
+// "niche" is a canvas discipline, not a backend entity.
 
 import type { CanvasArtwork, Category } from '@/features/artworks/artwork.types'
 import { http } from '@/lib/http'
@@ -10,31 +11,19 @@ import {
   contextualTags,
   neighbours,
   nicheTile,
-  resolveSearch,
+  recentSearches,
   suggest,
 } from './search.mock'
 import { layoutTile } from './tile.layout'
 import type {
   NicheNeighbour,
-  SearchResolution,
   Suggestion,
   SuggestionGroups,
 } from './search.types'
 
-const SUGGEST_LATENCY_MS = 90
-const RESOLVE_LATENCY_MS = 120
-const NEIGHBOURS_LATENCY_MS = 140
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
 // React Query key factory — single source of truth for search cache keys.
 export const searchKeys = {
   suggestions: (query: string) => ['search', 'suggestions', query] as const,
-  resolution: (query: string) => ['search', 'resolution', query] as const,
   nicheTile: (slug: string, tx: number, ty: number) =>
     ['search', 'niche', slug, 'tile', tx, ty] as const,
   neighbours: (slug: string) => ['search', 'neighbours', slug] as const,
@@ -80,13 +69,6 @@ export async function fetchSuggestions(
   }
 }
 
-/** Resolve a submitted term to a niche (or the nearest region).
-    TODO(backend): GET /search/resolve?q= → SearchResolution. */
-export async function fetchResolution(query: string): Promise<SearchResolution> {
-  await delay(RESOLVE_LATENCY_MS)
-  return resolveSearch(query)
-}
-
 /** Cartes d'une tuile de niche. Le slug sert de tag de recherche ; si le
     serveur ne connaît pas ce tag, on retombe sur la niche locale pour que
     le canvas reste peuplé. */
@@ -106,16 +88,30 @@ export async function fetchNicheTile(
   }
 }
 
-/** Neighbouring niches by tag proximity, closest first.
-    TODO(backend): GET /niche/:slug/neighbours → NicheNeighbour[] (needs proximity). */
-export async function fetchNeighbours(slug: string): Promise<NicheNeighbour[]> {
-  await delay(NEIGHBOURS_LATENCY_MS)
+/** Neighbouring niches, closest first. Client-side by design: niches are canvas
+    disciplines and proximity is their shared-tag count (no backend entity). */
+export function fetchNeighbours(slug: string): NicheNeighbour[] {
   return neighbours(slug as Category)
 }
 
-/** Contextual suggested tags (trending ⊕ recent history).
-    TODO(backend): GET /search/trending → string[] (recent stays client-side). */
+/** Contextual suggested tags: real trending (aggregated from recent artworks'
+    tags) merged with the user's recent local searches. Falls back to local. */
 export async function fetchContextualTags(): Promise<string[]> {
-  await delay(SUGGEST_LATENCY_MS)
-  return contextualTags()
+  try {
+    const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
+      params: { page: 1, limit: 40, sort: 'recent' },
+    })
+    const freq = new Map<string, number>()
+    for (const art of data) {
+      for (const tag of art.tags ?? []) {
+        freq.set(tag.name, (freq.get(tag.name) ?? 0) + 1)
+      }
+    }
+    const trending = [...freq.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .map(([name]) => name)
+    return [...new Set([...recentSearches(), ...trending])].slice(0, 3)
+  } catch {
+    return contextualTags()
+  }
 }
