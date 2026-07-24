@@ -34,7 +34,6 @@ import { OnlineStatusModule } from './websocket/onlineStatus.module';
     CloudinaryModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MulterModule.register({ storage: memoryStorage() }),
-    CloudinaryModule,
     FollowModule,
     LikesModule,
     	HealthModule,
@@ -43,8 +42,7 @@ import { OnlineStatusModule } from './websocket/onlineStatus.module';
     SearchModule,
     FriendsModule,
     OnlineStatusModule,
-  ,
-	MetricsModule],
+  	MetricsModule],
   controllers: [AppController],
   providers: [
     AppService,
@@ -55,6 +53,6 @@ import { OnlineStatusModule } from './websocket/onlineStatus.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-  , { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor }],
+  { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor }],
 })
 export class AppModule {}

@@ -11,5 +11,5 @@ route:
 receivers:
   - name: webhook
     webhook_configs:
-      - url: 
+      - url: https://webhook.site/5d7c5405-3dd8-4a9e-a0f0-e2010af2ef45
         send_resolved: true
