@@ -4,7 +4,8 @@
   },
   "intro": {
     "wordLead": "Perds-toi",
-    "wordTrail": "exprès"
+    "wordTrail": "exprès",
+    "welcome": "Bienvenue"
   },
   "language": {
     "label": "Langue"

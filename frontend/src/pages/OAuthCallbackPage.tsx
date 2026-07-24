@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next'
 
 import { fetchMe } from '@/features/auth/auth.api'
 import { useAuthStore } from '@/features/auth/auth.store'
+import { useIntroStore } from '@/features/auth/intro.store'
 import { tokenStore } from '@/features/auth/token'
+import { formatShortName } from '@/lib/name'
 import { useToastStore } from '@/lib/toast.store'
 
 export function OAuthCallbackPage() {
@@ -27,6 +29,7 @@ export function OAuthCallbackPage() {
     fetchMe()
       .then((user) => {
         storeLogin(user)
+        useIntroStore.getState().playWelcome(formatShortName(user))
         navigate('/', { replace: true })
       })
       .catch(() => {

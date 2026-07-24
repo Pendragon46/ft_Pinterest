@@ -13,8 +13,10 @@ import { useAuthStore } from '@/features/auth/auth.store'
 import { validateEmail, validatePassword } from '@/features/auth/auth.validation'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
+import { useIntroStore } from '@/features/auth/intro.store'
 import { tokenStore } from '@/features/auth/token'
 import { isApiError } from '@/lib/http'
+import { formatShortName } from '@/lib/name'
 
 interface LoginErrors {
   email?: AuthErrorKey
@@ -56,6 +58,7 @@ export function LoginPage() {
       tokenStore.set(token)
       const user = await fetchMe()
       storeLogin(user)
+      useIntroStore.getState().playWelcome(formatShortName(user))
       if (inModal) navigate(-1)
       else navigate('/')
     } catch (error) {

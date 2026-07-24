@@ -4,7 +4,8 @@
   },
   "intro": {
     "wordLead": "Get lost",
-    "wordTrail": "on purpose"
+    "wordTrail": "on purpose",
+    "welcome": "Welcome"
   },
   "language": {
     "label": "Language"
