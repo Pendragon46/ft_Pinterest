@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/Button'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
-import { useRole } from '@/features/auth/useRole'
 import { useToast } from '@/lib/toast.store'
 import { useCompact } from '@/lib/useCompact'
 
@@ -58,7 +57,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const { t } = useTranslation('common')
   const compact = useCompact()
   const requireAuth = useRequireAuth()
-  const { canInteract } = useRole()
   const currentUser = useAuthStore((state) => state.user)
   const queryClient = useQueryClient()
   const toast = useToast()
@@ -425,7 +423,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
 
           {/* Like/Save toggle locally; counts stay static until the backend owns them. */}
           <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-neutral-100 py-3">
-            {canInteract ? (
             <ActionChip
               active={liked}
               onClick={() => {
@@ -448,7 +445,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                 </span>
               }
             />
-            ) : null}
             <ActionChip
               active={false}
               onClick={() => undefined}
@@ -457,18 +453,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               icon={<MessageCircle aria-hidden="true" className="size-4" />}
               as="span"
             />
-            {canInteract ? (
-            <ActionChip
-              active={saved}
-              onClick={() => {
-                requireAuth(() => {
-                  doSave(!saved)
-                })
-              }}
-              label={saved ? t('artwork.saved') : t('artwork.save')}
-              icon={<Bookmark aria-hidden="true" className="size-4" fill={saved ? "currentColor" : "none"} />}
-            />
-            ) : null}
             <div className="relative ms-auto">
               <ActionChip
                 active={false}
@@ -559,7 +543,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           </section>
         </div>
 
-        {canInteract ? (
         <div className="border-t border-neutral-100 p-3">
           <div className="flex items-center gap-2">
             <input
@@ -594,7 +577,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             {postStatus === 'posted' ? t('artwork.commentPosted') : ''}
           </p>
         </div>
-        ) : null}
       </div>
     </article>
   )

@@ -7,6 +7,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateArtworkDto {
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
@@ -30,6 +31,11 @@ export class CreateArtworkDto {
   @IsOptional()
   mediapublicId?: string;
 
+  // multipart envoie une valeur unique comme string ; on la normalise en tableau
+  // pour ne pas faire échouer @IsArray (undefined reste undefined = optionnel).
+  @Transform(({ value }) =>
+    value === undefined || Array.isArray(value) ? value : [value],
+  )
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })

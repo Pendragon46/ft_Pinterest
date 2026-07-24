@@ -1,0 +1,1154 @@
+[
+  {
+    "file": "seed/portrait/008ae5b7cd1ad92a751c61fbb6efc65c.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "La Tête Haute",
+    "description": "Contre-plongée sur fond orange, un seul projecteur en douche. Les grands anneaux referment le cadre autour du visage.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/portrait/2ac30cf7a9122312080cdc4c5f325a47.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "La Main sur l'Œil",
+    "description": "Noir et blanc, lumière du dehors. La main posée sur l'œil coupe le visage et garde le regard.",
+    "tags": [
+      "portrait",
+      "studio",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/3f918c3561ca0a2c886389fe4c43578f.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "La Paume au Ciel",
+    "description": "Contre-plongée plein soleil, costume jaune contre le bleu. Il tend la main vers l'objectif, lunettes miroir orange.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/portrait/58cde313dd145f21724830e33be61393.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Étude, Yeux Clos",
+    "description": "Une seule source à ras du visage, le reste tombe dans le noir. Les yeux restent fermés.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/6d3c7fa63e0a2a28ebca41b6b8baf3db.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Sous la Passerelle",
+    "description": "Contre-plongée sous une passerelle vitrée, blazer trop grand, lumière plate de ville. Prise dans la rue.",
+    "tags": [
+      "portrait",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/71c41c44c20620d18aa948609ac9eb95.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Lumière d'Ambre",
+    "description": "Une seule lampe chaude, cadre serré, fond fondu. Il regarde à côté de l'objectif.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/portrait/748e339ce20bc2993e49cc389a99ae49.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Par-dessus l'Épaule",
+    "description": "Elle se retourne dans l'escalier, veste de cuir et foulard. Noir et blanc, sourire pris au vol.",
+    "tags": [
+      "portrait",
+      "studio",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/7a4a5756a8f430d5c59359ccc512bf61.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Contre le Couchant",
+    "description": "Fin de jour sur un toit, le ciel vire au rose derrière elle. Le vent fait tout le décor.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/portrait/a5bd257ea63cfaa9fa356c55aa04a347.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "La Rame Jaune",
+    "description": "Sur le quai, la rame jaune file en flou derrière elle. Pose longue à main levée, elle ne bouge pas.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/afc1f047b6da968f1f6e5249b86d0f90.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Les Blés, en Deux Temps",
+    "description": "Deux cadres empilés, un champ de blé sous un ciel lourd. Il lève la tête, les épis à la taille.",
+    "tags": [
+      "portrait",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/b7aa12ee3634660c245cfccc766e3318.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Entre les Doigts",
+    "description": "Contre-plongée plein ciel, elle cadre l'objectif entre ses doigts. Casquette et t-shirt assortis.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/portrait/be3a4646dc217c09f1cb6df7f1436ebc.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Bougé Volontaire",
+    "description": "Flou de bougé assumé, bras croisés sur fond vert. Le mouvement fait le portrait.",
+    "tags": [
+      "portrait",
+      "studio",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/cb38956688b160c5582d8c344824d590.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Rouge sur Rouge",
+    "description": "Fond rouge, lèvres rouges, épaule nue. Un carré de noir pour trancher.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/portrait/d21c019d19414ffd84ef85d50be96936.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "En Plongée",
+    "description": "Plongée totale, il lève les yeux vers l'objectif. Beaucoup de vide gris autour de lui.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/d9e14c251d468cc476c0ec33f969b5da.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Rame Bleue",
+    "description": "La rame bleue passe en flou derrière elle, lumière chaude des fenêtres. Elle tient le regard malgré la vitesse.",
+    "tags": [
+      "portrait",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/fae9e34f897d1ea91dfc1925e526323e.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Quai de Nuit",
+    "description": "Blouson de cuir trop grand, la rame passe en flou derrière. Lumière des wagons sur le quai.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/editorial/13dfc72f5580d5c192d384dc62a93915.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Six Captions, One Crown",
+    "description": "A display serif locked to the centre, six caption blocks set radially around the figure. Everything symmetrical but her.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/editorial/15b10a67e6b2afe2e121c5ece3c2320a.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Marble Meets the Toolbar",
+    "description": "A scanned David bust with a Photoshop toolbar pasted in, graphic design ribboned around the head. Grit texture over the whole thing.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/336c24a85ef34eeb0d3043e57e3903af.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Cut, Copy, Share",
+    "description": "Studio portrait on deep blue, the word Creativity glowing behind. A right-click menu floats over the sitter as the caption.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/6ed6292d7cbc706782cbebf901a2456c.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Four Services, One Blur",
+    "description": "A long motion blur in browns and rust, the services set in one line across the middle. Everything else left empty.",
+    "tags": [
+      "editorial",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/7673a4fa27a6a00ab7bd639872489c2a.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Magazine Cover, Streetwear Issue",
+    "description": "A fashion cover on gradient blue, masthead behind the model, cover lines stacked left and right. Special edition.",
+    "tags": [
+      "editorial",
+      "people",
+      "layout"
+    ]
+  },
+  {
+    "file": "seed/editorial/8afd29080774b85a0baa57075d1fc568.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Contact Block on a Face",
+    "description": "Extreme close-up of a face in grainy black and white, the studio's contact block set straight across the cheek. One rule above the name.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/editorial/94b330332cbb3368f1ca6a69f79f6429.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Who Will Listen",
+    "description": "A portrait boxed by a faint grid, the headline split to either side of her. Strategy, creativity, identity across the top.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/9bd7564786b05a78838f99c1fdeb8863.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Flowers From a Skull",
+    "description": "Grainy blue poster, a stippled skull cupped in a hand with flowers rising from the crown. Small captions scattered in the margins.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/c1ed2e30049e7bf22bd53b5815413aab.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "OKAY, Cut and Pasted",
+    "description": "The word okay in red, a cap and cut-out eyes and lips collaged into a face between the letters. Deadpan caption underneath.",
+    "tags": [
+      "editorial",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/c9bb47c0666356716a59db50a17357e4.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Point of View, Ain't It",
+    "description": "Loose red brush lettering over a point-of-view shot: your own legs, a cigarette, a lick of flame. Almost all white space.",
+    "tags": [
+      "editorial",
+      "people",
+      "layout"
+    ]
+  },
+  {
+    "file": "seed/editorial/cb919ee78389c1d9a5c1cba3d540275a.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Yellow Marker, Straight Across",
+    "description": "A black-and-white portrait of a seated man, a whole sentence scrawled in yellow marker across him. Caption bottom-right.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/editorial/cf8e14cf06db6e24d05465da56ba38bf.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Green Script, Checkerboard Floor",
+    "description": "A striding model on a red-and-white checkerboard, a green cursive logo swept behind her. Bag and heels pick up the same green.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/d3310f7aa78ac22419949fd72a041c2e.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Collar Spread, Priced List",
+    "description": "A jewellery spread: a clean product panel on top, a warm neck shot below with the collection priced in mixed serif and italic.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/da257473449a80feca072dcf36803c4e.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Ginger, White on Red",
+    "description": "Chunky graffiti letters knocked out of a white square, centred on flat red. A small logo at the foot.",
+    "tags": [
+      "editorial",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/fa87530b0786f2ef5d6a7c93fc986329.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Headphones, Logo Dead Centre",
+    "description": "A product ad in cold blue-grey, model in headphones and cat-eye shades. The serif logo sits dead centre, over her ear.",
+    "tags": [
+      "editorial",
+      "people",
+      "layout"
+    ]
+  },
+  {
+    "file": "seed/editorial/fc9f9896d46267fc5328abbc848ebddc.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Breaking News, in Hand",
+    "description": "Red-lacquered hands hold a mock newspaper against deep red, the front page all display serif and a giant 14 Sept. Body set in tight columns.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/uxui/27699f998a7faec9dc335d2f7a1ed205.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Épicerie en Ligne, Parcours Complet",
+    "description": "De l'inscription au paiement, tout le parcours d'une app de courses. Cartes claires, accents chauds réservés aux prix et aux boutons.",
+    "tags": [
+      "uxui",
+      "product",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/3e0125f0a1af7cf79e749a1b4df44746.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Robotique, Titraille Pleine Page",
+    "description": "Landing d'un studio de robotique, titraille géante en fond, bras blanc détouré. Deux bandes, une claire une noire.",
+    "tags": [
+      "uxui",
+      "interface",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/uxui/40a5333d077c5e44dc91f0b27318af04.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Grille Bento, Gourde Noire",
+    "description": "Page produit en grille bento : la gourde tient la grande case, un vert vif isolé pour le contact.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/47986c0a3133ae911c7ebc593778ff5f.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Tâches, en Couleurs Vives",
+    "description": "App de tâches, personnage 3D et cartes colorées. Onboarding, espaces de travail, tableau kanban.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/5f5b38755d8703f4fd1f5e9a5cb81c42.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "École en Ligne, à Plat",
+    "description": "App d'école en ligne, illustrations à plat sur fond violet. Compte à rebours d'examen, messagerie, fiches de cours.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/75b9fc97089b6408977d276d99aa73b9.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Login, Plein Noir",
+    "description": "Connexion sur tablette, noir intégral, formulaire à droite, marque en étoile à gauche. Le vide fait le luxe.",
+    "tags": [
+      "uxui",
+      "product",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/856b9162d7110ff7ee47b40e71875d92.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Fintech en Lueur Verte",
+    "description": "App d'investissement tenue en main, halo vert. Un prompt pour tout piloter, l'analyse de portefeuille en surimpression.",
+    "tags": [
+      "uxui",
+      "interface",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/uxui/95123462aaaa0cb98fceed47943534ee.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Manucure, Réservation et Inspo",
+    "description": "App d'un studio d'ongles, tons chauds et ombres de soleil. Fiche de réservation et planche de références côte à côte.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/ab0d24906e97ceb7c0f8c1efea625183.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Carrousel UX, Astronaute 3D",
+    "description": "Post carrousel sur l'UX, astronaute 3D au centre, bulles de fonctions autour. Format vertical pour le feed.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/b9dfc0185a67260b0591cb5554c5f405.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Fitness, Accueil et Profil",
+    "description": "App de sport, deux écrans : défi du jour et profil chiffré, poids, objectif, calories. Formes 3D pastel.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/c87c234c1e9d9ef91dded8a1c0d05ff0.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Nizo 2056, Grande Helvétique",
+    "description": "Landing d'une caméra Super 8, grande helvétique et beaucoup de blanc. Une date, 1976, pour seul argument.",
+    "tags": [
+      "uxui",
+      "product",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/d102cebc98768136016c72d0e592b010.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Galerie Photo, le Désert",
+    "description": "Site de galerie photo, grande titraille et grille d'images du désert. La photo prend toute la place.",
+    "tags": [
+      "uxui",
+      "interface",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/uxui/db3bd50218eeeb1173b353effe1773b7.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Tableau de Bord, Chiffres et Courbes",
+    "description": "Tableau de bord sombre, revenus en gros chiffres, anneau de ventes et courbe de profit. Dense mais lisible.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/e78ba10e525de292567122689512bf96.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Verre Dépoli, Scène Beige",
+    "description": "Écrans en verre dépoli posés dans une scène 3D beige. Connexion et carte d'événement, un dégradé orange pour trancher.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/f949fe159f509c8560260100c995e44d.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Études de Cas, Chiffres Clés",
+    "description": "Section études de cas, fond blanc et objet noir détouré. Chiffres clés alignés : +40 %, +25 %, ×3.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/fae26f19ac04376352a2fdaf7afe9bff.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Sport, Défi du Jour",
+    "description": "Écran d'accueil d'une app de sport, défi du jour et plan en cartes pastel. Une seule vue, très aérée.",
+    "tags": [
+      "uxui",
+      "product",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/illustration/23b20a21bc889e2af91fa59695b5f752.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "The Afternoon Train",
+    "description": "A boy and his satchel in the tall grass, a local train crossing the top of the frame. The hillside tilts the whole scene downhill.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/illustration/351ac66d44fa7d2e62955481eb636d38.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Through the Keyhole",
+    "description": "A minimalist film poster: a lone figure standing in a keyhole of yellow light, the rest sunk in near-black. Halftone grain over the glow.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/3a7ba4e90f220775aec586423ebf1f8d.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "A Giant Cups the Manor",
+    "description": "A painted giant in green and pink crouches over a real photo of a manor, cupping it like a toy. Her reflection lands in the pond below.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/3af51d84c500474a14db7bf884b1337c.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Cat, Hot-Headed",
+    "description": "A cartoon cat losing it, red flames licking up behind its head on flat yellow. Tongue out, claws up.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/41983401c92d9d39ea6835e261cff5a2.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Apéro in Blue Line",
+    "description": "A single blue line on cream: hands passing a baguette, pouring a glass, offering cheese and flowers. A whole apéro in outline.",
+    "tags": [
+      "illustration",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/5f2bc71b3e559899eee824f792dcdbd7.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Esc Makes a Break",
+    "description": "A visual pun — the Esc key locked in a cell, sawing through the bars. Teal on teal, one joke told cleanly.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/illustration/686538398385460f31463acfe849aa0a.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Blue and Yellow, Overlapping",
+    "description": "Two figures reduced to blue and yellow, a square and a circle passed between them. Where they overlap, a sliver of green.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/75eb51e0f46e25eb4171cfb88a1b0c81.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Skull Icon, Blue Flame",
+    "description": "A glossy game icon: a rounded pink skull wrapped in a lick of blue flame, floating on charcoal. Built to read at any size.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/8a0b4a37847cb0510fec08ede80444d2.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Mid-Leap, One Green",
+    "description": "An ad illustration all in one green: a woman mid-leap, sneakers flying, holding the bottle like a trophy. Grain on every shape.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/97fa30a63c8dcecfa195bf9797a8fb27.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "One Line Over the Noise",
+    "description": "A crouching figure drawn in one unbroken black line, colour bursting out behind it. The outline holds the chaos together.",
+    "tags": [
+      "illustration",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/9c904e6fc5fb00a9c16e61c0b9572ffc.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "The Boy and the Dog",
+    "description": "A straw-hatted kid and a small white dog sit shoulder to shoulder in tall grass, looking out over green hills. Big summer sky.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/illustration/a8e0b41fa88f1d0c4a709dbfa73d55e5.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Skull Mascot, Chained",
+    "description": "A stylised skull mascot, cap pushed back and chains swinging, red flame where the eyes should be. Ropey shapes on murky green.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/b7af78ca1465caaf123b2e01f9df5bf1.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Brush to the Lips",
+    "description": "A face in flat black, cream and red, a brush loading colour onto the lips and one eye. Not a shape wasted.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/c1a22d5ae4e7ffbaecda9025ac24cd2e.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Love Me Like a Sailor",
+    "description": "A real seaside photo with a doodled kraken rising around a tiny boat, a scrawled question in the sky. Drawn straight over the wave.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/c876f7a1d829f92e3fe61718f057257f.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "A Book and a Sleeping Cat",
+    "description": "A girl sprawled on a patterned rug with a book over her face, an orange cat curled at her feet. Socks half-on, nowhere to be.",
+    "tags": [
+      "illustration",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/d688eb24e330321fb573f8b47d269b0e.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Apple, One Sticker",
+    "description": "One flat red apple, squared at the shoulders, a single yellow FRESH sticker doing all the talking. Nothing else on the page.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/photography/0c026ef60bb9a2f73ade5401486765db.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Suspended in Black",
+    "description": "One fish against a black field, a single light raking the scales. The fins caught wide open.",
+    "tags": [
+      "photography",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/0fadc79425c857132f61e9135c3f1676.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Pasta, Low Light",
+    "description": "A bowl of tagliatelle in near-darkness, one basil leaf on top, a wine glass melting out of focus in front. Window light, nothing else.",
+    "tags": [
+      "photography",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/14f29cc22ab787c0478aa0e47f6eea4d.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Still in the Crowd",
+    "description": "A long exposure at a crossing: one figure holds still with his board while the crowd smears past. He's the only thing sharp.",
+    "tags": [
+      "photography",
+      "film",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/2786a0034a6e3891ac2499a30140b1d3.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Ranges in the Fog",
+    "description": "Ridgelines fading back into mist, black at the front and near-white behind. Reads more like ink wash than a photograph.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/301a9959ca31086987ea4e08871413a9.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Purple Under Old Trees",
+    "description": "Old mossy trees leaning over a field gone purple, low sun coming through from behind. A bench half-hidden in the middle.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/333a361642b941f81331f88d7c2c574a.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Two Mismatched Lenses",
+    "description": "A weathered man in a wound turban, two mismatched round lenses over his eyes, desert light on his beard. He held the gaze the whole frame.",
+    "tags": [
+      "photography",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/3bc73c15a4fa4cf12e88f7d612ca4c4a.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Red Cabin, Grey Sky",
+    "description": "A single red cabin on a green rise under a flat grey sky, white wildflowers blurred across the foreground. Nothing else for miles.",
+    "tags": [
+      "photography",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/3c3f138a994301b4a5853d353307aa6f.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Backlit, Three of Them",
+    "description": "Three silhouettes rimmed by a blown-out backlight — two parents leaning in, a baby reaching up. Everything else falls to black.",
+    "tags": [
+      "photography",
+      "film",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/4f6e44f7fdac85747bc1cbe6d24d3d05.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "One Match, Burning",
+    "description": "A single match at the moment it catches, the flame a clean white teardrop over the charred head. Macro, pure black around it.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/604edaa23da2c3b7ab482d81e2bbb12d.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "The Lamp Lights a Cloud",
+    "description": "A dusk trick of alignment: a street lamp's cone of light seems to land on one pink cloud below. Waited for the two to line up.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/690e5c13bb92d737f287b5aa4b8689d9.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Red on the Ridge",
+    "description": "A hiker in red alone on a knife-edge ridge, hazy peaks stacked behind. The path threads the spine of the mountain.",
+    "tags": [
+      "photography",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/6a958390de7924f68e1dfbd57d8c41d6.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Black Lab, Head Tilted",
+    "description": "A black Labrador on grey seamless, head tilted just enough, whiskers catching the light. One soft source, nothing to distract.",
+    "tags": [
+      "photography",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/7f148be2309858cbe95257274ce62651.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "From Above, Long Shadow",
+    "description": "Shot from above at golden hour: she looks straight up from a crosswalk, her shadow thrown long across the stripes.",
+    "tags": [
+      "photography",
+      "film",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/88afe03e172426244d571a7757cf7feb.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Through the Archway",
+    "description": "A black archway opening onto a sunlit Italian street, a couple in silhouette against the haze. A lantern hangs dead centre.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/ccd52a871a6da359719755730c73dd1e.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Sky Through the Leaves",
+    "description": "Straight up into a blue sky, a palm on one side and leafy branches on the other framing the clouds. A quick one, handheld.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/d3adc96cc10731915f821475d59adb10.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Dolomites, Flowers in Front",
+    "description": "The jagged Dolomite ridge across a green saddle, yellow wildflowers close in the foreground. Hikers strung along the path like ants.",
+    "tags": [
+      "photography",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/typography/06094c79163dbb38f1b73794e7f6323a.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Script et Blason",
+    "description": "Lettrage cursif tracé à la main puis vectorisé, logé dans un écusson à contour blanc. Le ® tient dans la pointe du bouclier.",
+    "tags": [
+      "typography",
+      "type",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/0b365e04c4d4ece7b6fed7f5b4efda75.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Spécimen d'une Grotesque",
+    "description": "Présentation d'une grotesque : capitale géante, filet fin, tout l'espace laissé autour. Le nom en petit sous le bloc.",
+    "tags": [
+      "typography",
+      "lettering",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/typography/13602c19bc93b586e082fa01c1a06378.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Lettres au Compas",
+    "description": "Lettrage géométrique construit au compas et à l'équerre, rouge sur crème. Les contreformes sont aussi dessinées que les pleins.",
+    "tags": [
+      "typography",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/2727366439f6d9fc3fe7df5cd5f7e3a1.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Lettres de Verre",
+    "description": "Exploration de lettres en verre 3D, elles diffusent la lumière sur fond noir. Le flou fait partie du dessin.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/2f71acd686349cf9f4107b43e48fbbfd.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Tokyo en Blocs Rouges",
+    "description": "« Tokyo » en lettrage modulaire, rouge sur crème. Chaque lettre tient dans le même carré.",
+    "tags": [
+      "typography",
+      "print",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/typography/52ff476c97a9a25bc83e49f897eb69ba.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Tous les Yeux Braqués",
+    "description": "Affiche rose et noir, un bloc de lettres serrées coincé entre des yeux en trame et deux téléviseurs. Tout est comprimé.",
+    "tags": [
+      "typography",
+      "type",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/54077f55595ad5e4473db45090e9cf6e.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Serif et Anglaise",
+    "description": "Capitales condensées à empattements et une anglaise cursive pour un seul mot. Deux styles sur la même ligne, blanc sur noir.",
+    "tags": [
+      "typography",
+      "lettering",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/typography/6d067e99c36717364df290c2b491e4de.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Waku Waku, Cartouche Gras",
+    "description": "Lettrage gras dans un cartouche arrondi, noir cerné de blanc sur vert vif. Un léger basculement pour l'énergie.",
+    "tags": [
+      "typography",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/6dd9d30cfda569583a9f5458e614678f.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Space, dans la Réserve",
+    "description": "« Space » en gras, « negative » logé dans la réserve des lettres. Le vide porte le second mot.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/736a26667d7539991de24c02619039ec.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Fium, Grasse Penchée",
+    "description": "Logotype en italique grasse, blanc sur noir, penché vers l'avant. Rien d'autre que le mot.",
+    "tags": [
+      "typography",
+      "print",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/typography/89a4fcccd863c45f3d89e7866b4439ef.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Local, en Coulée",
+    "description": "« Local » en lettrage liquide, les lettres coulent et se rejoignent par des gouttes. Tracé d'un seul geste.",
+    "tags": [
+      "typography",
+      "type",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/99326db1d56cf356b92638ec8f3efe2f.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Script sur Bleu Franc",
+    "description": "Une anglaise pour « Believe », une grotesque ronde pour le reste, sur bleu franc. Étoiles à quatre branches en ponctuation.",
+    "tags": [
+      "typography",
+      "lettering",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/typography/b48f6617ae565db220f788386d6b69a3.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Lettrage Fleuri, à la Main",
+    "description": "Lettrage tracé à la main, lettres épaisses et joufflues sur vert. Quelques fleurs dessinées dans les creux.",
+    "tags": [
+      "typography",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/b4963db5a99aad807f7766e24a0f7227.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Words Are Weapons, en Écho",
+    "description": "« Words are weapons » répété en fond, tampon usé rouge et noir. Le bloc blanc central tranche dans la répétition.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/e51401f510f68e5fda97f66bb825f5f3.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Calligraphie Asémique",
+    "description": "Composition calligraphique dense, signes blancs pleins sur noir. On lit le rythme avant les mots.",
+    "tags": [
+      "typography",
+      "print",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/typography/f8425468b8e945abaff528594728b968.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Serif Bleu sur Photo",
+    "description": "Titraille serif bleue posée sur une photo de champ, les mots s'imbriquent en plusieurs corps. Questions en gris dans les interstices.",
+    "tags": [
+      "typography",
+      "type",
+      "lettering"
+    ]
+  }
+]

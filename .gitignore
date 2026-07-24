@@ -3,3 +3,7 @@ node_modules
 dist
 .vscode
 
+
+# Secrets de seed (mots de passe en clair) — ne jamais committer
+seed-credentials.json
+READMELOGIN.md

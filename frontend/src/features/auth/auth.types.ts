@@ -1,4 +1,4 @@
-export type Role = 'USER' | 'GUEST' | 'ADMIN'
+export type Role = 'USER' | 'ADMIN'
 
 // Frontend view of the Prisma `User` — mirrors the model minus `password` (and
 // the server timestamps). `fullname`/`bio` are optional in Prisma; `avatarUrl`

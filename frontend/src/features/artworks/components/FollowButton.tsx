@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
-import { useRole } from '@/features/auth/useRole'
 import { fetchIsFollowing, setFollow, userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
 
@@ -24,7 +23,6 @@ export function FollowButton({ userId }: FollowButtonProps) {
   const { t } = useTranslation('common')
   const requireAuth = useRequireAuth()
   const currentUser = useAuthStore((state) => state.user)
-  const { canInteract } = useRole()
   const toast = useToast()
   const queryClient = useQueryClient()
   // Optimistic override; null means "defer to the backend's persisted state".
@@ -101,9 +99,6 @@ export function FollowButton({ userId }: FollowButtonProps) {
       mutation.mutate(!following)
     })
   }
-
-  // GUEST is read-only — no follow affordance at all.
-  if (!canInteract) return null
 
   if (!following) {
     return (

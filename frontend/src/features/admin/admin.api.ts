@@ -44,7 +44,7 @@ export async function deleteArtworkAsAdmin(id: string): Promise<void> {
   await http.delete(`/artworks/${id}`)
 }
 
-/** Liste des comptes. Réservée ADMIN côté serveur : un USER/GUEST reçoit 403,
+/** Liste des comptes. Réservée ADMIN côté serveur : un USER (ou visiteur) reçoit 403,
     que l'UI masque déjà le lien ou non. */
 export async function fetchAllUsers(): Promise<AdminUserRow[]> {
   const { data } = await http.get<AdminUserRow[]>('/users')

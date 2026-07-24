@@ -2,37 +2,40 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
 import { Public } from 'src/decorators/public.decorator';
 
-@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
+  @Public()
   @Post('login')
   async login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
   }
 
-  // Requires a valid token; JwtStrategy puts { id, username, role } on req.user.
-  @UseGuards(JwtAuthGuard)
+  // Protégé par le JwtAuthGuard global (pas de @Public) : JwtStrategy met
+  // { id, username, role } sur req.user. (Le @Public au niveau classe court-circuitait
+  // ce guard et laissait req.user undefined → 500.)
   @Get('me')
   async me(@Req() req: { user: { id: string } }) {
     return this.authService.me(req.user.id);
   }
 
+  @Public()
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 
+  @Public()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: { user: User }) {
