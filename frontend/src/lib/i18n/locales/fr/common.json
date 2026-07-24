@@ -186,7 +186,6 @@
   "login": {
     "title": "Content de vous revoir",
     "subtitle": "Connectez-vous pour aimer, enregistrer et créer.",
-    "forgotPassword": "Mot de passe oublié ?",
     "noAccount": "Nouveau ici ?",
     "registerLink": "Créer un compte"
   },

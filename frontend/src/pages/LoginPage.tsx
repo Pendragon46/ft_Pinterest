@@ -120,10 +120,6 @@ export function LoginPage() {
             }}
             error={errors.password ? t(errors.password) : undefined}
           />
-          {/* Route to build later — the 404 catches it meanwhile (decision D2). */}
-          <TextLink to="/forgot-password" className="self-end">
-            {t('login.forgotPassword')}
-          </TextLink>
         </div>
 
         <Button type="submit" fullWidth loading={submitting}>

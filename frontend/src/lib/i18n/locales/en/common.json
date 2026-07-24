@@ -186,7 +186,6 @@
   "login": {
     "title": "Welcome back",
     "subtitle": "Sign in to like, save and create.",
-    "forgotPassword": "Forgot Password?",
     "noAccount": "New here?",
     "registerLink": "Create an account"
   },
