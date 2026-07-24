@@ -1,7 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { ChevronDown, LogOut, Plus, Settings, Shield, User as UserIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { useAuthStore } from '../auth.store'
 import { useRole } from '../useRole'
@@ -18,6 +19,8 @@ const ITEM =
 export function AuthButton() {
   const { t } = useTranslation('common')
   const location = useLocation()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
   const { canViewDashboard } = useRole()
@@ -166,6 +169,8 @@ export function AuthButton() {
             onClick={() => {
               setOpen(false)
               logout()
+              queryClient.clear()
+              navigate('/', { replace: true })
             }}
             className={`${ITEM} text-red-600 hover:bg-red-50 focus-visible:bg-red-50`}
           >
