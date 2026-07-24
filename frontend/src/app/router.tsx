@@ -9,6 +9,7 @@ import { DevUiPage } from '@/pages/DevUiPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { OAuthCallbackPage } from '@/pages/OAuthCallbackPage'
 import { PrivacyPage } from '@/pages/PrivacyPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { RegisterPage } from '@/pages/RegisterPage'
@@ -34,6 +35,7 @@ export function AppRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/auth/callback" element={<OAuthCallbackPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/profile/:userId" element={<ProfilePage />} />
         <Route path="/create" element={<CreatePage />} />

@@ -15,7 +15,6 @@ import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
 import { tokenStore } from '@/features/auth/token'
 import { isApiError } from '@/lib/http'
-import { useToastStore } from '@/lib/toast.store'
 
 interface LoginErrors {
   email?: AuthErrorKey
@@ -34,7 +33,6 @@ export function LoginPage() {
   const inModal = Boolean(background)
 
   const storeLogin = useAuthStore((state) => state.login)
-  const showToast = useToastStore((state) => state.show)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<LoginErrors>({})
@@ -73,10 +71,8 @@ export function LoginPage() {
     }
   }
 
-  // Google OAuth backend is not built yet (see BACKEND_INTEGRATION §E.3); keep the
-  // button but tell the truth instead of faking a sign-in.
   const handleGoogle = () => {
-    showToast({ message: t('auth.googleSoon') })
+    window.location.href = '/api/auth/google'
   }
 
   return (
@@ -149,8 +145,6 @@ export function LoginPage() {
 
       <Divider>{t('divider.or')}</Divider>
 
-      {/* TODO(backend): real Google OAuth (POST /auth/google, BACKEND_INTEGRATION
-          §E.3). Until it exists the button is honest, not a fake sign-in. */}
       <Button variant="outline" fullWidth onClick={handleGoogle}>
         <GoogleIcon />
         {t('actions.continueWithGoogle')}

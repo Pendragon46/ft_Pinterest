@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import type { Response } from 'express';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
@@ -38,7 +47,9 @@ export class AuthController {
   @Public()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthCallback(@Req() req: { user: User }) {
-    return this.authService.googleLogin(req.user);
+  async googleAuthCallback(@Req() req: { user: User }, @Res() res: Response) {
+    // Redirige vers le SPA avec le token en fragment (non transmis au serveur).
+    const { access_token } = await this.authService.googleLogin(req.user);
+    res.redirect(`/auth/callback#token=${access_token}`);
   }
 }
