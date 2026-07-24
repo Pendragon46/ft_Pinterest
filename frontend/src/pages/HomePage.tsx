@@ -35,7 +35,7 @@ export function HomePage() {
         </div>
       </header>
 
-      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end p-4">
+      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center p-4 sm:justify-end">
         <nav className="pointer-events-auto flex h-10 items-center gap-2 rounded-full bg-white/85 px-4 text-sm text-neutral-600 shadow-sm backdrop-blur">
           <TextLink to="/privacy">{t('legal.privacy')}</TextLink>
           <span aria-hidden="true">·</span>
