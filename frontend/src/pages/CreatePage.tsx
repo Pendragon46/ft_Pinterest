@@ -141,7 +141,7 @@ export function CreatePage() {
 
   const mutation = useMutation({
     mutationFn: () =>
-      createArtwork(userId, {
+      createArtwork({
         title: title.trim(),
         description: description.trim(),
         tags: normalizeTags(tags),
