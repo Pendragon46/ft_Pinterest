@@ -1,122 +1,47 @@
-import { useState } from 'react'
-import reactLogo from '../assets/react.svg'
-import viteLogo from '../assets/vite.svg'
-import heroImg from '../assets/hero.png'
-import '../App.css'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 
-function HomePage() {
-  const [count, setCount] = useState(0)
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
+import { Logo } from '@/components/ui/Logo'
+import { TextLink } from '@/components/ui/TextLink'
+import { ArtworkCanvas } from '@/features/artworks/canvas/ArtworkCanvas'
+import { AuthButton } from '@/features/auth/components/AuthButton'
+
+// Full-viewport canvas with floating chrome; pointer-events-none lets drags
+// pass through to the map, each island re-enables pointer events for itself.
+export function HomePage() {
+  const { t } = useTranslation('common')
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <main className="relative h-svh overflow-hidden">
+      <ArtworkCanvas />
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-4 p-4">
+        <div className="pointer-events-auto flex items-center gap-2">
+          <Link
+            to="/"
+            aria-label={t('app.name')}
+            className="inline-flex h-10 items-center rounded-full bg-white/85 px-4 text-lg text-neutral-900 shadow-sm backdrop-blur focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
+          >
+            <Logo withWordmark />
+          </Link>
+          <span className="inline-flex h-10 items-center rounded-full bg-white/85 px-3 shadow-sm backdrop-blur">
+            <LanguageSwitcher />
+          </span>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <div className="pointer-events-auto">
+          <AuthButton />
+        </div>
+      </header>
+
+      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-end p-4">
+        <nav className="pointer-events-auto flex h-10 items-center gap-2 rounded-full bg-white/85 px-4 text-sm text-neutral-600 shadow-sm backdrop-blur">
+          <TextLink to="/privacy">{t('legal.privacy')}</TextLink>
+          <span aria-hidden="true">·</span>
+          <TextLink to="/terms">{t('legal.terms')}</TextLink>
+        </nav>
+      </footer>
+    </main>
   )
 }
-
-export default HomePage

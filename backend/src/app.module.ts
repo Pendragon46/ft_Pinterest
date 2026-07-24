@@ -17,18 +17,44 @@ import { MetricsService } from './metrics/metrics.service';
 import { MetricsModule } from './metrics/metrics.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';
+import { CommentModule } from './comment/comment.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthModule } from './auth/auth.module';
+import { SearchModule } from './search/search.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { FriendsModule } from './friends/friends.module';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { OnlineStatusModule } from './websocket/onlineStatus.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, ArtworkModule,
-	CloudinaryModule,
-	ConfigModule.forRoot({ isGlobal: true }),
-	MulterModule.register({	storage: memoryStorage()}),
-	CloudinaryModule,
-	FollowModule,
-	LikesModule,
-  	HealthModule,
+  imports: [
+    PrismaModule,
+    UsersModule,
+    ArtworkModule,
+    CloudinaryModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    MulterModule.register({ storage: memoryStorage() }),
+    CloudinaryModule,
+    FollowModule,
+    LikesModule,
+    	HealthModule,
+    CommentModule,
+    AuthModule,
+    SearchModule,
+    FriendsModule,
+    OnlineStatusModule,
+  ,
 	MetricsModule],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService, { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor }],
+  providers: [
+    AppService,
+    CloudinaryService,
+    HealthService,
+    WebsocketGateway,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  , { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor }],
 })
 export class AppModule {}

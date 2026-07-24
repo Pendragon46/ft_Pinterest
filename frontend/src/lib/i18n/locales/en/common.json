@@ -1,0 +1,289 @@
+{
+  "app": {
+    "name": "Atlaas"
+  },
+  "intro": {
+    "wordLead": "Get lost",
+    "wordTrail": "on purpose"
+  },
+  "language": {
+    "label": "Language"
+  },
+  "actions": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "continueWithGoogle": "Continue with Google",
+    "signOut": "Sign out",
+    "dismiss": "Dismiss"
+  },
+  "auth": {
+    "avatarAlt": "{{username}}'s avatar",
+    "menuLabel": "Account menu",
+    "invalidCredentials": "Incorrect email or password.",
+    "emailTaken": "This email is already registered.",
+    "usernameTaken": "This username is already taken.",
+    "googleSoon": "Google sign-in is coming soon.",
+    "loadingSession": "Restoring your session…"
+  },
+  "form": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@atlaas.app",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "8+ chars, letters, numbers & symbols",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "your_handle",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "consent": "By continuing, you agree to our <terms>Terms</terms> and <privacy>Privacy Policy</privacy>."
+  },
+  "create": {
+    "title": "Publish a work",
+    "subtitle": "Share something you made with the community.",
+    "cta": "Create",
+    "dropzoneIdle": "Drag an image or video here, or click to browse",
+    "dropzoneActive": "Drop to upload",
+    "dropzoneHint": "JPEG, PNG, GIF, WebP or MP4 — up to 10 MB",
+    "replace": "Replace",
+    "clear": "Clear",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "fieldTags": "Tags",
+    "tagPlaceholder": "Add a tag and press Enter",
+    "removeTag": "Remove tag {{tag}}",
+    "publish": "Publish",
+    "cancel": "Cancel",
+    "published": "Work published",
+    "videoBadge": "Video",
+    "errors": {
+      "fileRequired": "Add an image or video to publish.",
+      "fileType": "Use a JPEG, PNG, GIF, WebP or MP4 file.",
+      "fileTooLarge": "File must be 10 MB or smaller.",
+      "titleRequired": "A title is required.",
+      "titleLength": "Title must be between 3 and 100 characters.",
+      "descriptionLength": "Description must be 2000 characters or fewer.",
+      "tagsMin": "Add at least one tag.",
+      "tagsMax": "Use at most 5 tags."
+    }
+  },
+  "divider": {
+    "or": "or"
+  },
+  "errors": {
+    "usernameRequired": "Username is required.",
+    "emailRequired": "Email is required.",
+    "emailInvalid": "Enter a valid email address.",
+    "passwordRequired": "Password is required.",
+    "passwordWeak": "8+ characters with upper and lower case letters, a number and a symbol.",
+    "network": "Network error — check your connection."
+  },
+  "home": {
+    "heroLine1": "Don't scroll inspiration.",
+    "heroLine2": "Navigate it.",
+    "searchPlaceholder": "What are we looking for today?",
+    "searchAction": "Go",
+    "searchShortcut": "Ctrl + K",
+    "suggestedLabel": "Suggested:",
+    "refocus": "Refocus",
+    "canvasLabel": "Discovery map. Drag to explore, hold Ctrl and scroll to zoom, use the arrow keys to pan and Home to recenter."
+  },
+  "artwork": {
+    "views": "{{views}} views",
+    "openAria": "Open “{{title}}” by {{author}}",
+    "badgeAi": "AI-assisted",
+    "badgeSponsor": "Sponsor",
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow",
+    "like": "Like",
+    "liked": "Liked",
+    "save": "Save",
+    "saved": "Saved",
+    "share": "Share",
+    "linkCopied": "Link copied!",
+    "commentsTitle": "Comments",
+    "commentPlaceholder": "Add a comment…",
+    "post": "Post",
+    "reply": "Reply",
+    "timeNow": "now",
+    "timeHours": "{{hours}}h",
+    "close": "Close",
+    "loading": "Loading artwork…",
+    "notFoundTitle": "Artwork not found",
+    "notFoundBody": "This artwork doesn't exist or is no longer available.",
+    "backHome": "Back to the map",
+    "commentsEmpty": "Be the first to comment.",
+    "commentPosted": "Comment posted.",
+    "commentFailed": "Couldn't post your comment.",
+    "retry": "Retry"
+  },
+  "category": {
+    "portrait": "Portrait",
+    "editorial": "Editorial",
+    "typography": "Typography",
+    "uxui": "UX / UI",
+    "photography": "Photography",
+    "illustration": "Illustration",
+    "motion": "3D & Motion",
+    "branding": "Branding"
+  },
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to like, save and create.",
+    "forgotPassword": "Forgot Password?",
+    "noAccount": "New here?",
+    "registerLink": "Create an account"
+  },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Join Atlaas and start sharing your work.",
+    "haveAccount": "Already have an account?",
+    "loginLink": "Sign in"
+  },
+  "profile": {
+    "title": "Profile",
+    "tabWorks": "Works",
+    "tabLiked": "Liked",
+    "edit": "Edit profile",
+    "share": "Share",
+    "likes": "{{likes}} likes",
+    "worksEmptyOwn": "Your atlas is empty — publish your first work.",
+    "worksEmptyOther": "This creator hasn't published any work yet.",
+    "likedEmpty": "No liked works yet.",
+    "loadError": "Couldn't load this profile.",
+    "stats": {
+      "works": "works",
+      "followers": "followers",
+      "following": "following"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "navAccount": "Account",
+    "navAppearance": "Appearance",
+    "profileHeading": "Profile",
+    "changeAvatar": "Change avatar",
+    "displayName": "Display name",
+    "username": "Username",
+    "bio": "Bio",
+    "save": "Save changes",
+    "saved": "Changes saved",
+    "savedShort": "Saved",
+    "emailPasswordHeading": "Email & password",
+    "email": "Email",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Passwords don't match.",
+    "appearanceHeading": "Appearance",
+    "language": "Language"
+  },
+  "toast": {
+    "saveFailed": "Couldn't save your change."
+  },
+  "notFound": {
+    "title": "You wandered off the map",
+    "subtitle": "There's nothing to discover at this coordinate. The compass still points home",
+    "action": "Refocus to home"
+  },
+  "legal": {
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "back": "Back to home"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "How Atlaas collects, uses and protects your data.",
+    "toc": "Table of content",
+    "updated": "Last updated: {{date}}",
+    "sections": [
+      {
+        "heading": "1. Introduction",
+        "body": "Atlaas is a creative-inspiration platform where people discover, publish and discuss visual work. This Privacy Policy explains what information Atlaas collects, why, how it is used and protected, and the choices and rights you have. By creating an account or using Atlaas, you agree to the practices described here."
+      },
+      {
+        "heading": "2. Information We Collect",
+        "body": "We collect only what we need to run the service: your account information (username, email and a password, which is never stored in plain text — only as a secure hash); basic Google profile information if you choose to sign in with Google; your profile details such as a bio and avatar; the content you create (works, comments and likes); who you follow; and basic technical information your browser sends and that is strictly necessary to keep you signed in. We do not knowingly collect information from children under {{minAge}}."
+      },
+      {
+        "heading": "3. How We Use Your Information",
+        "body": "We use your information to create and secure your account, keep you signed in, display your profile and content to other users as intended, power your discovery feed, operate and improve the platform, protect it against abuse, and comply with legal obligations. We do not sell your personal information and do not use it for third-party advertising."
+      },
+      {
+        "heading": "4. Sharing Your Information",
+        "body": "Your public content — published works, your username, your comments and your public profile — is visible to other users, which is the purpose of the platform. Beyond that, we share personal information only with service providers who host or operate Atlaas on our behalf, with Google as needed for optional sign-in, and when required by law or to protect users and the service. We do not otherwise share your personal data."
+      },
+      {
+        "heading": "5. Your Rights and Choices",
+        "body": "Depending on where you live, you may have the right to access, correct, delete, export or restrict the processing of your personal data, and to withdraw consent. You can edit your profile at any time. To exercise any of these rights, contact us at {{contactEmail}}. You may also lodge a complaint with your local data-protection authority."
+      },
+      {
+        "heading": "6. Data Security",
+        "body": "We take reasonable technical and organisational measures to protect your data, including hashing passwords, using encrypted connections (HTTPS) and restricting access to personal information. No method of transmission or storage is completely secure, so we cannot guarantee absolute security. We keep your data only as long as your account is active or as needed to provide the service and meet legal obligations; when you delete your account, we delete or anonymise your personal data within a reasonable period."
+      },
+      {
+        "heading": "7. Changes to This Policy",
+        "body": "We may update this Privacy Policy from time to time. When we make material changes, we will update the date above and, where appropriate, notify you in the app. Your continued use of Atlaas after changes take effect means you accept the revised policy. Questions? Reach us at {{contactEmail}}."
+      }
+    ]
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "subtitle": "The rules for using Atlaas.",
+    "toc": "Table of content",
+    "updated": "Last updated: {{date}}",
+    "sections": [
+      {
+        "heading": "1. Acceptance of Terms",
+        "body": "These Terms of Service govern your access to and use of Atlaas. By creating an account or using the platform, you agree to these Terms. If you do not agree, please do not use Atlaas."
+      },
+      {
+        "heading": "2. Eligibility and Accounts",
+        "body": "You must be at least {{minAge}} years old to use Atlaas. You are responsible for the information you provide, for keeping your password confidential, and for all activity under your account. Notify us at {{contactEmail}} if you believe your account has been compromised. You may sign in with an email and password or with Google."
+      },
+      {
+        "heading": "3. Your Content",
+        "body": "You keep ownership of the works, comments and other content you post. By posting on Atlaas, you grant us a non-exclusive, worldwide, royalty-free licence to host, store and display your content only as needed to operate and promote the platform, such as showing your work in the discovery feed and on your profile. You are responsible for your content and confirm you have the rights to post it."
+      },
+      {
+        "heading": "4. Acceptable Use",
+        "body": "You agree not to post content that is illegal, infringing, hateful, harassing or sexually explicit; not to impersonate others; not to upload malware or attempt to breach security; not to scrape or harvest data from the platform without permission; and not to spam or abuse other users. We may remove content and suspend or terminate accounts that violate these rules, and administrators may moderate content to enforce these Terms."
+      },
+      {
+        "heading": "5. Intellectual Property",
+        "body": "Atlaas — including its name, logo, design and software — belongs to its operators and is protected by applicable law. These Terms do not grant you any right to use our branding without prior written permission. Your content remains yours, subject to the licence described in the section on Your Content."
+      },
+      {
+        "heading": "6. Third-Party Services",
+        "body": "Atlaas relies on third-party services to function, such as Google for optional sign-in and our hosting provider. Your use of those services may be subject to their own terms and privacy policies, and we are not responsible for third-party services we do not control."
+      },
+      {
+        "heading": "7. Termination",
+        "body": "You may stop using Atlaas and delete your account at any time. We may suspend or terminate your access if you breach these Terms or to protect the platform and its users. Sections that by their nature should survive termination — such as intellectual property, disclaimers and limitation of liability — continue to apply."
+      },
+      {
+        "heading": "8. Disclaimers and Limitation of Liability",
+        "body": "Atlaas is provided “as is” and “as available,” without warranties of any kind, to the fullest extent permitted by law. We do not guarantee the service will be uninterrupted, error-free or secure. To the maximum extent permitted by law, we are not liable for indirect, incidental or consequential damages arising from your use of the platform, which may change, pause or be discontinued at any time."
+      },
+      {
+        "heading": "9. Changes to These Terms",
+        "body": "We may update these Terms from time to time. When we make material changes, we will update the date above and, where appropriate, notify you in the app. Your continued use after changes take effect means you accept the revised Terms."
+      },
+      {
+        "heading": "10. Governing Law and Contact",
+        "body": "These Terms are governed by the laws of {{jurisdiction}}, and any disputes will be subject to its courts. For any questions about these Terms, contact us at {{contactEmail}}."
+      }
+    ]
+  },
+  "search": {
+    "emptyTitle": "Nothing over here",
+    "emptyBody": "We couldn't find anything for that — try another direction?",
+    "searching": "Searching…",
+    "groupDisciplines": "Disciplines",
+    "groupCreators": "Creators",
+    "nearestRegion": "Closest region",
+    "exploringTitle1": "Exploring",
+    "exploringTitle2": "{{niche}} Universe",
+    "whereNext": "You've explored all of {{niche}}. Where next?",
+    "whereNextShort": "Where next?",
+    "refreshNeighbours": "Show other neighbours"
+  }
+}

@@ -5,6 +5,7 @@
 ### Resources
  - **NestJS** : [official site documentation ] (https://docs.nestjs.com/)
  - **Prisma** : [official documentation ] (https://www.prisma.io/docs)
+ - **Socket.IO** : [official documentation ] (https://socket.io/docs/v4/)
 ### Team Information:
 ### Project Management:
 ### Technical Stack:
@@ -15,19 +16,25 @@
 - Frontend :
   - React
   - TypeScript
+
   
 ### Database Schema:
+
+![Database Schema](diagram_prisma.png)
+
 ### Features List:
+
 ### Modules:
  - Major :
-    - [x] Use a framework for both the frontend and backend.
+    - [x] Use a framework for the frontend and backend(React, NestJS).
     - [] Implement real-time features using WebSockets or similar technology.
-    - [] Allow users to interact with other users 
-    - [] Public API
-    - [] Advanced Permission System
-    - [] ELK Devops
-    - [] Microservices
+    - [] Allow users to interact with other users
+	
+    - [x] Advanced Permission System
     - [] Standard user management and authentication
+	- [x] Module of choice (infinite canvas)
+	- [] Monitoring system with Prometheus and Grafana.
+	
 
  
 - Minor :
@@ -35,16 +42,18 @@
     - [x] Use a backend framework (NestJS).
     - [x] Use an ORM (Prisma) for the database.
     - [x] Health check and status page system with automated backups and disaster recovery procedures.
-    - [] A complete notification system for all creation, update, and deletion actions.
-    - []  Implement advanced search functionality with filters, sorting, and pagination.
-    - [] File upload and management system
-    - [] Custom-made design system with reusable components, including a proper color palette, typography, and icons.
-    - [] Multilingue
-    - [] Support for additional browsers
-    - [] 2FA
-    - [] RTL Arabic
-    - [] Implement WAF/ModSecurity
-    - [] Chat
+    - [x] A complete notification system for all creation, update, and deletion actions.
+    - [x] File upload and management system
+    - [x] Custom-made design system with reusable components, including a proper color palette, typography, and icons.
+	- [x]  Implement advanced search functionality with filters, sorting, and pagination.
+    - [x] Multilingue
+    - [x] Support for additional browsers
+    - [x] RTL Arabic
+	- [] file upload
+	- [] Oauth2.0 authentication with Google or 42 API
+	- [] User activity analytics and insights dashboard
+
+Excpected points: 17/28
 
 ### Individual Contributions:
 - trindran :
@@ -58,3 +67,6 @@
   - Set up the complete development environment (frontend, backend, Docker, and service dependencies).
   - Implemented the health monitoring system, including health checks, the status page, automated PostgreSQL backups, and disaster recovery procedures.
 - srabeman :
+
+
+

@@ -88,7 +88,7 @@ function StatusBadge({ value }: { value: string }) {
   );
 }
 
-export default function StatusPage() {
+export function StatusPage() {
   const [health, setHealth] = useState<Health | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -116,6 +116,9 @@ export default function StatusPage() {
   }, []);
 
   useEffect(() => {
+    // fetchHealth is async — every setState runs after `await`, never synchronously
+    // in the effect body, so this is a false positive of the sync-set-state rule.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchHealth();
     const interval = setInterval(fetchHealth, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
