@@ -56,7 +56,6 @@ Required variables in `.env`:
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/transcendence
 JWT_SECRET=your_long_random_secret
-JWT_EXPIRATION=7d
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
