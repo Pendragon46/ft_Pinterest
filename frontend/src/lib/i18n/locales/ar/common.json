@@ -315,6 +315,7 @@
     "nearestRegion": "أقرب منطقة",
     "exploringTitle1": "استكشاف",
     "exploringTitle2": "عالم {{niche}}",
+    "creatorUniverse": "عالم {{name}}",
     "whereNext": "لقد استكشفت كل {{niche}}. إلى أين بعد؟",
     "whereNextShort": "إلى أين بعد؟",
     "refreshNeighbours": "عرض جيران آخرين"

@@ -315,6 +315,7 @@
     "nearestRegion": "Région la plus proche",
     "exploringTitle1": "Exploration",
     "exploringTitle2": "Univers {{niche}}",
+    "creatorUniverse": "Univers de {{name}}",
     "whereNext": "Tu as tout exploré de {{niche}}. Et après ?",
     "whereNextShort": "Et après ?",
     "refreshNeighbours": "Voir d'autres voisins"

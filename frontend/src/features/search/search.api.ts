@@ -26,6 +26,8 @@ export const searchKeys = {
   suggestions: (query: string) => ['search', 'suggestions', query] as const,
   nicheTile: (slug: string, tx: number, ty: number) =>
     ['search', 'niche', slug, 'tile', tx, ty] as const,
+  creatorTile: (id: string, tx: number, ty: number) =>
+    ['search', 'creator', id, 'tile', tx, ty] as const,
   neighbours: (slug: string) => ['search', 'neighbours', slug] as const,
   contextualTags: () => ['search', 'contextual-tags'] as const,
 }
@@ -57,6 +59,7 @@ export async function fetchSuggestions(
       term: u.fullname ?? u.username,
       username: u.fullname ?? u.username,
       handle: u.username,
+      userId: u.id,
       previews: [colorFromId(u.id)],
     }))
 
@@ -85,6 +88,39 @@ export async function fetchNicheTile(
     return layoutTile(data, slug as Category, tx, ty)
   } catch {
     return nicheTile(slug as Category, tx, ty)
+  }
+}
+
+/** A creator's "universe": their own artworks first, then the closest related
+    works (by shared tags), laid out toroidally per tile. Single source
+    /search/artworks (carries author + tags + counts). */
+export async function fetchCreatorTile(
+  creatorId: string,
+  tx: number,
+  ty: number,
+): Promise<CanvasArtwork[]> {
+  try {
+    const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
+      params: { page: 1, limit: 200, sort: 'recent' },
+    })
+    const own = data.filter((a) => a.author?.id === creatorId)
+    if (own.length === 0) return []
+    const ownTags = new Set(own.flatMap((a) => (a.tags ?? []).map((t) => t.name)))
+    const related = data
+      .filter((a) => a.author?.id !== creatorId)
+      .map((art) => ({
+        art,
+        shared: (art.tags ?? []).reduce(
+          (n, t) => n + (ownTags.has(t.name) ? 1 : 0),
+          0,
+        ),
+      }))
+      .filter((x) => x.shared > 0)
+      .sort((x, y) => y.shared - x.shared)
+      .map((x) => x.art)
+    return layoutTile([...own, ...related], undefined, tx, ty)
+  } catch {
+    return []
   }
 }
 

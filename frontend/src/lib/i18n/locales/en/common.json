@@ -338,6 +338,7 @@
     "nearestRegion": "Closest region",
     "exploringTitle1": "Exploring",
     "exploringTitle2": "{{niche}} Universe",
+    "creatorUniverse": "{{name}}'s Universe",
     "whereNext": "You've explored all of {{niche}}. Where next?",
     "whereNextShort": "Where next?",
     "refreshNeighbours": "Show other neighbours"
