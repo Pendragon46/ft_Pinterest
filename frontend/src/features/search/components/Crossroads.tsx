@@ -54,7 +54,7 @@ export function Crossroads({ niche, onPick }: CrossroadsProps) {
         onClick={() => {
           setOpen(true)
         }}
-        className="absolute bottom-6 left-1/2 flex h-10 -translate-x-1/2 animate-reveal items-center rounded-full bg-neutral-900 px-4 text-sm font-medium text-white shadow-lg transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none"
+        className="absolute bottom-20 left-1/2 flex h-10 -translate-x-1/2 animate-reveal items-center rounded-full bg-neutral-900 px-4 text-sm font-medium text-white shadow-lg transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none sm:bottom-6"
       >
         {t('search.whereNextShort')}
       </button>
@@ -64,7 +64,7 @@ export function Crossroads({ niche, onPick }: CrossroadsProps) {
   return (
     <div
       ref={rootRef}
-      className="absolute bottom-6 left-1/2 flex max-w-[92vw] -translate-x-1/2 animate-reveal flex-wrap items-center justify-center gap-x-4 gap-y-3 rounded-3xl bg-white/85 px-5 py-3 shadow-lg backdrop-blur motion-reduce:animate-none"
+      className="absolute bottom-20 left-1/2 flex max-w-[92vw] -translate-x-1/2 animate-reveal flex-wrap items-center justify-center gap-x-4 gap-y-3 rounded-3xl bg-white/85 px-5 py-3 shadow-lg backdrop-blur motion-reduce:animate-none sm:bottom-6"
     >
       <p className="font-serif text-lg text-neutral-900">
         {t('search.whereNext', { niche: t(`category.${niche.slug}`) })}
