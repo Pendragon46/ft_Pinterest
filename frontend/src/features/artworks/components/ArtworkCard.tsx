@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 import { Sparkles } from 'lucide-react'
@@ -24,6 +24,20 @@ export const ArtworkCard = memo(function ArtworkCard({
 }: ArtworkCardProps) {
   const { t } = useTranslation('common')
   const location = useLocation()
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Lecture au survol/focus (Pinterest-like) ; pause + retour au début en sortie.
+  // No-op pour les images (ref null).
+  const playHover = () => {
+    void videoRef.current?.play().catch(() => {})
+  }
+  const stopHover = () => {
+    const v = videoRef.current
+    if (v) {
+      v.pause()
+      v.currentTime = 0
+    }
+  }
 
   // Fold the kind into the accessible name: the Link's aria-label overrides its
   // descendants, so the Sponsor/AI badges are otherwise never announced (§2.1).
@@ -47,6 +61,10 @@ export const ArtworkCard = memo(function ArtworkCard({
       state={{ background: location }}
       // No native drag: a card drag must pan the map.
       draggable={false}
+      onMouseEnter={playHover}
+      onMouseLeave={stopHover}
+      onFocus={playHover}
+      onBlur={stopHover}
       aria-label={ariaLabel}
       className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
         layout === 'grid' ? 'relative w-full' : ''
@@ -70,8 +88,10 @@ export const ArtworkCard = memo(function ArtworkCard({
       {artwork.mediaUrl ? (
         artwork.mediaType === 'video' ? (
           <video
+            ref={videoRef}
             src={artwork.mediaUrl}
             muted
+            loop
             playsInline
             preload="metadata"
             // A native drag on the media would fight the canvas pan.

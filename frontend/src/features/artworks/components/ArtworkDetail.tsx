@@ -310,6 +310,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           artwork.mediaType === 'video' ? (
             <video
               src={artwork.mediaUrl}
+              autoPlay
+              muted
+              loop
               controls
               playsInline
               className="absolute inset-0 size-full bg-black object-contain"
