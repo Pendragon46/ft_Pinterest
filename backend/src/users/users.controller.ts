@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, Query, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UseGuards, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../roles/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum';
-import { log } from 'console';
+import { UpdateRolesDto } from './dto/update-roles.dto';
 
 @Controller('users')
 export class UsersController {
@@ -27,9 +29,19 @@ export class UsersController {
   }
 
  
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.admin)
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  // RGPD — export de ses propres données. AVANT @Get(':id') sinon Nest ferait
+  // correspondre "me" au paramètre :id.
+  @UseGuards(JwtAuthGuard)
+  @Get('me/export')
+  exportMyData(@Request() req: { user: { id: string } }) {
+    return this.usersService.exportUserData(req.user.id);
   }
 
   @Get(':id')
@@ -43,9 +55,10 @@ export class UsersController {
   }
 
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('avatar'))
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @UploadedFile(
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req: { user: { id: string } }, @UploadedFile(
 				new ParseFilePipe({
 				validators: [
 				new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }),
@@ -53,18 +66,20 @@ export class UsersController {
 			],
 			fileIsRequired: false,
 		})) file?: Express.Multer.File){
-    return  this.usersService.update(id,updateUserDto, file, "34131762-f416-40a9-98fb-95725479dff3");
+    return  this.usersService.update(id,updateUserDto, file, req.user.id);
   }
 
-  @Patch(':id/roles')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.admin)
-  updateRoles(@Param('id') id: string, @Body() data: { role: Role}) {
-  return this.usersService.updateRoles(id, data.role);
+  @Patch(':id/roles')
+  updateRoles(@Param('id') id: string, @Body() data: UpdateRolesDto, @Request() req: { user: { id: string } }) {
+  return this.usersService.updateRoles(id, data.role, req.user.id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  removebyId(@Param('id') id: string) {
-	return  this.usersService.removeById(id, "34131762-f416-40a9-98fb-95725479dff3");
+  removebyId(@Param('id') id: string, @Request() req: { user: { id: string } }) {
+	return  this.usersService.removeById(id, req.user.id);
   }
 
   @Get(':id/artworks')

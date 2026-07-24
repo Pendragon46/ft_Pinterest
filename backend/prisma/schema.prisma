@@ -84,5 +84,6 @@ model Tag {
 
 enum Role {
   USER
+  GUEST
   ADMIN
 }

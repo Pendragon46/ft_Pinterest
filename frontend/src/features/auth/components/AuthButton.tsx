@@ -86,7 +86,7 @@ export function AuthButton() {
             {(user.fullname ?? user.username).charAt(0).toUpperCase()}
           </span>
         )}
-        <span className="max-w-[2rem] truncate sm:max-w-[1rem]">
+        <span className="max-w-[5rem] truncate sm:max-w-[3rem]">
           {user.fullname ?? user.username}
         </span>
         <ChevronDown

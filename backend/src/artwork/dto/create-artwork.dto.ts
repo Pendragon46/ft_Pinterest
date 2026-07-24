@@ -1,4 +1,5 @@
 import { ArrayNotEmpty, IsArray, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateArtworkDto {
 	@MinLength(3, { message: 'Title must be at least 3 characters long' })
@@ -20,6 +21,11 @@ export class CreateArtworkDto {
 	@IsOptional()
 	mediapublicId?: string;
 
+	// multipart repeats the `tags` key; a SINGLE tag arrives as a string, not an
+	// array. Coerce it so one-tag uploads still pass @IsArray.
+	@Transform(({ value }) =>
+		Array.isArray(value) ? value : value === undefined ? value : [value],
+	)
 	@IsArray()
 	@ArrayNotEmpty()
 	@IsString({ each: true })

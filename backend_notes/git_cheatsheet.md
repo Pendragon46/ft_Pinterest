@@ -128,5 +128,5 @@ git checkout -b feature/what-im-building
 git add .
 git commit -m "feat: what I did"
 git push origin feature/what-im-building
-# open Pull Request on GitHub
+# open Pull Request on GitHubc
 ```

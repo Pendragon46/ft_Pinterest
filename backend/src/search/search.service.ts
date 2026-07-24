@@ -37,6 +37,11 @@ export class SearchService {
 				],
 			} : {})
 		},
+		include: {
+			author: { select: { id: true, username: true, fullname: true } },
+			tags: { select: { name: true } },
+			_count: { select: { likes: true, comments: true } },
+		},
 		skip,
 		take,
 		orderBy: {
@@ -94,6 +99,11 @@ export class SearchService {
 					name: { contains: q, mode: 'insensitive' },
 				},
 			}} : {})
+		},
+		include: {
+			author: { select: { id: true, username: true, fullname: true } },
+			tags: { select: { name: true } },
+			_count: { select: { likes: true, comments: true } },
 		},
 		skip,
 		take,

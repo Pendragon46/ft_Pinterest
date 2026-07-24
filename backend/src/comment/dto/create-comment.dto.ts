@@ -8,6 +8,6 @@ export class CreateCommentDto {
 	comment!: string;
 
 	@IsString()
-	@IsNotEmpty()
-	loggedUser!: string; // Add this property to hold the logged-in user's ID
+	@IsOptional() // identity now comes from the JWT (req.user.id); kept optional for back-compat
+	loggedUser?: string;
 }

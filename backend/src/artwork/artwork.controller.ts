@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, UseInterceptors, UploadedFile, FileTypeValidator, ParseFilePipe, MaxFileSizeValidator, Req, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, UseInterceptors, UploadedFile, FileTypeValidator, ParseFilePipe, MaxFileSizeValidator, Req, Request, UseGuards } from '@nestjs/common';
 import { ArtworkService } from './artwork.service';
 import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../roles/roles.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { Role } from '../enums/role.enum';
 
 @Controller('artworks')
 export class ArtworkController {
   constructor(private readonly artworkService: ArtworkService) {}
 
-  // @Post() Uncomment this line and comment the next line to use the user id from the token JWT
+  // GUEST est en lecture seule : USER/ADMIN pour publier.
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.user, Role.admin)
   @Post('user/:id')
   @UsePipes()
   @UseInterceptors(FileInterceptor('art'))
@@ -86,10 +92,10 @@ export class ArtworkController {
 //     return this.artworkService.update(id, data, file, req.user.Id);
 //   }
 
-  // change to @Request() req and get the user id from the token JWT
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() data: { userId: string }) {
-    return this.artworkService.remove(id, data.userId);
+  remove(@Param('id') id: string, @Request() req: { user: { id: string } }) {
+    return this.artworkService.remove(id, req.user.id);
   }
 
 //   @Delete(':id')

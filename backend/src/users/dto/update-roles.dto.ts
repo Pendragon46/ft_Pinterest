@@ -1,8 +1,7 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsEnum } from 'class-validator';
 import { Role } from 'src/enums/role.enum';
 
 export class UpdateRolesDto {
-	@IsString()
-	@IsNotEmpty()
-	roles!: Role;
+	@IsEnum(Role, { message: 'role must be USER, GUEST or ADMIN' })
+	role!: Role;
 }

@@ -14,10 +14,9 @@ import { LikesModule } from './likes/likes.module';
 import { HealthService } from './health/health.service';
 import { HealthModule } from './health/health.module';
 import { CommentModule } from './comment/comment.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './roles/roles.guard';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [PrismaModule, UsersModule, ArtworkModule,
@@ -31,12 +30,10 @@ import { SearchModule } from './search/search.module';
 	CommentModule,
 	AuthModule,
 	SearchModule,
+	MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService, CloudinaryService, HealthService, {
-    provide: APP_GUARD,
-    useClass: RolesGuard,
-  }],
-  
+  providers: [AppService, CloudinaryService, HealthService],
+
 })
 export class AppModule {}

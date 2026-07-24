@@ -147,6 +147,11 @@ export class ArtworkService {
 		where: {
 			id: id,
 		},
+		include: {
+			author: { select: { id: true, username: true, fullname: true } },
+			tags: { select: { name: true } },
+			_count: { select: { likes: true, comments: true } },
+		},
 	});
 	if (!artwork) {
 		throw new NotFoundException('Artwork not found');

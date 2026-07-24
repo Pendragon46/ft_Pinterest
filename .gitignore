@@ -2,3 +2,7 @@
 node_modules
 dist
 
+# Seed de démonstration — mots de passe en clair, ne jamais committer (spec R1)
+seed-credentials.json
+READMELOGIN.md
+

@@ -35,29 +35,23 @@ export class FollowService {
 	});
   }
  
+  // NB: the schema's User relations are named backwards. `user.followers` (the
+  // "Follower" relation) actually holds the rows where this user IS the follower
+  // → the people this user follows. `user.following` holds rows where this user
+  // is being followed → this user's real followers. Each getter is swapped
+  // accordingly so the API direction matches its name.
   async getFollowers(userId: string) {
 	const user = await this.prisma.user.findUnique({
 	  where: { id: userId },
-	  include: { followers: true },
-	});
-	if (!user) {
-		throw new NotFoundException('User not found');
-	}
-	return user.followers;
-  }
-  
-  async getFollowingcount(id: string) {
-	const user = await this.prisma.user.findUnique({
-	  where: { id: id },
 	  include: { following: true },
 	});
 	if (!user) {
 		throw new NotFoundException('User not found');
 	}
-	return user.following.length;
+	return user.following;
   }
 
-  async getFollowerscount(id: string) {
+  async getFollowingcount(id: string) {
 	const user = await this.prisma.user.findUnique({
 	  where: { id: id },
 	  include: { followers: true },
@@ -68,7 +62,7 @@ export class FollowService {
 	return user.followers.length;
   }
 
-  async getFollowing(id: string) {
+  async getFollowerscount(id: string) {
 	const user = await this.prisma.user.findUnique({
 	  where: { id: id },
 	  include: { following: true },
@@ -76,7 +70,18 @@ export class FollowService {
 	if (!user) {
 		throw new NotFoundException('User not found');
 	}
-	return user.following;
+	return user.following.length;
+  }
+
+  async getFollowing(id: string) {
+	const user = await this.prisma.user.findUnique({
+	  where: { id: id },
+	  include: { followers: true },
+	});
+	if (!user) {
+		throw new NotFoundException('User not found');
+	}
+	return user.followers;
   }
 
   

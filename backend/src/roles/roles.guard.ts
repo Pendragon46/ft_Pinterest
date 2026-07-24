@@ -17,6 +17,9 @@ export class RolesGuard implements CanActivate {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
+    // D1 — sans JwtAuthGuard en amont, req.user est absent : refuser proprement
+    // (403) plutôt que de lever un TypeError transformé en 500.
+    if (!user) return false;
     return requiredRoles.includes(user.role);
   }
 }
