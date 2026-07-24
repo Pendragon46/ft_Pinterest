@@ -7,6 +7,9 @@
     "wordTrail": "exprès",
     "welcome": "Bienvenue"
   },
+  "presence": {
+    "online": "En ligne"
+  },
   "language": {
     "label": "Langue"
   },

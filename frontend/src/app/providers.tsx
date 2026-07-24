@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ToastViewport } from '@/components/ui/ToastViewport'
 import { AuthGate } from '@/features/auth/AuthGate'
+import { PresenceProvider } from '@/features/presence/PresenceProvider'
 import { i18n } from '@/lib/i18n'
 
 // Single QueryClient, stable for the whole app lifetime.
@@ -19,7 +20,9 @@ export function AppProviders({ children }: AppProvidersProps) {
     <QueryClientProvider client={queryClient}>
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
-          <AuthGate>{children}</AuthGate>
+          <AuthGate>
+            <PresenceProvider>{children}</PresenceProvider>
+          </AuthGate>
           <ToastViewport />
         </BrowserRouter>
       </I18nextProvider>

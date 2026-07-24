@@ -7,6 +7,9 @@
     "wordTrail": "on purpose",
     "welcome": "Welcome"
   },
+  "presence": {
+    "online": "Online"
+  },
   "language": {
     "label": "Language"
   },

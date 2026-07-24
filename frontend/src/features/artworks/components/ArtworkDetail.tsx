@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
+import { OnlineDot } from '@/components/ui/OnlineDot'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
@@ -338,12 +339,15 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             to={`/profile/${artwork.author.id}`}
             className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
           >
-            <span
-              aria-hidden="true"
-              className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
-              style={{ backgroundColor: artwork.author.color }}
-            >
-              {artwork.author.username.charAt(0).toUpperCase()}
+            <span className="relative shrink-0">
+              <span
+                aria-hidden="true"
+                className="flex size-10 items-center justify-center rounded-full text-sm font-semibold text-white"
+                style={{ backgroundColor: artwork.author.color }}
+              >
+                {artwork.author.username.charAt(0).toUpperCase()}
+              </span>
+              <OnlineDot userId={artwork.author.id} />
             </span>
             <div className="min-w-0">
               <p className="truncate font-serif text-neutral-900 group-hover:underline">

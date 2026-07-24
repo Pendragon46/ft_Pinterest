@@ -104,33 +104,22 @@ export class FriendsService {
     return { message: 'Friend request rejected' };
   }
 
+  // Friends = mutual follow: users this user follows who also follow back.
+  // An unfollow mechanically breaks mutuality, so it breaks presence for free.
   async getFriends(ConnectedUserId: string) {
-    const friends = await this.Prisma.friendship.findMany({
-      where: {
-        OR: [
-          { requesterId: ConnectedUserId, status: 'ACCEPTED' },
-          { addresseeId: ConnectedUserId, status: 'ACCEPTED' },
-        ],
-      },
-      include: {
-        requester: true,
-        addressee: true,
-      },
+    const iFollow = await this.Prisma.follow.findMany({
+      where: { followerId: ConnectedUserId },
+      select: { followingId: true },
     });
-    if (!friends) {
-      throw new NotFoundException('No friends found');
-    }
-    const friendUsers = friends.map((friend) => {
-      if (friend.requesterId === ConnectedUserId) {
-        return friend.addressee;
-      } else {
-        return friend.requester;
-      }
+    const iFollowIds = iFollow.map((f) => f.followingId);
+    const mutuals = await this.Prisma.follow.findMany({
+      where: { followerId: { in: iFollowIds }, followingId: ConnectedUserId },
+      include: { follower: true },
     });
-    const result = friendUsers.map(
-      ({ password, role, googleId, provider, ...rest }) => rest,
-    );
-    return result;
+    return mutuals.map(({ follower }) => {
+      const { password, role, googleId, provider, ...rest } = follower;
+      return rest;
+    });
   }
 
   async getFriendRequests(ConnectedUserId: string) {
