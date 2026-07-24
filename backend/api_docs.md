@@ -5,8 +5,49 @@
 ```
 http://localhost:3000
 ```
+# Authentication
+
+Register a new user
+```http
+POST /auth/register
+```
+Login a user
+```http
+POST /auth/login
+```
 # Users
 
+get connected user
+```http
+GET /users/me
+```
+#### Response for connected user
+```json
+{
+  "id": "string",
+  "username": "string",
+  "fullname": "string",
+  "bio": "string",
+  "email": "string",
+  "avatarUrl": "string",
+  "createdAt": "2023-01-01T00:00:00.000Z",
+  "updatedAt": "2023-01-01T00:00:00.000Z",
+  "roles": ["string"],
+  "artworks": [
+	{
+	  "id": "string",
+	  "title": "string",
+	  "description": "string",
+	  "imageUrl": "string",
+	  "tags": ["string"],
+	  "createdAt": "2023-01-01T00:00:00.000Z",
+	  "updatedAt": "2023-01-01T00:00:00.000Z"
+	}
+  ],
+  "_count":{"artworks":n,"followers":n,"following":n}
+}
+
+```
 get all users
 ```http
 GET /users
@@ -20,10 +61,7 @@ get user by username
 ```http
 GET /users/username/:username
 ```
-Post a new user
-```http
-POST /users
-```
+
 Update user by id
 ```http
 PATCH /users/:id
@@ -63,6 +101,10 @@ PATCH /users/:id/roles
 
 # Artworks
 
+Get all artworks
+```http
+GET /artworks
+```
 Post a new artwork
 ```http
 Post /artworks
@@ -76,9 +118,9 @@ Update artwork by id
 Patch /artworks/:id
 ```
 
-Get feed of artworks, followed by user with id :userId
+Get feed of artworks, followed by user with id :userId if no artworks from followed users, return all artworks
 ```http
-GET /artworks/feed/:userId
+GET /artworks/feed/
 ```
 Delete artwork by id
 ```http
@@ -225,17 +267,103 @@ global search for artworks, users and tags
 ```http
 GET /search?q=searchTerm&&page=n&&limit=n&&sort=recent|oldest
 ```
-search for artworks in titlle and description and tags
+### Response Body
+
+```json
+{
+  "artworks": [
+	{
+	  "id": "string",
+	  "title": "string",
+	  "description": "string",
+	  "imageUrl": "string",
+	  "tags": ["string"],
+	  "createdAt": "2023-01-01T00:00:00.000Z",
+	  "updatedAt": "2023-01-01T00:00:00.000Z",
+	  "_count":{"likes":n,"comments":n}
+	}
+  ],
+  "users": [
+	{
+	  "id": "string",
+	  "username": "string",
+	  "fullname": "string",
+	  "bio": "string",
+	  "email": "string",
+	  "avatarUrl": "string",
+	  "createdAt": "2023-01-01T00:00:00.000Z",
+	  "updatedAt": "2023-01-01T00:00:00.000Z"
+	}
+  ],
+  "tags": [
+	{
+	  "id": "string",
+	  "name": "string"
+	}
+  ]
+}
+```
+search for artworks in titlle and description and tags and return the count of likes and comments for each artwork
 ```http
-GET /search/artworks?tag=tagName&&page=n&&limit=n&&sort=recent|oldest
+GET /search/artworks?q=artwork&&page=n&&limit=n&&sort=recent|oldest
+```
+
+### Response Body
+
+```json
+[
+  {
+	"id": "string",
+	"title": "string",
+	"description": "string",
+	"imageUrl": "string",
+	"tags": ["string"],
+	"createdAt": "2023-01-01T00:00:00.000Z",
+	"updatedAt": "2023-01-01T00:00:00.000Z",
+	"_count":{"likes":n,"comments":n}
+  }
+]
 ```
 search for users  username and fullName
 ```http
-GET /search/users?username=username&&page=n&&limit=n&&sort=recent|oldest
+GET /search/users?q=username&&page=n&&limit=n&&sort=recent|oldest
+```
+### Response Body
+
+```json
+[
+  {
+	"id": "string",
+	"username": "string",
+	"fullname": "string",
+	"bio": "string",
+	"email": "string",
+	"avatarUrl": "string",
+	"createdAt": "2023-01-01T00:00:00.000Z",
+	"updatedAt": "2023-01-01T00:00:00.000Z"
+  }
+]
 ```
 search for tags
 ```http
-GET /search/tags?tag=tagName&&page=n&&limit=n&&sort=recent|oldest
+GET /search/tags?q=tag&&page=n&&limit=n&&sort=recent|oldest
+```
+
+### Response Body
+
+```json
+[
+  {
+	"id": "string",
+	"username": "string",
+	"fullname": "string",
+	"bio": "string",
+	"email": "string",
+	"avatarUrl": "string",
+	"createdAt": "2023-01-01T00:00:00.000Z",
+	"updatedAt": "2023-01-01T00:00:00.000Z"
+  }
+]
 ```
 
 ### Request Query Parameters
@@ -248,3 +376,53 @@ GET /search/tags?tag=tagName&&page=n&&limit=n&&sort=recent|oldest
 | sort | string | ❌ | Sort order (recent or oldest, default: recent) |
 
 
+# Friends
+
+Send new friend request
+```http
+POST /friends/request/:userId
+```
+
+Delete friend
+```http
+DELETE /friends/:userId
+```
+
+Accept friend request
+```http
+PATCH /friends/:userId/request/accept
+```
+
+Reject friend request
+```http
+DELETE /friends/:userId/request
+```
+
+Get all friends for a user
+```http
+GET /friends
+```
+
+Get all friend for a user
+```http
+GET /friends/:userId
+```
+
+Get all friend requests for a user
+```http
+GET /friends/requests
+```
+
+Get Pending friend requests sent
+```http
+GET /friends/requests/pending
+```
+
+Get online friends for a user
+```http
+GET /friends/online
+```
+
+### Request Query Parameters
+
+UserId is used because we can't get the friend request from the friendrequestID

@@ -1,0 +1,21 @@
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "fullname": "Test TheUser",
+    "username": "testuser",
+    "email": "test@test.com",
+    "password": "Test@1234!",
+    "bio": "hello there I m the test user"
+  }'
+
+
+curl -X POST http://localhost:3000/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "test@test.com",
+    "password": "Test@1234!"
+  }'
+
+
+curl http://localhost:3000/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhMjFkMjJiMy02NGU1LTQ1NjQtOTlmMS1kODY0NWJhYzYyYTkiLCJ1c2VybmFtZSI6InRlc3R1c2VyIiwiaWF0IjoxNzg0MjU0MTQ1LCJleHAiOjE3ODQyNTUwNDV9.KEZoEWuiLVXbUD5P9_6ysAVzxcT4CnRpezDakaxhnqw"

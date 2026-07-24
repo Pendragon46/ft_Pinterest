@@ -1,4 +1,10 @@
-import { BadRequestException, ConflictException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -7,259 +13,324 @@ import { Role } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-	constructor(private readonly prisma: PrismaService,
-				private readonly cloudinaryService: CloudinaryService,
-
-	){}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   async create(data: Prisma.UserCreateInput, file?: Express.Multer.File) {
-	let uploadResult: UploadApiResponse | undefined;
-	let user = await this.prisma.user.findUnique({where: {username: data.username}})
+    let uploadResult: UploadApiResponse | undefined;
+    let user = await this.prisma.user.findUnique({
+      where: { username: data.username },
+    });
     if (user) {
       throw new ConflictException('Username already taken');
-
     }
-	user = await this.prisma.user.findUnique({where: {email: data.email}})
-	if (user) {
-	  throw new ConflictException('Email already exist');
-	}
-	try{
-		if (file) {
-		uploadResult = await this.cloudinaryService.uploadImage(file);
-		data.avatarUrl = uploadResult.secure_url;
-		data.avatarPublicId = uploadResult.public_id;
-	}
-	return await this.prisma.user.create({
-		data: data,})
-	}
-	catch (error){
-			if (uploadResult && uploadResult?.public_id)
-				await this.cloudinaryService.deleteImage(uploadResult.public_id);
-			throw error;
-		}	
-	}
+    user = await this.prisma.user.findUnique({ where: { email: data.email } });
+    if (user) {
+      throw new ConflictException('Email already exist');
+    }
+    try {
+      if (file) {
+        uploadResult = await this.cloudinaryService.uploadImage(file);
+        data.avatarUrl = uploadResult.secure_url;
+        data.avatarPublicId = uploadResult.public_id;
+      }
+      return await this.prisma.user.create({
+        data: data,
+      });
+    } catch (error) {
+      if (uploadResult && uploadResult?.public_id)
+        await this.cloudinaryService.deleteImage(uploadResult.public_id);
+      throw error;
+    }
+  }
 
   async findAll() {
-
-	const users = await this.prisma.user.findMany({
-		orderBy: {
-			createdAt: 'desc',
-		},
-	});
-	if (!users || users.length === 0) {
-	  throw new NotFoundException('No users found');
-	}
-	return users;
+    const users = await this.prisma.user.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        bio: true,
+        avatarUrl: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+    if (!users || users.length === 0) {
+      throw new NotFoundException('No users found');
+    }
+    return users;
   }
 
   async findOneByUsername(username: string) {
-    let user =  await this.prisma.user.findMany({
-		where:{
-			username:{
-				contains: username,
-				mode: 'insensitive',
-			}
-		},
-		orderBy: {
-			username: 'asc',
-		}
-	})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
-	return user;
+    const user = await this.prisma.user.findMany({
+      where: {
+        username: {
+          contains: username,
+          mode: 'insensitive',
+        },
+      },
+      orderBy: {
+        username: 'asc',
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        bio: true,
+        avatarUrl: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+    if (!user || user.length === 0) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
-//   async getUserProfile(userId: string) {
-// 	const user = await this.prisma.user.findUnique({
-// 		where: {
-// 			id: userId,
-// 		},
-// 		include: {
-// 			artworks: true,
-// 			_count: {
-// 				select: {
-// 					artworks: true,
-// 					followers: true,
-// 					following: true,
-// 					role: true,
-// 				},
-// 			},
-// 		},
-// 	});
-// 	if (!user) {
-// 		throw new NotFoundException('User not found');
-// 	}
-// 	return user;
-//   }
+  async getCurrentUser(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      include: {
+        artworks: true,
+        _count: {
+          select: {
+            artworks: true,
+            followers: true,
+            following: true,
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const { password, googleId, provider, ...result } = user;
+    return result;
+  }
 
   async findOneById(id: string) {
-	let user =  await this.prisma.user.findUnique({
-		where: {
-			id
-		}
-	})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
-	return user;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const { password, googleId, role, provider, ...result } = user;
+    return result;
   }
 
-  // get user connected and check if he can update or delete the user
-  async update(id: string, data: Prisma.UserUpdateInput, file?: Express.Multer.File, loggedUserId?: string) {
-	let user = await this.prisma.user.findUnique({where: {id}})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
-	//from req
-	if (id !== loggedUserId && user.role !== Role.ADMIN) {
-		throw new ForbiddenException('You are not authorized to update this user');
-	}
-	if (data.username) {
-		const existingUser = await this.prisma.user.findUnique({where: {username : data.username as string}})
-		if (existingUser && existingUser.id !== id) {
-		  throw new ConflictException('Username already taken');
-		}
-	}
-	if (data.email) {
-		const existingUser = await this.prisma.user.findUnique({where: {email : data.email as string}})
-		if (existingUser && existingUser.id !== id) {
-		  throw new ConflictException('Email already taken');
-		}
-	}
-	if (file) {
-		let OldImagePublicId = user.avatarPublicId;
-		let uploadResult: UploadApiResponse | undefined;
+  async update(
+    id: string,
+    data: Prisma.UserUpdateInput,
+	loggedUserId: string,
+    file?: Express.Multer.File    
+  ) {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (id !== loggedUserId && user.role !== Role.ADMIN) {
+      throw new ForbiddenException(
+        'You are not authorized to update this user',
+      );
+    }
+    if (data.username) {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { username: data.username as string },
+      });
+      if (existingUser && existingUser.id !== id) {
+        throw new ConflictException('Username already taken');
+      }
+    }
+    if (data.email) {
+      const existingUser = await this.prisma.user.findUnique({
+        where: { email: data.email as string },
+      });
+      if (existingUser && existingUser.id !== id) {
+        throw new ConflictException('Email already taken');
+      }
+    }
+    if (file) {
+      const OldImagePublicId = user.avatarPublicId;
+      let uploadResult: UploadApiResponse | undefined;
+      try {
+        uploadResult = await this.cloudinaryService.uploadImage(file);
+        const updatedUser = await this.prisma.user.update({
+          where: { id },
+          data: {
+            ...data,
+            avatarUrl: uploadResult.secure_url,
+            avatarPublicId: uploadResult.public_id,
+          },
+        });
+        if (
+          OldImagePublicId &&
+          OldImagePublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID
+        ) {
+          try {
+            await this.cloudinaryService.deleteImage(OldImagePublicId);
+          } catch (error) {
+            console.error('Error deleting old avatar', error);
+            throw error;
+          }
+        }
+        const { password, ...result } = updatedUser;
+        return result;
+      } catch (error) {
+        if (uploadResult?.public_id)
+          await this.cloudinaryService.deleteImage(uploadResult.public_id);
+        throw error;
+      }
+    }
+    return await this.prisma.user.update({
+      where: { id },
+      data,
+      select: {
+        id: true,
+        username: true,
+        fullname: true,
+        email: true,
+        bio: true,
+        avatarUrl: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+  }
 
-		try {
-			uploadResult= await this.cloudinaryService.uploadImage(file);
-			const updatedUser = await this.prisma.user.update({
-				where: { id },
-				data: {
-					...data,
-					avatarUrl: uploadResult.secure_url,
-					avatarPublicId: uploadResult.public_id,
-				}
-			});
-			if (OldImagePublicId && OldImagePublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID) {
-				try {
-				await this.cloudinaryService.deleteImage(OldImagePublicId);
-				} catch (error) {
-					console.error('Error deleting old avatar', error);
-					throw error;
-				}
-			}
-			return updatedUser;
-		}
-		catch (error){
-			if (uploadResult?.public_id)
-				await this.cloudinaryService.deleteImage(uploadResult.public_id);
-			throw error;
-		}
-	}
-	return await this.prisma.user.update({
-		where: { id },
-		data,
-	})
-}
+  async getUserArtworks(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        artworks: {
+          include: {
+            _count: {
+              select: {
+                likes: true,
+                comments: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user.artworks;
+  }
 
-async getUserArtworks (userId: string) {
-	const user = await this.prisma.user.findUnique({
-		where: { id: userId },
-		include: {
-			artworks: { 
-				include: {
-					_count: {
-						select: {
-						likes: true,
-						comments: true,
-					},
-				},
-			},
-		},
-	}});
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
-	return user.artworks;
-}
+  async getUserLikedArtworks(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId }
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const likedArtworks = await this.prisma.artwork.findMany({
+      where: {
+        likes: {
+          some: {
+            authorId: userId,
+          },
+        },
+      },
+      include: {
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
+      },
+    });
+    return likedArtworks;
+  }
 
-async getUserLikedArtworks(userId: string) {
-	const user = await this.prisma.user.findUnique({
-		where: { id: userId },
-	});
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
-	const likedArtworks = await this.prisma.like.findMany({
-		where: { authorId: userId },
-		include: {
-			artwork: {
-				include: {
-					_count: {
-						select: {
-						likes: true,
-						comments: true,
-					},
-				},
-			},
-		},
-	}});
-	return likedArtworks.map(like => like.artwork);
-}
-							
-
-// get user connected and check if he can update or delete the user
   async removeById(id: string, loggedUserId?: string) {
-	let user = await this.prisma.user.findUnique({where: {id}})
-	if (!user) {
-	  throw new NotFoundException('User not found');
-	}
-	// from req
-	if (id !== loggedUserId && user.role !== Role.ADMIN) {
-		throw new ForbiddenException('You are not authorized to delete this user');
-	}
-	if (user.avatarPublicId && user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID	) {
-		try {
-		await this.cloudinaryService.deleteImage(user.avatarPublicId);
-		}
-		catch (error) {
-			console.error('Error deleting user avatar', error);
-		}
-	}
-	const artworks = await this.prisma.artwork.findMany({where: {authorId: id}});
-	for (const artwork of artworks) {
-		if (artwork.mediaPublicId) {
-			try {
-				await this.cloudinaryService.deleteImage(artwork.mediaPublicId);
-			} catch (error) {
-				throw new BadRequestException(`Failed to delete artwork image with publicId: ${artwork.mediaPublicId}`);
-			}
-		}	
-}
-	await this.prisma.user.delete({
-		where: { id },
-	});
-	await this.prisma.tag.deleteMany({
-		where: {
-			artworks: {
-				none: {},
-			},
-		},
-	});
-	return { message: 'User deleted successfully' };
-}
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const loggedUser = await this.prisma.user.findUnique({
+      where: { id: loggedUserId },
+    });
+    if (!loggedUser) {
+      throw new NotFoundException('Logged user not found');
+    }
+    if (id !== loggedUserId && loggedUser.role !== Role.ADMIN) {
+      throw new ForbiddenException(
+        'You are not authorized to delete this user',
+      );
+    }
+    if (
+      user.avatarPublicId &&
+      user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID
+    ) {
+      try {
+        await this.cloudinaryService.deleteImage(user.avatarPublicId);
+      } catch (error) {
+        console.error('Error deleting user avatar', error);
+      }
+    }
+    const artworks = await this.prisma.artwork.findMany({
+      where: { authorId: id },
+    });
+    for (const artwork of artworks) {
+      if (artwork.mediaPublicId) {
+        try {
+          await this.cloudinaryService.deleteImage(artwork.mediaPublicId);
+        } catch (error) {
+          throw new BadRequestException(
+            `Failed to delete artwork image with publicId: ${artwork.mediaPublicId}`,
+          );
+        }
+      }
+    }
+    await this.prisma.user.delete({
+      where: { id },
+    });
+    await this.prisma.tag.deleteMany({
+      where: {
+        artworks: {
+          none: {},
+        },
+      },
+    });
+    return { message: 'User deleted successfully' };
+  }
 
-async updateRoles(id: string, role: Role) {
-	const user = await this.prisma.user.findUnique({
-		where: { id },
-	});
-	if (!user) {
-		throw new NotFoundException('User not found');
-	}
-	return await this.prisma.user.update({
-		where: { id },
-		data: { role },
-	});
-}
+  async updateRoles(id: string, role: Role) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return await this.prisma.user.update({
+      where: { id },
+      data: { role },
+      select: {
+        id: true,
+        username: true,
+        fullname: true,
+        email: true,
+        bio: true,
+        avatarUrl: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+  }
 }
