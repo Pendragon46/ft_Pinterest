@@ -33,7 +33,7 @@ model User {
 model friendship {
   requesterId String
   addresseeId String
-  status      String   @default("PENDING")
+  status      FriendshipStatus @default(PENDING)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
