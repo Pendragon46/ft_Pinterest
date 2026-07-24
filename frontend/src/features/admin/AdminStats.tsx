@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Shield, User as UserIcon, UserCog, Users } from 'lucide-react'
+import { Shield, User as UserIcon, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import type { AdminUserRow } from './admin.api'
@@ -17,13 +17,11 @@ export function AdminStats({
 
   const stats = useMemo(() => {
     const admins = users.filter((u) => u.role === 'ADMIN').length
-    const guests = users.filter((u) => u.role === 'GUEST').length
     return {
       total: users.length,
       admins,
-      guests,
-      // « Utilisateurs » = comptes USER (ni admin ni invité) → total = somme.
-      members: users.length - admins - guests,
+      // « Utilisateurs » = comptes non-admin.
+      members: users.length - admins,
     }
   }, [users])
 
@@ -31,11 +29,10 @@ export function AdminStats({
     { key: 'total', value: stats.total, label: t('admin.stats.total'), icon: Users, tint: 'bg-violet-100 text-violet-600' },
     { key: 'admins', value: stats.admins, label: t('admin.stats.admins'), icon: Shield, tint: 'bg-blue-100 text-blue-600' },
     { key: 'members', value: stats.members, label: t('admin.stats.members'), icon: UserIcon, tint: 'bg-emerald-100 text-emerald-600' },
-    { key: 'guests', value: stats.guests, label: t('admin.stats.guests'), icon: UserCog, tint: 'bg-amber-100 text-amber-600' },
   ]
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
       {cards.map((card) => (
         <div
           key={card.key}

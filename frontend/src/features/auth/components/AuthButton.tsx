@@ -20,7 +20,7 @@ export function AuthButton() {
   const location = useLocation()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
-  const { canViewDashboard, canInteract } = useRole()
+  const { canViewDashboard } = useRole()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
@@ -134,19 +134,17 @@ export function AuthButton() {
             <Settings aria-hidden="true" className="size-4 text-neutral-400" />
             {t('settings.title')}
           </Link>
-          {canInteract ? (
-            <Link
-              to="/create"
-              role="menuitem"
-              onClick={() => {
-                setOpen(false)
-              }}
-              className={ITEM}
-            >
-              <Plus aria-hidden="true" className="size-4 text-neutral-400" />
-              {t('create.cta')}
-            </Link>
-          ) : null}
+          <Link
+            to="/create"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+            }}
+            className={ITEM}
+          >
+            <Plus aria-hidden="true" className="size-4 text-neutral-400" />
+            {t('create.cta')}
+          </Link>
           {canViewDashboard ? (
             <Link
               to="/admin"

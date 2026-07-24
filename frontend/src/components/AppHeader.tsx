@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { AuthButton } from '@/features/auth/components/AuthButton'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
-import { useRole } from '@/features/auth/useRole'
 
 import { LanguageSwitcher } from './ui/LanguageSwitcher'
 import { Logo } from './ui/Logo'
@@ -16,7 +15,6 @@ export function AppHeader() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
   const requireAuth = useRequireAuth()
-  const { canInteract } = useRole()
 
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/90 backdrop-blur">
@@ -34,21 +32,19 @@ export function AppHeader() {
           </span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Hidden for GUEST (read-only); gated on click for everyone else. */}
-          {canInteract ? (
-            <button
-              type="button"
-              onClick={() => {
-                requireAuth(() => {
-                  navigate('/create')
-                })
-              }}
-              className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
-            >
-              <Plus aria-hidden="true" className="size-4" />
-              {t('create.cta')}
-            </button>
-          ) : null}
+          {/* Always visible; a click while signed out opens the login modal. */}
+          <button
+            type="button"
+            onClick={() => {
+              requireAuth(() => {
+                navigate('/create')
+              })
+            }}
+            className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+          >
+            <Plus aria-hidden="true" className="size-4" />
+            {t('create.cta')}
+          </button>
           <AuthButton />
         </div>
       </div>

@@ -49,6 +49,8 @@ export class SearchService {
         createdAt: sort === 'recent' ? 'desc' : 'asc',
       },
       include: {
+        author: { select: { id: true, username: true, fullname: true } },
+        tags: { select: { name: true } },
         _count: {
           select: {
             likes: true,
@@ -122,6 +124,11 @@ export class SearchService {
       take,
       orderBy: {
         createdAt: sort === 'recent' ? 'desc' : 'asc',
+      },
+      include: {
+        author: { select: { id: true, username: true, fullname: true } },
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
     return artworks;
