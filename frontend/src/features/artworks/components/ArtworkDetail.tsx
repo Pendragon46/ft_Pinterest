@@ -1,15 +1,16 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, MessageCircle, Pencil, Share2, X } from 'lucide-react'
+import { Heart, MessageCircle, Pencil, Share2, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
 import { OnlineDot } from '@/components/ui/OnlineDot'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
 import { useCompact } from '@/lib/useCompact'
 
@@ -26,6 +27,7 @@ import type {
   ArtworkDetail as Detail,
   AuthorSummary,
 } from '../artwork.types'
+import { DeleteArtworkDialog } from './DeleteArtworkDialog'
 import { FollowButton } from './FollowButton'
 
 // Lazy so lottie-web is code-split out of the main bundle (loaded on first like).
@@ -33,9 +35,7 @@ const HeartBurst = lazy(() =>
   import('./HeartBurst').then((m) => ({ default: m.HeartBurst })),
 )
 
-// Fixed outer height so the modal frame never changes with comment count (§3.1):
-// mobile fills the viewport, desktop is a stable "~4 comments then scroll" frame.
-// The scroll region absorbs the difference; the frame stays put.
+// Fixed outer height so the modal frame doesn't change with comment count.
 const SHELL =
   'grid h-[85svh] max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:h-[40rem] md:grid-cols-[1.15fr_1fr] md:grid-rows-1'
 
@@ -51,8 +51,6 @@ interface CommentPostContext {
   tempId: string
 }
 
-// Mutating actions gated behind useRequireAuth. Comment posting is optimistic and
-// cache-backed (§4); like/save/follow stay local toggles until the backend owns them.
 export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const { t } = useTranslation('common')
   const compact = useCompact()
@@ -60,6 +58,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const currentUser = useAuthStore((state) => state.user)
   const queryClient = useQueryClient()
   const toast = useToast()
+  const navigate = useNavigate()
+  const isOwner = currentUser?.id === artwork.author.id
+  const [deleteOpen, setDeleteOpen] = useState(false)
+
+  const onDeleted = () => {
+    const authorId = artwork.author.id
+    queryClient.removeQueries({ queryKey: artworkKeys.detail(artwork.id) })
+    queryClient.removeQueries({ queryKey: artworkKeys.comments(artwork.id) })
+    void queryClient.invalidateQueries({ queryKey: userKeys.works(authorId) })
+    void queryClient.invalidateQueries({ queryKey: userKeys.profile(authorId) })
+    void queryClient.invalidateQueries({ queryKey: userKeys.liked(authorId) })
+    void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+    if (onClose) onClose()
+    else navigate(`/profile/${authorId}`)
+  }
 
   // Optimistic override; null means "defer to the backend's persisted state".
   const [likeOverride, setLikeOverride] = useState<boolean | null>(null)
@@ -80,19 +93,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     queryKey: artworkKeys.comments(artwork.id),
     queryFn: () => fetchArtworkComments(artwork.id),
   })
-  // The comments cache is the single source of truth: the list and the count chip
-  // both read it, so an optimistic post can never make them disagree (§7).
   const comments = commentsQuery.data ?? []
 
-  // Initial like state from the backend (likes list), so a reload reflects what
-  // is persisted; it seeds the optimistic toggle below.
   const isLikedQuery = useQuery({
     queryKey: ['artworks', 'isLiked', artwork.id, currentUser?.id],
     queryFn: () => fetchIsLiked(artwork.id, currentUser?.id ?? ''),
     enabled: Boolean(currentUser),
   })
-  // Derived: an in-flight optimistic choice wins, else the persisted state.
-  const liked = likeOverride ?? isLikedQuery.data ?? false
+  const persistedLiked = isLikedQuery.data ?? false
+  const liked = likeOverride ?? persistedLiked
+  // likeCount already counts the current user's like, so adjust by the delta
+  // between the optimistic choice and what's persisted — never a flat +1.
+  const likeDisplay = Math.max(
+    0,
+    artwork.likeCount - (persistedLiked ? 1 : 0) + (liked ? 1 : 0),
+  )
 
   /** Author stamped on this user's own optimistic comments. */
   const selfAuthor = (): AuthorSummary | null =>
@@ -215,9 +230,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       })
     },
     onSettled: () => {
-      // A like changes the detail's count and the "liked" grid on profiles.
       void queryClient.invalidateQueries({
         queryKey: artworkKeys.detail(artwork.id),
+      })
+      // Refetch the persisted "liked" state too, else the count formula keeps a
+      // stale base and double-counts (shows 2 for a single like).
+      void queryClient.invalidateQueries({
+        queryKey: ['artworks', 'isLiked', artwork.id],
       })
       void queryClient.invalidateQueries({ queryKey: ['users', 'liked'] })
     },
@@ -358,14 +377,26 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               </p>
             </div>
           </Link>
-          {currentUser?.id === artwork.author.id ? (
-            <Link
-              to={`/artwork/${artwork.id}/edit`}
-              className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-neutral-300 px-4 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
-            >
-              <Pencil aria-hidden="true" className="size-4" />
-              {t('actions.edit')}
-            </Link>
+          {isOwner ? (
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                to={`/artwork/${artwork.id}/edit`}
+                className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-neutral-300 px-4 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+              >
+                <Pencil aria-hidden="true" className="size-4" />
+                {t('actions.edit')}
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteOpen(true)
+                }}
+                aria-label={t('artwork.delete')}
+                className="flex size-9 cursor-pointer items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+              >
+                <Trash2 aria-hidden="true" className="size-5" />
+              </button>
+            </div>
           ) : (
             <FollowButton userId={artwork.author.id} />
           )}
@@ -405,7 +436,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             ))}
           </ul>
 
-          {/* Like/Save toggle locally; counts stay static until the backend owns them. */}
           <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-neutral-100 py-3">
             <ActionChip
               active={liked}
@@ -415,7 +445,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                 })
               }}
               label={liked ? t('artwork.liked') : t('artwork.like')}
-              count={compact(artwork.likeCount + (liked ? 1 : 0))}
+              count={compact(likeDisplay)}
               icon={
                 <span className="relative inline-flex">
                   <Heart aria-hidden="true" className={liked ? "size-4 text-red-500" : "size-4"} fill={liked ? "currentColor" : "none"} />
@@ -562,6 +592,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           </p>
         </div>
       </div>
+      <DeleteArtworkDialog
+        artwork={deleteOpen ? { id: artwork.id, title: artwork.title } : null}
+        onClose={() => {
+          setDeleteOpen(false)
+        }}
+        onDeleted={onDeleted}
+      />
     </article>
   )
 }

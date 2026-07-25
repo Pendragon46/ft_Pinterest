@@ -1,7 +1,5 @@
-// L'API "artworks". Tuiles, détail, publication, suppression, commentaires et
-// likes appellent le backend NestJS. Signatures et clés de cache inchangées.
-
 import { http, isApiError, multipartConfig } from '@/lib/http'
+import { TILE_CELLS } from '@/features/artworks/canvas/canvas.constants'
 import { layoutTile, pageForTile } from '@/features/search/tile.layout'
 import {
   realArtworkId,
@@ -18,8 +16,6 @@ import type {
   CanvasArtwork,
 } from './artwork.types'
 
-// React Query key factory — single source of truth for cache keys, kept next
-// to the fetchers so invalidation can't drift from fetching.
 export const artworkKeys = {
   tile: (tx: number, ty: number) => ['artworks', 'tile', tx, ty] as const,
   feed: () => ['artworks', 'feed'] as const,
@@ -29,9 +25,6 @@ export const artworkKeys = {
   comments: (id: string) => ['artworks', 'comments', id] as const,
 }
 
-/** Cartes d'une tuile de la carte. Le backend n'a pas de notion de
-    coordonnées : on demande une page de résultats dérivée de (tx, ty)
-    puis on la dispose côté client. */
 export async function fetchTileArtworks(
   tx: number,
   ty: number,
@@ -40,28 +33,29 @@ export async function fetchTileArtworks(
   const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
     params: { page, limit: 16, sort: 'recent' },
   })
-  // Base vide ou page au-delà du dernier résultat : tuile vide plutôt
-  // qu'un plantage. Les skeletons prennent le relais visuellement.
   return layoutTile(data, undefined, tx, ty)
 }
 
-/** Tuiles du feed personnalisé (connecté) : œuvres des personnes suivies + amis
-    mutuels, repli sur tout le pool. Le feed est une liste plate (pas de
-    coordonnées) : on la récupère puis on la dispose comme une tuile de niche. */
+// Friends-first pool rotated by tile distance: the centre shows friends, outward
+// tiles vary into the general pool (no wall of repeats).
 export async function fetchFeedTile(
   tx: number,
   ty: number,
 ): Promise<CanvasArtwork[]> {
   try {
     const { data } = await http.get<ServerArtwork[]>('/artworks/feed')
-    return layoutTile(data, undefined, tx, ty)
+    if (data.length === 0) return []
+    const offset =
+      ((Math.abs(tx) + Math.abs(ty)) * TILE_CELLS * TILE_CELLS) % data.length
+    const rotated = offset
+      ? [...data.slice(offset), ...data.slice(0, offset)]
+      : data
+    return layoutTile(rotated, undefined, tx, ty)
   } catch {
     return []
   }
 }
 
-/** Un artwork complet. Sans l'include serveur (ticket T2), les mappers
-    retombent sur des valeurs neutres et la modale s'ouvre quand même. */
 export async function fetchArtworkDetail(id: string): Promise<ArtworkDetail> {
   const { data } = await http.get<ServerArtwork>(
     `/artworks/${realArtworkId(id)}`,
@@ -69,8 +63,6 @@ export async function fetchArtworkDetail(id: string): Promise<ArtworkDetail> {
   return toArtworkDetail(data)
 }
 
-/** Commentaires d'un artwork, du plus récent au plus ancien. Le backend
-    renvoie l'ordre d'insertion : on trie ici. */
 export async function fetchArtworkComments(
   id: string,
 ): Promise<ArtworkComment[]> {
@@ -80,8 +72,7 @@ export async function fetchArtworkComments(
   return data.map(toArtworkComment).sort((a, b) => a.hoursAgo - b.hoursAgo)
 }
 
-/** Poste un commentaire. Le DTO serveur attend `comment` ; toute autre clé
-    déclenche un 400 (forbidNonWhitelisted). L'auteur vient du token. */
+// Server DTO expects `comment`; any other key trips forbidNonWhitelisted (400).
 export async function postArtworkComment(
   id: string,
   input: { content: string },
@@ -93,8 +84,6 @@ export async function postArtworkComment(
   return toArtworkComment(data)
 }
 
-/** Supprime un commentaire. Le serveur vérifie que l'appelant en est
-    l'auteur (ou ADMIN) et renvoie 403 sinon. */
 export async function deleteArtworkComment(
   artworkId: string,
   commentId: string,
@@ -107,12 +96,10 @@ export async function deleteArtworkComment(
 export interface ArtworkLikeInput {
   id: string
   liked: boolean
-  // `loggedUser` retiré : le token porte l'identité (ticket T1).
 }
 
-/** Bascule un like. Le serveur renvoie 400 quand l'état demandé est déjà en
-    place — de fait idempotent, donc on confirme l'état optimiste plutôt que
-    de faire reculer l'interface. Toute autre erreur remonte. */
+// The server returns 400 when the requested state is already set — effectively
+// idempotent, so we keep the optimistic state instead of rolling back.
 export async function setArtworkLike(
   input: ArtworkLikeInput,
 ): Promise<boolean> {
@@ -130,8 +117,7 @@ export async function setArtworkLike(
   }
 }
 
-/** Ai-je liké cette œuvre ? Pas d'endpoint dédié : on lit la liste des likes
-    et on y cherche l'utilisateur courant. */
+// No dedicated endpoint: read the likes list and look for the current user.
 export async function fetchIsLiked(
   artworkId: string,
   currentUserId: string,
@@ -149,18 +135,15 @@ export interface CreateArtworkInput {
   file: File
 }
 
-/** Publie une œuvre. Champ fichier `art`, 10 Mo max, images + mp4.
-    Le nouveau backend dérive l'auteur du token : POST /artworks. */
 export async function createArtwork(
   input: CreateArtworkInput,
+  onProgress?: (pct: number) => void,
 ): Promise<ArtworkDetail> {
   const form = new FormData()
   form.append('title', input.title)
   if (input.description) form.append('description', input.description)
 
-  // Un tableau se transmet en répétant la clé : tags=a&tags=b.
-  // class-validator le reconstruit côté Nest. Le DTO impose
-  // ArrayNotEmpty : on n'envoie rien si la liste est vide.
+  // Repeated key (tags=a&tags=b); the DTO is ArrayNotEmpty, so send nothing when empty.
   input.tags
     ?.map((t) => t.trim().toLowerCase())
     .filter((t) => t.length > 0)
@@ -170,11 +153,16 @@ export async function createArtwork(
 
   form.append('art', input.file)
 
-  const { data } = await http.post<ServerArtwork>(
-    `/artworks`,
-    form,
-    multipartConfig,
-  )
+  const { data } = await http.post<ServerArtwork>(`/artworks`, form, {
+    ...multipartConfig,
+    onUploadProgress: onProgress
+      ? (event) => {
+          if (event.total) {
+            onProgress(Math.round((event.loaded / event.total) * 100))
+          }
+        }
+      : undefined,
+  })
   return toArtworkDetail(data)
 }
 
@@ -185,9 +173,7 @@ export interface UpdateArtworkInput {
   file?: File
 }
 
-/** Édite une œuvre (métadonnées ; média conservé si aucun fichier). PATCH
-    /artworks/:id — le serveur vérifie la propriété. Le DTO impose ArrayNotEmpty
-    sur les tags : on omet la clé quand la liste est vide (tags inchangés). */
+// Metadata edit (media kept when no file). Omit tags when empty (DTO is ArrayNotEmpty).
 export async function updateArtwork(
   id: string,
   input: UpdateArtworkInput,
@@ -215,8 +201,6 @@ export async function updateArtwork(
   return toArtworkDetail(data)
 }
 
-/** Supprime une œuvre. Le serveur vérifie la propriété (403 sinon) et
-    nettoie le média sur Cloudinary. */
 export async function deleteArtwork(id: string): Promise<void> {
   await http.delete(`/artworks/${realArtworkId(id)}`)
 }
