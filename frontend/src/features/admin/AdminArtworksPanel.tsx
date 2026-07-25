@@ -39,7 +39,7 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
     queryKey: adminKeys.artworks(),
     queryFn: fetchAllArtworks,
   })
-  const artworks = artQuery.data ?? []
+  const artworks = useMemo(() => artQuery.data ?? [], [artQuery.data])
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteArtworkAsAdmin(id),
