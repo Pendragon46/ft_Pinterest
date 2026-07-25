@@ -117,6 +117,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           username: currentUser.username,
           handle: currentUser.username,
           color: '#525252',
+          avatarUrl: currentUser.avatarUrl ?? null,
         }
       : null
 
@@ -359,13 +360,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
           >
             <span className="relative shrink-0">
-              <span
-                aria-hidden="true"
-                className="flex size-10 items-center justify-center rounded-full text-sm font-semibold text-white"
-                style={{ backgroundColor: artwork.author.color }}
-              >
-                {artwork.author.username.charAt(0).toUpperCase()}
-              </span>
+              {artwork.author.avatarUrl ? (
+                <img
+                  src={artwork.author.avatarUrl}
+                  alt={artwork.author.username}
+                  className="size-10 rounded-full object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className="flex size-10 items-center justify-center rounded-full text-sm font-semibold text-white"
+                  style={{ backgroundColor: artwork.author.color }}
+                >
+                  {artwork.author.username.charAt(0).toUpperCase()}
+                </span>
+              )}
               <OnlineDot userId={artwork.author.id} />
             </span>
             <div className="min-w-0">
@@ -416,10 +425,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           <h1 id="artwork-title" className="font-serif text-2xl text-neutral-900">
             {artwork.title}
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            {t('artwork.views', { views: compact(artwork.viewCount) })}
-            {artwork.category ? ` · ${t(`category.${artwork.category}`)}` : ''}
-          </p>
+          {artwork.category ? (
+            <p className="mt-1 text-sm text-neutral-500">
+              {t(`category.${artwork.category}`)}
+            </p>
+          ) : null}
 
           {artwork.description ? (
             <p className="mt-3 text-neutral-700">{artwork.description}</p>
@@ -506,13 +516,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               <ul className="mt-3 flex flex-col gap-4">
                 {comments.map((comment) => (
                   <li key={comment.id} className="flex gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: comment.author.color }}
-                    >
-                      {comment.author.username.charAt(0).toUpperCase()}
-                    </span>
+                    {comment.author.avatarUrl ? (
+                      <img
+                        src={comment.author.avatarUrl}
+                        alt={comment.author.username}
+                        className="size-8 shrink-0 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
+                        style={{ backgroundColor: comment.author.color }}
+                      >
+                        {comment.author.username.charAt(0).toUpperCase()}
+                      </span>
+                    )}
                     <div className="min-w-0">
                       <p className="text-sm">
                         <span className="font-serif text-neutral-900">

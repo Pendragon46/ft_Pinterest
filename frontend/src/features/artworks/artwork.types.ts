@@ -27,6 +27,7 @@ export interface AuthorSummary {
   username: string
   handle: string
   color: string
+  avatarUrl?: string | null
 }
 
 /** One artwork as listed on the map or in grids. */

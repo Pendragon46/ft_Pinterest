@@ -29,7 +29,9 @@ export class CommentService {
         content: comment,
       },
       include: {
-        user: { select: { id: true, username: true, fullname: true } },
+        user: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
       },
     });
   }
@@ -49,7 +51,9 @@ export class CommentService {
       include: {
         comments: {
           include: {
-            user: { select: { id: true, username: true, fullname: true } },
+            user: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
           },
         },
       },

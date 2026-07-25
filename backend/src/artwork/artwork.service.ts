@@ -73,7 +73,9 @@ export class ArtworkService {
             }),
         },
         include: {
-          author: { select: { id: true, username: true, fullname: true } },
+          author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
           tags: { select: { name: true } },
           _count: { select: { likes: true, comments: true } },
         },
@@ -178,7 +180,9 @@ export class ArtworkService {
           where: { authorId: { in: authorIds } },
           orderBy: { updatedAt: 'desc' },
           include: {
-            author: { select: { id: true, username: true, fullname: true } },
+            author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
             tags: { select: { name: true } },
             _count: { select: { likes: true, comments: true } },
           },
@@ -189,7 +193,9 @@ export class ArtworkService {
       orderBy: { updatedAt: 'desc' },
       take: 200,
       include: {
-        author: { select: { id: true, username: true, fullname: true } },
+        author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
         tags: { select: { name: true } },
         _count: { select: { likes: true, comments: true } },
       },
@@ -203,7 +209,9 @@ export class ArtworkService {
         id: id,
       },
       include: {
-        author: { select: { id: true, username: true, fullname: true } },
+        author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
         tags: { select: { name: true } },
         _count: { select: { likes: true, comments: true } },
       },
@@ -266,7 +274,9 @@ export class ArtworkService {
           }),
       },
       include: {
-        author: { select: { id: true, username: true, fullname: true } },
+        author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
         tags: { select: { name: true } },
         _count: { select: { likes: true, comments: true } },
       },

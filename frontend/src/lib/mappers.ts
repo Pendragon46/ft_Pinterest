@@ -121,6 +121,7 @@ export function toAuthorSummary(
     username: author?.fullname ?? handle,
     handle,
     color: colorFromId(id),
+    avatarUrl: author?.avatarUrl ?? null,
   }
 }
 
