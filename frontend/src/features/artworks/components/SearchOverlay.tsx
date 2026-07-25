@@ -4,6 +4,7 @@ import type { FormEvent, KeyboardEvent, RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { OnlineDot } from '@/components/ui/OnlineDot'
 import {
   fetchContextualTags,
   fetchSuggestions,
@@ -326,12 +327,15 @@ function SuggestionGroup({
                 }`}
               >
                 {item.kind === 'creator' ? (
-                  <span
-                    aria-hidden="true"
-                    style={{ backgroundColor: item.previews[0] }}
-                    className="flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                  >
-                    {labelOf(item).charAt(0).toUpperCase()}
+                  <span className="relative shrink-0">
+                    <span
+                      aria-hidden="true"
+                      style={{ backgroundColor: item.previews[0] }}
+                      className="flex size-7 items-center justify-center rounded-full text-xs font-semibold text-white"
+                    >
+                      {labelOf(item).charAt(0).toUpperCase()}
+                    </span>
+                    {item.userId ? <OnlineDot userId={item.userId} /> : null}
                   </span>
                 ) : (
                   <span aria-hidden="true" className="flex shrink-0 gap-0.5">
