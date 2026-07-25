@@ -178,6 +178,43 @@ export async function createArtwork(
   return toArtworkDetail(data)
 }
 
+export interface UpdateArtworkInput {
+  title?: string
+  description?: string
+  tags?: string[]
+  file?: File
+}
+
+/** Édite une œuvre (métadonnées ; média conservé si aucun fichier). PATCH
+    /artworks/:id — le serveur vérifie la propriété. Le DTO impose ArrayNotEmpty
+    sur les tags : on omet la clé quand la liste est vide (tags inchangés). */
+export async function updateArtwork(
+  id: string,
+  input: UpdateArtworkInput,
+): Promise<ArtworkDetail> {
+  const form = new FormData()
+  if (input.title !== undefined) form.append('title', input.title)
+  if (input.description !== undefined) {
+    form.append('description', input.description)
+  }
+
+  input.tags
+    ?.map((t) => t.trim().toLowerCase())
+    .filter((t) => t.length > 0)
+    .forEach((tag) => {
+      form.append('tags', tag)
+    })
+
+  if (input.file) form.append('art', input.file)
+
+  const { data } = await http.patch<ServerArtwork>(
+    `/artworks/${realArtworkId(id)}`,
+    form,
+    multipartConfig,
+  )
+  return toArtworkDetail(data)
+}
+
 /** Supprime une œuvre. Le serveur vérifie la propriété (403 sinon) et
     nettoie le média sur Cloudinary. */
 export async function deleteArtwork(id: string): Promise<void> {

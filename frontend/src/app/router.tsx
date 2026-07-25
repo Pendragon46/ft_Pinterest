@@ -6,6 +6,7 @@ import { AdminPage } from '@/pages/AdminPage'
 import { ArtworkPage } from '@/pages/ArtworkPage'
 import { CreatePage } from '@/pages/CreatePage'
 import { DevUiPage } from '@/pages/DevUiPage'
+import { EditArtworkPage } from '@/pages/EditArtworkPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
@@ -42,6 +43,7 @@ export function AppRouter() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/artwork/:id" element={<ArtworkPage />} />
+        <Route path="/artwork/:id/edit" element={<EditArtworkPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/status" element={<StatusPage />} />

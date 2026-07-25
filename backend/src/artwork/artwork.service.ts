@@ -38,7 +38,7 @@ export class ArtworkService {
   }
 
   async Updatedfile(
-    userId: string,
+    artworkId: string,
     file: Express.Multer.File,
     updatedata: UpdateArtworkDto,
     oldPublicId: string,
@@ -52,11 +52,15 @@ export class ArtworkService {
       upload = await this.cloudinaryService.uploadImage(file);
       updatedArtwork = await this.prisma.artwork.update({
         where: {
-          id: userId,
+          id: artworkId,
         },
         data: {
           mediaUrl: upload.secure_url,
           mediaPublicId: upload.public_id,
+          ...(updatedata.title !== undefined && { title: updatedata.title }),
+          ...(updatedata.description !== undefined && {
+            description: updatedata.description,
+          }),
           ...(normalizedtags &&
             normalizedtags.length > 0 && {
               tags: {
@@ -67,6 +71,11 @@ export class ArtworkService {
                 })),
               },
             }),
+        },
+        include: {
+          author: { select: { id: true, username: true, fullname: true } },
+          tags: { select: { name: true } },
+          _count: { select: { likes: true, comments: true } },
         },
       });
       await this.deletetagswithoutartworks();
@@ -240,6 +249,10 @@ export class ArtworkService {
         id: artworkId,
       },
       data: {
+        ...(updatedata.title !== undefined && { title: updatedata.title }),
+        ...(updatedata.description !== undefined && {
+          description: updatedata.description,
+        }),
         ...(normalizedtags &&
           normalizedtags.length > 0 && {
             tags: {
@@ -250,6 +263,11 @@ export class ArtworkService {
               })),
             },
           }),
+      },
+      include: {
+        author: { select: { id: true, username: true, fullname: true } },
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
   }

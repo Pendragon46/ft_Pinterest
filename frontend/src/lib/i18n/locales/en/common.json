@@ -10,6 +10,13 @@
   "presence": {
     "online": "Online"
   },
+  "edit": {
+    "title": "Edit artwork",
+    "subtitle": "Update the title, description and tags. The media stays.",
+    "save": "Save changes",
+    "saved": "Changes saved",
+    "mediaKept": "The uploaded media is kept."
+  },
   "language": {
     "label": "Language"
   },
@@ -18,7 +25,8 @@
     "signUp": "Sign up",
     "continueWithGoogle": "Continue with Google",
     "signOut": "Sign out",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "edit": "Edit"
   },
   "auth": {
     "avatarAlt": "{{username}}'s avatar",

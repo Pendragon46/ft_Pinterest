@@ -10,6 +10,13 @@
   "presence": {
     "online": "En ligne"
   },
+  "edit": {
+    "title": "Éditer l'œuvre",
+    "subtitle": "Modifie le titre, la description et les tags. Le média est conservé.",
+    "save": "Enregistrer",
+    "saved": "Modifications enregistrées",
+    "mediaKept": "Le média téléversé est conservé."
+  },
   "language": {
     "label": "Langue"
   },
@@ -18,7 +25,8 @@
     "signUp": "S'inscrire",
     "continueWithGoogle": "Continuer avec Google",
     "signOut": "Se déconnecter",
-    "dismiss": "Ignorer"
+    "dismiss": "Ignorer",
+    "edit": "Éditer"
   },
   "auth": {
     "avatarAlt": "Avatar de {{username}}",

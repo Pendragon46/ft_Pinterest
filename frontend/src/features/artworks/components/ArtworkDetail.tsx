@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, MessageCircle, Share2, X } from 'lucide-react'
+import { Heart, MessageCircle, Pencil, Share2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -358,7 +358,17 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               </p>
             </div>
           </Link>
-          <FollowButton userId={artwork.author.id} />
+          {currentUser?.id === artwork.author.id ? (
+            <Link
+              to={`/artwork/${artwork.id}/edit`}
+              className="inline-flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl border border-neutral-300 px-4 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            >
+              <Pencil aria-hidden="true" className="size-4" />
+              {t('actions.edit')}
+            </Link>
+          ) : (
+            <FollowButton userId={artwork.author.id} />
+          )}
           {onClose ? (
             <button
               type="button"

@@ -10,6 +10,13 @@
   "presence": {
     "online": "متصل"
   },
+  "edit": {
+    "title": "تعديل العمل",
+    "subtitle": "حدّث العنوان والوصف والوسوم. تبقى الوسائط كما هي.",
+    "save": "حفظ التغييرات",
+    "saved": "تم حفظ التغييرات",
+    "mediaKept": "تُحفظ الوسائط المرفوعة."
+  },
   "language": {
     "label": "اللغة"
   },
@@ -18,7 +25,8 @@
     "signUp": "إنشاء حساب",
     "continueWithGoogle": "المتابعة باستخدام Google",
     "signOut": "تسجيل الخروج",
-    "dismiss": "إغلاق"
+    "dismiss": "إغلاق",
+    "edit": "تعديل"
   },
   "auth": {
     "avatarAlt": "الصورة الرمزية لـ {{username}}",
