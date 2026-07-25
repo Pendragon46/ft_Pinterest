@@ -167,33 +167,34 @@ export class ArtworkService {
       },
     });
     const followingIds = following.map((f) => f.followingId);
-    // Follows + mutual friends, deduplicated: one query naturally dedups the
-    // artworks of an author who is both followed and a mutual.
     const friends = await this.friendService.getFriends(userId);
     const authorIds = [
       ...new Set([...followingIds, ...friends.map((friend) => friend.id)]),
     ];
-    const feedArtworks = await this.prisma.artwork.findMany({
-      where: { authorId: { in: authorIds } },
+    // Friends first (they land in the central tiles), then the whole pool
+    // deduped — the canvas stays full and varied even with a single follow.
+    const friendWorks = authorIds.length
+      ? await this.prisma.artwork.findMany({
+          where: { authorId: { in: authorIds } },
+          orderBy: { updatedAt: 'desc' },
+          include: {
+            author: { select: { id: true, username: true, fullname: true } },
+            tags: { select: { name: true } },
+            _count: { select: { likes: true, comments: true } },
+          },
+        })
+      : [];
+    const seen = new Set(friendWorks.map((a) => a.id));
+    const general = await this.prisma.artwork.findMany({
       orderBy: { updatedAt: 'desc' },
+      take: 200,
       include: {
         author: { select: { id: true, username: true, fullname: true } },
         tags: { select: { name: true } },
         _count: { select: { likes: true, comments: true } },
       },
     });
-    // No follows/mutuals yet (or they have no work): fall back to the whole pool.
-    if (feedArtworks.length === 0) {
-      return this.prisma.artwork.findMany({
-        orderBy: { updatedAt: 'desc' },
-        include: {
-          author: { select: { id: true, username: true, fullname: true } },
-          tags: { select: { name: true } },
-          _count: { select: { likes: true, comments: true } },
-        },
-      });
-    }
-    return feedArtworks;
+    return [...friendWorks, ...general.filter((a) => !seen.has(a.id))];
   }
 
   async findOne(id: string) {
