@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/features/auth/auth.store'
 import { Crossroads } from '@/features/search/components/Crossroads'
 import {
   fetchCreatorTile,
@@ -14,7 +15,7 @@ import { useNicheCompletion } from '@/features/search/useNicheCompletion'
 import { fetchProfile, userKeys } from '@/features/users/user.api'
 import type { User } from '@/features/auth/auth.types'
 
-import { artworkKeys, fetchTileArtworks } from '../artwork.api'
+import { artworkKeys, fetchFeedTile, fetchTileArtworks } from '../artwork.api'
 import { tileSlots } from '../artwork.mock'
 import type { CanvasArtwork } from '../artwork.types'
 import { ArtworkCard } from '../components/ArtworkCard'
@@ -58,6 +59,7 @@ export function ArtworkCanvas() {
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const { niche, enterNiche, exitNiche } = useNiche()
   const nicheSlug = niche?.slug ?? null
+  const currentUser = useAuthStore((state) => state.user)
   const { creatorId, enterCreator, exitCreator } = useCreator()
   const creatorProfile = useQuery({
     queryKey: userKeys.profile(creatorId ?? 'none'),
@@ -68,8 +70,10 @@ export function ArtworkCanvas() {
   const creator = creatorId
     ? { id: creatorId, name: creatorDisplayName(creatorProfile.data) }
     : null
-  // What the canvas shows: creator wins over niche wins over the global map.
-  const activeKey = creatorId ?? nicheSlug
+  // What the canvas shows: creator > niche > (signed-in) personalized feed >
+  // the public global map. The feed only supplants the global surface.
+  const showFeed = !creatorId && !niche && Boolean(currentUser)
+  const activeKey = creatorId ?? nicheSlug ?? (showFeed ? 'feed' : null)
 
   // The hero never moves (§5.0). Entering a niche/creator reorganises the content
   // in place: a centre-out wave staggers the tile reveal for ~WAVE_DURATION.
@@ -114,23 +118,29 @@ export function ArtworkCanvas() {
   // search is what makes the surrounding tiles reorganise in place.
   const tileQueries = useQueries({
     queries: tiles.map(({ tx, ty }) =>
-      creatorId
+      showFeed
         ? {
-            queryKey: searchKeys.creatorTile(creatorId, tx, ty),
-            queryFn: () => fetchCreatorTile(creatorId, tx, ty),
+            queryKey: artworkKeys.feedTile(tx, ty),
+            queryFn: () => fetchFeedTile(tx, ty),
             staleTime: Infinity,
           }
-        : niche
+        : creatorId
           ? {
-              queryKey: searchKeys.nicheTile(niche.slug, tx, ty),
-              queryFn: () => fetchNicheTile(niche.slug, tx, ty),
+              queryKey: searchKeys.creatorTile(creatorId, tx, ty),
+              queryFn: () => fetchCreatorTile(creatorId, tx, ty),
               staleTime: Infinity,
             }
-          : {
-              queryKey: artworkKeys.tile(tx, ty),
-              queryFn: () => fetchTileArtworks(tx, ty),
-              staleTime: Infinity,
-            },
+          : niche
+            ? {
+                queryKey: searchKeys.nicheTile(niche.slug, tx, ty),
+                queryFn: () => fetchNicheTile(niche.slug, tx, ty),
+                staleTime: Infinity,
+              }
+            : {
+                queryKey: artworkKeys.tile(tx, ty),
+                queryFn: () => fetchTileArtworks(tx, ty),
+                staleTime: Infinity,
+              },
     ),
   })
 

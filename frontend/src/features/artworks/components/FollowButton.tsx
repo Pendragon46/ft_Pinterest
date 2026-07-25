@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { artworkKeys } from '@/features/artworks/artwork.api'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
 import { fetchIsFollowing, setFollow, userKeys } from '@/features/users/user.api'
@@ -90,6 +91,8 @@ export function FollowButton({ userId }: FollowButtonProps) {
         void queryClient.invalidateQueries({
           queryKey: userKeys.followingCount(currentUser.id),
         })
+        // Following someone reshuffles the signed-in home feed.
+        void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
       }
     },
   })

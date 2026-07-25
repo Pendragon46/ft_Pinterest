@@ -158,27 +158,31 @@ export class ArtworkService {
       },
     });
     const followingIds = following.map((f) => f.followingId);
-    let feedFollowedUser = await this.prisma.artwork.findMany({
-      where: {
-        authorId: { in: followingIds },
-      },
-      orderBy: {
-        updatedAt: 'desc',
+    // Follows + mutual friends, deduplicated: one query naturally dedups the
+    // artworks of an author who is both followed and a mutual.
+    const friends = await this.friendService.getFriends(userId);
+    const authorIds = [
+      ...new Set([...followingIds, ...friends.map((friend) => friend.id)]),
+    ];
+    const feedArtworks = await this.prisma.artwork.findMany({
+      where: { authorId: { in: authorIds } },
+      orderBy: { updatedAt: 'desc' },
+      include: {
+        author: { select: { id: true, username: true, fullname: true } },
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
-	const friends = this.friendService.getFriends(userId);
-	const friendIds = (await friends).map((friend) => friend.id);
-	const feedFriends = await this.prisma.artwork.findMany({
-			where: {
-				authorId: { in: friendIds },
-			},
-			orderBy: {
-				updatedAt: 'desc',
-			},
-	});
-	const feedArtworks = [...feedFollowedUser, ...feedFriends];
-	if (feedArtworks.length === 0) {
-		      feedFollowedUser = await this.findAll(); // If no artworks from followed users, return all artworks
+    // No follows/mutuals yet (or they have no work): fall back to the whole pool.
+    if (feedArtworks.length === 0) {
+      return this.prisma.artwork.findMany({
+        orderBy: { updatedAt: 'desc' },
+        include: {
+          author: { select: { id: true, username: true, fullname: true } },
+          tags: { select: { name: true } },
+          _count: { select: { likes: true, comments: true } },
+        },
+      });
     }
     return feedArtworks;
   }

@@ -22,6 +22,9 @@ import type {
 // to the fetchers so invalidation can't drift from fetching.
 export const artworkKeys = {
   tile: (tx: number, ty: number) => ['artworks', 'tile', tx, ty] as const,
+  feed: () => ['artworks', 'feed'] as const,
+  feedTile: (tx: number, ty: number) =>
+    ['artworks', 'feed', 'tile', tx, ty] as const,
   detail: (id: string) => ['artworks', 'detail', id] as const,
   comments: (id: string) => ['artworks', 'comments', id] as const,
 }
@@ -40,6 +43,21 @@ export async function fetchTileArtworks(
   // Base vide ou page au-delà du dernier résultat : tuile vide plutôt
   // qu'un plantage. Les skeletons prennent le relais visuellement.
   return layoutTile(data, undefined, tx, ty)
+}
+
+/** Tuiles du feed personnalisé (connecté) : œuvres des personnes suivies + amis
+    mutuels, repli sur tout le pool. Le feed est une liste plate (pas de
+    coordonnées) : on la récupère puis on la dispose comme une tuile de niche. */
+export async function fetchFeedTile(
+  tx: number,
+  ty: number,
+): Promise<CanvasArtwork[]> {
+  try {
+    const { data } = await http.get<ServerArtwork[]>('/artworks/feed')
+    return layoutTile(data, undefined, tx, ty)
+  } catch {
+    return []
+  }
 }
 
 /** Un artwork complet. Sans l'include serveur (ticket T2), les mappers
