@@ -1,8 +1,14 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Heart, Image as ImageIcon, MessageCircle } from 'lucide-react'
+import {
+  Heart,
+  Image as ImageIcon,
+  MessageCircle,
+  RefreshCw,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { Button } from '@/components/ui/Button'
 import { AreaChart, type AreaPoint } from '@/components/ui/charts/AreaChart'
 import { BarList } from '@/components/ui/charts/BarList'
 import { DonutChart } from '@/components/ui/charts/DonutChart'
@@ -50,12 +56,14 @@ function MetricCard({
   label,
   tint,
   loading,
+  error,
 }: {
   icon: typeof Heart
   value: number
   label: string
   tint: string
   loading: boolean
+  error: boolean
 }) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
@@ -69,7 +77,9 @@ function MetricCard({
         {loading ? (
           <span className="block h-7 w-10 animate-pulse rounded bg-neutral-200" />
         ) : (
-          <p className="text-2xl font-semibold text-neutral-900">{value}</p>
+          <p className="text-2xl font-semibold text-neutral-900">
+            {error ? '—' : value}
+          </p>
         )}
         <p className="truncate text-sm text-neutral-500">{label}</p>
       </div>
@@ -77,7 +87,13 @@ function MetricCard({
   )
 }
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+function Panel({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
   return (
     <section className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-neutral-500">
@@ -85,6 +101,15 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
       </h3>
       {children}
     </section>
+  )
+}
+
+function ChartSkeleton({ className = 'h-28' }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`w-full animate-pulse rounded-xl bg-neutral-100 motion-reduce:animate-none ${className}`}
+    />
   )
 }
 
@@ -102,11 +127,9 @@ export function AdminAnalytics({
     queryKey: adminKeys.artworks(),
     queryFn: fetchAllArtworks,
   })
-  const artworks = useMemo(
-    () => artworksQuery.data ?? [],
-    [artworksQuery.data],
-  )
-  const loading = usersLoading || artworksQuery.isPending
+  const artworks = useMemo(() => artworksQuery.data ?? [], [artworksQuery.data])
+  const artworksLoading = artworksQuery.isPending
+  const artworksError = artworksQuery.isError
 
   const userGrowth = useMemo(
     () => growthSeries(users.map((u) => u.createdAt), i18n.language),
@@ -152,6 +175,22 @@ export function AdminAnalytics({
     0,
   )
 
+  // Shared error state for the artwork-derived panels: a fetch failure must not
+  // look like real zeros, so those panels offer a retry instead.
+  const artworkError = (
+    <div className="flex flex-col items-center gap-2 py-8 text-center">
+      <p className="text-sm text-neutral-500">{t('admin.error.body')}</p>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => void artworksQuery.refetch()}
+      >
+        <RefreshCw aria-hidden="true" className="size-4" />
+        {t('admin.error.retry')}
+      </Button>
+    </div>
+  )
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
@@ -160,63 +199,90 @@ export function AdminAnalytics({
           value={artworks.length}
           label={t('admin.analytics.artworks')}
           tint="bg-blue-100 text-blue-600"
-          loading={loading}
+          loading={artworksLoading}
+          error={artworksError}
         />
         <MetricCard
           icon={Heart}
           value={totalLikes}
           label={t('admin.analytics.likes')}
           tint="bg-rose-100 text-rose-600"
-          loading={loading}
+          loading={artworksLoading}
+          error={artworksError}
         />
         <MetricCard
           icon={MessageCircle}
           value={totalComments}
           label={t('admin.analytics.comments')}
           tint="bg-amber-100 text-amber-600"
-          loading={loading}
+          loading={artworksLoading}
+          error={artworksError}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Panel title={t('admin.analytics.userGrowth')}>
-          <AreaChart
-            points={userGrowth}
-            color="#7c3aed"
-            ariaLabel={t('admin.analytics.userGrowth')}
-          />
+          {usersLoading ? (
+            <ChartSkeleton />
+          ) : (
+            <AreaChart
+              points={userGrowth}
+              color="#7c3aed"
+              ariaLabel={t('admin.analytics.userGrowth')}
+            />
+          )}
         </Panel>
         <Panel title={t('admin.analytics.contentGrowth')}>
-          <AreaChart
-            points={artworkGrowth}
-            color="#2563eb"
-            ariaLabel={t('admin.analytics.contentGrowth')}
-          />
+          {artworksLoading ? (
+            <ChartSkeleton />
+          ) : artworksError ? (
+            artworkError
+          ) : (
+            <AreaChart
+              points={artworkGrowth}
+              color="#2563eb"
+              ariaLabel={t('admin.analytics.contentGrowth')}
+            />
+          )}
         </Panel>
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Panel title={t('admin.analytics.roles')}>
-          <DonutChart
-            segments={roleSegments}
-            ariaLabel={t('admin.analytics.roles')}
-            centerValue={users.length}
-            centerLabel={t('admin.stats.total')}
-          />
+          {usersLoading ? (
+            <ChartSkeleton className="h-32" />
+          ) : (
+            <DonutChart
+              segments={roleSegments}
+              ariaLabel={t('admin.analytics.roles')}
+              centerValue={users.length}
+              centerLabel={t('admin.stats.total')}
+            />
+          )}
         </Panel>
         <Panel title={t('admin.analytics.topCreators')}>
-          <BarList
-            bars={topCreators}
-            color="#7c3aed"
-            emptyLabel={t('admin.analytics.empty')}
-          />
+          {usersLoading ? (
+            <ChartSkeleton />
+          ) : (
+            <BarList
+              bars={topCreators}
+              color="#7c3aed"
+              emptyLabel={t('admin.analytics.empty')}
+            />
+          )}
         </Panel>
         <Panel title={t('admin.analytics.topTags')}>
-          <BarList
-            bars={topTags}
-            color="#059669"
-            emptyLabel={t('admin.analytics.empty')}
-          />
+          {artworksLoading ? (
+            <ChartSkeleton />
+          ) : artworksError ? (
+            artworkError
+          ) : (
+            <BarList
+              bars={topTags}
+              color="#059669"
+              emptyLabel={t('admin.analytics.empty')}
+            />
+          )}
         </Panel>
       </div>
     </div>

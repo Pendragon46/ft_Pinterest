@@ -3,8 +3,11 @@
 // so a nested field never breaks the row shape. CRLF line endings for Excel.
 function escapeCell(value: unknown): string {
   if (value == null) return ''
-  const raw =
-    typeof value === 'object' ? JSON.stringify(value) : String(value)
+  let raw = typeof value === 'object' ? JSON.stringify(value) : String(value)
+  // Neutralize spreadsheet formula injection: a cell starting with = + - @ (or a
+  // control char) executes in Excel/Sheets, so prefix it with a quote to force
+  // text. A field crafted like "=cmd|..." in a bio can't run when reopened.
+  if (/^[=+\-@\t\r]/.test(raw)) raw = `'${raw}`
   return /[",\r\n]/.test(raw) ? `"${raw.replace(/"/g, '""')}"` : raw
 }
 

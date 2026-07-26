@@ -63,7 +63,12 @@ export function AreaChart({
               vectorEffect="non-scaling-stroke"
             />
           </svg>
-          <div className="mt-1 flex justify-between text-xs text-neutral-400">
+          {/* Force LTR: the SVG plots oldest->newest left->right regardless of
+              locale, so the captions must not flip under an RTL document. */}
+          <div
+            dir="ltr"
+            className="mt-1 flex justify-between text-xs text-neutral-400"
+          >
             <span>{first}</span>
             <span>{last}</span>
           </div>

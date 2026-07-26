@@ -29,10 +29,12 @@ export const adminKeys = {
   artworks: () => ['admin', 'artworks'] as const,
 }
 
-/** Toutes les œuvres (modération admin) — réutilise /search/artworks. */
+// Toutes les œuvres (modération admin + analytics) — réutilise /search/artworks.
+// Fenêtre haute (le endpoint ne plafonne pas `limit`) pour que les totaux du
+// dashboard restent exacts à l'échelle du projet.
 export async function fetchAllArtworks(): Promise<AdminArtworkRow[]> {
   const { data } = await http.get<AdminArtworkRow[]>('/search/artworks', {
-    params: { page: 1, limit: 200, sort: 'recent' },
+    params: { page: 1, limit: 1000, sort: 'recent' },
   })
   return data
 }

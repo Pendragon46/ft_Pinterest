@@ -54,7 +54,9 @@ export function downloadExportCsv(data: GdprExport, username: string): void {
     .map(([title, rows]) => `${title}\r\n${toCsv(rows)}`)
     .join('\r\n\r\n')
 
-  downloadFile(csv, exportFilename(username, 'csv'), 'text/csv')
+  // Lead with a UTF-8 BOM so Excel decodes accented French and Arabic correctly
+  // on double-click instead of falling back to its ANSI codepage.
+  downloadFile(`\uFEFF${csv}`, exportFilename(username, 'csv'), 'text/csv')
 }
 
 /** Supprime définitivement le compte. Irréversible : l'appelant doit avoir

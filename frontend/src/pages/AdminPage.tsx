@@ -216,24 +216,24 @@ function AdminDashboard() {
             </div>
 
             {tab === 'overview' ? (
-              <>
-                <AdminStats users={users} loading={query.isPending} />
-                {query.isError ? (
-                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-16 text-center">
-                    <span className="flex size-14 items-center justify-center rounded-full bg-red-50 text-red-600">
-                      <AlertTriangle aria-hidden="true" className="size-6" />
-                    </span>
-                    <p className="font-serif text-lg text-neutral-900">{t('admin.error.title')}</p>
-                    <p className="text-sm text-neutral-500">{t('admin.error.body')}</p>
-                    <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
-                      <RefreshCw aria-hidden="true" className="size-4" />
-                      {t('admin.error.retry')}
-                    </Button>
-                  </div>
-                ) : (
+              query.isError ? (
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-16 text-center">
+                  <span className="flex size-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+                    <AlertTriangle aria-hidden="true" className="size-6" />
+                  </span>
+                  <p className="font-serif text-lg text-neutral-900">{t('admin.error.title')}</p>
+                  <p className="text-sm text-neutral-500">{t('admin.error.body')}</p>
+                  <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
+                    <RefreshCw aria-hidden="true" className="size-4" />
+                    {t('admin.error.retry')}
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <AdminStats users={users} loading={query.isPending} />
                   <AdminAnalytics users={users} usersLoading={query.isPending} />
-                )}
-              </>
+                </>
+              )
             ) : tab === 'users' ? (
               <>
                 {query.isError ? (
