@@ -8,6 +8,7 @@ interface ChatState {
   drafts: Record<string, string>
 
   togglePanel: () => void
+  openPanel: () => void
   closePanel: () => void
   openThread: (conversationId: string) => void
   backToList: () => void
@@ -24,6 +25,7 @@ export const useChatStore = create<ChatState>()((set) => ({
   drafts: {},
 
   togglePanel: () => set((s) => ({ open: !s.open, view: s.open ? s.view : 'list' })),
+  openPanel: () => set({ open: true, view: 'list' }),
   closePanel: () => set({ open: false }),
   openThread: (conversationId) =>
     set({ open: true, view: 'thread', activeId: conversationId }),

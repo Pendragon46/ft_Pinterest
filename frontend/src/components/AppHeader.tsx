@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { AuthButton } from '@/features/auth/components/AuthButton'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { MessagesButton } from '@/features/chat/components/MessagesButton'
 
 import { LanguageSwitcher } from './ui/LanguageSwitcher'
 import { Logo } from './ui/Logo'
@@ -45,6 +46,7 @@ export function AppHeader() {
             <Plus aria-hidden="true" className="size-4" />
             {t('create.cta')}
           </button>
+          <MessagesButton />
           <AuthButton />
         </div>
       </div>

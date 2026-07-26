@@ -6,6 +6,7 @@ import { Logo } from '@/components/ui/Logo'
 import { TextLink } from '@/components/ui/TextLink'
 import { ArtworkCanvas } from '@/features/artworks/canvas/ArtworkCanvas'
 import { AuthButton } from '@/features/auth/components/AuthButton'
+import { MessagesButton } from '@/features/chat/components/MessagesButton'
 
 // Full-viewport canvas with floating chrome; pointer-events-none lets drags
 // pass through to the map, each island re-enables pointer events for itself.
@@ -30,7 +31,8 @@ export function HomePage() {
           </span>
         </div>
 
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto flex items-center gap-2">
+          <MessagesButton />
           <AuthButton />
         </div>
       </header>
