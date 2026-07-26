@@ -69,7 +69,7 @@ export function ChatPanel({
           </h2>
           <CloseButton onClick={closePanel} />
         </div>
-        <NewMessagePicker onOpenThread={openThread} />
+        <NewMessagePicker />
       </div>
     )
   }

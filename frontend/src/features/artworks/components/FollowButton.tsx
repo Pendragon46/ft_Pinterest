@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import { artworkKeys } from '@/features/artworks/artwork.api'
 import { useAuthStore } from '@/features/auth/auth.store'
+import { chatKeys } from '@/features/chat/chat.api'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
 import { fetchIsFollowing, setFollow, userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
@@ -93,6 +94,8 @@ export function FollowButton({ userId }: FollowButtonProps) {
         })
         // Following someone reshuffles the signed-in home feed.
         void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+        // A follow can make (or break) a mutual: refresh who can be messaged.
+        void queryClient.invalidateQueries({ queryKey: chatKeys.mutuals() })
       }
     },
   })

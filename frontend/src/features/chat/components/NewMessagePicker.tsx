@@ -1,41 +1,24 @@
 import { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { Spinner } from '@/components/ui/Spinner'
 
-import { chatKeys, fetchMutuals, openConversation } from '../chat.api'
-import type { Conversation } from '../chat.types'
+import { chatKeys, fetchMutuals } from '../chat.api'
+import { useStartConversation } from '../useStartConversation'
 import { ChatAvatar } from './ChatAvatar'
 
-export function NewMessagePicker({
-  onOpenThread,
-}: {
-  onOpenThread: (id: string) => void
-}) {
+export function NewMessagePicker() {
   const { t } = useTranslation('common')
-  const qc = useQueryClient()
   const [query, setQuery] = useState('')
   const { data, isPending } = useQuery({
     queryKey: chatKeys.mutuals(),
     queryFn: fetchMutuals,
   })
 
-  const mutation = useMutation({
-    mutationFn: (userId: string) => openConversation(userId),
-    onSuccess: (conv) => {
-      qc.setQueryData<Conversation[]>(chatKeys.conversations(), (prev) => {
-        const list = prev ?? []
-        return list.some((c) => c.id === conv.id)
-          ? list.map((c) => (c.id === conv.id ? conv : c))
-          : [conv, ...list]
-      })
-      void qc.invalidateQueries({ queryKey: chatKeys.conversations() })
-      onOpenThread(conv.id)
-    },
-  })
+  const mutation = useStartConversation()
 
   const needle = query.trim().toLowerCase()
   const filtered = (data ?? []).filter(
@@ -87,7 +70,7 @@ export function NewMessagePicker({
                 <button
                   type="button"
                   disabled={mutation.isPending}
-                  onClick={() => mutation.mutate(u.id)}
+                  onClick={() => mutation.mutate({ userId: u.id })}
                   className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-start transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
                 >
                   <ChatAvatar user={u} />

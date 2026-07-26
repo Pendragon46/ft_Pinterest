@@ -14,6 +14,7 @@ import {
 } from '@/features/artworks/components/ProfileArtworkCard'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { MessageUserButton } from '@/features/chat/components/MessageUserButton'
 import {
   fetchFollowerCount,
   fetchFollowingCount,
@@ -185,7 +186,10 @@ export function ProfilePage() {
                   {t('profile.edit')}
                 </Button>
               ) : (
-                <FollowButton userId={userId} />
+                <>
+                  <MessageUserButton userId={userId} />
+                  <FollowButton userId={userId} />
+                </>
               )}
               <div className="relative">
                 <Button variant="outline" size="sm" onClick={handleShare}>
