@@ -27,8 +27,6 @@ import type {
   ArtworkDetail as Detail,
   AuthorSummary,
 } from '../artwork.types'
-import { ShareArtworkChip } from '@/features/chat/components/ShareArtworkChip'
-
 import { DeleteArtworkDialog } from './DeleteArtworkDialog'
 import { FollowButton } from './FollowButton'
 
@@ -479,31 +477,28 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               icon={<MessageCircle aria-hidden="true" className="size-4" />}
               as="span"
             />
-            <div className="relative ms-auto flex items-center gap-1">
-              <ShareArtworkChip artworkId={artwork.id} />
-              <div className="relative">
-                <ActionChip
-                  active={false}
-                  onClick={handleShare}
-                  label={t('artwork.share')}
-                  icon={<Share2 aria-hidden="true" className="size-4" />}
-                />
-                {/* Always-mounted live region so the announcement fires reliably —
-                    SRs skip a region injected together with its text (§2.2). */}
-                <span role="status" aria-live="polite" className="sr-only">
-                  {shareHint ? t('artwork.linkCopied') : ''}
+            <div className="relative ms-auto">
+              <ActionChip
+                active={false}
+                onClick={handleShare}
+                label={t('artwork.share')}
+                icon={<Share2 aria-hidden="true" className="size-4" />}
+              />
+              {/* Always-mounted live region so the announcement fires reliably —
+                  SRs skip a region injected together with its text (§2.2). */}
+              <span role="status" aria-live="polite" className="sr-only">
+                {shareHint ? t('artwork.linkCopied') : ''}
+              </span>
+              {/* Visible tooltip for sighted users; decorative (the live region
+                  above carries the announcement). */}
+              {shareHint ? (
+                <span
+                  aria-hidden="true"
+                  className="absolute bottom-full end-0 mb-1 whitespace-nowrap rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
+                >
+                  {t('artwork.linkCopied')}
                 </span>
-                {/* Visible tooltip for sighted users; decorative (the live region
-                    above carries the announcement). */}
-                {shareHint ? (
-                  <span
-                    aria-hidden="true"
-                    className="absolute bottom-full end-0 mb-1 whitespace-nowrap rounded-md bg-neutral-900 px-2 py-1 text-xs text-white"
-                  >
-                    {t('artwork.linkCopied')}
-                  </span>
-                ) : null}
-              </div>
+              ) : null}
             </div>
           </div>
 

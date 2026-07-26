@@ -55,8 +55,6 @@
     "messageFromYou": "Your message",
     "conversationWith": "Conversation with {{name}}",
     "viewProfile": "View {{name}}'s profile",
-    "sendByMessage": "Send by message",
-    "sentToast": "Sent to {{name}}",
     "message": "Message",
     "typing": "{{name}} is typing…"
   },

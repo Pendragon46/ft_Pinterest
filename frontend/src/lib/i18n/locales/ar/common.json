@@ -55,8 +55,6 @@
     "messageFromYou": "رسالتك",
     "conversationWith": "محادثة مع {{name}}",
     "viewProfile": "عرض ملف {{name}}",
-    "sendByMessage": "إرسال عبر رسالة",
-    "sentToast": "أُرسل إلى {{name}}",
     "message": "مراسلة",
     "typing": "{{name}} يكتب…"
   },

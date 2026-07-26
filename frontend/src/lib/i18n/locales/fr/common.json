@@ -55,8 +55,6 @@
     "messageFromYou": "Votre message",
     "conversationWith": "Conversation avec {{name}}",
     "viewProfile": "Voir le profil de {{name}}",
-    "sendByMessage": "Envoyer par message",
-    "sentToast": "Envoyé à {{name}}",
     "message": "Message",
     "typing": "{{name}} écrit…"
   },
