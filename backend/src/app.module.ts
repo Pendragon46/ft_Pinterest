@@ -26,6 +26,7 @@ import { FriendsModule } from './friends/friends.module';
 import { OnlineStatusModule } from './websocket/onlineStatus.module';
 import { WebsocketModule } from './websocket/websocket.module';
 import { ChatModule } from './chat/chat.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ChatModule } from './chat/chat.module';
     ArtworkModule,
     CloudinaryModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([{ ttl: 10000, limit: 20 }]),
     MulterModule.register({ storage: memoryStorage() }),
     FollowModule,
     LikesModule,

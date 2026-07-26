@@ -1,10 +1,13 @@
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // CSP off: Vite dev + Cloudinary assets would otherwise be blocked.
+  app.use(helmet({ contentSecurityPolicy: false }));
   // Behind nginx the frontend and API share an origin, so CORS is a no-op there;
   // it lets the frontend reach the API directly (e.g. Vite dev on another port).
   // Bearer tokens, not cookies, carry the session.

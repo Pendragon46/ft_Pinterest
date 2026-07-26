@@ -7,7 +7,9 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { ChatService } from './chat.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -42,6 +44,8 @@ export class ChatController {
   }
 
   @Post(':id/messages')
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ default: { limit: 20, ttl: 10000 } })
   send(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: CreateMessageDto,
