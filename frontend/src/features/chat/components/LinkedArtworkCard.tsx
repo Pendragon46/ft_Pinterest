@@ -6,10 +6,8 @@ import type { SharedArtwork } from '../chat.types'
 import { MessageText } from './MessageText'
 import { SharedArtworkCard } from './SharedArtworkCard'
 
-// Renders an artwork link pasted into a message as the same rich card used for
-// artworks shared through the API. Resolves the artwork by id (sharing the
-// modal's query cache); on failure it falls back to the link text so nothing is
-// lost. Any text around the link is rendered by the caller, in order.
+// Resolves the pasted artwork id via the shared detail query cache and renders
+// the same rich card as an API share; on failure falls back to the link text.
 export function LinkedArtworkCard({
   id,
   mine,

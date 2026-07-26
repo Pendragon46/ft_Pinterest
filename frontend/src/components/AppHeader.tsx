@@ -9,9 +9,8 @@ import { MessagesButton } from '@/features/chat/components/MessagesButton'
 import { LanguageSwitcher } from './ui/LanguageSwitcher'
 import { Logo } from './ui/Logo'
 
-// Shared light top-bar for the standalone pages (Profile, Settings). Sticky, with
-// a bottom border; the logo links home. The canvas home has its own floating
-// chrome and the legal/404 pages their dark headers — this is the light-page one.
+// Light top-bar for the standalone pages (Profile, Settings); the canvas home and
+// legal/404 pages have their own headers.
 export function AppHeader() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()

@@ -68,7 +68,6 @@ function AdminDashboard() {
 
   return (
     <div className="flex min-h-svh bg-neutral-50">
-      {/* Sidebar — desktop only; mobile gets the top bar's chrome. */}
       <aside className="hidden w-64 shrink-0 flex-col border-e border-neutral-200 bg-white lg:flex">
         <div className="flex items-center justify-between p-4">
           <Link to="/" aria-label={t('app.name')} className="text-lg text-neutral-900">
@@ -135,7 +134,6 @@ function AdminDashboard() {
         ) : null}
       </aside>
 
-      {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6">
           <p className="text-sm text-neutral-500">
@@ -146,8 +144,6 @@ function AdminDashboard() {
           <AuthButton />
         </header>
 
-        {/* Tabs — visible on mobile where the sidebar is hidden, and a handy
-            switcher on desktop too. */}
         <div className="flex gap-1 border-b border-neutral-200 bg-white px-4 sm:px-6 lg:hidden">
           <button
             type="button"
@@ -177,7 +173,6 @@ function AdminDashboard() {
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           <div className="mx-auto flex max-w-6xl flex-col gap-6">
-            {/* Title + actions */}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1 className="font-serif text-3xl text-neutral-900 sm:text-4xl">

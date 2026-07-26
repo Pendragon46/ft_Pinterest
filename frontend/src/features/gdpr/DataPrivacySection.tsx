@@ -13,8 +13,6 @@ import type { GdprExport } from './gdpr.types'
 
 type ExportFormat = 'json' | 'csv'
 
-// Section RGPD des Réglages : voir un récapitulatif chiffré, télécharger le
-// document complet, et supprimer son compte (zone de danger séparée).
 export function DataPrivacySection({ user }: { user: User }) {
   const { t } = useTranslation('common')
   const toast = useToast()
@@ -37,7 +35,6 @@ export function DataPrivacySection({ user }: { user: User }) {
   }
 
   const handleDownload = (format: ExportFormat) => {
-    // Réutilise le document déjà chargé, sinon le récupère puis télécharge.
     if (data) {
       save(data, format)
       return
@@ -53,7 +50,6 @@ export function DataPrivacySection({ user }: { user: User }) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* View + download */}
       <section className={card}>
         <div className="flex flex-col gap-1">
           <h2 className="font-serif text-xl text-neutral-900">
@@ -118,7 +114,6 @@ export function DataPrivacySection({ user }: { user: User }) {
         )}
       </section>
 
-      {/* Danger zone — visually separated from the save actions. */}
       <section className="flex flex-col gap-3 rounded-2xl border border-red-200 bg-red-50/40 p-6">
         <div className="flex flex-col gap-1">
           <h2 className="font-serif text-xl text-red-700">

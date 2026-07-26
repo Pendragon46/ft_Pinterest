@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react'
 
-// The plain text bubble, shared by MessageBubble and the linked-artwork card
-// (which reuses it for any text around the link and for its fallback).
 export function MessageText({
   mine,
   children,

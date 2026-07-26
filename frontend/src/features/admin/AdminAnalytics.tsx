@@ -113,8 +113,6 @@ function ChartSkeleton({ className = 'h-28' }: { className?: string }) {
   )
 }
 
-// Platform analytics derived entirely from the already-fetched user list plus a
-// one-off artworks fetch — no dedicated backend endpoint (mirrors AdminStats).
 export function AdminAnalytics({
   users,
   usersLoading,

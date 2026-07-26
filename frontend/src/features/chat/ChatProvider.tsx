@@ -23,7 +23,6 @@ interface TypingEvent {
   fromUserId: string
 }
 
-// Ties the chat streams to the auth lifecycle, mirroring PresenceProvider.
 export function ChatProvider({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user)
   const queryClient = useQueryClient()

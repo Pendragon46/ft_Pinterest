@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next'
 
-// Three staggered dots shown while the other participant is typing. The label
-// is announced to screen readers; the dots themselves are decorative.
 export function TypingIndicator({ name }: { name: string }) {
   const { t } = useTranslation('common')
   return (

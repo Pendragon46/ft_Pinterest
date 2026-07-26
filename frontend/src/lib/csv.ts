@@ -44,7 +44,6 @@ export function toCsv(
   return lines.join('\r\n')
 }
 
-/** Trigger a browser download of `content` as `filename` with the given MIME. */
 export function downloadFile(
   content: string,
   filename: string,

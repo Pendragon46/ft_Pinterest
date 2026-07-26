@@ -7,8 +7,8 @@ export const gdprKeys = {
   export: () => ['gdpr', 'export'] as const,
 }
 
-/** Récupère l'intégralité des données personnelles. Le serveur exclut le
-    mot de passe ; on ne met jamais ce document en cache persistant. */
+/** Le serveur exclut le mot de passe ; on ne met jamais ce document en cache
+    persistant. */
 export async function fetchMyData(): Promise<GdprExport> {
   const { data } = await http.get<GdprExport>('/users/me/export')
   return data
@@ -19,7 +19,6 @@ function exportFilename(username: string, ext: 'json' | 'csv'): string {
   return `atlaas-data-${username}-${date}.${ext}`
 }
 
-/** Déclenche le téléchargement du document complet en JSON. */
 export function downloadExport(data: GdprExport, username: string): void {
   downloadFile(
     JSON.stringify(data, null, 2),
@@ -29,9 +28,9 @@ export function downloadExport(data: GdprExport, username: string): void {
 }
 
 /**
- * Même document, aplati en CSV. Un export RGPD couvre plusieurs catégories
- * (compte, compteurs, œuvres, commentaires, …) : chacune devient un tableau
- * titré, séparé par une ligne vide, dans un seul fichier lisible en tableur.
+ * Un export RGPD couvre plusieurs catégories (compte, compteurs, œuvres,
+ * commentaires, …) : chacune devient un tableau titré, séparé par une ligne
+ * vide, dans un seul fichier lisible en tableur.
  */
 export function downloadExportCsv(data: GdprExport, username: string): void {
   const asRows = (value: unknown): Record<string, unknown>[] =>
@@ -59,8 +58,7 @@ export function downloadExportCsv(data: GdprExport, username: string): void {
   downloadFile(`\uFEFF${csv}`, exportFilename(username, 'csv'), 'text/csv')
 }
 
-/** Supprime définitivement le compte. Irréversible : l'appelant doit avoir
-    obtenu une confirmation explicite. */
+/** Irréversible : l'appelant doit avoir obtenu une confirmation explicite. */
 export async function deleteMyAccount(userId: string): Promise<void> {
   await http.delete(`/users/${userId}`)
 }

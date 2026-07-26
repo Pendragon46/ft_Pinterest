@@ -4,9 +4,6 @@ import { chatKeys, openConversation } from './chat.api'
 import { useChatStore } from './chat.store'
 import type { Conversation } from './chat.types'
 
-// Opens (or creates) the conversation with a user, seeds it into the inbox
-// cache, and surfaces the panel on that thread — shared by the new-message
-// picker and the profile "Message" button.
 export function useStartConversation() {
   const qc = useQueryClient()
   const openThread = useChatStore((s) => s.openThread)

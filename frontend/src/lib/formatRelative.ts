@@ -19,7 +19,6 @@ export function formatTime(iso: string, locale: string): string {
   }).format(new Date(iso))
 }
 
-/** Localized day label for the thread's date separators. */
 export function formatDayLabel(
   iso: string,
   locale: string,

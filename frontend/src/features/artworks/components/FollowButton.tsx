@@ -10,7 +10,6 @@ import { fetchIsFollowing, setFollow, userKeys } from '@/features/users/user.api
 import { useToast } from '@/lib/toast.store'
 
 interface FollowButtonProps {
-  /** Id of the user to follow. */
   userId: string
 }
 
