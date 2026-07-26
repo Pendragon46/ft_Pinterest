@@ -1,3 +1,4 @@
+import { downloadFile, toCsv } from '@/lib/csv'
 import { http } from '@/lib/http'
 
 import type { GdprExport } from './gdpr.types'
@@ -13,24 +14,47 @@ export async function fetchMyData(): Promise<GdprExport> {
   return data
 }
 
-/** Déclenche le téléchargement du fichier JSON. Passe par un Blob plutôt
-    qu'un lien direct : la requête porte le token, un <a href> ne
-    l'enverrait pas. */
-export function downloadExport(data: GdprExport, username: string): void {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: 'application/json',
-  })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
+function exportFilename(username: string, ext: 'json' | 'csv'): string {
   const date = new Date().toISOString().slice(0, 10)
-  link.download = `atlaas-data-${username}-${date}.json`
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  // Libérer l'URL objet : sans ça le Blob reste en mémoire jusqu'au
-  // rechargement de la page.
-  URL.revokeObjectURL(url)
+  return `atlaas-data-${username}-${date}.${ext}`
+}
+
+/** Déclenche le téléchargement du document complet en JSON. */
+export function downloadExport(data: GdprExport, username: string): void {
+  downloadFile(
+    JSON.stringify(data, null, 2),
+    exportFilename(username, 'json'),
+    'application/json',
+  )
+}
+
+/**
+ * Même document, aplati en CSV. Un export RGPD couvre plusieurs catégories
+ * (compte, compteurs, œuvres, commentaires, …) : chacune devient un tableau
+ * titré, séparé par une ligne vide, dans un seul fichier lisible en tableur.
+ */
+export function downloadExportCsv(data: GdprExport, username: string): void {
+  const asRows = (value: unknown): Record<string, unknown>[] =>
+    Array.isArray(value) ? (value as Record<string, unknown>[]) : []
+  const row = (obj: object): Record<string, unknown> =>
+    obj as Record<string, unknown>
+
+  const sections: [string, Record<string, unknown>[]][] = [
+    ['meta', [{ exportedAt: data.exportedAt, notice: data.notice }]],
+    ['account', [row(data.account)]],
+    ['counts', [row(data.counts)]],
+    ['artworks', asRows(data.artworks)],
+    ['comments', asRows(data.comments)],
+    ['likes', asRows(data.likes)],
+    ['following', asRows(data.following)],
+    ['followers', asRows(data.followers)],
+  ]
+
+  const csv = sections
+    .map(([title, rows]) => `${title}\r\n${toCsv(rows)}`)
+    .join('\r\n\r\n')
+
+  downloadFile(csv, exportFilename(username, 'csv'), 'text/csv')
 }
 
 /** Supprime définitivement le compte. Irréversible : l'appelant doit avoir

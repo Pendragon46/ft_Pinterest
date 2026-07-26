@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   AlertTriangle,
+  BarChart3,
   Image as ImageIcon,
   Plus,
   RefreshCw,
@@ -20,13 +21,14 @@ import { useAuthStore } from '@/features/auth/auth.store'
 import { useRole } from '@/features/auth/useRole'
 import { adminKeys, fetchAllUsers, type AdminUserRow } from '@/features/admin/admin.api'
 import { AddUserDialog } from '@/features/admin/AddUserDialog'
+import { AdminAnalytics } from '@/features/admin/AdminAnalytics'
 import { AdminArtworksPanel } from '@/features/admin/AdminArtworksPanel'
 import { AdminStats } from '@/features/admin/AdminStats'
 import { AdminUsersTable } from '@/features/admin/AdminUsersTable'
 import { DeleteUserDialog } from '@/features/admin/DeleteUserDialog'
 import { UserProfileModal } from '@/features/users/UserProfileModal'
 
-type AdminTab = 'users' | 'artworks'
+type AdminTab = 'overview' | 'users' | 'artworks'
 
 export function AdminPage() {
   const { canViewDashboard } = useRole()
@@ -41,7 +43,7 @@ function AdminDashboard() {
   const { t } = useTranslation('common')
   const { canAdmin } = useRole()
   const currentUser = useAuthStore((s) => s.user)
-  const [tab, setTab] = useState<AdminTab>('users')
+  const [tab, setTab] = useState<AdminTab>('overview')
   const [toDelete, setToDelete] = useState<AdminUserRow | null>(null)
   const [addOpen, setAddOpen] = useState(false)
   const [viewUserId, setViewUserId] = useState<string | null>(null)
@@ -57,7 +59,12 @@ function AdminDashboard() {
   const navState = (active: boolean) =>
     active ? 'bg-neutral-900 text-white' : 'text-neutral-600 hover:bg-neutral-100'
 
-  const tabLabel = tab === 'users' ? t('admin.nav.users') : t('admin.nav.artworks')
+  const tabLabel =
+    tab === 'overview'
+      ? t('admin.nav.overview')
+      : tab === 'users'
+        ? t('admin.nav.users')
+        : t('admin.nav.artworks')
 
   return (
     <div className="flex min-h-svh bg-neutral-50">
@@ -75,6 +82,15 @@ function AdminDashboard() {
           <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
             {t('admin.breadcrumb.root')}
           </p>
+          <button
+            type="button"
+            onClick={() => setTab('overview')}
+            aria-current={tab === 'overview' ? 'page' : undefined}
+            className={`${navItem} ${navState(tab === 'overview')}`}
+          >
+            <BarChart3 aria-hidden="true" className="size-4" />
+            {t('admin.nav.overview')}
+          </button>
           <button
             type="button"
             onClick={() => setTab('users')}
@@ -135,6 +151,14 @@ function AdminDashboard() {
         <div className="flex gap-1 border-b border-neutral-200 bg-white px-4 sm:px-6 lg:hidden">
           <button
             type="button"
+            onClick={() => setTab('overview')}
+            aria-current={tab === 'overview' ? 'page' : undefined}
+            className={`-mb-px border-b-2 px-3 py-3 text-sm font-medium ${tab === 'overview' ? 'border-neutral-900 text-neutral-900' : 'border-transparent text-neutral-500'}`}
+          >
+            {t('admin.nav.overview')}
+          </button>
+          <button
+            type="button"
             onClick={() => setTab('users')}
             aria-current={tab === 'users' ? 'page' : undefined}
             className={`-mb-px border-b-2 px-3 py-3 text-sm font-medium ${tab === 'users' ? 'border-neutral-900 text-neutral-900' : 'border-transparent text-neutral-500'}`}
@@ -157,10 +181,18 @@ function AdminDashboard() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <h1 className="font-serif text-3xl text-neutral-900 sm:text-4xl">
-                  {tab === 'users' ? t('admin.title') : t('admin.artworks.title')}
+                  {tab === 'overview'
+                    ? t('admin.analytics.title')
+                    : tab === 'users'
+                      ? t('admin.title')
+                      : t('admin.artworks.title')}
                 </h1>
                 <p className="mt-1 text-neutral-500">
-                  {tab === 'users' ? t('admin.subtitle') : t('admin.artworks.subtitle')}
+                  {tab === 'overview'
+                    ? t('admin.analytics.subtitle')
+                    : tab === 'users'
+                      ? t('admin.subtitle')
+                      : t('admin.artworks.subtitle')}
                 </p>
               </div>
               {tab === 'users' ? (
@@ -183,10 +215,27 @@ function AdminDashboard() {
               ) : null}
             </div>
 
-            {tab === 'users' ? (
+            {tab === 'overview' ? (
               <>
                 <AdminStats users={users} loading={query.isPending} />
-
+                {query.isError ? (
+                  <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-16 text-center">
+                    <span className="flex size-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+                      <AlertTriangle aria-hidden="true" className="size-6" />
+                    </span>
+                    <p className="font-serif text-lg text-neutral-900">{t('admin.error.title')}</p>
+                    <p className="text-sm text-neutral-500">{t('admin.error.body')}</p>
+                    <Button variant="outline" size="sm" onClick={() => void query.refetch()}>
+                      <RefreshCw aria-hidden="true" className="size-4" />
+                      {t('admin.error.retry')}
+                    </Button>
+                  </div>
+                ) : (
+                  <AdminAnalytics users={users} usersLoading={query.isPending} />
+                )}
+              </>
+            ) : tab === 'users' ? (
+              <>
                 {query.isError ? (
                   <div className="flex flex-col items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-16 text-center">
                     <span className="flex size-14 items-center justify-center rounded-full bg-red-50 text-red-600">

@@ -8,8 +8,10 @@ import type { User } from '@/features/auth/auth.types'
 import { useToast } from '@/lib/toast.store'
 
 import { DeleteAccountDialog } from './DeleteAccountDialog'
-import { downloadExport, fetchMyData } from './gdpr.api'
+import { downloadExport, downloadExportCsv, fetchMyData } from './gdpr.api'
 import type { GdprExport } from './gdpr.types'
+
+type ExportFormat = 'json' | 'csv'
 
 // Section RGPD des Réglages : voir un récapitulatif chiffré, télécharger le
 // document complet, et supprimer son compte (zone de danger séparée).
@@ -29,15 +31,20 @@ export function DataPrivacySection({ user }: { user: User }) {
     },
   })
 
-  const handleDownload = () => {
+  const save = (doc: GdprExport, format: ExportFormat) => {
+    if (format === 'csv') downloadExportCsv(doc, user.username)
+    else downloadExport(doc, user.username)
+  }
+
+  const handleDownload = (format: ExportFormat) => {
     // Réutilise le document déjà chargé, sinon le récupère puis télécharge.
     if (data) {
-      downloadExport(data, user.username)
+      save(data, format)
       return
     }
     exportMutation.mutate(undefined, {
       onSuccess: (result) => {
-        downloadExport(result, user.username)
+        save(result, format)
       },
     })
   }
@@ -71,9 +78,25 @@ export function DataPrivacySection({ user }: { user: User }) {
               ? t('gdpr.view.loading')
               : t('gdpr.view.button')}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDownload}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              handleDownload('json')
+            }}
+          >
             <Download aria-hidden="true" className="size-4" />
-            {t('gdpr.download.button')}
+            {t('gdpr.download.json')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              handleDownload('csv')
+            }}
+          >
+            <Download aria-hidden="true" className="size-4" />
+            {t('gdpr.download.csv')}
           </Button>
         </div>
 

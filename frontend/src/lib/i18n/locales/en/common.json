@@ -143,8 +143,9 @@
       "summary": "{{artworks}} artworks · {{comments}} comments · {{likes}} likes · {{following}} following · {{followers}} followers"
     },
     "download": {
-      "button": "Download (JSON)",
-      "hint": "A readable JSON file with everything we store — never your password."
+      "hint": "A readable JSON or CSV file with everything we store — never your password.",
+      "json": "Download (JSON)",
+      "csv": "Download (CSV)"
     },
     "danger": {
       "title": "Delete account",
@@ -178,7 +179,8 @@
     "nav": {
       "users": "Users",
       "artworks": "Artworks",
-      "other": "Other"
+      "other": "Other",
+      "overview": "Overview"
     },
     "title": "Users",
     "subtitle": "Manage users, their roles and access.",
@@ -267,6 +269,19 @@
       "deleteBody": "This is permanent. “{{title}}” and all its likes and comments will be removed.",
       "deleteCancel": "Cancel",
       "deleteConfirm": "Delete"
+    },
+    "analytics": {
+      "title": "Overview",
+      "subtitle": "Platform activity at a glance.",
+      "artworks": "Artworks",
+      "likes": "Total likes",
+      "comments": "Total comments",
+      "userGrowth": "User growth",
+      "contentGrowth": "Content growth",
+      "roles": "Roles",
+      "topCreators": "Top creators",
+      "topTags": "Top tags",
+      "empty": "No data yet"
     }
   },
   "home": {

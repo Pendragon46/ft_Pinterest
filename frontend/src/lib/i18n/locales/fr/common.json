@@ -143,8 +143,9 @@
       "summary": "{{artworks}} œuvres · {{comments}} commentaires · {{likes}} likes · {{following}} abonnements · {{followers}} abonnés"
     },
     "download": {
-      "button": "Télécharger (JSON)",
-      "hint": "Un fichier JSON lisible avec tout ce que nous stockons — jamais votre mot de passe."
+      "hint": "Un fichier JSON ou CSV lisible avec tout ce que nous stockons — jamais votre mot de passe.",
+      "json": "Télécharger (JSON)",
+      "csv": "Télécharger (CSV)"
     },
     "danger": {
       "title": "Supprimer le compte",
@@ -178,7 +179,8 @@
     "nav": {
       "users": "Utilisateurs",
       "artworks": "Œuvres",
-      "other": "Autre"
+      "other": "Autre",
+      "overview": "Vue d'ensemble"
     },
     "title": "Utilisateurs",
     "subtitle": "Gérez les utilisateurs, leurs rôles et leurs accès.",
@@ -267,6 +269,19 @@
       "deleteBody": "Cette action est irréversible. « {{title}} » ainsi que tous ses j'aime et commentaires seront supprimés.",
       "deleteCancel": "Annuler",
       "deleteConfirm": "Supprimer"
+    },
+    "analytics": {
+      "title": "Vue d'ensemble",
+      "subtitle": "L'activité de la plateforme en un coup d'œil.",
+      "artworks": "Œuvres",
+      "likes": "Total des likes",
+      "comments": "Total des commentaires",
+      "userGrowth": "Croissance des membres",
+      "contentGrowth": "Croissance du contenu",
+      "roles": "Rôles",
+      "topCreators": "Meilleurs créateurs",
+      "topTags": "Tags populaires",
+      "empty": "Aucune donnée"
     }
   },
   "home": {
