@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 import { ToastViewport } from '@/components/ui/ToastViewport'
 import { AuthGate } from '@/features/auth/AuthGate'
+import { ChatProvider } from '@/features/chat/ChatProvider'
 import { PresenceProvider } from '@/features/presence/PresenceProvider'
 import { i18n } from '@/lib/i18n'
 
@@ -21,7 +22,9 @@ export function AppProviders({ children }: AppProvidersProps) {
       <I18nextProvider i18n={i18n}>
         <BrowserRouter>
           <AuthGate>
-            <PresenceProvider>{children}</PresenceProvider>
+            <PresenceProvider>
+              <ChatProvider>{children}</ChatProvider>
+            </PresenceProvider>
           </AuthGate>
           <ToastViewport />
         </BrowserRouter>

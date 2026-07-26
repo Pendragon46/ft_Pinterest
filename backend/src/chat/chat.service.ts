@@ -211,6 +211,7 @@ export class ChatService {
     return {
       id: c.id,
       otherUser: other ? other.user : null,
+      otherLastReadAt: other?.lastReadAt ?? null,
       lastMessage: last
         ? {
             senderId: last.senderId,

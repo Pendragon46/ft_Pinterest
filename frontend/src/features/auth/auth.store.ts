@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 
+import { useChatStore } from '@/features/chat/chat.store'
 import { usePresenceStore } from '@/features/presence/presence.store'
 import { disconnectSocket } from '@/features/presence/socket'
 
@@ -25,6 +26,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
     tokenStore.clear()
     disconnectSocket()
     usePresenceStore.getState().clear()
+    useChatStore.getState().reset()
     set({ user: null })
   },
 }))
