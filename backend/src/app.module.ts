@@ -23,8 +23,8 @@ import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { FriendsModule } from './friends/friends.module';
-import { WebsocketGateway } from './websocket/websocket.gateway';
 import { OnlineStatusModule } from './websocket/onlineStatus.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module({
   imports: [
@@ -42,13 +42,13 @@ import { OnlineStatusModule } from './websocket/onlineStatus.module';
     SearchModule,
     FriendsModule,
     OnlineStatusModule,
+    WebsocketModule,
   	MetricsModule],
   controllers: [AppController],
   providers: [
     AppService,
     CloudinaryService,
     HealthService,
-    WebsocketGateway,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

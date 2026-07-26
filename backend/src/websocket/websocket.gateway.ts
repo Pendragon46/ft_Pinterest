@@ -51,23 +51,15 @@ export class WebsocketGateway
     });
   }
 
-  //in frontend, use this code to connect to the websocket server and send the jwt token in the auth header
-  // 	const socket = io("http://localhost:3000", {
-  //   auth: {
-  //     token: jwt
-  //   }
-  // after you use the GetonlineFriends endpoint to get the list of online friends, you can listen for the friendStatusChange event to update the friend status in the UI
-  /*
-in frontend, use this code to listen for the friendStatusChange event and update the friend status in the UI
-socket.on('friendStatusChange', (data) => {
-  console.log(data);
+  /** Emit an event to every open socket of a user (multi-tab). Reuses the
+      presence registry — no Socket.IO rooms. */
+  emitToUser(userId: string, event: string, payload: unknown): void {
+    const socketIds = this.onlineStatusService.getSocketIdsForUser(userId);
+    socketIds?.forEach((socketId) =>
+      this.server.to(socketId).emit(event, payload),
+    );
+  }
 
-  // exemple :
-  // data.userId = "123"
-  // data.status = "online"
-
-  updateFriendStatus(data.userId, data.status);
-});*/
   handleConnection(client: Socket) {
     let token: any;
     try {
@@ -87,9 +79,10 @@ socket.on('friendStatusChange', (data) => {
     this.NotifyFriendsAboutStatusChange(token.sub, 'online');
   }
 
-  async handleDisconnect(client: any) {
-    console.log(`Client disconnected: ${client.id}`);
-    this.onlineStatusService.removeOnlineUser(client.data.userId, client.id);
-    this.NotifyFriendsAboutStatusChange(client.data.userId, 'offline');
+  async handleDisconnect(client: Socket) {
+    const userId = client.data.userId as string | undefined;
+    if (!userId) return; // unauthenticated socket: nothing was registered
+    this.onlineStatusService.removeOnlineUser(userId, client.id);
+    this.NotifyFriendsAboutStatusChange(userId, 'offline');
   }
 }
