@@ -1,4 +1,5 @@
 import { memo, useRef } from 'react'
+import { Video } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -96,6 +97,16 @@ export const ArtworkCard = memo(function ArtworkCard({
             className="pointer-events-none absolute inset-0 size-full object-cover"
           />
         )
+      ) : null}
+
+      {artwork.mediaType === 'video' ? (
+        <span
+          role="img"
+          aria-label={t('create.videoBadge')}
+          className="absolute end-3 top-3 flex items-center justify-center rounded-full bg-neutral-900/60 p-1.5 text-white backdrop-blur"
+        >
+          <Video aria-hidden="true" className="size-4" />
+        </span>
       ) : null}
 
       {/* Title reveals on hover/focus; pointer-events-none so it never intercepts the click. */}
