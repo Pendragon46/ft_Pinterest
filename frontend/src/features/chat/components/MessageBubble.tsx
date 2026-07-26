@@ -25,12 +25,11 @@ export function MessageBubble({ message, mine, senderName }: Props) {
       {message.artwork ? (
         <SharedArtworkCard artwork={message.artwork} mine={mine} />
       ) : link ? (
-        <LinkedArtworkCard
-          id={link.id}
-          mine={mine}
-          rest={link.rest}
-          fallback={message.content ?? ''}
-        />
+        <>
+          {link.before ? <MessageText mine={mine}>{link.before}</MessageText> : null}
+          <LinkedArtworkCard id={link.id} mine={mine} fallback={link.url} />
+          {link.after ? <MessageText mine={mine}>{link.after}</MessageText> : null}
+        </>
       ) : (
         <MessageText mine={mine}>{message.content}</MessageText>
       )}
