@@ -1,7 +1,6 @@
 import { memo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
-import { Sparkles } from 'lucide-react'
 
 import type { CanvasArtwork } from '../artwork.types'
 
@@ -38,19 +37,10 @@ export const ArtworkCard = memo(function ArtworkCard({
     }
   }
 
-  // Fold the kind into the accessible name: the Link's aria-label overrides its
-  // descendants, so the Sponsor/AI badges are otherwise never announced (§2.1).
-  const baseLabel = t('artwork.openAria', {
+  const ariaLabel = t('artwork.openAria', {
     title: artwork.title,
     author: artwork.author.username,
   })
-  const kindLabel =
-    artwork.kind === 'sponsor'
-      ? t('artwork.badgeSponsor')
-      : artwork.kind === 'ai'
-        ? t('artwork.badgeAi')
-        : ''
-  const ariaLabel = kindLabel ? `${baseLabel}, ${kindLabel}` : baseLabel
 
   // Modal-route pattern: stash the current page so detail opens as an overlay;
   // a refresh or shared link lands on the standalone page instead.
@@ -106,22 +96,6 @@ export const ArtworkCard = memo(function ArtworkCard({
             className="pointer-events-none absolute inset-0 size-full object-cover"
           />
         )
-      ) : null}
-
-      {/* Badges use logical sides so they swap in RTL. */}
-      {artwork.kind === 'sponsor' ? (
-        <span className="absolute start-3 top-3 rounded-full bg-black/25 px-3 py-1 text-xs font-medium text-white">
-          {t('artwork.badgeSponsor')}
-        </span>
-      ) : null}
-      {artwork.kind === 'ai' ? (
-        <span
-          role="img"
-          aria-label={t('artwork.badgeAi')}
-          className="absolute end-3 top-3 flex size-8 items-center justify-center rounded-full bg-black/20 text-white"
-        >
-          <Sparkles aria-hidden="true" className="size-4" />
-        </span>
       ) : null}
 
       {/* Title reveals on hover/focus; pointer-events-none so it never intercepts the click. */}
