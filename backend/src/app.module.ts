@@ -25,6 +25,7 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { FriendsModule } from './friends/friends.module';
 import { OnlineStatusModule } from './websocket/onlineStatus.module';
 import { WebsocketModule } from './websocket/websocket.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { WebsocketModule } from './websocket/websocket.module';
     FriendsModule,
     OnlineStatusModule,
     WebsocketModule,
+    ChatModule,
   	MetricsModule],
   controllers: [AppController],
   providers: [

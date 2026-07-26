@@ -211,4 +211,18 @@ export class FriendsService {
     );
     return onlineFriends;
   }
+
+  // True when a and b follow each other — the chat access rule (CHAT_SPEC D1).
+  // Two targeted lookups rather than getFriends(), which loads the whole list.
+  async areMutuals(a: string, b: string): Promise<boolean> {
+    const [ab, ba] = await Promise.all([
+      this.Prisma.follow.findUnique({
+        where: { followerId_followingId: { followerId: a, followingId: b } },
+      }),
+      this.Prisma.follow.findUnique({
+        where: { followerId_followingId: { followerId: b, followingId: a } },
+      }),
+    ]);
+    return ab !== null && ba !== null;
+  }
 }
