@@ -338,6 +338,127 @@ async function publishArtwork(token, userId, filePath, meta) {
   })
 }
 
+// ── Graphe social (suivis + messagerie) ─────────────────────────────────
+
+const authHeader = (token) => ({ Authorization: `Bearer ${token}` })
+const jsonHeader = (token) => ({ ...authHeader(token), 'Content-Type': 'application/json' })
+
+/** Suit un utilisateur ; avale l'erreur « déjà suivi » pour rester idempotent. */
+async function follow(token, targetId) {
+  try {
+    await apiJson(`/users/${targetId}/follow`, { method: 'POST', headers: authHeader(token) })
+    return true
+  } catch {
+    return false
+  }
+}
+
+async function fetchFirstArtworkId(userId, token) {
+  try {
+    const list = await apiJson(`/users/${userId}/artworks`, { headers: authHeader(token) })
+    return Array.isArray(list) && list[0]?.id ? list[0].id : null
+  } catch {
+    return null
+  }
+}
+
+/** Ouvre (ou retrouve) la conversation avec un mutuel. 403 si le lien n'est pas réciproque. */
+async function openConversation(token, otherId) {
+  return apiJson('/conversations', {
+    method: 'POST',
+    headers: jsonHeader(token),
+    body: JSON.stringify({ userId: otherId }),
+  })
+}
+
+async function conversationIsEmpty(token, convId) {
+  try {
+    const page = await apiJson(`/conversations/${convId}/messages?page=1&limit=1`, {
+      headers: authHeader(token),
+    })
+    return Array.isArray(page?.items) ? page.items.length === 0 : true
+  } catch {
+    return false
+  }
+}
+
+async function sendChatMessage(token, convId, payload) {
+  return apiJson(`/conversations/${convId}/messages`, {
+    method: 'POST',
+    headers: jsonHeader(token),
+    body: JSON.stringify(payload),
+  })
+}
+
+// Courtes conversations scénarisées pour animer la messagerie de démonstration.
+const CHAT_SCRIPTS = [
+  [
+    "Salut ! J'adore ta dernière série, la lumière est superbe.",
+    'Merci beaucoup 🙏 Un seul réflecteur, tout en douceur.',
+    'Ça se voit, très maîtrisé. On échange nos réglages un de ces jours ?',
+    "Avec plaisir, je t'envoie ça ce week-end.",
+  ],
+  [
+    'Hello ! Dispo pour un shooting collaboratif le mois prochain ?',
+    'Carrément, tu imagines quelle direction ?',
+    'Portrait éditorial, palette sobre. Je te partage une réf.',
+  ],
+  [
+    "Ton travail m'inspire pas mal en ce moment 👌",
+    'Trop gentil ! Le tien aussi, franchement.',
+  ],
+]
+
+// Tisse un petit graphe : anneau unidirectionnel (variété du feed) + paires
+// consécutives mutuelles, puis quelques conversations de démo sur ces paires.
+// Idempotent : suivis « déjà faits » ignorés, messages seulement si le fil est vide.
+async function seedSocialGraph(sessions) {
+  const live = sessions.filter(Boolean)
+  if (live.length < 2) return
+  console.log(c.bold('\nGraphe social\n'))
+
+  let follows = 0
+  for (let i = 0; i < live.length; i += 1) {
+    const next = live[(i + 1) % live.length]
+    if (next.id !== live[i].id && (await follow(live[i].token, next.id))) follows += 1
+  }
+  const pairs = []
+  for (let i = 0; i + 1 < live.length; i += 2) pairs.push([live[i], live[i + 1]])
+  for (const [a, b] of pairs) {
+    if (await follow(a.token, b.id)) follows += 1
+    if (await follow(b.token, a.id)) follows += 1
+  }
+  console.log(`  ${c.green(`${follows} suivis`)} ${c.dim(`(${pairs.length} paires mutuelles)`)}`)
+
+  let convos = 0
+  for (let p = 0; p < Math.min(pairs.length, CHAT_SCRIPTS.length); p += 1) {
+    const [a, b] = pairs[p]
+    const script = CHAT_SCRIPTS[p]
+    try {
+      const conv = await openConversation(a.token, b.id)
+      if (!conv?.id) continue
+      if (!(await conversationIsEmpty(a.token, conv.id))) {
+        console.log(`  ${c.dim('•')} ${a.username} ↔ ${b.username} — déjà des messages`)
+        continue
+      }
+      for (let m = 0; m < script.length; m += 1) {
+        const speaker = m % 2 === 0 ? a : b
+        await sendChatMessage(speaker.token, conv.id, { content: script[m] })
+        await sleep(120)
+      }
+      const artworkId = await fetchFirstArtworkId(b.id, b.token)
+      if (artworkId) await sendChatMessage(b.token, conv.id, { artworkId })
+      convos += 1
+      console.log(
+        `  ${c.green('✓')} ${a.username} ↔ ${b.username} ${c.dim(`(${script.length} msg${artworkId ? ' + 1 œuvre' : ''})`)}`,
+      )
+    } catch (error) {
+      console.log(`  ${c.red('✗')} ${a.username} ↔ ${b.username} — ${error.message}`)
+    }
+  }
+  console.log(`  ${c.green(`${convos} conversation(s) de démo`)}`)
+}
+
 // ── Artefacts persistés ─────────────────────────────────────────────────
 
 /** Tâche 2 — credentials. Réutilise le fichier existant sauf --reset. */
@@ -552,6 +673,7 @@ function parseArgs(argv) {
     dryRun: argv.includes('--dry-run'),
     resetCredentials: argv.includes('--reset-credentials'),
     resetManifest: argv.includes('--reset-manifest') || argv.includes('--reset-credentials'),
+    social: !argv.includes('--no-social'),
     limit: Infinity,
     only: null,
     authors: 6,
@@ -673,6 +795,15 @@ async function main() {
     }
 
     if (i < manifest.length - 1) await sleep(THROTTLE_MS)
+  }
+
+  // 5.5 Graphe social : suivis mutuels + conversations de démo (chat).
+  if (args.social) {
+    try {
+      await seedSocialGraph(sessions)
+    } catch (error) {
+      console.log(c.red(`  Graphe social ignoré — ${error.message}`))
+    }
   }
 
   // 6. Comptage final par compte (pour le README).
