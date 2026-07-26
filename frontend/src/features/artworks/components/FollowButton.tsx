@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next'
 
 import { artworkKeys } from '@/features/artworks/artwork.api'
 import { useAuthStore } from '@/features/auth/auth.store'
-import { chatKeys } from '@/features/chat/chat.api'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { chatKeys } from '@/features/chat/chat.api'
 import { fetchIsFollowing, setFollow, userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
 
 interface FollowButtonProps {
-  /** The user to follow (mock: the artwork's author). */
+  /** Id of the user to follow. */
   userId: string
 }
 

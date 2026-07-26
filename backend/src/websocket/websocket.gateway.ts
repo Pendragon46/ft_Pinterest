@@ -1,8 +1,8 @@
 import {WebSocketGateway,WebSocketServer,OnGatewayConnection,OnGatewayDisconnect,SubscribeMessage,MessageBody,ConnectedSocket,} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { OnlineStatusService } from './onlineStatus.service';
 import { JwtService } from '@nestjs/jwt';
 import { FriendsService } from 'src/friends/friends.service';
+import { OnlineStatusService } from './onlineStatus.service';
 
 @WebSocketGateway({
   cors: {
@@ -30,7 +30,7 @@ export class WebsocketGateway
     return token;
   }
 
-  async NotifyFriendsAboutStatusChange(
+  async notifyFriendsAboutStatusChange(
     userId: string,
     status: 'online' | 'offline',
   ) {
@@ -92,13 +92,13 @@ export class WebsocketGateway
       return;
     }
     this.onlineStatusService.addOnlineUser(client.id, token.sub);
-    this.NotifyFriendsAboutStatusChange(token.sub, 'online');
+    this.notifyFriendsAboutStatusChange(token.sub, 'online');
   }
 
   async handleDisconnect(client: Socket) {
     const userId = client.data.userId as string | undefined;
     if (!userId) return; // unauthenticated socket: nothing was registered
     this.onlineStatusService.removeOnlineUser(userId, client.id);
-    this.NotifyFriendsAboutStatusChange(userId, 'offline');
+    this.notifyFriendsAboutStatusChange(userId, 'offline');
   }
 }

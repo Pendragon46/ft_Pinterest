@@ -39,13 +39,12 @@ export async function fetchMessages(
 
 export async function sendMessage(input: {
   conversationId: string
-  content?: string
-  artworkId?: string
+  content: string
 }): Promise<ChatMessage> {
-  const { conversationId, content, artworkId } = input
+  const { conversationId, content } = input
   const { data } = await http.post<ChatMessage>(
     `/conversations/${conversationId}/messages`,
-    { ...(content ? { content } : {}), ...(artworkId ? { artworkId } : {}) },
+    { content },
   )
   return data
 }
