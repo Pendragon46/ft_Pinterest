@@ -5,6 +5,7 @@ import { ArrowUp } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { useAuthStore } from '@/features/auth/auth.store'
+import { getSocket } from '@/features/presence/socket'
 import { useToast } from '@/lib/toast.store'
 
 import { chatKeys, sendMessage } from '../chat.api'
@@ -16,7 +17,13 @@ interface Context {
   tempId: string
 }
 
-export function MessageComposer({ conversationId }: { conversationId: string }) {
+export function MessageComposer({
+  conversationId,
+  otherUserId,
+}: {
+  conversationId: string
+  otherUserId?: string
+}) {
   const { t } = useTranslation('common')
   const qc = useQueryClient()
   const toast = useToast()
@@ -31,6 +38,17 @@ export function MessageComposer({ conversationId }: { conversationId: string }) 
       isMountedRef.current = false
     }
   }, [])
+
+  // Tell the other participant we're typing, at most every ~1.5s (their client
+  // clears the flag on its own if the keystrokes stop).
+  const lastTypingRef = useRef(0)
+  const notifyTyping = () => {
+    if (!otherUserId) return
+    const now = Date.now()
+    if (now - lastTypingRef.current < 1500) return
+    lastTypingRef.current = now
+    getSocket()?.emit('chat:typing', { conversationId, toUserId: otherUserId })
+  }
 
   const mutation = useMutation<ChatMessage, Error, string, Context>({
     mutationFn: (content) => sendMessage({ conversationId, content }),
@@ -109,7 +127,10 @@ export function MessageComposer({ conversationId }: { conversationId: string }) 
         id="chat-composer"
         rows={1}
         value={draft}
-        onChange={(e) => setDraft(conversationId, e.target.value)}
+        onChange={(e) => {
+          setDraft(conversationId, e.target.value)
+          if (e.target.value.trim()) notifyTyping()
+        }}
         onKeyDown={onKeyDown}
         placeholder={t('chat.composerPlaceholder')}
         className="max-h-28 min-h-[2.5rem] flex-1 resize-none rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus-visible:border-neutral-400 focus-visible:ring-2 focus-visible:ring-neutral-200"

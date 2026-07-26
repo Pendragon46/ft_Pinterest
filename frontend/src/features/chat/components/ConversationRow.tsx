@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { formatRelative } from '@/lib/formatRelative'
 
+import { useChatStore } from '../chat.store'
 import type { Conversation } from '../chat.types'
 import { ChatAvatar } from './ChatAvatar'
 
@@ -15,6 +16,7 @@ interface Props {
 export function ConversationRow({ conversation: c, active, onClick }: Props) {
   const { t, i18n } = useTranslation('common')
   const myId = useAuthStore((s) => s.user?.id)
+  const typing = useChatStore((s) => s.typing[c.id] ?? false)
   const other = c.otherUser
   const name = other ? (other.fullname ?? other.username) : ''
   const unread = c.unreadCount > 0
@@ -61,9 +63,15 @@ export function ConversationRow({ conversation: c, active, onClick }: Props) {
           </span>
           <span className="mt-0.5 flex items-center justify-between gap-2">
             <span
-              className={`truncate text-sm ${unread ? 'text-neutral-700' : 'text-neutral-500'}`}
+              className={`truncate text-sm ${
+                typing
+                  ? 'text-green-600'
+                  : unread
+                    ? 'text-neutral-700'
+                    : 'text-neutral-500'
+              }`}
             >
-              {preview}
+              {typing ? t('chat.typing', { name }) : preview}
             </span>
             {unread ? (
               <span

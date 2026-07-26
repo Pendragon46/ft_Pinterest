@@ -1,4 +1,4 @@
-import {WebSocketGateway,WebSocketServer,OnGatewayConnection,OnGatewayDisconnect,} from '@nestjs/websockets';
+import {WebSocketGateway,WebSocketServer,OnGatewayConnection,OnGatewayDisconnect,SubscribeMessage,MessageBody,ConnectedSocket,} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { OnlineStatusService } from './onlineStatus.service';
 import { JwtService } from '@nestjs/jwt';
@@ -58,6 +58,22 @@ export class WebsocketGateway
     socketIds?.forEach((socketId) =>
       this.server.to(socketId).emit(event, payload),
     );
+  }
+
+  /** Ephemeral "typing" relay for the 1-1 chat. The sender is taken from the
+      authenticated socket (never trusted from the payload); the recipient is
+      the conversation's other participant, known to the client. */
+  @SubscribeMessage('chat:typing')
+  handleTyping(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { conversationId?: string; toUserId?: string },
+  ): void {
+    const fromUserId = client.data.userId as string | undefined;
+    if (!fromUserId || !data?.conversationId || !data?.toUserId) return;
+    this.emitToUser(data.toUserId, 'chat:typing', {
+      conversationId: data.conversationId,
+      fromUserId,
+    });
   }
 
   handleConnection(client: Socket) {

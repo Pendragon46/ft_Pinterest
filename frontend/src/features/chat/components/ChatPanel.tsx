@@ -40,9 +40,15 @@ export function ChatPanel({
   const backToList = useChatStore((s) => s.backToList)
   const openNewMessage = useChatStore((s) => s.openNewMessage)
 
+  // Key each view so switching remounts it and replays the page-turn animation.
+  const anim = 'animate-chat-view motion-reduce:animate-none'
+
   if (view === 'thread' && activeId) {
     return (
-      <div className="relative flex min-h-0 flex-1 flex-col">
+      <div
+        key={`thread:${activeId}`}
+        className={`relative flex min-h-0 flex-1 flex-col ${anim}`}
+      >
         <CloseButton onClick={closePanel} className="absolute end-2 top-2 z-10" />
         <ConversationThread conversationId={activeId} onBack={backToList} />
       </div>
@@ -51,7 +57,7 @@ export function ChatPanel({
 
   if (view === 'new') {
     return (
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div key="new" className={`flex min-h-0 flex-1 flex-col ${anim}`}>
         <div className="flex items-center gap-2 px-3 pb-1 pt-3">
           <button
             type="button"
@@ -75,7 +81,7 @@ export function ChatPanel({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div key="list" className={`flex min-h-0 flex-1 flex-col ${anim}`}>
       <div className="flex items-center justify-between px-4 pb-1 pt-4">
         <h2 id="chat-title" className="font-serif text-2xl text-neutral-900">
           {t('chat.title')}

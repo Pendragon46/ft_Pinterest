@@ -18,6 +18,10 @@ interface ReadEvent {
   userId: string
   readAt: string
 }
+interface TypingEvent {
+  conversationId: string
+  fromUserId: string
+}
 
 // Ties the chat streams to the auth lifecycle, mirroring PresenceProvider.
 export function ChatProvider({ children }: { children: ReactNode }) {
@@ -96,13 +100,33 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       )
     }
 
+    // "Typing" is ephemeral: flag the conversation, then clear it if no keystroke
+    // refreshes it within a short window (the sender re-emits while typing).
+    const typingTimers = new Map<string, ReturnType<typeof setTimeout>>()
+    const onTyping = ({ conversationId, fromUserId }: TypingEvent) => {
+      if (fromUserId === myId) return
+      useChatStore.getState().setTyping(conversationId, true)
+      const existing = typingTimers.get(conversationId)
+      if (existing) clearTimeout(existing)
+      typingTimers.set(
+        conversationId,
+        setTimeout(() => {
+          useChatStore.getState().setTyping(conversationId, false)
+          typingTimers.delete(conversationId)
+        }, 3500),
+      )
+    }
+
     socket.on('message:new', onNewMessage)
     socket.on('conversation:read', onRead)
+    socket.on('chat:typing', onTyping)
     socket.on('connect', seed)
     return () => {
       socket.off('message:new', onNewMessage)
       socket.off('conversation:read', onRead)
+      socket.off('chat:typing', onTyping)
       socket.off('connect', seed)
+      typingTimers.forEach((timer) => clearTimeout(timer))
     }
   }, [user, queryClient])
 

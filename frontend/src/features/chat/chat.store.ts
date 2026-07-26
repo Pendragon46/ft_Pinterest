@@ -6,6 +6,8 @@ interface ChatState {
   activeId: string | null
   /** Draft per conversation: survives closing the panel. */
   drafts: Record<string, string>
+  /** Transient "the other person is typing" flag, per conversation. */
+  typing: Record<string, boolean>
 
   togglePanel: () => void
   openPanel: () => void
@@ -14,6 +16,7 @@ interface ChatState {
   backToList: () => void
   openNewMessage: () => void
   setDraft: (conversationId: string, text: string) => void
+  setTyping: (conversationId: string, value: boolean) => void
   reset: () => void
 }
 
@@ -23,6 +26,7 @@ export const useChatStore = create<ChatState>()((set) => ({
   view: 'list',
   activeId: null,
   drafts: {},
+  typing: {},
 
   togglePanel: () => set((s) => ({ open: !s.open, view: s.open ? s.view : 'list' })),
   openPanel: () => set({ open: true, view: 'list' }),
@@ -33,5 +37,8 @@ export const useChatStore = create<ChatState>()((set) => ({
   openNewMessage: () => set({ view: 'new' }),
   setDraft: (conversationId, text) =>
     set((s) => ({ drafts: { ...s.drafts, [conversationId]: text } })),
-  reset: () => set({ open: false, view: 'list', activeId: null, drafts: {} }),
+  setTyping: (conversationId, value) =>
+    set((s) => ({ typing: { ...s.typing, [conversationId]: value } })),
+  reset: () =>
+    set({ open: false, view: 'list', activeId: null, drafts: {}, typing: {} }),
 }))

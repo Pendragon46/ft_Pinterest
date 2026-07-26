@@ -15,10 +15,12 @@ import {
   fetchMessages,
   markRead,
 } from '../chat.api'
+import { useChatStore } from '../chat.store'
 import { ChatAvatar } from './ChatAvatar'
 import { DateSeparator } from './DateSeparator'
 import { MessageBubble } from './MessageBubble'
 import { MessageComposer } from './MessageComposer'
+import { TypingIndicator } from './TypingIndicator'
 
 interface Props {
   conversationId: string
@@ -40,6 +42,7 @@ export function ConversationThread({ conversationId, onBack }: Props) {
   const other = conversation?.otherUser ?? null
   const otherName = other ? (other.fullname ?? other.username) : ''
   const online = useIsOnline(other?.id ?? '')
+  const isTyping = useChatStore((s) => s.typing[conversationId] ?? false)
 
   const messagesQuery = useInfiniteQuery({
     queryKey: chatKeys.messages(conversationId),
@@ -69,7 +72,7 @@ export function ConversationThread({ conversationId, onBack }: Props) {
   useLayoutEffect(() => {
     const el = scrollRef.current
     if (el && stickBottomRef.current) el.scrollTop = el.scrollHeight
-  }, [ordered.length])
+  }, [ordered.length, isTyping])
 
   const lastMine = [...ordered].reverse().find((m) => m.senderId === myId)
   const showRead =
@@ -168,6 +171,8 @@ export function ConversationThread({ conversationId, onBack }: Props) {
           </ul>
         )}
 
+        {isTyping ? <TypingIndicator name={otherName} /> : null}
+
         {showRead && conversation?.otherLastReadAt ? (
           <p className="mt-1 text-end text-xs text-neutral-400">
             {t('chat.readAt', {
@@ -177,7 +182,7 @@ export function ConversationThread({ conversationId, onBack }: Props) {
         ) : null}
       </div>
 
-      <MessageComposer conversationId={conversationId} />
+      <MessageComposer conversationId={conversationId} otherUserId={other?.id} />
     </div>
   )
 }

@@ -8,7 +8,12 @@ import { useUnreadTotal } from '../chat.api'
 import { useChatStore } from '../chat.store'
 import { ChatPanel } from './ChatPanel'
 
-export function MessagesButton() {
+export function MessagesButton({
+  placement = 'top',
+}: {
+  /** Where the trigger sits, so the panel opens away from that edge. */
+  placement?: 'top' | 'bottom'
+}) {
   const { t } = useTranslation('common')
   const user = useAuthStore((s) => s.user)
   const open = useChatStore((s) => s.open)
@@ -78,7 +83,11 @@ export function MessagesButton() {
           id="chat-panel"
           role="dialog"
           aria-labelledby="chat-title"
-          className="fixed inset-0 z-30 flex flex-col overflow-hidden border-neutral-200 bg-white/95 shadow-xl backdrop-blur animate-reveal motion-reduce:animate-none sm:absolute sm:inset-auto sm:end-0 sm:top-full sm:mt-2 sm:max-h-[calc(100svh-5rem)] sm:w-[26rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:border"
+          className={`fixed inset-0 z-30 flex flex-col overflow-hidden border-neutral-200 bg-white/95 shadow-xl backdrop-blur animate-reveal motion-reduce:animate-none sm:absolute sm:inset-auto sm:end-0 sm:h-[34rem] sm:max-h-[calc(100dvh-5rem)] sm:w-[26rem] sm:max-w-[calc(100vw-2rem)] sm:rounded-2xl sm:border ${
+            placement === 'bottom'
+              ? 'sm:bottom-full sm:mb-2'
+              : 'sm:top-full sm:mt-2'
+          }`}
         >
           <ChatPanel searchRef={searchRef} />
         </div>

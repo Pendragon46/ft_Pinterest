@@ -57,7 +57,8 @@
     "viewProfile": "Voir le profil de {{name}}",
     "sendByMessage": "Envoyer par message",
     "sentToast": "Envoyé à {{name}}",
-    "message": "Message"
+    "message": "Message",
+    "typing": "{{name}} écrit…"
   },
   "language": {
     "label": "Langue"
