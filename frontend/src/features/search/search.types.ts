@@ -34,6 +34,8 @@ export interface Suggestion {
   /** creator → shown as-is (mock data). */
   username?: string
   handle?: string
+  /** creator → the backend user id, used to open their universe. */
+  userId?: string
   /** Illustrative trailing crumbs shown after the label (§4.3), e.g. `['mobile']`. */
   path?: string[]
 }

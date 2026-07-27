@@ -38,29 +38,19 @@ export class FollowService {
     });
   }
 
+  // Relations inversées dans le schéma : user.followers = comptes suivis, user.following = abonnés.
   async getFollowers(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      include: { followers: true },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    return user.followers;
-  }
-
-  async getFollowingcount(id: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: id },
       include: { following: true },
     });
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user.following.length;
+    return user.following;
   }
 
-  async getFollowerscount(id: string) {
+  async getFollowingcount(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
       include: { followers: true },
@@ -71,7 +61,7 @@ export class FollowService {
     return user.followers.length;
   }
 
-  async getFollowing(id: string) {
+  async getFollowerscount(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
       include: { following: true },
@@ -79,7 +69,18 @@ export class FollowService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user.following;
+    return user.following.length;
+  }
+
+  async getFollowing(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: id },
+      include: { followers: true },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user.followers;
   }
 
   async unfollow(currentuser: string, target: string) {

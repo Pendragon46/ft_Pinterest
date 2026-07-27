@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateRolesDto } from './dto/update-roles.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum';
@@ -30,7 +31,15 @@ export class UsersController {
     return this.usersService.getCurrentUser(req.user.id);
   }
 
+  // Avant @Get(':id') pour que "me/export" ne soit pas pris pour un id.
+  @Get('me/export')
+  exportMyData(@Req() req) {
+    return this.usersService.exportUserData(req.user.id);
+  }
+
   @Get()
+  @Roles(Role.admin)
+  @UseGuards(RolesGuard)
   findAll() {
     return this.usersService.findAll();
   }
@@ -72,8 +81,12 @@ export class UsersController {
   @Patch(':id/roles')
   @Roles(Role.admin)
   @UseGuards(RolesGuard)
-  updateRoles(@Param('id') id: string, @Body() data: { role: Role }) {
-    return this.usersService.updateRoles(id, data.role);
+  updateRoles(
+    @Param('id') id: string,
+    @Body() data: UpdateRolesDto,
+    @Req() req,
+  ) {
+    return this.usersService.updateRoles(id, data.role, req.user.id);
   }
 
   @Delete(':id')

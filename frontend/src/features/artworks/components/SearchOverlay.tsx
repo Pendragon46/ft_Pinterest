@@ -4,6 +4,7 @@ import type { FormEvent, KeyboardEvent, RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { OnlineDot } from '@/components/ui/OnlineDot'
 import {
   fetchContextualTags,
   fetchSuggestions,
@@ -18,9 +19,13 @@ interface SearchOverlayProps {
   inputRef: RefObject<HTMLInputElement | null>
   /** The active niche (drives the title + pre-fill), or null at home. */
   niche: Niche | null
+  /** The active creator universe (drives the title), or null. */
+  creator?: { id: string; name: string } | null
   /** Submit a resolved term (Enter / Go / tag / suggestion) — same path (§4.5). */
   onSubmit?: (term: string) => void
-  /** Clearing the bar while in a niche returns to the global map (§6.4). */
+  /** Open a creator's universe when their suggestion is picked. */
+  onEnterCreator?: (userId: string) => void
+  /** Clearing the bar while in a niche/creator returns to the global map (§6.4). */
   onExit?: () => void
 }
 
@@ -30,7 +35,9 @@ interface SearchOverlayProps {
 export function SearchOverlay({
   inputRef,
   niche,
+  creator,
   onSubmit,
+  onEnterCreator,
   onExit,
 }: SearchOverlayProps) {
   const { t } = useTranslation('common')
@@ -96,9 +103,20 @@ export function SearchOverlay({
     close()
   }
 
+  // A creator suggestion opens their universe; everything else resolves to a niche.
+  const pick = (s: Suggestion) => {
+    if (s.kind === 'creator' && s.userId) {
+      recordSearch(s.term)
+      onEnterCreator?.(s.userId)
+      close()
+      return
+    }
+    submit(s.term)
+  }
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (activeIndex >= 0) submit(flat[activeIndex].term)
+    if (activeIndex >= 0) pick(flat[activeIndex])
     else submit(query)
   }
 
@@ -124,13 +142,17 @@ export function SearchOverlay({
       ? t(`category.${s.categoryKey}`)
       : (s.username ?? s.term)
 
-  // Home tagline, or the niche's "Exploring {niche} Universe" (§5.2). Two lines,
-  // "\n"-separated, so HeroTitle types across them.
-  const titleText = niche
-    ? `${t('search.exploringTitle1')}\n${t('search.exploringTitle2', {
-        niche: t(`category.${niche.slug}`),
+  // Home tagline, a niche's "Exploring {niche} Universe", or a creator's
+  // "Exploring {Name}'s Universe". Two "\n"-separated lines for HeroTitle.
+  const titleText = creator
+    ? `${t('search.exploringTitle1')}\n${t('search.creatorUniverse', {
+        name: creator.name,
       })}`
-    : `${t('home.heroLine1')}\n${t('home.heroLine2')}`
+    : niche
+      ? `${t('search.exploringTitle1')}\n${t('search.exploringTitle2', {
+          niche: t(`category.${niche.slug}`),
+        })}`
+      : `${t('home.heroLine1')}\n${t('home.heroLine2')}`
 
   return (
     <section className="pointer-events-auto absolute left-0 top-0 flex w-[min(480px,88vw)] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-6 text-center">
@@ -153,8 +175,8 @@ export function SearchOverlay({
               const value = event.target.value
               setQuery(value)
               setHighlight(-1)
-              // Emptying the bar while in a niche returns to the global map (§6.4).
-              if (niche && value.trim() === '') onExit?.()
+              // Emptying the bar while in a niche/creator returns to the map (§6.4).
+              if ((niche || creator) && value.trim() === '') onExit?.()
             }}
             onFocus={() => {
               setActive(true)
@@ -179,7 +201,7 @@ export function SearchOverlay({
           </kbd>
           <button
             type="submit"
-            className="rounded-full bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            className="rounded-full cursor-pointer bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
           >
             {t('home.searchAction')}
           </button>
@@ -204,7 +226,7 @@ export function SearchOverlay({
                     highlight={activeIndex}
                     labelOf={suggestionLabel}
                     onHover={setHighlight}
-                    onPick={submit}
+                    onPick={pick}
                   />
                 ) : null}
                 {groups.creators.length > 0 ? (
@@ -215,7 +237,7 @@ export function SearchOverlay({
                     highlight={activeIndex}
                     labelOf={suggestionLabel}
                     onHover={setHighlight}
-                    onPick={submit}
+                    onPick={pick}
                   />
                 ) : null}
               </ul>
@@ -265,7 +287,7 @@ interface SuggestionGroupProps {
   highlight: number
   labelOf: (s: Suggestion) => string
   onHover: (index: number) => void
-  onPick: (term: string) => void
+  onPick: (item: Suggestion) => void
 }
 
 // One labelled category of rows, each with a micro-preview (§4.1, §4.2).
@@ -298,19 +320,22 @@ function SuggestionGroup({
                   onHover(index)
                 }}
                 onClick={() => {
-                  onPick(item.term)
+                  onPick(item)
                 }}
                 className={`flex min-h-11 w-full items-center gap-3 px-4 py-2 text-start transition-colors motion-reduce:transition-none ${
                   isActive ? 'bg-neutral-100' : 'hover:bg-neutral-50'
                 }`}
               >
                 {item.kind === 'creator' ? (
-                  <span
-                    aria-hidden="true"
-                    style={{ backgroundColor: item.previews[0] }}
-                    className="flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                  >
-                    {labelOf(item).charAt(0).toUpperCase()}
+                  <span className="relative shrink-0">
+                    <span
+                      aria-hidden="true"
+                      style={{ backgroundColor: item.previews[0] }}
+                      className="flex size-7 items-center justify-center rounded-full text-xs font-semibold text-white"
+                    >
+                      {labelOf(item).charAt(0).toUpperCase()}
+                    </span>
+                    {item.userId ? <OnlineDot userId={item.userId} /> : null}
                   </span>
                 ) : (
                   <span aria-hidden="true" className="flex shrink-0 gap-0.5">

@@ -28,6 +28,11 @@ export class CommentService {
         user: { connect: { id: userId } },
         content: comment,
       },
+      include: {
+        user: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+      },
     });
   }
 
@@ -43,7 +48,15 @@ export class CommentService {
 
     const artwork = await this.prisma.artwork.findUnique({
       where: { id: artworkId },
-      include: { comments: true },
+      include: {
+        comments: {
+          include: {
+            user: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+          },
+        },
+      },
     });
     if (!artwork) {
       throw new NotFoundException('Artwork not found');

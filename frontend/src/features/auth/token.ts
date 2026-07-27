@@ -1,7 +1,4 @@
-// The JWT lives in localStorage so the session survives a page refresh and the
-// axios request interceptor can read it synchronously. Pragmatic for a 42
-// project without SSR; a httpOnly cookie would be the stronger anti-XSS choice
-// but needs CORS credentials + CSRF handling (see docs/BACKEND_INTEGRATION.md).
+// JWT en localStorage : lu en synchrone par l'intercepteur axios, survit au refresh.
 const KEY = 'atlaas_token'
 
 export const tokenStore = {

@@ -13,14 +13,19 @@ import { useAuthStore } from '@/features/auth/auth.store'
 import { validateEmail, validatePassword } from '@/features/auth/auth.validation'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
+import { useIntroStore } from '@/features/auth/intro.store'
 import { tokenStore } from '@/features/auth/token'
 import { isApiError } from '@/lib/http'
-import { useToastStore } from '@/lib/toast.store'
+import { formatShortName } from '@/lib/name'
 
 interface LoginErrors {
   email?: AuthErrorKey
   password?: AuthErrorKey
 }
+
+// Hold the submit button in its loading state for at least this long so a fast
+// login still reads as "loading…" before the welcome reveal takes over.
+const MIN_SUBMIT_MS = 600
 
 // Renders as modal (location.state.background) or standalone page.
 export function LoginPage() {
@@ -34,7 +39,6 @@ export function LoginPage() {
   const inModal = Boolean(background)
 
   const storeLogin = useAuthStore((state) => state.login)
-  const showToast = useToastStore((state) => state.show)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<LoginErrors>({})
@@ -53,11 +57,19 @@ export function LoginPage() {
 
     setSubmitting(true)
     setFormError(null)
+    const startedAt = Date.now()
     try {
       const token = await loginRequest(email, password)
       tokenStore.set(token)
       const user = await fetchMe()
       storeLogin(user)
+      const elapsed = Date.now() - startedAt
+      if (elapsed < MIN_SUBMIT_MS) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, MIN_SUBMIT_MS - elapsed),
+        )
+      }
+      useIntroStore.getState().playWelcome(formatShortName(user))
       if (inModal) navigate(-1)
       else navigate('/')
     } catch (error) {
@@ -73,10 +85,8 @@ export function LoginPage() {
     }
   }
 
-  // Google OAuth backend is not built yet (see BACKEND_INTEGRATION §E.3); keep the
-  // button but tell the truth instead of faking a sign-in.
   const handleGoogle = () => {
-    showToast({ message: t('auth.googleSoon') })
+    window.location.href = '/api/auth/google'
   }
 
   return (
@@ -124,10 +134,6 @@ export function LoginPage() {
             }}
             error={errors.password ? t(errors.password) : undefined}
           />
-          {/* Route to build later — the 404 catches it meanwhile (decision D2). */}
-          <TextLink to="/forgot-password" className="self-end">
-            {t('login.forgotPassword')}
-          </TextLink>
         </div>
 
         <Button type="submit" fullWidth loading={submitting}>
@@ -149,8 +155,6 @@ export function LoginPage() {
 
       <Divider>{t('divider.or')}</Divider>
 
-      {/* TODO(backend): real Google OAuth (POST /auth/google, BACKEND_INTEGRATION
-          §E.3). Until it exists the button is honest, not a fake sign-in. */}
       <Button variant="outline" fullWidth onClick={handleGoogle}>
         <GoogleIcon />
         {t('actions.continueWithGoogle')}

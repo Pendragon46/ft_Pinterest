@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { artworkKeys } from '@/features/artworks/artwork.api'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
-import { setFollow } from '@/features/users/user.api'
+import { chatKeys } from '@/features/chat/chat.api'
+import { fetchIsFollowing, setFollow, userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
 
 interface FollowButtonProps {
-  /** The user to follow (mock: the artwork's author). */
   userId: string
 }
 
@@ -24,7 +25,9 @@ export function FollowButton({ userId }: FollowButtonProps) {
   const requireAuth = useRequireAuth()
   const currentUser = useAuthStore((state) => state.user)
   const toast = useToast()
-  const [following, setFollowing] = useState(false)
+  const queryClient = useQueryClient()
+  // Optimistic override; null means "defer to the backend's persisted state".
+  const [followOverride, setFollowOverride] = useState<boolean | null>(null)
   const [bounce, setBounce] = useState(false)
   // A late follow rejection must not toast after this button unmounts (§1.1).
   const isMountedRef = useRef(true)
@@ -35,8 +38,18 @@ export function FollowButton({ userId }: FollowButtonProps) {
     }
   }, [])
 
+  // Initial follow state from the backend, so a reload reflects what's
+  // persisted; it seeds the optimistic toggle below.
+  const isFollowingQuery = useQuery({
+    queryKey: ['users', 'isFollowing', currentUser?.id, userId],
+    queryFn: () => fetchIsFollowing(currentUser?.id ?? '', userId),
+    enabled: Boolean(currentUser),
+  })
+  // Derived: an in-flight optimistic choice wins, else the persisted state.
+  const following = followOverride ?? isFollowingQuery.data ?? false
+
   const flip = (next: boolean) => {
-    setFollowing(next)
+    setFollowOverride(next)
     if (next) {
       setBounce(true)
       window.setTimeout(() => {
@@ -46,8 +59,7 @@ export function FollowButton({ userId }: FollowButtonProps) {
   }
 
   const mutation = useMutation({
-    mutationFn: (next: boolean) =>
-      setFollow({ id: userId, following: next, loggedUser: currentUser?.id ?? '' }),
+    mutationFn: (next: boolean) => setFollow({ id: userId, following: next }),
     // Flip in onMutate and snapshot the prior value as context, then restore that
     // exact value on error (no re-bounce, and safe if opposite toggles interleave)
     // rather than inverting this call's `next`.
@@ -58,7 +70,7 @@ export function FollowButton({ userId }: FollowButtonProps) {
     },
     onError: (_error, next, context) => {
       if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
-      setFollowing(context?.previous ?? !next)
+      setFollowOverride(context?.previous ?? !next)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
@@ -69,6 +81,21 @@ export function FollowButton({ userId }: FollowButtonProps) {
           },
         },
       })
+    },
+    onSettled: () => {
+      // Counts on both profiles must refresh after a (un)follow.
+      void queryClient.invalidateQueries({
+        queryKey: userKeys.followerCount(userId),
+      })
+      if (currentUser) {
+        void queryClient.invalidateQueries({
+          queryKey: userKeys.followingCount(currentUser.id),
+        })
+        // Following someone reshuffles the signed-in home feed.
+        void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+        // A follow can make (or break) a mutual: refresh who can be messaged.
+        void queryClient.invalidateQueries({ queryKey: chatKeys.mutuals() })
+      }
     },
   })
 

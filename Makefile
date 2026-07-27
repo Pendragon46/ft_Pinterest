@@ -7,7 +7,10 @@ start: build
 stop:
 	docker compose down
 
-modify: stop start
+rebuild: stop build
+	docker compose up -d
+
+restart: stop start
 
 logs:
 	docker compose logs -f
@@ -15,13 +18,11 @@ logs:
 ps:
 	docker compose ps
 
-clean:
-	docker-compose down -v
+clean-volumes:
+	docker compose down -v
 
-fclean: clean
+fclean: clean-volumes
 	docker system prune -af --volumes
-
-restart: fclean start
 
 backup:
 	docker exec ft_pinterest_backup /scripts/backup.sh
@@ -41,4 +42,4 @@ recover:
 health:
 	docker exec ft_pinterest_backup /scripts/health_check.sh
 
-PHONY: build start stop modify logs ps clean fclean restart
+.PHONY: build start stop rebuild restart logs ps clean-volumes fclean backup restore recover health

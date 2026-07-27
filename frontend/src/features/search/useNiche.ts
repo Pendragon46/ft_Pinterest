@@ -22,6 +22,7 @@ export function useNiche(): {
       const slug = resolveSearch(term).niche.slug
       setParams((prev) => {
         const next = new URLSearchParams(prev)
+        next.delete('creator')
         next.set('q', slug)
         return next
       })

@@ -326,8 +326,12 @@ export function recordSearch(term: string): void {
   }
 }
 
-/** Suggested tags under the bar: recent exploration ⊕ trending, [default] 3 (§2.2). */
+/** Recent local search history (most recent first), for the contextual tags. */
+export function recentSearches(): string[] {
+  return readHistory().slice(0, 2)
+}
+
+/** Local fallback for the contextual tags when the network is unavailable. */
 export function contextualTags(): string[] {
-  const recent = readHistory().slice(0, 2)
-  return [...new Set([...recent, ...SUGGESTED_QUERIES])].slice(0, 3)
+  return [...new Set([...recentSearches(), ...SUGGESTED_QUERIES])].slice(0, 3)
 }

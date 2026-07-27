@@ -19,8 +19,10 @@ import {
 import { updateAccount, updateProfile, userKeys } from '@/features/users/user.api'
 import { DEFAULT_AVATAR } from '@/lib/avatar'
 import { useToast } from '@/lib/toast.store'
+import { validateUpload, type UploadErrorKey } from '@/lib/upload.validation'
+import { DataPrivacySection } from '@/features/gdpr/DataPrivacySection'
 
-type Section = 'account' | 'appearance'
+type Section = 'account' | 'appearance' | 'privacy'
 
 export function SettingsPage() {
   const { t } = useTranslation('common')
@@ -45,6 +47,9 @@ export function SettingsPage() {
   const [avatarPreview, setAvatarPreview] = useState(
     authUser?.avatarUrl ?? DEFAULT_AVATAR,
   )
+  // The actual File to upload; null = avatar unchanged (profile saves as JSON).
+  const [avatarFile, setAvatarFile] = useState<File | null>(null)
+  const [avatarError, setAvatarError] = useState<UploadErrorKey | undefined>()
   const [profileError, setProfileError] = useState<AuthErrorKey | undefined>()
   const [profileSaved, setProfileSaved] = useState(false)
 
@@ -60,17 +65,16 @@ export function SettingsPage() {
   const [accountSaved, setAccountSaved] = useState(false)
 
   const profileMutation = useMutation({
-    // TODO(backend): PATCH /users/:id (multipart if avatar changed).
     mutationFn: () =>
       updateProfile(userId, {
-        loggedUser: userId,
         fullname: fullname.trim() || null,
         username: username.trim(),
         bio: bio.trim() || null,
-        avatarUrl: avatarPreview,
+        avatarFile,
       }),
     onSuccess: (updated) => {
       login(updated) // reflect the new identity in the header/avatar immediately
+      setAvatarFile(null) // avatar persisted; next save is JSON unless re-picked
       void queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
       setProfileSaved(true)
       window.clearTimeout(profileSavedTimer.current)
@@ -94,10 +98,8 @@ export function SettingsPage() {
   })
 
   const accountMutation = useMutation({
-    // TODO(backend): PATCH /users/:id with { email?, password? }.
     mutationFn: () =>
       updateAccount(userId, {
-        loggedUser: userId,
         email: email.trim() !== authUser?.email ? email.trim() : undefined,
         password: password || undefined,
       }),
@@ -138,7 +140,16 @@ export function SettingsPage() {
   const onAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
-    // Mock: preview only. The real save sends multipart/form-data (field `avatar`).
+    // Client-side mirror of the server's ParseFilePipe: a rejected file never
+    // leaves the browser.
+    const error = validateUpload(file, 'avatar')
+    if (error) {
+      setAvatarError(error)
+      return
+    }
+    setAvatarError(undefined)
+    setAvatarFile(file)
+    // Local preview; the real bytes upload as multipart on Save (field `avatar`).
     const reader = new FileReader()
     reader.onload = () => {
       if (typeof reader.result === 'string') setAvatarPreview(reader.result)
@@ -173,6 +184,7 @@ export function SettingsPage() {
 
   const sections: { id: Section; label: string }[] = [
     { id: 'account', label: t('settings.navAccount') },
+    { id: 'privacy', label: t('gdpr.nav') },
     { id: 'appearance', label: t('settings.navAppearance') },
   ]
 
@@ -248,6 +260,11 @@ export function SettingsPage() {
                       {t('settings.changeAvatar')}
                     </Button>
                   </div>
+                  {avatarError ? (
+                    <p role="alert" className="text-sm text-red-600">
+                      {t(avatarError)}
+                    </p>
+                  ) : null}
                   <Input
                     label={t('settings.displayName')}
                     value={fullname}
@@ -355,7 +372,7 @@ export function SettingsPage() {
                   </div>
                 </form>
               </div>
-            ) : (
+            ) : section === 'appearance' ? (
               /* Appearance section */
               <div className="flex flex-col gap-5 rounded-2xl border border-neutral-200 p-6">
                 <h2 className="font-serif text-xl text-neutral-900">
@@ -366,6 +383,8 @@ export function SettingsPage() {
                   <LanguageSwitcher />
                 </div>
               </div>
+            ) : (
+              <DataPrivacySection user={authUser} />
             )}
           </div>
         </div>

@@ -6,6 +6,7 @@ import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
+import { OnlineDot } from '@/components/ui/OnlineDot'
 import { FollowButton } from '@/features/artworks/components/FollowButton'
 import {
   ProfileArtworkCard,
@@ -13,6 +14,7 @@ import {
 } from '@/features/artworks/components/ProfileArtworkCard'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { MessageUserButton } from '@/features/chat/components/MessageUserButton'
 import {
   fetchFollowerCount,
   fetchFollowingCount,
@@ -134,11 +136,14 @@ export function ProfilePage() {
         ) : (
           <header className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex gap-5">
-              <img
-                src={profile.avatarUrl}
-                alt={profile.fullname ?? profile.username}
-                className="size-24 shrink-0 rounded-full object-cover"
-              />
+              <div className="relative shrink-0">
+                <img
+                  src={profile.avatarUrl}
+                  alt={profile.fullname ?? profile.username}
+                  className="size-24 rounded-full object-cover"
+                />
+                {isOwnProfile ? null : <OnlineDot userId={userId} />}
+              </div>
               <div className="min-w-0">
                 <h1 className="font-serif text-3xl text-neutral-900">
                   {profile.fullname ?? `@${profile.username}`}
@@ -181,7 +186,10 @@ export function ProfilePage() {
                   {t('profile.edit')}
                 </Button>
               ) : (
-                <FollowButton userId={userId} />
+                <>
+                  <MessageUserButton userId={userId} />
+                  <FollowButton userId={userId} />
+                </>
               )}
               <div className="relative">
                 <Button variant="outline" size="sm" onClick={handleShare}>

@@ -56,6 +56,7 @@ export function CreatePage() {
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
   const [errors, setErrors] = useState<CreateErrors>({})
+  const [progress, setProgress] = useState<number | null>(null)
 
   // Revoke the *preview* object URL on replace/unmount. The published copy mints
   // its own URL in the store, so navigating away never blanks the new detail.
@@ -141,23 +142,25 @@ export function CreatePage() {
 
   const mutation = useMutation({
     mutationFn: () =>
-      createArtwork({
-        file: file as File,
-        mediaType: mediaType ?? 'image',
-        title: title.trim(),
-        description: description.trim(),
-        tags: normalizeTags(tags),
-        userId,
-      }),
-    onSuccess: (created) => {
+      createArtwork(
+        {
+          title: title.trim(),
+          description: description.trim(),
+          tags: normalizeTags(tags),
+          file: file as File,
+        },
+        (pct) => setProgress(pct),
+      ),
+    onSuccess: () => {
+      setProgress(null)
       void queryClient.invalidateQueries({ queryKey: userKeys.works(userId) })
       void queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
       toast({ message: t('create.published') })
-      // Fresh context — standalone detail, no modal background (§0).
-      navigate(`/artwork/${created.id}`)
+      // Land on the author's profile so the fresh work is seen in context.
+      navigate(`/profile/${userId}`)
     },
     onError: () => {
-      // Failure keeps the whole form intact; retry re-runs the same publish.
+      setProgress(null)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
@@ -176,6 +179,7 @@ export function CreatePage() {
     }
     setErrors(next)
     if (next.file || next.title || next.description || next.tags) return
+    setProgress(0)
     mutation.mutate()
   }
 
@@ -275,6 +279,20 @@ export function CreatePage() {
               <p role="alert" className="text-sm text-red-600">
                 {t(errors.file)}
               </p>
+            ) : null}
+            {progress !== null ? (
+              <div
+                role="progressbar"
+                aria-valuenow={progress}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200"
+              >
+                <div
+                  className="h-full rounded-full bg-neutral-900 transition-[width] duration-150"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
             ) : null}
           </div>
 

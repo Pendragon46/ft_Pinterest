@@ -27,6 +27,7 @@ export interface AuthorSummary {
   username: string
   handle: string
   color: string
+  avatarUrl?: string | null
 }
 
 /** One artwork as listed on the map or in grids. */
@@ -63,6 +64,9 @@ export interface CanvasArtwork extends ArtworkSummary {
   /** Niche mode only: the world id to open on click. A niche tiles one item at
       many positions, so `id` is unique per placement while `sourceId` is stable. */
   sourceId?: string
+  /** Uploaded media (real works); when absent the card falls back to `color`. */
+  mediaUrl?: string | null
+  mediaType?: MediaType
 }
 
 /** A backend-shaped artwork as returned by the user endpoints (profile grids):
