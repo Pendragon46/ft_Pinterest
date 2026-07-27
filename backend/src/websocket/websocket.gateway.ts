@@ -30,6 +30,15 @@ export class WebsocketGateway
     return token;
   }
 
+  async notifyUser(userId: string, status: 'online' | 'offline') {
+	const socketIds = this.onlineStatusService.getSocketIdsForUser(userId);
+		if (socketIds) {
+			socketIds.forEach((socketId) => {
+				this.server.to(socketId).emit('statusChange', { userId, status });
+			});
+		}
+  } 
+
   async notifyFriendsAboutStatusChange(
     userId: string,
     status: 'online' | 'offline',
@@ -98,7 +107,8 @@ export class WebsocketGateway
   async handleDisconnect(client: Socket) {
     const userId = client.data.userId as string | undefined;
     if (!userId) return; // unauthenticated socket: nothing was registered
-    this.onlineStatusService.removeOnlineUser(userId, client.id);
-    this.notifyFriendsAboutStatusChange(userId, 'offline');
+    const userOffline = this.onlineStatusService.removeOnlineUser(userId, client.id);
+	if (userOffline)
+    	this.notifyFriendsAboutStatusChange(userId, 'offline');
   }
 }

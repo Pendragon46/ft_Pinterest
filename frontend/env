@@ -1,0 +1,12 @@
+DATABASE_URL=postgresql://postgres:ft_pinterest_password123*@postgres:5432/ft_pinterest
+JWT_SECRET=ft_pinterest_JWT123*
+
+CLOUDINARY_CLOUD_NAME=ft_pinterest_cloud_name
+CLOUDINARY_API_KEY=ft_pinterest_api_key
+CLOUDINARY_API_SECRET=ft_pinterest_api_secret
+
+CLOUDINARY_CLOUD_NAME=i1i52wjs
+CLOUDINARY_API_KEY=447498332226141
+CLOUDINARY_API_SECRET=6eADDHRFvh4d324PLdAEZv3XhQs
+DEFAULT_AVATAR_URL=https://res.cloudinary.com/i1i52wjs/image/upload/default_avatar_dljkve.png
+

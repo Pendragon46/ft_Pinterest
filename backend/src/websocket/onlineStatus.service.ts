@@ -12,14 +12,17 @@ export class OnlineStatusService {
     this.onlineUsers.get(userId)?.add(socketId);
   }
 
-  removeOnlineUser(userId: string, socketId: string) {
+  removeOnlineUser(userId: string, socketId: string) : boolean {
     if (this.onlineUsers.has(userId)) {
       const userSockets = this.onlineUsers.get(userId);
       userSockets?.delete(socketId);
       if (userSockets?.size === 0) {
         this.onlineUsers.delete(userId);
+		return true; // User is now offline
       }
+	  return false; // User still has active sessions
     }
+	return false;
   }
 
   isUserOnline(userId: string): boolean {

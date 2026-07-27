@@ -43,8 +43,7 @@ export class ArtworkService {
     updatedata: UpdateArtworkDto,
     oldPublicId: string,
   ) {
-    let upload;
-    let updatedArtwork;
+    let upload,updatedArtwork;
     try {
       const normalizedtags = updatedata.tags
         ?.map((tag) => tag.trim().toLowerCase())
