@@ -59,7 +59,7 @@
     - [x] Multilingue
     - [x] Support for additional browsers
     - [x] RTL Arabic
-    - [x] GDPR compliance features *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
+    - [x] GDPR compliance features
 	- [] file upload
 	- [] Oauth2.0 authentication with Google or 42 API
 	- [] User activity analytics and insights dashboard
