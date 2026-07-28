@@ -470,6 +470,8 @@
     "searching": "جارٍ البحث…",
     "groupDisciplines": "التخصصات",
     "groupCreators": "المبدعون",
+    "groupTags": "وسوم",
+    "tagCount": "{{count}} أعمال",
     "nearestRegion": "أقرب منطقة",
     "exploringTitle1": "استكشاف",
     "exploringTitle2": "عالم {{niche}}",

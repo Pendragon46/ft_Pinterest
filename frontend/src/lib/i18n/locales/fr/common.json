@@ -470,6 +470,8 @@
     "searching": "Recherche…",
     "groupDisciplines": "Disciplines",
     "groupCreators": "Créateurs",
+    "groupTags": "Tags",
+    "tagCount": "{{count}} œuvres",
     "nearestRegion": "Région la plus proche",
     "exploringTitle1": "Exploration",
     "exploringTitle2": "Univers {{niche}}",

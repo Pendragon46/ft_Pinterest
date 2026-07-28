@@ -49,11 +49,16 @@ export async function fetchSuggestions(
   if (!query.trim()) return local
 
   try {
-    const { data } = await http.get<ServerSearchAll>('/search', {
-      params: { q: query, page: 1, limit: 5, sort: 'recent' },
-    })
+    const [all, suggested] = await Promise.all([
+      http.get<ServerSearchAll>('/search', {
+        params: { q: query, page: 1, limit: 5, sort: 'recent' },
+      }),
+      http.get<{ name: string; count: number }[]>('/search/suggest', {
+        params: { q: query, limit: 6 },
+      }),
+    ])
 
-    const creators: Suggestion[] = data.users.map((u) => ({
+    const creators: Suggestion[] = all.data.users.map((u) => ({
       id: `creator-${u.id}`,
       kind: 'creator',
       term: u.fullname ?? u.username,
@@ -63,8 +68,16 @@ export async function fetchSuggestions(
       previews: [colorFromId(u.id)],
     }))
 
-    // Disciplines locales (niches) + créateurs réels.
-    return { disciplines: local.disciplines, creators }
+    const tags: Suggestion[] = suggested.data.map((tg) => ({
+      id: `tag-${tg.name}`,
+      kind: 'tag',
+      term: tg.name,
+      count: tg.count,
+      previews: [colorFromId(tg.name)],
+    }))
+
+    // Disciplines locales (niches) + tags réels de la base + créateurs réels.
+    return { disciplines: local.disciplines, tags, creators }
   } catch {
     // La recherche ne doit jamais casser la barre de saisie : en cas
     // d'échec réseau on retombe sur les suggestions locales.

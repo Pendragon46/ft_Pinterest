@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, KeyboardEvent, RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
@@ -64,10 +64,17 @@ export function SearchOverlay({
   }
 
   const trimmed = query.trim()
+  // Debounce 200ms and gate at 2 chars: typing fast shouldn't fire a request per
+  // keystroke, and 1-char queries are too noisy to suggest on (§4.2).
+  const [debounced, setDebounced] = useState('')
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebounced(trimmed), 200)
+    return () => window.clearTimeout(id)
+  }, [trimmed])
   const suggestionsQuery = useQuery({
-    queryKey: searchKeys.suggestions(trimmed),
-    queryFn: () => fetchSuggestions(trimmed),
-    enabled: active && trimmed.length > 0,
+    queryKey: searchKeys.suggestions(debounced),
+    queryFn: () => fetchSuggestions(debounced),
+    enabled: active && debounced.length >= 2,
     staleTime: 60_000,
   })
   const tagsQuery = useQuery({
@@ -77,16 +84,19 @@ export function SearchOverlay({
   })
 
   const data = suggestionsQuery.data
-  const groups = data ?? { disciplines: [], creators: [] }
-  // Flatten across categories for one keyboard cursor (§4.4).
+  const groups = data ?? { disciplines: [], tags: [], creators: [] }
+  // Flatten across categories for one keyboard cursor (§4.4). Order MUST match the
+  // visual render order below (disciplines → tags → creators), otherwise the
+  // highlighted aria-activedescendant points at the wrong row.
   const flat = useMemo(
-    () => (data ? [...data.disciplines, ...data.creators] : []),
+    () => (data ? [...data.disciplines, ...data.tags, ...data.creators] : []),
     [data],
   )
   // Clamp the cursor at read time so a shrinking result set can't point past it.
   const activeIndex = highlight >= 0 && highlight < flat.length ? highlight : -1
   const hasSuggestions = flat.length > 0
-  const showDropdown = active && trimmed.length > 0
+  const debouncing = trimmed !== debounced
+  const showDropdown = active && trimmed.length >= 2
   const showTags = !active || trimmed.length === 0
 
   const close = () => {
@@ -229,6 +239,17 @@ export function SearchOverlay({
                     onPick={pick}
                   />
                 ) : null}
+                {groups.tags.length > 0 ? (
+                  <SuggestionGroup
+                    label={t('search.groupTags')}
+                    items={groups.tags}
+                    flat={flat}
+                    highlight={activeIndex}
+                    labelOf={suggestionLabel}
+                    onHover={setHighlight}
+                    onPick={pick}
+                  />
+                ) : null}
                 {groups.creators.length > 0 ? (
                   <SuggestionGroup
                     label={t('search.groupCreators')}
@@ -241,7 +262,7 @@ export function SearchOverlay({
                   />
                 ) : null}
               </ul>
-            ) : suggestionsQuery.isPending ? (
+            ) : debouncing || suggestionsQuery.isFetching ? (
               <p className="px-4 py-6 text-center text-sm text-neutral-400">
                 {t('search.searching')}
               </p>
@@ -300,9 +321,13 @@ function SuggestionGroup({
   onHover,
   onPick,
 }: SuggestionGroupProps) {
+  const { t } = useTranslation('common')
   return (
-    <li>
-      <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-neutral-400">
+    <li role="group" aria-label={label}>
+      <p
+        aria-hidden="true"
+        className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-neutral-400"
+      >
         {label}
       </p>
       <ul>
@@ -349,9 +374,17 @@ function SuggestionGroup({
                   </span>
                 )}
                 <span className="min-w-0 flex-1 truncate">
-                  <span className="text-sm text-neutral-900">{labelOf(item)}</span>
+                  <span className="text-sm text-neutral-900">
+                    {item.kind === 'tag' ? `#${labelOf(item)}` : labelOf(item)}
+                  </span>
                   {item.kind === 'creator' && item.handle ? (
                     <span className="text-sm text-neutral-400"> @{item.handle}</span>
+                  ) : null}
+                  {item.kind === 'tag' && item.count != null ? (
+                    <span className="text-sm text-neutral-400">
+                      {' · '}
+                      {t('search.tagCount', { count: item.count })}
+                    </span>
                   ) : null}
                   {item.kind === 'discipline' && item.path?.length ? (
                     <span className="text-xs text-neutral-400">

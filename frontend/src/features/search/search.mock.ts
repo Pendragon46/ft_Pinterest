@@ -162,7 +162,8 @@ const MAX_PER_CATEGORY = 3
 /** Categorised suggestions for the current query: disciplines + creators. */
 export function suggest(term: string): SuggestionGroups {
   const q = normalise(term)
-  if (q.length === 0) return { disciplines: [], creators: [] }
+  // Tags come from the backend (/search/suggest), never the local mock.
+  if (q.length === 0) return { disciplines: [], tags: [], creators: [] }
 
   const disciplines: Suggestion[] = NICHES.filter((n) => nicheMatches(q, n))
     .slice(0, MAX_PER_CATEGORY)
@@ -188,7 +189,7 @@ export function suggest(term: string): SuggestionGroups {
       previews: [a.color],
     }))
 
-  return { disciplines, creators }
+  return { disciplines, tags: [], creators }
 }
 
 // ── Niche content & toroidal tiling (§6) ────────────────────────────────────
