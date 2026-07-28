@@ -80,14 +80,14 @@ export class WebsocketGateway
     let token: any;
     try {
       token = this.verifyToken(client);
+      // No/invalid token = an unauthenticated (guest) socket: disconnect quietly.
+      // This is a normal case, not a server error, so it stays off the console.
       if (!token) {
-        console.error('No token provided');
         client.disconnect();
         return;
       }
       client.data.userId = token.sub;
-    } catch (error) {
-      console.error('Token verification failed:', error);
+    } catch {
       client.disconnect();
       return;
     }

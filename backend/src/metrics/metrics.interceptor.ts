@@ -12,8 +12,6 @@ export class MetricsInterceptor implements NestInterceptor {
   constructor(private readonly metricsService: MetricsService) {}
 
   intercept(context: ExecutionContext, next: CallHandler) {
-    
-    console.log('Intercepting request...');
     this.metricsService.httpRequestsTotal.inc();
 
     return next.handle();

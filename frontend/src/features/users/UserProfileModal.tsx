@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { Modal } from '@/components/ui/Modal'
+import { SafeImage } from '@/components/ui/SafeImage'
 import { ROLE_BADGE, ROLE_LABEL_KEY } from '@/features/admin/roleBadge'
 import type { AppRole } from '@/features/auth/useRole'
 import {
@@ -63,7 +64,7 @@ export function UserProfileModal({ userId, onClose }: Props) {
         ) : (
           <>
             <header className="flex items-center gap-4">
-              <img
+              <SafeImage
                 src={u.avatarUrl}
                 alt=""
                 className="size-16 shrink-0 rounded-full object-cover"
@@ -104,7 +105,7 @@ export function UserProfileModal({ userId, onClose }: Props) {
                 {workList.slice(0, 8).map((w) => (
                   <li key={w.id} className="aspect-square overflow-hidden rounded-lg bg-neutral-100">
                     {w.mediaUrl ? (
-                      <img src={w.mediaUrl} alt={w.title} loading="lazy" draggable={false} className="size-full object-cover" />
+                      <SafeImage src={w.mediaUrl} alt={w.title} loading="lazy" draggable={false} className="size-full object-cover" />
                     ) : (
                       <span aria-hidden="true" className="block size-full bg-neutral-200" />
                     )}

@@ -7,6 +7,7 @@ import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
 import { OnlineDot } from '@/components/ui/OnlineDot'
+import { SafeImage } from '@/components/ui/SafeImage'
 import { FollowButton } from '@/features/artworks/components/FollowButton'
 import {
   ProfileArtworkCard,
@@ -137,7 +138,7 @@ export function ProfilePage() {
           <header className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex gap-5">
               <div className="relative shrink-0">
-                <img
+                <SafeImage
                   src={profile.avatarUrl}
                   alt={profile.fullname ?? profile.username}
                   className="size-24 rounded-full object-cover"

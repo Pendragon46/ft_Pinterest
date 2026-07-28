@@ -72,6 +72,9 @@ export const ArtworkCard = memo(function ArtworkCard({
             preload="metadata"
             // A native drag on the media would fight the canvas pan.
             draggable={false}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
             className="pointer-events-none absolute inset-0 size-full object-cover"
           />
         ) : (
@@ -80,6 +83,11 @@ export const ArtworkCard = memo(function ArtworkCard({
             alt=""
             loading="lazy"
             draggable={false}
+            // A dead media URL hides itself so the card's `color` shows through,
+            // instead of leaving a broken frame over the canvas.
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
             className="pointer-events-none absolute inset-0 size-full object-cover"
           />
         )

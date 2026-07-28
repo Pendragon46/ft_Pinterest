@@ -2,6 +2,7 @@ import { OnlineDot } from '@/components/ui/OnlineDot'
 import { colorFromId } from '@/lib/mappers'
 
 import type { ChatUser } from '../chat.types'
+import { SafeImage } from '@/components/ui/SafeImage'
 
 interface Props {
   user: ChatUser
@@ -15,7 +16,7 @@ export function ChatAvatar({ user, size = 'md', dot = true }: Props) {
   return (
     <span className="relative shrink-0">
       {user.avatarUrl ? (
-        <img src={user.avatarUrl} alt="" className={`${px} rounded-full object-cover`} />
+        <SafeImage src={user.avatarUrl} alt="" className={`${px} rounded-full object-cover`} />
       ) : (
         <span
           aria-hidden="true"

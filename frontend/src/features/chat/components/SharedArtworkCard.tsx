@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { mediaTypeFromUrl } from '@/lib/mappers'
 
 import type { SharedArtwork } from '../chat.types'
+import { SafeImage } from '@/components/ui/SafeImage'
 
 export function SharedArtworkCard({
   artwork,
@@ -32,7 +33,7 @@ export function SharedArtworkCard({
     >
       <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-neutral-200">
         {artwork.mediaUrl && !isVideo ? (
-          <img src={artwork.mediaUrl} alt="" className="size-full object-cover" />
+          <SafeImage src={artwork.mediaUrl} alt="" className="size-full object-cover" />
         ) : null}
         {isVideo ? (
           <span className="absolute end-1.5 top-1.5 flex items-center justify-center rounded-full bg-neutral-900/60 p-1 text-white backdrop-blur">

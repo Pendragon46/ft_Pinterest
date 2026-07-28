@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useCompact } from '@/lib/useCompact'
 
 import type { ProfileArtwork } from '../artwork.types'
+import { SafeImage } from '@/components/ui/SafeImage'
 
 interface ProfileArtworkCardProps {
   artwork: ProfileArtwork
@@ -42,10 +43,13 @@ export function ProfileArtworkCard({
               muted
               playsInline
               preload="metadata"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
               className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
           ) : (
-            <img
+            <SafeImage
               src={artwork.mediaUrl}
               alt=""
               loading="lazy"

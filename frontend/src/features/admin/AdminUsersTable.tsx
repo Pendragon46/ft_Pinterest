@@ -7,6 +7,7 @@ import type { AppRole } from '@/features/auth/useRole'
 import type { AdminUserRow } from './admin.api'
 import { RoleSelect } from './RoleSelect'
 import { ALL_ROLES, ROLE_LABEL_KEY } from './roleBadge'
+import { SafeImage } from '@/components/ui/SafeImage'
 
 type SortKey = 'recent' | 'oldest' | 'name'
 const PAGE_SIZES = [10, 25, 50] as const
@@ -159,7 +160,7 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
                         className="group flex items-center gap-3 rounded-lg text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900"
                       >
                         {u.avatarUrl ? (
-                          <img src={u.avatarUrl} alt="" className="size-9 shrink-0 rounded-full object-cover" />
+                          <SafeImage src={u.avatarUrl} alt="" className="size-9 shrink-0 rounded-full object-cover" />
                         ) : (
                           <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-neutral-800 text-xs font-semibold text-white">
                             {(u.fullname ?? u.username).charAt(0).toUpperCase()}
