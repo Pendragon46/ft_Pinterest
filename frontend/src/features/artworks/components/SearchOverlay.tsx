@@ -10,7 +10,11 @@ import {
   fetchSuggestions,
   searchKeys,
 } from '@/features/search/search.api'
-import { recordSearch, resolveSearch } from '@/features/search/search.mock'
+import {
+  isDisciplineSlug,
+  recordSearch,
+  resolveSearch,
+} from '@/features/search/search.mock'
 import type { Niche, Suggestion } from '@/features/search/search.types'
 
 import { HeroTitle } from './HeroTitle'
@@ -25,6 +29,8 @@ interface SearchOverlayProps {
   onSubmit?: (term: string) => void
   /** Open a creator's universe when their suggestion is picked. */
   onEnterCreator?: (userId: string) => void
+  /** Enter a tag's universe (its works) when a tag suggestion is picked. */
+  onEnterTag?: (tag: string) => void
   /** Clearing the bar while in a niche/creator returns to the global map (§6.4). */
   onExit?: () => void
 }
@@ -38,6 +44,7 @@ export function SearchOverlay({
   creator,
   onSubmit,
   onEnterCreator,
+  onEnterTag,
   onExit,
 }: SearchOverlayProps) {
   const { t } = useTranslation('common')
@@ -47,6 +54,13 @@ export function SearchOverlay({
 
   // Pre-fill the bar with the niche label when a niche is entered, reset on leave
   // (§6.4). Adjusting state during render (not an effect) keeps it lint-clean.
+  // A real discipline shows its translated label; a synthesized tag niche shows
+  // the raw #tag (there is no `category.<tag>` key to translate).
+  const nicheLabel = niche
+    ? isDisciplineSlug(niche.slug)
+      ? t(`category.${niche.slug}`)
+      : `#${niche.slug}`
+    : ''
   const nicheSlug = niche?.slug ?? null
   const [lastNicheSlug, setLastNicheSlug] = useState<string | null>(null)
   if (nicheSlug !== lastNicheSlug) {
@@ -54,7 +68,7 @@ export function SearchOverlay({
     setHighlight(-1)
     if (niche) {
       // Entering a niche: pre-fill with its label and drop focus.
-      setQuery(t(`category.${niche.slug}`))
+      setQuery(nicheLabel)
       setActive(false)
     } else {
       // Leaving (the bar was cleared): empty it but keep the focus state so the
@@ -121,6 +135,13 @@ export function SearchOverlay({
       close()
       return
     }
+    // A tag opens ITS universe (its works), never the nearest discipline.
+    if (s.kind === 'tag') {
+      recordSearch(s.term)
+      onEnterTag?.(s.term)
+      close()
+      return
+    }
     submit(s.term)
   }
 
@@ -160,7 +181,7 @@ export function SearchOverlay({
       })}`
     : niche
       ? `${t('search.exploringTitle1')}\n${t('search.exploringTitle2', {
-          niche: t(`category.${niche.slug}`),
+          niche: nicheLabel,
         })}`
       : `${t('home.heroLine1')}\n${t('home.heroLine2')}`
 

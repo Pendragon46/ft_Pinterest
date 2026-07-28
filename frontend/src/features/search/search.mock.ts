@@ -90,7 +90,25 @@ export const NICHES: Niche[] = CATEGORIES.map((slug, index) => ({
 const NICHE_BY_SLUG = new Map<Category, Niche>(NICHES.map((n) => [n.slug, n]))
 
 export function getNiche(slug: string): Niche | null {
-  return NICHE_BY_SLUG.get(slug as Category) ?? null
+  if (!slug) return null
+  const known = NICHE_BY_SLUG.get(slug as Category)
+  if (known) return known
+  // Not one of the 8 disciplines → a tag chosen from the suggestions. Synthesize a
+  // niche keyed on the tag so the canvas fetches /search/tags?q=<tag> and shows its
+  // works, rather than resolving the tag to the nearest discipline.
+  const seed = [...slug].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7)
+  return {
+    slug: slug as Category,
+    tags: [slug],
+    contentAnchor: anchorFor(seed % CATEGORIES.length),
+    hue: seed % 360,
+    contentSize: NICHE_CONTENT_SIZE,
+  }
+}
+
+/** True for the 8 real discipline slugs (vs a synthesized tag niche). */
+export function isDisciplineSlug(slug: string): boolean {
+  return NICHE_BY_SLUG.has(slug as Category)
 }
 
 // ── Colours & previews ──────────────────────────────────────────────────────

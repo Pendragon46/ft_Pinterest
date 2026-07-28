@@ -9,6 +9,7 @@ import { colorFromId, type ServerArtwork, type ServerUser } from '@/lib/mappers'
 
 import {
   contextualTags,
+  isDisciplineSlug,
   neighbours,
   nicheTile,
   recentSearches,
@@ -93,14 +94,20 @@ export async function fetchNicheTile(
   tx: number,
   ty: number,
 ): Promise<CanvasArtwork[]> {
+  // A tag niche (not one of the 8 disciplines) must never fall back to the local
+  // discipline mock — its content is only what the backend returns for that tag.
+  const isDiscipline = isDisciplineSlug(slug)
+  const category = isDiscipline ? (slug as Category) : undefined
   try {
     const { data } = await http.get<ServerArtwork[]>('/search/tags', {
       params: { q: slug, page: 1, limit: 16, sort: 'recent' },
     })
-    if (data.length === 0) return nicheTile(slug as Category, tx, ty)
-    return layoutTile(data, slug as Category, tx, ty)
+    if (data.length === 0) {
+      return isDiscipline ? nicheTile(slug as Category, tx, ty) : []
+    }
+    return layoutTile(data, category, tx, ty)
   } catch {
-    return nicheTile(slug as Category, tx, ty)
+    return isDiscipline ? nicheTile(slug as Category, tx, ty) : []
   }
 }
 

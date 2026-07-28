@@ -62,7 +62,7 @@ export function ArtworkCanvas() {
     requestSync,
   } = useCanvasCamera()
   const searchInputRef = useRef<HTMLInputElement | null>(null)
-  const { niche, enterNiche, exitNiche } = useNiche()
+  const { niche, enterNiche, enterTag, exitNiche } = useNiche()
   const nicheSlug = niche?.slug ?? null
   const currentUser = useAuthStore((state) => state.user)
   const { creatorId, enterCreator, exitCreator } = useCreator()
@@ -256,6 +256,7 @@ export function ArtworkCanvas() {
             creator={creator}
             onSubmit={enterNiche}
             onEnterCreator={enterCreator}
+            onEnterTag={enterTag}
             onExit={() => {
               if (creatorId) exitCreator()
               else exitNiche()
