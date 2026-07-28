@@ -12,6 +12,11 @@ rebuild: stop build
 
 restart: stop start
 
+# Peuple la base via l'API (stack déjà démarrée). Node 18+ requis sur l'hôte ;
+# lit les manifestes de seed-data/ et publie le réseau de démo (18 auteurs).
+seed:
+	node seed-network.mjs
+
 logs:
 	docker compose logs -f
 
@@ -42,4 +47,4 @@ recover:
 health:
 	docker exec ft_pinterest_backup /scripts/health_check.sh
 
-.PHONY: build start stop rebuild restart logs ps clean-volumes fclean backup restore recover health
+.PHONY: build start stop rebuild restart seed logs ps clean-volumes fclean backup restore recover health
