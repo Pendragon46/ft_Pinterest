@@ -1,7 +1,16 @@
+# Self-signed dev TLS cert for nginx. Generated locally (not in git); idempotent.
+certs:
+	@test -f nginx/ssl/nginx.key || { \
+		mkdir -p nginx/ssl && \
+		openssl req -x509 -newkey rsa:2048 -nodes -days 365 \
+			-keyout nginx/ssl/nginx.key -out nginx/ssl/nginx.crt \
+			-subj "/CN=localhost" ; \
+	}
+
 build:
 	docker compose build
 
-start: build
+start: certs build
 	docker compose up -d --build
 
 stop:
@@ -47,4 +56,4 @@ recover:
 health:
 	docker exec ft_pinterest_backup /scripts/health_check.sh
 
-.PHONY: build start stop rebuild restart seed logs ps clean-volumes fclean backup restore recover health
+.PHONY: certs build start stop rebuild restart seed logs ps clean-volumes fclean backup restore recover health
