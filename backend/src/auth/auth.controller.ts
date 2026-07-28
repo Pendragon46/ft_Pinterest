@@ -1,16 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
+import { GoogleAuthGuard } from './google-auth.guard';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '@prisma/client';
 import { Public } from 'src/decorators/public.decorator';
@@ -39,15 +32,15 @@ export class AuthController {
 
   @Public()
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleAuth() {}
 
   @Public()
   @Get('google/callback')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleAuthGuard)
   async googleAuthCallback(@Req() req: { user: User }, @Res() res: Response) {
-    // Redirige vers le SPA avec le token en fragment (non transmis au serveur).
     const { access_token } = await this.authService.googleLogin(req.user);
-    res.redirect(`/auth/callback#token=${access_token}`);
+    const frontendUrl = process.env.FRONTEND_URL;
+    res.redirect(`${frontendUrl}/auth/callback#token=${access_token}`);
   }
 }
