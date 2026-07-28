@@ -308,7 +308,10 @@ export function SearchOverlay({
                 key={suggestion}
                 type="button"
                 onClick={() => {
-                  submit(suggestion)
+                  // These are real tags → open the tag's works, not the nearest
+                  // discipline (which is what submit()/enterNiche would do).
+                  onEnterTag?.(suggestion)
+                  close()
                 }}
                 className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-sm text-neutral-700 transition duration-100 hover:border-neutral-300 hover:bg-neutral-50 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
               >

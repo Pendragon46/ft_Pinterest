@@ -12,7 +12,6 @@ import {
   isDisciplineSlug,
   neighbours,
   nicheTile,
-  recentSearches,
   suggest,
 } from './search.mock'
 import { layoutTile } from './tile.layout'
@@ -150,8 +149,9 @@ export function fetchNeighbours(slug: string): NicheNeighbour[] {
   return neighbours(slug as Category)
 }
 
-/** Contextual suggested tags: real trending (aggregated from recent artworks'
-    tags) merged with the user's recent local searches. Falls back to local. */
+/** Contextual suggested tags: the most frequent tags on recent artworks. Real
+    tags only — recent free-text searches (names, discipline labels) are not tags
+    and would mis-route when clicked. Falls back to local. */
 export async function fetchContextualTags(): Promise<string[]> {
   try {
     const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
@@ -166,7 +166,7 @@ export async function fetchContextualTags(): Promise<string[]> {
     const trending = [...freq.entries()]
       .sort((a, b) => b[1] - a[1])
       .map(([name]) => name)
-    return [...new Set([...recentSearches(), ...trending])].slice(0, 3)
+    return [...new Set(trending)].slice(0, 3)
   } catch {
     return contextualTags()
   }
