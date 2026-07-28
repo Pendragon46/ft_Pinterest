@@ -7,19 +7,25 @@ import {
   IsOptional,
   IsEmail,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
+  @Transform(({ value }) => value?.trim())
+  @IsOptional() // for undefined and null values
+  @IsNotEmpty() // for empty string
   @IsString()
-  @IsOptional()
+
   @MaxLength(50)
   fullname!: string;
 
-  @IsString()
+  @Transform(({ value }) => value?.trim())
   @IsNotEmpty()
+  @IsString()
   @MinLength(3)
   @MaxLength(30)
   username!: string;
 
+  @Transform(({ value }) => value?.trim())
   @IsString()
   @IsEmail()
   @IsNotEmpty()
@@ -28,11 +34,13 @@ export class CreateUserDto {
   @IsStrongPassword()
   @IsNotEmpty()
   password!: string;
-
-  @IsString()
+  
   @IsOptional()
+  @Transform(({ value }) => value?.trim())
+  @IsNotEmpty()
+  @IsString()
   @MaxLength(280)
-  bio!: string;
+  bio?: string;
 
   @IsString()
   @IsOptional()

@@ -10,6 +10,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
 import { Role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UsersService {
@@ -110,6 +112,10 @@ export class UsersService {
         throw new ConflictException('Username already taken');
       }
     }
+	if (data.password)
+	{
+		data.password = await bcrypt.hash(data.password as string , 10);
+	}
     if (data.email) {
       const existingUser = await this.prisma.user.findUnique({
         where: { email: data.email as string },
