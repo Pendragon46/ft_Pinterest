@@ -34,7 +34,7 @@ export class WebsocketGateway
 	const socketIds = this.onlineStatusService.getSocketIdsForUser(userId);
 		if (socketIds) {
 			socketIds.forEach((socketId) => {
-				this.server.to(socketId).emit('statusChange', { userId, status });
+				this.server.to(socketId).emit('friendStatusChange', { userId, status });
 			});
 		}
   } 
@@ -84,6 +84,32 @@ export class WebsocketGateway
       fromUserId,
     });
   }
+
+//in front should connect with this socket when friend requests are accepted and immediately change the status to online for the user who accepted the request, so that the other user can see it in real time
+  @SubscribeMessage('friendRequest:accepted')
+  handleFriendRequestAccepted(
+	@ConnectedSocket() client: Socket,
+	data: { friendUserId: string }
+  ){
+	let token: any;
+    try {
+      token = this.verifyToken(client);
+      if (!token) {
+        console.error('No token provided');
+        client.disconnect();
+        return;
+      }
+      client.data.userId = token.sub;
+  }catch (error) {
+      console.error('Token verification failed:', error);
+      client.disconnect();
+      return;
+    }
+    this.onlineStatusService.addOnlineUser(client.id, token.sub);
+	this.notifyUser(data.friendUserId, 'online');
+	// if this don't work use = this.notifyFriendsAboutStatusChange(token.sub, 'online'); instead
+}
+
 
   handleConnection(client: Socket) {
     let token: any;
