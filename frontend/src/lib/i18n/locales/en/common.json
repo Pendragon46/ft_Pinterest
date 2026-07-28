@@ -327,6 +327,7 @@
     "backHome": "Back to the map",
     "commentsEmpty": "Be the first to comment.",
     "commentPosted": "Comment posted.",
+    "commentMinLength": "At least 3 characters.",
     "commentFailed": "Couldn't post your comment.",
     "retry": "Retry"
   },

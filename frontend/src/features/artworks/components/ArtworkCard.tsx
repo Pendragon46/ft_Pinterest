@@ -43,36 +43,22 @@ export const ArtworkCard = memo(function ArtworkCard({
     author: artwork.author.username,
   })
 
-  // Modal-route pattern: stash the current page so detail opens as an overlay;
-  // a refresh or shared link lands on the standalone page instead.
-  return (
-    <Link
-      to={`/artwork/${artwork.sourceId ?? artwork.id}`}
-      state={{ background: location }}
-      // No native drag: a card drag must pan the map.
-      draggable={false}
-      onMouseEnter={playHover}
-      onMouseLeave={stopHover}
-      onFocus={playHover}
-      onBlur={stopHover}
-      aria-label={ariaLabel}
-      className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
-        layout === 'grid' ? 'relative w-full' : ''
-      }`}
-      style={{
-        backgroundColor: artwork.color,
-        animationDelay: `${revealDelay}ms`,
-        ...(layout === 'canvas'
-          ? {
-              position: 'absolute' as const,
-              left: artwork.x,
-              top: artwork.y,
-              width: artwork.width,
-              height: artwork.height,
-            }
-          : { aspectRatio: `${artwork.width} / ${artwork.height}` }),
-      }}
-    >
+  const cardStyle = {
+    backgroundColor: artwork.color,
+    animationDelay: `${revealDelay}ms`,
+    ...(layout === 'canvas'
+      ? {
+          position: 'absolute' as const,
+          left: artwork.x,
+          top: artwork.y,
+          width: artwork.width,
+          height: artwork.height,
+        }
+      : { aspectRatio: `${artwork.width} / ${artwork.height}` }),
+  }
+
+  const media = (
+    <>
       {/* Uploaded media fills the card; the `color` background shows through
           only while it loads or when a work has no media. */}
       {artwork.mediaUrl ? (
@@ -118,6 +104,45 @@ export const ArtworkCard = memo(function ArtworkCard({
           {artwork.author.username}
         </span>
       </span>
+    </>
+  )
+
+  // A card without a real sourceId is a placeholder cell, not a work: its `id`
+  // is a grid-cell key (`w_x_y`), so a <Link> would navigate to a 404. Render it
+  // inert instead of pretending it leads somewhere.
+  if (!artwork.sourceId) {
+    return (
+      <div
+        aria-hidden="true"
+        className={`block animate-reveal overflow-hidden rounded-md motion-reduce:animate-none ${
+          layout === 'grid' ? 'relative w-full' : ''
+        }`}
+        style={cardStyle}
+      >
+        {media}
+      </div>
+    )
+  }
+
+  // Modal-route pattern: stash the current page so detail opens as an overlay;
+  // a refresh or shared link lands on the standalone page instead.
+  return (
+    <Link
+      to={`/artwork/${artwork.sourceId}`}
+      state={{ background: location }}
+      // No native drag: a card drag must pan the map.
+      draggable={false}
+      onMouseEnter={playHover}
+      onMouseLeave={stopHover}
+      onFocus={playHover}
+      onBlur={stopHover}
+      aria-label={ariaLabel}
+      className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
+        layout === 'grid' ? 'relative w-full' : ''
+      }`}
+      style={cardStyle}
+    >
+      {media}
     </Link>
   )
 })

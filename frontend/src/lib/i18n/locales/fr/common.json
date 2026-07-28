@@ -326,6 +326,7 @@
     "backHome": "Retour à la carte",
     "commentsEmpty": "Soyez le premier à commenter.",
     "commentPosted": "Commentaire publié.",
+    "commentMinLength": "Au moins 3 caractères.",
     "commentFailed": "Échec de l'envoi du commentaire.",
     "retry": "Réessayer",
     "unfollow": "Ne plus suivre"

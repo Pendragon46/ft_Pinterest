@@ -326,6 +326,7 @@
     "backHome": "العودة إلى الخريطة",
     "commentsEmpty": "كن أول من يعلّق.",
     "commentPosted": "تم نشر التعليق.",
+    "commentMinLength": "٣ أحرف على الأقل.",
     "commentFailed": "تعذّر نشر تعليقك.",
     "retry": "إعادة المحاولة",
     "unfollow": "إلغاء المتابعة"

@@ -15,7 +15,12 @@ import { useNicheCompletion } from '@/features/search/useNicheCompletion'
 import { fetchProfile, userKeys } from '@/features/users/user.api'
 import type { User } from '@/features/auth/auth.types'
 
-import { artworkKeys, fetchFeedTile, fetchTileArtworks } from '../artwork.api'
+import {
+  artworkKeys,
+  fetchArtworkCount,
+  fetchFeedTile,
+  fetchTileArtworks,
+} from '../artwork.api'
 import { tileSlots } from '../artwork.mock'
 import type { CanvasArtwork } from '../artwork.types'
 import { ArtworkCard } from '../components/ArtworkCard'
@@ -67,6 +72,15 @@ export function ArtworkCanvas() {
     enabled: Boolean(creatorId),
     staleTime: 300_000,
   })
+  // Total works → how many 16-item pages the default map can spread tiles over.
+  // The tiles below gate on it (enabled) so pageForTile is sized correctly on
+  // the first fetch — no page churn. Niche/feed/creator tiles are unaffected.
+  const totalCount = useQuery({
+    queryKey: artworkKeys.count(),
+    queryFn: fetchArtworkCount,
+    staleTime: Infinity,
+  })
+  const totalPages = Math.max(1, Math.ceil((totalCount.data ?? 0) / 16))
   const creator = creatorId
     ? { id: creatorId, name: creatorDisplayName(creatorProfile.data) }
     : null
@@ -137,9 +151,10 @@ export function ArtworkCanvas() {
                 staleTime: Infinity,
               }
             : {
-                queryKey: artworkKeys.tile(tx, ty),
-                queryFn: () => fetchTileArtworks(tx, ty),
+                queryKey: artworkKeys.tile(tx, ty, totalPages),
+                queryFn: () => fetchTileArtworks(tx, ty, totalPages),
                 staleTime: Infinity,
+                enabled: totalCount.isSuccess,
               },
     ),
   })

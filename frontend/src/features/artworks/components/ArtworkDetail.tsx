@@ -296,7 +296,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     // while a post is in flight so concurrent posts can't clobber each other (§2.5).
     if (postMutation.isPending) return
     const content = draft.trim()
-    if (!content) return
+    // Le serveur exige 3 caractères (@MinLength(3)) : refuser plus tôt côté
+    // client évite un aller-retour en 400 sur Entrée comme sur le bouton.
+    if (content.length < 3) return
     requireAuth(() => {
       if (!selfAuthor()) return // requireAuth guarantees a user; narrow for TS
       setDraft('')
@@ -598,11 +600,18 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               size="sm"
               onClick={handlePost}
               loading={postMutation.isPending}
-              disabled={draft.trim().length === 0}
+              disabled={draft.trim().length < 3}
             >
               {t('artwork.post')}
             </Button>
           </div>
+          {/* Explique le bouton grisé plutôt que de laisser l'utilisateur deviner :
+              visible seulement quand il a commencé à taper mais reste sous 3. */}
+          {draft.trim().length > 0 && draft.trim().length < 3 ? (
+            <p className="mt-1.5 px-1 text-xs text-neutral-500">
+              {t('artwork.commentMinLength')}
+            </p>
+          ) : null}
           {/* Success is announced politely here; failure is announced by the toast
               (role="alert"), so it isn't duplicated. */}
           <p role="status" aria-live="polite" className="sr-only">

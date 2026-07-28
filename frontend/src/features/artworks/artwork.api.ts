@@ -17,7 +17,9 @@ import type {
 } from './artwork.types'
 
 export const artworkKeys = {
-  tile: (tx: number, ty: number) => ['artworks', 'tile', tx, ty] as const,
+  tile: (tx: number, ty: number, totalPages: number) =>
+    ['artworks', 'tile', tx, ty, totalPages] as const,
+  count: () => ['artworks', 'count'] as const,
   feed: () => ['artworks', 'feed'] as const,
   feedTile: (tx: number, ty: number) =>
     ['artworks', 'feed', 'tile', tx, ty] as const,
@@ -25,11 +27,22 @@ export const artworkKeys = {
   comments: (id: string) => ['artworks', 'comments', id] as const,
 }
 
+// Total published works → number of 16-item pages the canvas can spread tiles
+// across. Without it, pageForTile assumed a fixed 5 pages: with more works most
+// stayed off the map, with fewer some tiles hit empty pages. One cached request.
+export async function fetchArtworkCount(): Promise<number> {
+  const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
+    params: { page: 1, limit: 1000, sort: 'recent' },
+  })
+  return data.length
+}
+
 export async function fetchTileArtworks(
   tx: number,
   ty: number,
+  totalPages: number,
 ): Promise<CanvasArtwork[]> {
-  const page = pageForTile(tx, ty)
+  const page = pageForTile(tx, ty, totalPages)
   const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
     params: { page, limit: 16, sort: 'recent' },
   })
