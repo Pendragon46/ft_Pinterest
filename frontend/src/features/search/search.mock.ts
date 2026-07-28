@@ -130,7 +130,16 @@ function nearestScore(q: string, niche: Niche): number {
   return score
 }
 
-/** Resolve a submitted term to a niche, or the nearest region if none match (§7). */
+/**
+ * Resolve a submitted term to a niche, or the nearest region if none match (§7).
+ *
+ * DESIGN DECISION — search never dead-ends. Any term always resolves to a niche
+ * (the closest one, `best`, when nothing matches), so the discovery canvas is
+ * never a cold "no results" screen. This is why there is no server-side
+ * empty-results fallback (SEARCH_SPEC S3 / `/search/unified`): that fallback
+ * exists to fill a flat results list, and this app has none — search is spatial,
+ * `onSubmit` enters a niche rather than listing works.
+ */
 export function resolveSearch(term: string): SearchResolution {
   const q = normalise(term)
   if (q.length > 0) {
