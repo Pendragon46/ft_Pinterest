@@ -17,7 +17,7 @@
   - React
   - TypeScript
 
-  
+
 ### Database Schema:
 
 ![Database Schema](diagram_prisma.png)
@@ -51,7 +51,7 @@
     - [x] RTL Arabic
     - [x] GDPR compliance features *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
 	- [] file upload
-	- [] Oauth2.0 authentication with Google or 42 API
+	- [] Oauth2.0 authentication with Google
 	- [] User activity analytics and insights dashboard
 
 Excpected points: 17/28

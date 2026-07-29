@@ -1,20 +1,11 @@
-*This project has been created as part of the 42 curriculum by cramaros, trindran, srabeman, nrakotom.*
-
----
-
-# ft_transcendence — [Project Name]
-> [do not forget, this has to be professional not casual] \
-> [One sentence that describes the app.
-Example: "An infinite canvas web app where users discover and share artwork organized by topic."]
+*This project has been created as part of the 42 curriculum by trindran, cramaros, nrakotom, srabeman*
 
 ---
 
 # Description
 
-### What is this project?
-
-[2-3 sentences describing the app concept. What does a user see when they open it?
-What can they do? What makes it different from a standard social app?]
+The project is an infinite canvas web app where user discover and share artwork.\
+It's like pinterest but with infinite canvas instead of standard scrolling.
 
 ### Key features
 
@@ -23,14 +14,10 @@ What can they do? What makes it different from a standard social app?]
 - Search — filter the canvas by keyword to see only matching content
 - User accounts — register, log in, manage your profile
 - Social features — follow users, like and comment on posts
-- Real-time chat — direct messaging between users
-- [Add any other features your team implemented]
-
 
 ---
 
-
-# Instructions
+# Instruction
 
 ### Prerequisites
 
@@ -45,18 +32,16 @@ Make sure the following are installed on your machine:
 
 ### Environment setup
 
-Copy the example env file and fill in your values:
+Copy the example env files and fill in your values:
 
 ```bash
 cp .env.example .env
 ```
-
 Required variables in `.env`:
 
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/transcendence
 JWT_SECRET=your_long_random_secret
-JWT_EXPIRATION=7d
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
@@ -71,65 +56,15 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 make start
 ```
 
-The app will be available at `http://localhost:3000` (backend) and
-`http://localhost:5173` (frontend, or whichever port is configured).
-
-### Run locally without Docker (development)
-
-**Backend:**
-```bash
-cd backend
-npm install
-npx prisma migrate dev
-npm run start:dev
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
----
-
-## Individual Contributions
-
-### \<login1\> — Project Manager / Backend Developer
-- [List specific features and modules you built]
-- [Describe any technical challenges you faced and how you solved them]
-
-### \<login2\> — [role]
-- [List specific features and modules]
-- [Challenges and solutions]
-
-### \<login3\> — [role]
-- [List specific features and modules]
-- [Challenges and solutions]
-
-### \<login4\> — [role]
-- [List specific features and modules]
-- [Challenges and solutions]
+The app will be available at `http://localhost:8443`
 
 ---
 
 # Resources
 
-### Documentation
-- [NestJS official docs](https://docs.nestjs.com)
-- [Prisma docs](https://www.prisma.io/docs)
-- [React docs](https://react.dev)
-- [PostgreSQL docs](https://www.postgresql.org/docs)
-- [Docker docs](https://docs.docker.com)
-- [Passport.js docs](https://www.passportjs.org)
-- [JWT introduction](https://jwt.io/introduction)
-- [Cloudinary docs](https://cloudinary.com/documentation)
-
-### Articles and tutorials
-- [NestJS authentication guide](https://docs.nestjs.com/security/authentication)
-- [NestJS WebSockets guide](https://docs.nestjs.com/websockets/gateways)
-- [Prisma with NestJS](https://docs.nestjs.com/recipes/prisma)
-- [Add any other articles that helped your team]
+ - **NestJS** : [official site documentation ] (https://docs.nestjs.com/)
+ - **Prisma** : [official documentation ] (https://www.prisma.io/docs)
+ - **Socket.IO** : [official documentation ] (https://socket.io/docs/v4/)
 
 ### AI usage
 AI tools (Claude by Anthropic) were used during this project for the following tasks:
@@ -145,17 +80,7 @@ team before being integrated into the project. No code was blindly copy-pasted.
 
 ---
 
-## Known Limitations
-
-- [List anything that doesn't work perfectly or is incomplete]
-- [Example: "The canvas positioning algorithm is a simplified version and may cluster
-  posts unevenly for tags with very few entries"]
-
----
-
-# Additional sections
-
-## Team Information
+## Team Information:
 
 | Login | Role(s) | Responsibilities |
 |-------|---------|-----------------|
@@ -164,24 +89,23 @@ team before being integrated into the project. No code was blindly copy-pasted.
 | \<login3\> | [role] | [responsibilities] |
 | \<login4\> | [role] | [responsibilities] |
 
+
+
 ---
 
-## Project Management
+## Project Management:
 
-### How we organized the work
-[Describe how tasks were distributed. Example: "We held weekly meetings to sync on
-progress and divided work by feature. Each feature had a designated owner responsible
-for both implementation and testing."]
+### How the team organized the work
+Weekly meetings. Each feature had a responsible for implementation and testing.
 
 ### Tools used
 - **Version control**: Git + GitHub
-- **Task tracking**: [GitHub Issues / Trello / Notion — fill in what you used]
-- **Communication**: [Discord / Slack — fill in what you used]
-- **Branch strategy**: feature branches merged into `dev`, then into `main` after review
+- **Task tracking**: [GitHub Issues]
+- **Communication**: [Whatsapp / Slack]
 
 ---
 
-## Technical Stack
+## Technical Stack:
 
 ### Frontend
 - **Framework**: React + TypeScript
@@ -217,8 +141,10 @@ for both implementation and testing."]
   without requiring us to manage a file server manually.
 
 ---
+  
+## Database Schema:
 
-## Database Schema
+![Database Schema](diagram_prisma.png)
 
 ### Tables and relationships
 
@@ -230,8 +156,6 @@ for both implementation and testing."]
 | Like     | A user liking an artwork | Belongs to User and Artwork |
 | Comment  | A user commenting on an artwork | Belongs to User and Artwork |
 | Follow   | Follow relationship between two users | References User twice (follower / following) |
-| [Message]   | Direct messages between users | Belongs to sender and receiver (User) |
-| [Notification] | In-app alerts | Belongs to User |
 
 ### Key fields
 
@@ -243,11 +167,9 @@ for both implementation and testing."]
 
 **Follow**: composite primary key `(followerId, followingId)` both referencing User
 
-> For a visual diagram of the schema, see [`prisma/schema.prisma`](./backend/prisma/schema.prisma)
-
 ---
 
-## Features List
+## Features List:
 
 | Feature | Description | Owner |
 |---------|-------------|-------|
@@ -267,35 +189,49 @@ for both implementation and testing."]
 | Admin panel | Manage users and content | \<login\> |
 | [Add more as completed] | | |
 
----
-
-## Modules
-
-| Status | Module | Type | Points | Owner | Description |
-|--------|--------|------|--------|-------|-------------|
-| [] | Framework frontend + backend | Major | 2 | \<login\> | React (frontend) + NestJS (backend) |
-| [] | Frontend framework | Minor | 1 | \<login\> | React + TypeScript |
-| [] | Backend framework | Minor | 1 | \<login\> | NestJS |
-| [] | Real-time features (WebSockets) | Major | 2 | \<login\> | Live chat and canvas updates |
-| [] | User interaction | Major | 2 | \<login\> | Chat, profiles, follow system |
-| [] | Standard user management | Major | 2 | \<login\> | Registration, login, profile, avatar |
-| [] | OAuth (Google login) | Minor | 1 | \<login\> | Google sign-in via passport-google |
-| [] | ORM | Minor | 1 | \<login\> | Prisma connected to PostgreSQL |
-| [] | Notification system | Minor | 1 | \<login\> | In-app alerts for user activity |
-| [] | Advanced search | Minor | 1 | \<login\> | Search with filters and tag support |
-| [] | File upload | Minor | 1 | \<login\> | Image upload via Cloudinary |
-| [] | Custom design system | Minor | 1 | \<login\> | [describe your component library] |
-| [] | Multiple languages (i18n) | Minor | 1 | \<login\> | [languages supported] |
-| [] | Additional browser support | Minor | 1 | \<login\> | Firefox, Safari, Edge |
-| [] | Public API | Major | 2 | \<login\> | Secured public API with rate limiting |
-| [] | RTL language support | Minor | 1 | \<login\> | Arabic RTL layout support |
-| [] | Advanced permission system | Major | 2 | \<login\> | Admin/moderator/user roles and CRUD |
-| [] | Two-factor authentication | Minor | 1 | \<login\> | TOTP via authenticator app |
-| [] | WAF/ModSecurity | Major | 2 | \<login\> | Hardened WAF + HashiCorp Vault |
-| [] | ELK stack | Major | 2 | \<login\> | Elasticsearch, Logstash, Kibana |
-| [] | Microservices | Major | 2 | \<login\> | Backend split into independent services |
-| [] | GDPR compliance | Minor | 1 | \<login\> | Data export, deletion, confirmation |
-
-**Total: 29 points**
 
 ---
+
+## Modules:
+ - Major :
+    - [2] Use a framework for the frontend and backend(React, NestJS).
+    - [] Implement real-time features using WebSockets or similar technology.
+    - [] Allow users to interact with other users
+	
+    - [2] Advanced Permission System *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
+    - [] Standard user management and authentication
+	- [2] Module of choice (infinite canvas)
+	- [] Monitoring system with Prometheus and Grafana.
+	
+
+ 
+- Minor :
+    - [x] Use a frontend framework (React).
+    - [x] Use a backend framework (NestJS).
+    - [x] Use an ORM (Prisma) for the database.
+    - [x] Health check and status page system with automated backups and disaster recovery procedures.
+    - [x] A complete notification system for all creation, update, and deletion actions.
+    - [x] File upload and management system
+    - [x] Custom-made design system with reusable components, including a proper color palette, typography, and icons.
+	- [x]  Implement advanced search functionality with filters, sorting, and pagination.
+    - [x] Multilingue
+    - [x] Support for additional browsers
+    - [x] RTL Arabic
+	- [] file upload
+	- [x] Oauth2.0 authentication with Google
+	- [] User activity analytics and insights dashboard
+
+Excpected points: 17/28
+
+## Individual Contributions:
+- trindran :
+  - create prisma schema  
+  - Implement basis user CRUD with the dto validation
+  - Upload avatar, file and artwork with dto validation
+  - follow, like, comment system
+
+- nrakotom :
+- cramaros :
+  - Set up the complete development environment (frontend, backend, Docker, and service dependencies).
+  - Implemented the health monitoring system, including health checks, the status page, automated PostgreSQL backups, and disaster recovery procedures.
+- srabeman :
