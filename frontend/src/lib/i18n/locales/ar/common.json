@@ -56,7 +56,10 @@
     "conversationWith": "محادثة مع {{name}}",
     "viewProfile": "عرض ملف {{name}}",
     "message": "مراسلة",
-    "typing": "{{name}} يكتب…"
+    "typing": "{{name}} يكتب…",
+    "system": {
+      "mutualFollow": "أصبحتما صديقين الآن. يمكنكما تبادل الرسائل.",
+      "unknown": "تحديث المحادثة"}
   },
   "language": {
     "label": "اللغة"

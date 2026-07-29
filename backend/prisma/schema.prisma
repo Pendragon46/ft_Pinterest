@@ -139,16 +139,23 @@ model ConversationParticipant {
   @@index([userId])
 }
 
+enum MessageKind {
+  USER
+  SYSTEM
+}
+
 model Message {
-  id             String   @id @default(uuid())
+  id             String      @id @default(uuid())
   conversationId String
-  senderId       String
+  kind           MessageKind @default(USER)
+  senderId       String?
   content        String?
+  systemKey      String?
   artworkId      String?
-  createdAt      DateTime @default(now())
+  createdAt      DateTime    @default(now())
 
   conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderId], references: [id], onDelete: Cascade)
   artwork      Artwork?     @relation(fields: [artworkId], references: [id], onDelete: SetNull)
 
   @@index([conversationId, createdAt])

@@ -160,6 +160,32 @@ const VOCAB = {
       'Composition en diagonale, le regard entre par le bas à gauche.',
     ],
   },
+  motion: {
+    tags: ['loop', 'timing', 'easing', 'transition', 'kinetic'],
+    nouns: ['Boucle', 'Transition', 'Animation', 'Séquence', 'Étude', 'Générique'],
+    qualifiers: ['en boucle courte', 'à 24 images/seconde', 'sur courbe douce', 'en typographie cinétique', 'sans raccord', 'à rythme soutenu'],
+    descriptions: [
+      "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+      "Courbe d'accélération douce à l'entrée, franche à la sortie.",
+      'Typographie cinétique : le texte arrive par le bas, décalé de trois images.',
+      'Étude de rythme avant la version finale. Celle-ci est restée plus lisible.',
+      "Rendu à 24 images/seconde pour garder un peu de matière dans le mouvement.",
+      'Transition testée sur trois durées, la plus courte gagne.',
+    ],
+  },
+  brand: {
+    tags: ['identity', 'logo', 'system', 'palette', 'guidelines'],
+    nouns: ['Identité', 'Marque', 'Logotype', 'Système', 'Charte', 'Déclinaison'],
+    qualifiers: ['en monochrome', 'à symbole modulaire', 'pour une jeune marque', 'en trois couleurs', 'sur fond sombre', 'à typographie unique'],
+    descriptions: [
+      "Identité construite autour d'un seul symbole, décliné en six tailles.",
+      'Palette réduite à trois couleurs : plus simple à tenir dans le temps.',
+      'Logotype dessiné sur grille, les proportions restent stables à petite taille.',
+      'Charte tenant sur huit pages. Au-delà, personne ne la lit.',
+      "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+      'Système de déclinaisons testé sur papier avant tout écran.',
+    ],
+  },
 }
 
 // Niches du canvas sans dossier source : la recherche y retombe sur le mock

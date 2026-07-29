@@ -56,7 +56,11 @@
     "conversationWith": "Conversation with {{name}}",
     "viewProfile": "View {{name}}'s profile",
     "message": "Message",
-    "typing": "{{name}} is typing…"
+    "typing": "{{name}} is typing…",
+    "system": {
+      "mutualFollow": "You are now friends. You can message each other.",
+      "unknown": "Conversation update"
+    }
   },
   "language": {
     "label": "Language"

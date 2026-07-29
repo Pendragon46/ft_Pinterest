@@ -23,11 +23,16 @@ export function ConversationRow({ conversation: c, active, onClick }: Props) {
 
   let preview = ''
   if (c.lastMessage) {
-    const mine = c.lastMessage.senderId === myId
-    if (c.lastMessage.hasArtwork) {
-      preview = mine ? t('chat.sharedArtworkSent') : t('chat.sharedArtworkPreview')
+    if (c.lastMessage.kind === 'SYSTEM') {
+      // No "Vous :" prefix — a system message belongs to neither participant.
+      preview = t(`chat.system.${c.lastMessage.systemKey ?? 'unknown'}`)
     } else {
-      preview = (mine ? t('chat.you') : '') + (c.lastMessage.content ?? '')
+      const mine = c.lastMessage.senderId === myId
+      if (c.lastMessage.hasArtwork) {
+        preview = mine ? t('chat.sharedArtworkSent') : t('chat.sharedArtworkPreview')
+      } else {
+        preview = (mine ? t('chat.you') : '') + (c.lastMessage.content ?? '')
+      }
     }
   }
 

@@ -38,9 +38,11 @@ export function PresenceProvider({ children }: PresenceProviderProps) {
 
     socket.on('friendStatusChange', onChange)
     socket.on('connect', seed)
+    socket.on('friendsChanged', seed)
     return () => {
       socket.off('friendStatusChange', onChange)
       socket.off('connect', seed)
+      socket.off('friendsChanged', seed)
       usePresenceStore.getState().clear()
     }
   }, [user])

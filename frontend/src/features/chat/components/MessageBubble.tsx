@@ -14,6 +14,19 @@ interface Props {
 
 export function MessageBubble({ message, mine, senderName }: Props) {
   const { t } = useTranslation('common')
+
+  // A system message belongs to neither side: it renders centred, like a date
+  // separator. No ms-auto/me-auto, so nothing to mirror in RTL. The text comes
+  // from i18n (systemKey), never from the database, so it follows the user's
+  // language — including retroactively.
+  if (message.kind === 'SYSTEM') {
+    return (
+      <li className="py-2 text-center text-xs text-neutral-500">
+        {t(`chat.system.${message.systemKey ?? 'unknown'}`)}
+      </li>
+    )
+  }
+
   // A pasted artwork link renders as the rich card, same as an API-shared one.
   const link = message.artwork ? null : extractArtworkLink(message.content)
 

@@ -57,7 +57,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
       const { open, activeId } = useChatStore.getState()
       const viewing = open && activeId === conversationId
-      const isMine = message.senderId === myId
+      // A system message has no sender: `senderId === myId` would be false for
+      // both sides, which is what we want (it must count as unread), but the
+      // kind test makes that intent explicit rather than accidental.
+      const isMine = message.kind === 'USER' && message.senderId === myId
 
       queryClient.setQueryData<Conversation[]>(
         chatKeys.conversations(),
@@ -65,6 +68,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           if (!prev) return prev
           const idx = prev.findIndex((c) => c.id === conversationId)
           if (idx === -1) {
+            // A mutual follow creates the conversation server-side: it isn't in
+            // the cached inbox yet, so re-seed rather than drop the event.
             seed()
             return prev
           }
@@ -72,6 +77,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             ...prev[idx],
             lastMessage: {
               senderId: message.senderId,
+              kind: message.kind,
+              systemKey: message.systemKey,
               content: message.content,
               hasArtwork: message.artwork !== null,
               createdAt: message.createdAt,

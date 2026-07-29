@@ -144,6 +144,59 @@ export class ChatService {
     return payload;
   }
 
+  /**
+   * Ouvre la conversation d'une paire devenue mutuelle et y pose le marqueur
+   * d'amitié. Appelé par FollowService, jamais par un contrôleur — d'où
+   * l'absence de garde de participation : la mutualité a déjà été vérifiée.
+   *
+   * Le texte n'est pas stocké : on persiste `systemKey`, le frontend rend
+   * t('chat.system.<key>'). Sinon le message resterait figé dans la langue
+   * de création, alors que l'app tient trois locales en parité.
+   */
+  async createMutualFollowMarker(a: string, b: string): Promise<void> {
+    const pairKey = [a, b].sort().join(':');
+    let convo = await this.prisma.conversation.findUnique({ where: { pairKey } });
+    if (!convo) {
+      convo = await this.prisma.conversation.create({
+        data: {
+          pairKey,
+          participants: { create: [{ userId: a }, { userId: b }] },
+        },
+      });
+    }
+
+    // Garde anti-toggle : un follow/unfollow répété ne doit pas empiler les
+    // marqueurs. Une remutualisation APRÈS un vrai échange en repose un.
+    const last = await this.prisma.message.findFirst({
+      where: { conversationId: convo.id },
+      orderBy: { createdAt: 'desc' },
+      select: { kind: true, systemKey: true },
+    });
+    if (last?.kind === 'SYSTEM' && last.systemKey === 'mutualFollow') {
+      return;
+    }
+
+    const created = await this.prisma.message.create({
+      data: {
+        conversationId: convo.id,
+        kind: 'SYSTEM',
+        systemKey: 'mutualFollow',
+      },
+      include: { artwork: MESSAGE_ARTWORK },
+    });
+    await this.prisma.conversation.update({
+      where: { id: convo.id },
+      data: { updatedAt: new Date() },
+    });
+
+    const payload = {
+      conversationId: convo.id,
+      message: this.toMessage(created),
+    };
+    this.gateway.emitToUser(a, 'message:new', payload);
+    this.gateway.emitToUser(b, 'message:new', payload);
+  }
+
   async markRead(userId: string, conversationId: string) {
     await this.assertParticipant(userId, conversationId);
     const readAt = new Date();
@@ -191,7 +244,9 @@ export class ChatService {
         };
       }[];
       messages: {
-        senderId: string;
+        senderId: string | null;
+        kind: 'USER' | 'SYSTEM';
+        systemKey: string | null;
         content: string | null;
         artworkId: string | null;
         createdAt: Date;
@@ -204,7 +259,9 @@ export class ChatService {
     const unreadCount = await this.prisma.message.count({
       where: {
         conversationId: c.id,
-        senderId: { not: userId },
+        // Un message système n'a pas d'expéditeur : `senderId != moi` ne suffit
+        // plus. Sans ce OR, le marqueur d'amitié n'allumerait pas la pastille.
+        OR: [{ kind: 'SYSTEM' }, { senderId: { not: userId } }],
         ...(me?.lastReadAt ? { createdAt: { gt: me.lastReadAt } } : {}),
       },
     });
@@ -215,6 +272,8 @@ export class ChatService {
       lastMessage: last
         ? {
             senderId: last.senderId,
+            kind: last.kind,
+            systemKey: last.systemKey,
             content: last.content,
             hasArtwork: last.artworkId !== null,
             createdAt: last.createdAt,
@@ -228,7 +287,9 @@ export class ChatService {
   private toMessage(m: {
     id: string;
     conversationId: string;
-    senderId: string;
+    senderId: string | null;
+    kind: 'USER' | 'SYSTEM';
+    systemKey: string | null;
     content: string | null;
     createdAt: Date;
     artwork: {
@@ -242,6 +303,8 @@ export class ChatService {
       id: m.id,
       conversationId: m.conversationId,
       senderId: m.senderId,
+      kind: m.kind,
+      systemKey: m.systemKey,
       content: m.content,
       createdAt: m.createdAt,
       artwork: m.artwork,
