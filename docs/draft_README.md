@@ -194,14 +194,14 @@ Weekly meetings. Each feature had a responsible for implementation and testing.
 
 ## Modules:
  - Major :
-    - [2] Use a framework for the frontend and backend(React, NestJS).
+    - [x] Use a framework for the frontend and backend(React, NestJS).
     - [] Implement real-time features using WebSockets or similar technology.
     - [] Allow users to interact with other users
 	
-    - [2] Advanced Permission System *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
+    - [x] Advanced Permission System *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
     - [] Standard user management and authentication
-	- [2] Module of choice (infinite canvas)
-	- [] Monitoring system with Prometheus and Grafana.
+	- [x] Module of choice (infinite canvas)
+	- [x] Monitoring system with Prometheus and Grafana.
 	
 
  
@@ -217,7 +217,6 @@ Weekly meetings. Each feature had a responsible for implementation and testing.
     - [x] Multilingue
     - [x] Support for additional browsers
     - [x] RTL Arabic
-	- [] file upload
 	- [x] Oauth2.0 authentication with Google
 	- [] User activity analytics and insights dashboard
 
