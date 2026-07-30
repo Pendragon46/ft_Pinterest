@@ -1,8 +1,8 @@
-import {WebSocketGateway,WebSocketServer,OnGatewayConnection,OnGatewayDisconnect,} from '@nestjs/websockets';
+import {WebSocketGateway,WebSocketServer,OnGatewayConnection,OnGatewayDisconnect,SubscribeMessage,MessageBody,ConnectedSocket,} from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
-import { OnlineStatusService } from './onlineStatus.service';
 import { JwtService } from '@nestjs/jwt';
 import { FriendsService } from 'src/friends/friends.service';
+import { OnlineStatusService } from './onlineStatus.service';
 
 @WebSocketGateway({
   cors: {
@@ -30,7 +30,16 @@ export class WebsocketGateway
     return token;
   }
 
-  async NotifyFriendsAboutStatusChange(
+  async notifyUser(userId: string, status: 'online' | 'offline') {
+	const socketIds = this.onlineStatusService.getSocketIdsForUser(userId);
+		if (socketIds) {
+			socketIds.forEach((socketId) => {
+				this.server.to(socketId).emit('friendStatusChange', { userId, status });
+			});
+		}
+  } 
+
+  async notifyFriendsAboutStatusChange(
     userId: string,
     status: 'online' | 'offline',
   ) {
@@ -51,25 +60,38 @@ export class WebsocketGateway
     });
   }
 
-  //in frontend, use this code to connect to the websocket server and send the jwt token in the auth header
-  // 	const socket = io("http://localhost:3000", {
-  //   auth: {
-  //     token: jwt
-  //   }
-  // after you use the GetonlineFriends endpoint to get the list of online friends, you can listen for the friendStatusChange event to update the friend status in the UI
-  /*
-in frontend, use this code to listen for the friendStatusChange event and update the friend status in the UI
-socket.on('friendStatusChange', (data) => {
-  console.log(data);
+  /** Emit an event to every open socket of a user (multi-tab). Reuses the
+      presence registry — no Socket.IO rooms. */
+  emitToUser(userId: string, event: string, payload: unknown): void {
+    const socketIds = this.onlineStatusService.getSocketIdsForUser(userId);
+    socketIds?.forEach((socketId) =>
+      this.server.to(socketId).emit(event, payload),
+    );
+  }
 
-  // exemple :
-  // data.userId = "123"
-  // data.status = "online"
+  /** Ephemeral "typing" relay for the 1-1 chat. The sender is taken from the
+      authenticated socket (never trusted from the payload); the recipient is
+      the conversation's other participant, known to the client. */
+  @SubscribeMessage('chat:typing')
+  handleTyping(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { conversationId?: string; toUserId?: string },
+  ): void {
+    const fromUserId = client.data.userId as string | undefined;
+    if (!fromUserId || !data?.conversationId || !data?.toUserId) return;
+    this.emitToUser(data.toUserId, 'chat:typing', {
+      conversationId: data.conversationId,
+      fromUserId,
+    });
+  }
 
-  updateFriendStatus(data.userId, data.status);
-});*/
-  handleConnection(client: Socket) {
-    let token: any;
+//in front should connect with this socket when friend requests are accepted and immediately change the status to online for the user who accepted the request, so that the other user can see it in real time
+  @SubscribeMessage('friendRequest:accepted')
+  handleFriendRequestAccepted(
+	@ConnectedSocket() client: Socket,
+	data: { friendUserId: string }
+  ){
+	let token: any;
     try {
       token = this.verifyToken(client);
       if (!token) {
@@ -78,18 +100,41 @@ socket.on('friendStatusChange', (data) => {
         return;
       }
       client.data.userId = token.sub;
-    } catch (error) {
+  }catch (error) {
       console.error('Token verification failed:', error);
       client.disconnect();
       return;
     }
     this.onlineStatusService.addOnlineUser(client.id, token.sub);
-    this.NotifyFriendsAboutStatusChange(token.sub, 'online');
+	this.notifyUser(data.friendUserId, 'online');
+	// if this don't work use = this.notifyFriendsAboutStatusChange(token.sub, 'online'); instead
+}
+
+
+  handleConnection(client: Socket) {
+    let token: any;
+    try {
+      token = this.verifyToken(client);
+      // No/invalid token = an unauthenticated (guest) socket: disconnect quietly.
+      // This is a normal case, not a server error, so it stays off the console.
+      if (!token) {
+        client.disconnect();
+        return;
+      }
+      client.data.userId = token.sub;
+    } catch {
+      client.disconnect();
+      return;
+    }
+    this.onlineStatusService.addOnlineUser(client.id, token.sub);
+    this.notifyFriendsAboutStatusChange(token.sub, 'online');
   }
 
-  async handleDisconnect(client: any) {
-    console.log(`Client disconnected: ${client.id}`);
-    this.onlineStatusService.removeOnlineUser(client.data.userId, client.id);
-    this.NotifyFriendsAboutStatusChange(client.data.userId, 'offline');
+  async handleDisconnect(client: Socket) {
+    const userId = client.data.userId as string | undefined;
+    if (!userId) return; // unauthenticated socket: nothing was registered
+    const userOffline = this.onlineStatusService.removeOnlineUser(userId, client.id);
+	if (userOffline)
+    	this.notifyFriendsAboutStatusChange(userId, 'offline');
   }
 }

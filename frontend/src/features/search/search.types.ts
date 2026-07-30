@@ -18,7 +18,7 @@ export interface Niche {
   contentSize: number
 }
 
-export type SuggestionKind = 'discipline' | 'creator'
+export type SuggestionKind = 'discipline' | 'creator' | 'tag'
 
 /** One autocomplete row (§4). Labels resolve at render: disciplines translate via
     `category.*`, creators show their (data) username as-is. */
@@ -34,13 +34,20 @@ export interface Suggestion {
   /** creator → shown as-is (mock data). */
   username?: string
   handle?: string
+  /** creator → the backend user id, used to open their universe. */
+  userId?: string
+  /** tag → number of works carrying it, shown after the label (§4.2). */
+  count?: number
   /** Illustrative trailing crumbs shown after the label (§4.3), e.g. `['mobile']`. */
   path?: string[]
 }
 
-/** Categorised autocomplete payload; empty categories are omitted by the UI (§4.1). */
+/** Categorised autocomplete payload; empty categories are omitted by the UI (§4.1).
+    Order here is the visual order — the combobox flattens it in the same order for
+    keyboard navigation, so keep disciplines → tags → creators. */
 export interface SuggestionGroups {
   disciplines: Suggestion[]
+  tags: Suggestion[]
   creators: Suggestion[]
 }
 

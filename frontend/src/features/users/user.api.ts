@@ -1,29 +1,18 @@
-// The users "API": every read/write the profile & settings pages perform goes
-// through here. Today each resolves from the mock; when the NestJS/Prisma backend
-// lands only the bodies change (signatures + query keys stay identical). The
-// mock shapes already mirror the backend (`_count`, minimal DTO bodies, `mediaUrl`).
+// L'API "users" : toutes les lectures/écritures des pages Profil & Réglages
+// passent par ici. Lectures + mutations profil/compte appellent le backend
+// NestJS ; `setFollow` reste sur mock jusqu'au ticket T1. Clés de cache
+// inchangées.
 
 import type { ProfileArtwork } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
-import { maybeFailMutation } from '@/lib/devFail'
-
+import { http, isApiError, multipartConfig } from '@/lib/http'
 import {
-  getMockProfile,
-  mockUserLiked,
-  mockUserWorks,
-  MOCK_FOLLOWER_COUNT,
-  MOCK_FOLLOWING_COUNT,
-  updateMockProfile,
-  type ProfilePatch,
-} from './user.mock'
-
-const LATENCY_MS = 200
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
+  toProfileArtwork,
+  toUser,
+  type ServerArtwork,
+  type ServerFollow,
+  type ServerUser,
+} from '@/lib/mappers'
 
 // React Query key factory — single source of truth for the users cache keys.
 export const userKeys = {
@@ -34,103 +23,130 @@ export const userKeys = {
   followingCount: (id: string) => ['users', 'followingCount', id] as const,
 }
 
-/** One user's profile.
-    TODO(backend): GET /users/:id → User (404 if unknown). */
+/** Profil d'un user. GET /users/:id → 404 si inconnu (remonté en ApiError). */
 export async function fetchProfile(id: string): Promise<User> {
-  await delay(LATENCY_MS)
-  const profile = getMockProfile(id)
-  if (!profile) throw new Error(`User not found: ${id}`)
-  return profile
+  const { data } = await http.get<ServerUser>(`/users/${id}`)
+  return toUser(data)
 }
 
-/** A user's own works.
-    TODO(backend): GET /users/:id/artworks → Artwork[] (each with `_count`). */
+/** Œuvres publiées. Le backend inclut déjà `_count`. */
 export async function fetchUserWorks(id: string): Promise<ProfileArtwork[]> {
-  await delay(LATENCY_MS)
-  return mockUserWorks(id)
+  const { data } = await http.get<ServerArtwork[]>(`/users/${id}/artworks`)
+  return data.map(toProfileArtwork)
 }
 
-/** A user's liked works.
-    TODO(backend): GET /users/:id/artworks/liked → Artwork[]. */
+/** Œuvres likées. Le service déplie déjà `like.artwork` côté serveur. */
 export async function fetchUserLiked(id: string): Promise<ProfileArtwork[]> {
-  await delay(LATENCY_MS)
-  return mockUserLiked(id)
+  const { data } = await http.get<ServerArtwork[]>(
+    `/users/${id}/artworks/liked`,
+  )
+  return data.map(toProfileArtwork)
 }
 
-/** TODO(backend): GET /users/:id/followers/count → number. */
+/** Nombre d'abonnés. Le backend renvoie un entier nu, pas un objet. */
 export async function fetchFollowerCount(id: string): Promise<number> {
-  await delay(LATENCY_MS)
-  return getMockProfile(id) ? MOCK_FOLLOWER_COUNT : 0
+  const { data } = await http.get<number>(`/users/${id}/followers/count`)
+  return data
 }
 
-/** TODO(backend): GET /users/:id/following/count → number. */
+/** Nombre d'abonnements. Même forme. */
 export async function fetchFollowingCount(id: string): Promise<number> {
-  await delay(LATENCY_MS)
-  return getMockProfile(id) ? MOCK_FOLLOWING_COUNT : 0
+  const { data } = await http.get<number>(`/users/${id}/following/count`)
+  return data
 }
 
 // ── Mutations ───────────────────────────────────────────────────────────────
-// The global ValidationPipe uses forbidNonWhitelisted, so bodies carry ONLY the
-// DTO fields + `loggedUser` (the current user's id — the temporary auth seam).
+// Profil, compte et follow passent par le backend ; l'identité voyage dans le
+// token, donc plus de `loggedUser` dans les corps.
 
 export interface UpdateProfileInput {
-  loggedUser: string
   fullname?: string | null
   username?: string
   bio?: string | null
-  avatarUrl?: string
+  // Fichier choisi dans le formulaire ; absent si l'avatar est inchangé.
+  avatarFile?: File | null
 }
 
-/** Save Account → Profile.
-    TODO(backend): PATCH /users/:id (multipart/form-data if the avatar changed,
-    else JSON), then invalidate userKeys.profile(id). */
+/** Enregistre le profil. Deux formes selon qu'un fichier accompagne la
+    requête : multipart avec avatar, JSON sinon. On n'envoie que les champs
+    réellement modifiés — forbidNonWhitelisted rejette le reste. */
 export async function updateProfile(
   id: string,
   input: UpdateProfileInput,
 ): Promise<User> {
-  await delay(LATENCY_MS)
-  maybeFailMutation()
-  // Send only the changed profile fields (the backend DTO forbids extra keys);
-  // `loggedUser` is the auth seam meant for the server, not the client cache.
-  const patch: ProfilePatch = {}
-  if (input.fullname !== undefined) patch.fullname = input.fullname
-  if (input.username !== undefined) patch.username = input.username
-  if (input.bio !== undefined) patch.bio = input.bio
-  if (input.avatarUrl !== undefined) patch.avatarUrl = input.avatarUrl
-  return updateMockProfile(id, patch)
+  const { avatarFile, ...fields } = input
+
+  if (avatarFile) {
+    const form = new FormData()
+    // FormData transporte des chaînes : on saute null et undefined, sinon
+    // ils arrivent en « null » littéral côté serveur.
+    Object.entries(fields).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        form.append(key, String(value))
+      }
+    })
+    form.append('avatar', avatarFile)
+
+    const { data } = await http.patch<ServerUser>(
+      `/users/${id}`,
+      form,
+      multipartConfig,
+    )
+    return toUser(data)
+  }
+
+  const { data } = await http.patch<ServerUser>(`/users/${id}`, fields)
+  return toUser(data)
 }
 
 export interface UpdateAccountInput {
-  loggedUser: string
   email?: string
   password?: string
 }
 
-/** Save Account → Email & password.
-    TODO(backend): PATCH /users/:id with { email?, password? } (+ loggedUser),
-    then invalidate userKeys.profile(id). The password is never stored client-side. */
+/** Email et mot de passe. Toujours JSON — aucun fichier ici. Le mot de
+    passe n'est jamais conservé côté client. */
 export async function updateAccount(
   id: string,
   input: UpdateAccountInput,
 ): Promise<User> {
-  await delay(LATENCY_MS)
-  maybeFailMutation()
-  const patch: ProfilePatch = {}
-  if (input.email !== undefined) patch.email = input.email
-  // A password change is server-only — nothing to reflect in the client cache.
-  return updateMockProfile(id, patch)
+  const { data } = await http.patch<ServerUser>(`/users/${id}`, input)
+  return toUser(data)
 }
 
 export interface FollowInput {
   id: string
   following: boolean
-  loggedUser: string
+  // `loggedUser` retiré : identité portée par le token.
 }
 
-/** Follow / unfollow a user (optimistic caller). The mock echoes the requested state.
-    TODO(backend): POST/DELETE /users/:id/follow (body { loggedUser }). */
+/** Suit / ne suit plus un user. 400 si la relation existe déjà, 404 si elle
+    est absente lors d'un unfollow : deux façons de dire « c'est déjà l'état
+    demandé », donc traitées en succès. */
 export async function setFollow(input: FollowInput): Promise<boolean> {
-  await delay(LATENCY_MS)
-  maybeFailMutation()
-  return input.following
+  try {
+    if (input.following) {
+      await http.post(`/users/${input.id}/follow`)
+    } else {
+      await http.delete(`/users/${input.id}/unfollow`)
+    }
+    return input.following
+  } catch (error) {
+    if (isApiError(error) && (error.status === 400 || error.status === 404)) {
+      return input.following
+    }
+    throw error
+  }
+}
+
+/** Est-ce que je suis déjà cet utilisateur ? Le backend renvoie des relations
+    Follow brutes : on cherche la cible dans mes abonnements. */
+export async function fetchIsFollowing(
+  currentUserId: string,
+  targetId: string,
+): Promise<boolean> {
+  const { data } = await http.get<ServerFollow[]>(
+    `/users/${currentUserId}/following`,
+  )
+  return data.some((f) => f.followingId === targetId)
 }

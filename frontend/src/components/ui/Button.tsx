@@ -2,7 +2,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 
 import { Spinner } from './Spinner'
 
-type ButtonVariant = 'primary' | 'outline' | 'ghost'
+type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'danger'
 type ButtonSize = 'sm' | 'md'
 
 interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
@@ -22,6 +22,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   outline:
     'border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100',
   ghost: 'text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200',
+  danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
 }
 
 const SIZES: Record<ButtonSize, string> = {

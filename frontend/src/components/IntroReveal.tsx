@@ -1,7 +1,8 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ATLAAS_MARK_CENTER, ATLAAS_MARK_PATHS } from '@/components/ui/atlaasMark'
+import { useIntroStore } from '@/features/auth/intro.store'
 
 /**
  * Branded intro reveal.
@@ -83,6 +84,7 @@ export function IntroReveal() {
   const [visible, setVisible] = useState(
     () => introForced() || !seenThisSession(),
   )
+  const welcomeName = useIntroStore((state) => state.welcomeName)
 
   const holeRef = useRef<SVGGElement | null>(null) // mask hole (reveals home)
   const logoRef = useRef<SVGGElement | null>(null) // solid white mark on top
@@ -90,11 +92,22 @@ export function IntroReveal() {
   const leftWordRef = useRef<HTMLSpanElement | null>(null)
   const rightWordRef = useRef<HTMLSpanElement | null>(null)
 
+  // A login queues a welcome after mount; re-open the curtain for it. setState
+  // lives in a timer so it is never synchronous in the effect body.
+  useEffect(() => {
+    if (welcomeName === null) return
+    const id = setTimeout(() => setVisible(true), 0)
+    return () => clearTimeout(id)
+  }, [welcomeName])
+
   // useLayoutEffect (not useEffect): the t=0 state is written synchronously
   // below, *before* the browser paints, so the first paint already matches the
   // animation's start — no flash of an un-positioned mark or fully-lit words.
   useLayoutEffect(() => {
     if (!visible) return
+
+    // Mode is fixed for the whole reveal at the moment it starts.
+    const isWelcome = useIntroStore.getState().welcomeName !== null
 
     let alive = true
     let raf = 0
@@ -105,7 +118,8 @@ export function IntroReveal() {
       if (!alive) return
       alive = false
       cancelAnimationFrame(raf)
-      markSeen()
+      if (isWelcome) useIntroStore.getState().clearWelcome()
+      else markSeen()
       setVisible(false)
     }
 
@@ -165,11 +179,21 @@ export function IntroReveal() {
       // Mark: pop in small, hold, then swell to cover with a hint of rotation.
       // The white cover stays opaque until the reveal, then fades to expose home.
       if (e < ENTER_MS) {
-        setMark(lerp(rest * 0.35, rest, easeOutBack(clamp01(e / ENTER_MS))), 0)
-        setLogoOpacity(1)
+        const enter = clamp01(e / ENTER_MS)
+        setMark(lerp(rest * 0.35, rest, easeOutBack(enter)), 0)
+        // Welcome opens over the live app: the curtain + mark fade in (the
+        // "close") instead of snapping on. The first-load intro starts opaque.
+        if (isWelcome) {
+          const fade = easeOutCubic(enter)
+          setLogoOpacity(fade)
+          setCurtainOpacity(fade)
+        } else {
+          setLogoOpacity(1)
+        }
       } else if (e < REVEAL_AT) {
         setMark(rest, 0)
         setLogoOpacity(1)
+        if (isWelcome) setCurtainOpacity(1)
       } else {
         const rp = clamp01((e - REVEAL_AT) / REVEAL_MS)
         setMark(lerp(rest, coverScale(), easeInOutExpo(rp)), lerp(0, 6, rp))
@@ -214,6 +238,14 @@ export function IntroReveal() {
         startTime = now
       }
       const held = now - startTime
+      // Welcome fades its still frame in over the live app before the hold.
+      if (isWelcome && held <= 400) {
+        const p = easeOutCubic(clamp01(held / 400))
+        setLogoOpacity(p)
+        setCurtainOpacity(p)
+        if (leftWordRef.current) leftWordRef.current.style.opacity = String(p)
+        if (rightWordRef.current) rightWordRef.current.style.opacity = String(p)
+      }
       if (held > 520) {
         const k = clamp01((held - 520) / 700)
         setLogoOpacity(1 - k)
@@ -231,22 +263,36 @@ export function IntroReveal() {
     const reduced = prefersReducedMotion()
 
     // Paint the t=0 state synchronously, before the browser's first paint.
-    setLogoOpacity(1)
+    // Welcome starts fully transparent (it fades in over the live app); the
+    // first-load intro starts opaque on its own black curtain.
+    setLogoOpacity(isWelcome ? 0 : 1)
+    if (isWelcome) setCurtainOpacity(0)
     if (reduced) {
       setMark(restScale(), 0)
-      setWord(leftWordRef.current, -1, 0, 1)
-      setWord(rightWordRef.current, 1, 0, 1)
+      setWord(leftWordRef.current, -1, 0, isWelcome ? 0 : 1)
+      setWord(rightWordRef.current, 1, 0, isWelcome ? 0 : 1)
     } else {
       setMark(restScale() * 0.35, 0)
       setWord(leftWordRef.current, -1, 28, 0)
       setWord(rightWordRef.current, 1, 28, 0)
     }
 
+    // Always interruptible: any click / tap / Escape jumps to the end state.
+    // finish() is idempotent, so an early call runs the same mode side-effect.
+    const dismiss = () => finish()
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') finish()
+    }
+    window.addEventListener('pointerdown', dismiss)
+    window.addEventListener('keydown', onKey)
+
     raf = requestAnimationFrame(reduced ? reducedFrame : frame)
 
     return () => {
       alive = false
       cancelAnimationFrame(raf)
+      window.removeEventListener('pointerdown', dismiss)
+      window.removeEventListener('keydown', onKey)
     }
   }, [visible])
 
@@ -255,9 +301,12 @@ export function IntroReveal() {
   // Reading order flips in RTL: the first-read word sits on the right there. The
   // fly-apart is a mirror-symmetric physical motion, so the layout is forced LTR
   // and we swap which word lands in the left / right slot instead.
+  const leadWord =
+    welcomeName !== null ? t('intro.welcome') : t('intro.wordLead')
+  const trailWord = welcomeName !== null ? welcomeName : t('intro.wordTrail')
   const rtl = i18n.dir() === 'rtl'
-  const leftWord = rtl ? t('intro.wordTrail') : t('intro.wordLead')
-  const rightWord = rtl ? t('intro.wordLead') : t('intro.wordTrail')
+  const leftWord = rtl ? trailWord : leadWord
+  const rightWord = rtl ? leadWord : trailWord
 
   return (
     <div aria-hidden="true" className="fixed inset-0 z-[100] overflow-hidden">

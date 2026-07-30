@@ -1,29 +1,33 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Heart, MessageCircle, Bookmark, Share2, X } from 'lucide-react'
+import { Heart, MessageCircle, Pencil, Share2, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
+import { OnlineDot } from '@/components/ui/OnlineDot'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
+import { userKeys } from '@/features/users/user.api'
 import { useToast } from '@/lib/toast.store'
 import { useCompact } from '@/lib/useCompact'
 
 import {
   artworkKeys,
+  deleteArtworkComment,
   fetchArtworkComments,
+  fetchIsLiked,
   postArtworkComment,
   setArtworkLike,
-  setArtworkSave,
 } from '../artwork.api'
 import type {
   ArtworkComment,
   ArtworkDetail as Detail,
   AuthorSummary,
 } from '../artwork.types'
+import { DeleteArtworkDialog } from './DeleteArtworkDialog'
 import { FollowButton } from './FollowButton'
 
 // Lazy so lottie-web is code-split out of the main bundle (loaded on first like).
@@ -31,9 +35,7 @@ const HeartBurst = lazy(() =>
   import('./HeartBurst').then((m) => ({ default: m.HeartBurst })),
 )
 
-// Fixed outer height so the modal frame never changes with comment count (§3.1):
-// mobile fills the viewport, desktop is a stable "~4 comments then scroll" frame.
-// The scroll region absorbs the difference; the frame stays put.
+// Fixed outer height so the modal frame doesn't change with comment count.
 const SHELL =
   'grid h-[85svh] max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:h-[40rem] md:grid-cols-[1.15fr_1fr] md:grid-rows-1'
 
@@ -49,8 +51,6 @@ interface CommentPostContext {
   tempId: string
 }
 
-// Mutating actions gated behind useRequireAuth. Comment posting is optimistic and
-// cache-backed (§4); like/save/follow stay local toggles until the backend owns them.
 export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const { t } = useTranslation('common')
   const compact = useCompact()
@@ -58,11 +58,26 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const currentUser = useAuthStore((state) => state.user)
   const queryClient = useQueryClient()
   const toast = useToast()
+  const navigate = useNavigate()
+  const isOwner = currentUser?.id === artwork.author.id
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
-  const [liked, setLiked] = useState(false)
+  const onDeleted = () => {
+    const authorId = artwork.author.id
+    queryClient.removeQueries({ queryKey: artworkKeys.detail(artwork.id) })
+    queryClient.removeQueries({ queryKey: artworkKeys.comments(artwork.id) })
+    void queryClient.invalidateQueries({ queryKey: userKeys.works(authorId) })
+    void queryClient.invalidateQueries({ queryKey: userKeys.profile(authorId) })
+    void queryClient.invalidateQueries({ queryKey: userKeys.liked(authorId) })
+    void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+    if (onClose) onClose()
+    else navigate(`/profile/${authorId}`)
+  }
+
+  // Optimistic override; null means "defer to the backend's persisted state".
+  const [likeOverride, setLikeOverride] = useState<boolean | null>(null)
   /** Bumped each time the user likes, to replay the heart burst. */
   const [likeBurst, setLikeBurst] = useState(0)
-  const [saved, setSaved] = useState(false)
   const [shareHint, setShareHint] = useState(false)
   const [draft, setDraft] = useState('')
   const [postStatus, setPostStatus] = useState<'idle' | 'posted' | 'failed'>(
@@ -78,9 +93,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     queryKey: artworkKeys.comments(artwork.id),
     queryFn: () => fetchArtworkComments(artwork.id),
   })
-  // The comments cache is the single source of truth: the list and the count chip
-  // both read it, so an optimistic post can never make them disagree (§7).
   const comments = commentsQuery.data ?? []
+
+  const isLikedQuery = useQuery({
+    queryKey: ['artworks', 'isLiked', artwork.id, currentUser?.id],
+    queryFn: () => fetchIsLiked(artwork.id, currentUser?.id ?? ''),
+    enabled: Boolean(currentUser),
+  })
+  const persistedLiked = isLikedQuery.data ?? false
+  const liked = likeOverride ?? persistedLiked
+  // likeCount already counts the current user's like, so adjust by the delta
+  // between the optimistic choice and what's persisted — never a flat +1.
+  const likeDisplay = Math.max(
+    0,
+    artwork.likeCount - (persistedLiked ? 1 : 0) + (liked ? 1 : 0),
+  )
 
   /** Author stamped on this user's own optimistic comments. */
   const selfAuthor = (): AuthorSummary | null =>
@@ -90,6 +117,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           username: currentUser.username,
           handle: currentUser.username,
           color: '#525252',
+          avatarUrl: currentUser.avatarUrl ?? null,
         }
       : null
 
@@ -97,12 +125,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   // detail and comments stay independent queries — optimistic add, rollback on
   // error (keeping the draft), reconcile the temp row with the server one.
   const postMutation = useMutation<ArtworkComment, Error, string, CommentPostContext>({
-    mutationFn: (content: string) => {
-      const author = selfAuthor()
-      if (!author) throw new Error('unauthenticated')
-      // TODO(backend): write seam — swap for POST /artworks/:id/comments.
-      return postArtworkComment(artwork.id, { content, author })
-    },
+    mutationFn: (content: string) =>
+      postArtworkComment(artwork.id, { content }),
     onMutate: async (content: string) => {
       setPostStatus('idle')
       await queryClient.cancelQueries({
@@ -159,11 +183,15 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       })
     },
     onSuccess: () => {
-      // The mock persists the comment, so a refetch returns it: invalidate to
-      // reconcile with the server's canonical list (real id/timestamp) and to
-      // restore anything a mid-load post interrupted — exactly the backend path.
+      // Refetch to reconcile the temp row with the server's canonical comment
+      // (real id/timestamp/author) and restore anything a mid-load post
+      // interrupted.
       void queryClient.invalidateQueries({
         queryKey: artworkKeys.comments(artwork.id),
+      })
+      // The comment count also lives on the detail (once the T2 include lands).
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.detail(artwork.id),
       })
       setPostStatus('posted')
       composerRef.current?.focus()
@@ -173,16 +201,12 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   // P0 — like/save are optimistic: flip now, roll back + retry-toast on error. The
   // count stays local-optimistic and reconciles on the next detail fetch.
   const applyLike = (next: boolean) => {
-    setLiked(next)
+    setLikeOverride(next)
     if (next) setLikeBurst((count) => count + 1)
   }
   const likeMutation = useMutation({
     mutationFn: (next: boolean) =>
-      setArtworkLike({
-        id: artwork.id,
-        liked: next,
-        loggedUser: currentUser?.id ?? '',
-      }),
+      setArtworkLike({ id: artwork.id, liked: next }),
     // Flip in onMutate and snapshot the pre-flip value as context, so rollback
     // restores the exact prior state — never replaying the celebratory burst on an
     // un-like, and safe if two opposite toggles interleave — rather than inverting
@@ -194,7 +218,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     },
     onError: (_error, next, context) => {
       if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
-      setLiked(context?.previous ?? !next)
+      setLikeOverride(context?.previous ?? !next)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
@@ -206,41 +230,39 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         },
       })
     },
+    onSettled: () => {
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.detail(artwork.id),
+      })
+      // Refetch the persisted "liked" state too, else the count formula keeps a
+      // stale base and double-counts (shows 2 for a single like).
+      void queryClient.invalidateQueries({
+        queryKey: ['artworks', 'isLiked', artwork.id],
+      })
+      void queryClient.invalidateQueries({ queryKey: ['users', 'liked'] })
+    },
   })
   const doLike = (next: boolean) => {
     likeMutation.mutate(next)
   }
 
-  const saveMutation = useMutation({
-    mutationFn: (next: boolean) =>
-      setArtworkSave({
-        id: artwork.id,
-        saved: next,
-        loggedUser: currentUser?.id ?? '',
-      }),
-    onMutate: (next: boolean) => {
-      const previous = saved
-      setSaved(next)
-      return { previous }
-    },
-    onError: (_error, next, context) => {
-      if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
-      setSaved(context?.previous ?? !next)
-      toast({
-        variant: 'error',
-        message: t('toast.saveFailed'),
-        action: {
-          label: t('artwork.retry'),
-          onClick: () => {
-            saveMutation.mutate(next)
-          },
-        },
+  // Delete one of the user's own comments; the server enforces ownership (403).
+  const deleteCommentMutation = useMutation({
+    mutationFn: (commentId: string) =>
+      deleteArtworkComment(artwork.id, commentId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.comments(artwork.id),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.detail(artwork.id),
       })
     },
+    onError: () => {
+      if (!isMountedRef.current) return
+      toast({ variant: 'error', message: t('toast.saveFailed') })
+    },
   })
-  const doSave = (next: boolean) => {
-    saveMutation.mutate(next)
-  }
 
   const handleShare = () => {
     // clipboard can reject (permission / insecure context) — never throw.
@@ -274,7 +296,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     // while a post is in flight so concurrent posts can't clobber each other (§2.5).
     if (postMutation.isPending) return
     const content = draft.trim()
-    if (!content) return
+    // Le serveur exige 3 caractères (@MinLength(3)) : refuser plus tôt côté
+    // client évite un aller-retour en 400 sur Entrée comme sur le bouton.
+    if (content.length < 3) return
     requireAuth(() => {
       if (!selfAuthor()) return // requireAuth guarantees a user; narrow for TS
       setDraft('')
@@ -309,6 +333,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           artwork.mediaType === 'video' ? (
             <video
               src={artwork.mediaUrl}
+              autoPlay
+              muted
+              loop
               controls
               playsInline
               className="absolute inset-0 size-full bg-black object-contain"
@@ -334,12 +361,23 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             to={`/profile/${artwork.author.id}`}
             className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
           >
-            <span
-              aria-hidden="true"
-              className="flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white"
-              style={{ backgroundColor: artwork.author.color }}
-            >
-              {artwork.author.username.charAt(0).toUpperCase()}
+            <span className="relative shrink-0">
+              {artwork.author.avatarUrl ? (
+                <img
+                  src={artwork.author.avatarUrl}
+                  alt={artwork.author.username}
+                  className="size-10 rounded-full object-cover"
+                />
+              ) : (
+                <span
+                  aria-hidden="true"
+                  className="flex size-10 items-center justify-center rounded-full text-sm font-semibold text-white"
+                  style={{ backgroundColor: artwork.author.color }}
+                >
+                  {artwork.author.username.charAt(0).toUpperCase()}
+                </span>
+              )}
+              <OnlineDot userId={artwork.author.id} />
             </span>
             <div className="min-w-0">
               <p className="truncate font-serif text-neutral-900 group-hover:underline">
@@ -350,7 +388,29 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               </p>
             </div>
           </Link>
-          <FollowButton userId={artwork.author.id} />
+          {isOwner ? (
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                to={`/artwork/${artwork.id}/edit`}
+                className="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border border-neutral-300 px-4 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+              >
+                <Pencil aria-hidden="true" className="size-4" />
+                {t('actions.edit')}
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setDeleteOpen(true)
+                }}
+                aria-label={t('artwork.delete')}
+                className="flex size-9 cursor-pointer items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-red-50 hover:text-red-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+              >
+                <Trash2 aria-hidden="true" className="size-5" />
+              </button>
+            </div>
+          ) : (
+            <FollowButton userId={artwork.author.id} />
+          )}
           {onClose ? (
             <button
               type="button"
@@ -367,10 +427,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           <h1 id="artwork-title" className="font-serif text-2xl text-neutral-900">
             {artwork.title}
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            {t('artwork.views', { views: compact(artwork.viewCount) })}
-            {artwork.category ? ` · ${t(`category.${artwork.category}`)}` : ''}
-          </p>
+          {artwork.category ? (
+            <p className="mt-1 text-sm text-neutral-500">
+              {t(`category.${artwork.category}`)}
+            </p>
+          ) : null}
 
           {artwork.description ? (
             <p className="mt-3 text-neutral-700">{artwork.description}</p>
@@ -387,7 +448,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
             ))}
           </ul>
 
-          {/* Like/Save toggle locally; counts stay static until the backend owns them. */}
           <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-neutral-100 py-3">
             <ActionChip
               active={liked}
@@ -397,7 +457,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                 })
               }}
               label={liked ? t('artwork.liked') : t('artwork.like')}
-              count={compact(artwork.likeCount + (liked ? 1 : 0))}
+              count={compact(likeDisplay)}
               icon={
                 <span className="relative inline-flex">
                   <Heart aria-hidden="true" className={liked ? "size-4 text-red-500" : "size-4"} fill={liked ? "currentColor" : "none"} />
@@ -418,16 +478,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               count={commentCount}
               icon={<MessageCircle aria-hidden="true" className="size-4" />}
               as="span"
-            />
-            <ActionChip
-              active={saved}
-              onClick={() => {
-                requireAuth(() => {
-                  doSave(!saved)
-                })
-              }}
-              label={saved ? t('artwork.saved') : t('artwork.save')}
-              icon={<Bookmark aria-hidden="true" className="size-4" fill={saved ? "currentColor" : "none"} />}
             />
             <div className="relative ms-auto">
               <ActionChip
@@ -468,13 +518,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               <ul className="mt-3 flex flex-col gap-4">
                 {comments.map((comment) => (
                   <li key={comment.id} className="flex gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: comment.author.color }}
-                    >
-                      {comment.author.username.charAt(0).toUpperCase()}
-                    </span>
+                    {comment.author.avatarUrl ? (
+                      <img
+                        src={comment.author.avatarUrl}
+                        alt={comment.author.username}
+                        className="size-8 shrink-0 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
+                        style={{ backgroundColor: comment.author.color }}
+                      >
+                        {comment.author.username.charAt(0).toUpperCase()}
+                      </span>
+                    )}
                     <div className="min-w-0">
                       <p className="text-sm">
                         <span className="font-serif text-neutral-900">
@@ -488,15 +546,29 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                         </span>
                       </p>
                       <p className="text-neutral-700">{comment.content}</p>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          handleReply(comment.author.handle)
-                        }}
-                        className="mt-0.5 cursor-pointer text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
-                      >
-                        {t('artwork.reply')}
-                      </button>
+                      <div className="mt-0.5 flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            handleReply(comment.author.handle)
+                          }}
+                          className="cursor-pointer text-xs text-neutral-400 transition-colors hover:text-neutral-700 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
+                        >
+                          {t('artwork.reply')}
+                        </button>
+                        {comment.author.id === currentUser?.id &&
+                        !comment.id.startsWith('temp_') ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              deleteCommentMutation.mutate(comment.id)
+                            }}
+                            className="cursor-pointer text-xs text-neutral-400 transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
+                          >
+                            {t('artwork.deleteComment')}
+                          </button>
+                        ) : null}
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -528,11 +600,18 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               size="sm"
               onClick={handlePost}
               loading={postMutation.isPending}
-              disabled={draft.trim().length === 0}
+              disabled={draft.trim().length < 3}
             >
               {t('artwork.post')}
             </Button>
           </div>
+          {/* Explique le bouton grisé plutôt que de laisser l'utilisateur deviner :
+              visible seulement quand il a commencé à taper mais reste sous 3. */}
+          {draft.trim().length > 0 && draft.trim().length < 3 ? (
+            <p className="mt-1.5 px-1 text-xs text-neutral-500">
+              {t('artwork.commentMinLength')}
+            </p>
+          ) : null}
           {/* Success is announced politely here; failure is announced by the toast
               (role="alert"), so it isn't duplicated. */}
           <p role="status" aria-live="polite" className="sr-only">
@@ -540,6 +619,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           </p>
         </div>
       </div>
+      <DeleteArtworkDialog
+        artwork={deleteOpen ? { id: artwork.id, title: artwork.title } : null}
+        onClose={() => {
+          setDeleteOpen(false)
+        }}
+        onDeleted={onDeleted}
+      />
     </article>
   )
 }

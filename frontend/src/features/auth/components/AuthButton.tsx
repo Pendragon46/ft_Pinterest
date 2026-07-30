@@ -1,9 +1,12 @@
-import { ChevronDown, LogOut, User as UserIcon } from 'lucide-react'
+import { useQueryClient } from '@tanstack/react-query'
+import { ChevronDown, LogOut, Plus, Settings, Shield, User as UserIcon } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 import { useAuthStore } from '../auth.store'
+import { useRole } from '../useRole'
+import { SafeImage } from '@/components/ui/SafeImage'
 
 // Shared pill; neutral-500 keeps the white text above WCAG AA contrast.
 // h-10 matches the other floating chrome pills (logo, language, refocus, footer).
@@ -17,8 +20,11 @@ const ITEM =
 export function AuthButton() {
   const { t } = useTranslation('common')
   const location = useLocation()
+  const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const user = useAuthStore((state) => state.user)
   const logout = useAuthStore((state) => state.logout)
+  const { canViewDashboard } = useRole()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement | null>(null)
   const buttonRef = useRef<HTMLButtonElement | null>(null)
@@ -68,10 +74,11 @@ export function AuthButton() {
         }}
         aria-haspopup="menu"
         aria-expanded={open}
-        className={`${PILL} gap-2 pe-4 ps-1`}
+        aria-label={user.fullname ?? user.username}
+        className={`${PILL} gap-2 ps-1 pe-2 sm:pe-4`}
       >
         {user.avatarUrl ? (
-          <img
+          <SafeImage
             src={user.avatarUrl}
             alt={t('auth.avatarAlt', { username: user.username })}
             className="size-8 rounded-full object-cover"
@@ -84,7 +91,9 @@ export function AuthButton() {
             {(user.fullname ?? user.username).charAt(0).toUpperCase()}
           </span>
         )}
-        <span>{user.fullname ?? user.username}</span>
+        <span className="hidden max-w-[9rem] truncate sm:inline">
+          {user.fullname ?? user.username}
+        </span>
         <ChevronDown
           aria-hidden="true"
           className={`size-4 text-neutral-200 transition-transform motion-reduce:transition-none ${
@@ -119,16 +128,54 @@ export function AuthButton() {
             <UserIcon aria-hidden="true" className="size-4 text-neutral-400" />
             {t('profile.title')}
           </Link>
+          <Link
+            to="/settings"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+            }}
+            className={ITEM}
+          >
+            <Settings aria-hidden="true" className="size-4 text-neutral-400" />
+            {t('settings.title')}
+          </Link>
+          <Link
+            to="/create"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false)
+            }}
+            className={ITEM}
+          >
+            <Plus aria-hidden="true" className="size-4 text-neutral-400" />
+            {t('create.cta')}
+          </Link>
+          {canViewDashboard ? (
+            <Link
+              to="/admin"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false)
+              }}
+              className={ITEM}
+            >
+              <Shield aria-hidden="true" className="size-4 text-neutral-400" />
+              {t('admin.menuLink')}
+            </Link>
+          ) : null}
+          <div aria-hidden="true" className="h-px bg-neutral-100" />
           <button
             type="button"
             role="menuitem"
             onClick={() => {
               setOpen(false)
               logout()
+              queryClient.clear()
+              navigate('/', { replace: true })
             }}
-            className={ITEM}
+            className={`${ITEM} text-red-600 hover:bg-red-50 focus-visible:bg-red-50`}
           >
-            <LogOut aria-hidden="true" className="size-4 text-neutral-400" />
+            <LogOut aria-hidden="true" className="size-4 text-red-500" />
             {t('actions.signOut')}
           </button>
         </div>

@@ -3,3 +3,14 @@ node_modules
 dist
 .vscode
 
+
+# Secrets de seed (mots de passe en clair) — ne jamais committer
+seed-credentials.json
+READMELOGIN.md
+
+# Seed network account credentials (dev)
+seed-network-credentials.json
+
+# Self-signed TLS material — regenerated locally by `make certs`, never committed.
+nginx/ssl/*.key
+nginx/ssl/*.crt

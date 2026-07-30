@@ -1,0 +1,2704 @@
+[
+  {
+    "file": "seed/brand/008fb908359ae68f4b3cde8baf5f5b91.jpg",
+    "category": "brand",
+    "authorIndex": 0,
+    "title": "Identité en monochrome",
+    "description": "Système de déclinaisons testé sur papier avant tout écran.",
+    "tags": [
+      "brand",
+      "logo",
+      "system",
+      "palette"
+    ]
+  },
+  {
+    "file": "seed/brand/124d30b5e011b4ae45257a78603843a0.jpg",
+    "category": "brand",
+    "authorIndex": 1,
+    "title": "Marque en monochrome",
+    "description": "Palette réduite à trois couleurs : plus simple à tenir dans le temps.",
+    "tags": [
+      "brand",
+      "guidelines",
+      "identity"
+    ]
+  },
+  {
+    "file": "seed/brand/125cda7dfa57e17feb4b6155e849c553.jpg",
+    "category": "brand",
+    "authorIndex": 2,
+    "title": "Logotype en monochrome",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "system",
+      "palette"
+    ]
+  },
+  {
+    "file": "seed/brand/1bcc69b7597347ade64804346dd9a67b.jpg",
+    "category": "brand",
+    "authorIndex": 3,
+    "title": "Système en monochrome",
+    "description": "Palette réduite à trois couleurs : plus simple à tenir dans le temps.",
+    "tags": [
+      "brand",
+      "palette",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/brand/20d6176646dba0ce0f5c3fe469934b1d.jpg",
+    "category": "brand",
+    "authorIndex": 4,
+    "title": "Charte en monochrome",
+    "description": "Logotype dessiné sur grille, les proportions restent stables à petite taille.",
+    "tags": [
+      "brand",
+      "identity",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/285d5afaa71be2ac0fea9c4ea892d7c7.jpg",
+    "category": "brand",
+    "authorIndex": 5,
+    "title": "Déclinaison en monochrome",
+    "description": "Système de déclinaisons testé sur papier avant tout écran.",
+    "tags": [
+      "brand",
+      "guidelines",
+      "identity",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/33a96c13aae76ea9f96ce847f4f89ec8.jpg",
+    "category": "brand",
+    "authorIndex": 0,
+    "title": "Identité à symbole modulaire",
+    "description": "Identité construite autour d'un seul symbole, décliné en six tailles.",
+    "tags": [
+      "brand",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/brand/37561fa1708421a20e81cff4451e0d04.jpg",
+    "category": "brand",
+    "authorIndex": 1,
+    "title": "Marque à symbole modulaire",
+    "description": "Identité construite autour d'un seul symbole, décliné en six tailles.",
+    "tags": [
+      "brand",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/3d06b4e01c7f9f330cc670a8a83bef4f.jpg",
+    "category": "brand",
+    "authorIndex": 2,
+    "title": "Logotype à symbole modulaire",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/488f5afafe01617b218a3f4371d54bc0.jpg",
+    "category": "brand",
+    "authorIndex": 3,
+    "title": "Système à symbole modulaire",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/4d6d49a2d4e51e668cb026639f6a18fc.jpg",
+    "category": "brand",
+    "authorIndex": 4,
+    "title": "Charte à symbole modulaire",
+    "description": "Palette réduite à trois couleurs : plus simple à tenir dans le temps.",
+    "tags": [
+      "brand",
+      "identity",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/4ee12b6bb6ebeafd63f688f9229c1ebc.jpg",
+    "category": "brand",
+    "authorIndex": 5,
+    "title": "Déclinaison à symbole modulaire",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "palette",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/brand/56f45a02f7d6141d35226f7544336b25.jpg",
+    "category": "brand",
+    "authorIndex": 0,
+    "title": "Identité pour une jeune marque",
+    "description": "Logotype dessiné sur grille, les proportions restent stables à petite taille.",
+    "tags": [
+      "brand",
+      "system",
+      "palette",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/brand/69940f8af4f57b9f98a872092d08b9e3.jpg",
+    "category": "brand",
+    "authorIndex": 1,
+    "title": "Marque pour une jeune marque",
+    "description": "Logotype dessiné sur grille, les proportions restent stables à petite taille.",
+    "tags": [
+      "brand",
+      "identity",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/6c64bcef16bb7d0244e851402f8c64b4.gif",
+    "category": "brand",
+    "authorIndex": 2,
+    "title": "Logotype pour une jeune marque",
+    "description": "Palette réduite à trois couleurs : plus simple à tenir dans le temps.",
+    "tags": [
+      "brand",
+      "identity",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/71d9df936b452d73880665bd00449879.jpg",
+    "category": "brand",
+    "authorIndex": 3,
+    "title": "Système pour une jeune marque",
+    "description": "Charte tenant sur huit pages. Au-delà, personne ne la lit.",
+    "tags": [
+      "brand",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/8c18bbb3a96c7d3c285428199e006f02.jpg",
+    "category": "brand",
+    "authorIndex": 4,
+    "title": "Charte pour une jeune marque",
+    "description": "Charte tenant sur huit pages. Au-delà, personne ne la lit.",
+    "tags": [
+      "brand",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/96731fab247d4fefccc04067bba68f9c.jpg",
+    "category": "brand",
+    "authorIndex": 5,
+    "title": "Déclinaison pour une jeune marque",
+    "description": "Palette réduite à trois couleurs : plus simple à tenir dans le temps.",
+    "tags": [
+      "brand",
+      "system",
+      "palette"
+    ]
+  },
+  {
+    "file": "seed/brand/977a91bc028ea1646099c3e02125774d.jpg",
+    "category": "brand",
+    "authorIndex": 0,
+    "title": "Identité en trois couleurs",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/990c9bf841af81a5bef9bf94e5083f04.jpg",
+    "category": "brand",
+    "authorIndex": 1,
+    "title": "Marque en trois couleurs",
+    "description": "Identité construite autour d'un seul symbole, décliné en six tailles.",
+    "tags": [
+      "brand",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/a93b1e18647d1d7134ec3383fefe5fff.jpg",
+    "category": "brand",
+    "authorIndex": 2,
+    "title": "Logotype en trois couleurs",
+    "description": "Identité construite autour d'un seul symbole, décliné en six tailles.",
+    "tags": [
+      "brand",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/ae74a667c21a1ed6c89d0ab410e11ff9.jpg",
+    "category": "brand",
+    "authorIndex": 3,
+    "title": "Système en trois couleurs",
+    "description": "Système de déclinaisons testé sur papier avant tout écran.",
+    "tags": [
+      "brand",
+      "identity",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/ba9ccc513a2d2e70bdb00014e60263d7.jpg",
+    "category": "brand",
+    "authorIndex": 4,
+    "title": "Charte en trois couleurs",
+    "description": "Identité construite autour d'un seul symbole, décliné en six tailles.",
+    "tags": [
+      "brand",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/bc91b644a7c7f22e841ddb2322567b3e.jpg",
+    "category": "brand",
+    "authorIndex": 5,
+    "title": "Déclinaison en trois couleurs",
+    "description": "Charte tenant sur huit pages. Au-delà, personne ne la lit.",
+    "tags": [
+      "brand",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/brand/be1e54efc9d2bf2f547a30a67f1cb69f.jpg",
+    "category": "brand",
+    "authorIndex": 0,
+    "title": "Identité sur fond sombre",
+    "description": "Charte tenant sur huit pages. Au-delà, personne ne la lit.",
+    "tags": [
+      "brand",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/brand/bea5bf1d8e282a6acda9c1f232d61409.jpg",
+    "category": "brand",
+    "authorIndex": 1,
+    "title": "Marque sur fond sombre",
+    "description": "Logotype dessiné sur grille, les proportions restent stables à petite taille.",
+    "tags": [
+      "brand",
+      "guidelines",
+      "identity",
+      "logo"
+    ]
+  },
+  {
+    "file": "seed/brand/cfccdb1de7e3cd037f9fc9d8b5237a4a.jpg",
+    "category": "brand",
+    "authorIndex": 2,
+    "title": "Logotype sur fond sombre",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/e4eb35555ab08c1d9d715d7a19c4bcd2.jpg",
+    "category": "brand",
+    "authorIndex": 3,
+    "title": "Système sur fond sombre",
+    "description": "Système de déclinaisons testé sur papier avant tout écran.",
+    "tags": [
+      "brand",
+      "identity",
+      "logo",
+      "system"
+    ]
+  },
+  {
+    "file": "seed/brand/f3bdee44159cf0eb9bd27fd94d6b4987.jpg",
+    "category": "brand",
+    "authorIndex": 4,
+    "title": "Charte sur fond sombre",
+    "description": "Version monochrome pensée d'abord, la couleur est venue ensuite.",
+    "tags": [
+      "brand",
+      "palette",
+      "guidelines"
+    ]
+  },
+  {
+    "file": "seed/editorial/121c9f472f7d192bc6e5e57631e4a09f.jpg",
+    "category": "editorial",
+    "authorIndex": 5,
+    "title": "Mise en page sur grille douze colonnes",
+    "description": "Titre en corps 72, filet fin dessous. Le reste respire.",
+    "tags": [
+      "editorial",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/13dfc72f5580d5c192d384dc62a93915.jpg",
+    "category": "editorial",
+    "authorIndex": 0,
+    "title": "Double page sur grille douze colonnes",
+    "description": "Le blanc tournant fait tout le travail : rien d'autre à ajouter.",
+    "tags": [
+      "editorial",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/15b10a67e6b2afe2e121c5ece3c2320a.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Chemin de fer sur grille douze colonnes",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/1e487e728f3e18436da11a4e06ff9238.jpg",
+    "category": "editorial",
+    "authorIndex": 2,
+    "title": "Composition sur grille douze colonnes",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/1e919ea91a6de94c6bb708fa8226b40c.jpg",
+    "category": "editorial",
+    "authorIndex": 3,
+    "title": "Maquette sur grille douze colonnes",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/2a076a16ab2b54edb28cf4950fe80439.jpg",
+    "category": "editorial",
+    "authorIndex": 4,
+    "title": "Cahier sur grille douze colonnes",
+    "description": "Hiérarchie posée d'abord en gris, la couleur est arrivée en dernier.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/336c24a85ef34eeb0d3043e57e3903af.jpg",
+    "category": "editorial",
+    "authorIndex": 5,
+    "title": "Mise en page pour un trimestriel",
+    "description": "Hiérarchie posée d'abord en gris, la couleur est arrivée en dernier.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/6c886eec90402bfb1e9ef2dd2658f8e6.jpg",
+    "category": "editorial",
+    "authorIndex": 0,
+    "title": "Double page pour un trimestriel",
+    "description": "Grille de douze colonnes, gouttières larges. La photo occupe six colonnes.",
+    "tags": [
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/6ed6292d7cbc706782cbebf901a2456c.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Chemin de fer pour un trimestriel",
+    "description": "Bichromie choisie pour tenir le budget d'impression sans perdre le contraste.",
+    "tags": [
+      "editorial",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/749cba86014fd0842885b9c8b32c1ad8.jpg",
+    "category": "editorial",
+    "authorIndex": 2,
+    "title": "Composition pour un trimestriel",
+    "description": "Le blanc tournant fait tout le travail : rien d'autre à ajouter.",
+    "tags": [
+      "editorial",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/7673a4fa27a6a00ab7bd639872489c2a.jpg",
+    "category": "editorial",
+    "authorIndex": 3,
+    "title": "Maquette pour un trimestriel",
+    "description": "Le blanc tournant fait tout le travail : rien d'autre à ajouter.",
+    "tags": [
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/8afd29080774b85a0baa57075d1fc568.jpg",
+    "category": "editorial",
+    "authorIndex": 4,
+    "title": "Cahier pour un trimestriel",
+    "description": "Grille de douze colonnes, gouttières larges. La photo occupe six colonnes.",
+    "tags": [
+      "editorial",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/94b330332cbb3368f1ca6a69f79f6429.jpg",
+    "category": "editorial",
+    "authorIndex": 5,
+    "title": "Mise en page en bichromie",
+    "description": "Bichromie choisie pour tenir le budget d'impression sans perdre le contraste.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/9bd7564786b05a78838f99c1fdeb8863.jpg",
+    "category": "editorial",
+    "authorIndex": 0,
+    "title": "Double page en bichromie",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/c1ed2e30049e7bf22bd53b5815413aab.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Chemin de fer en bichromie",
+    "description": "Titre en corps 72, filet fin dessous. Le reste respire.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/c9bb47c0666356716a59db50a17357e4.jpg",
+    "category": "editorial",
+    "authorIndex": 2,
+    "title": "Composition en bichromie",
+    "description": "Grille de douze colonnes, gouttières larges. La photo occupe six colonnes.",
+    "tags": [
+      "editorial",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/ca36a8327c1460fc3fb3d5adc87ac32e.jpg",
+    "category": "editorial",
+    "authorIndex": 3,
+    "title": "Maquette en bichromie",
+    "description": "Grille de douze colonnes, gouttières larges. La photo occupe six colonnes.",
+    "tags": [
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/cb919ee78389c1d9a5c1cba3d540275a.jpg",
+    "category": "editorial",
+    "authorIndex": 4,
+    "title": "Cahier en bichromie",
+    "description": "Titre en corps 72, filet fin dessous. Le reste respire.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/cf8e14cf06db6e24d05465da56ba38bf.jpg",
+    "category": "editorial",
+    "authorIndex": 5,
+    "title": "Mise en page format tabloïd",
+    "description": "Hiérarchie posée d'abord en gris, la couleur est arrivée en dernier.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/cfdac5432263e1286b434f41e57b3442.jpg",
+    "category": "editorial",
+    "authorIndex": 0,
+    "title": "Double page format tabloïd",
+    "description": "Le blanc tournant fait tout le travail : rien d'autre à ajouter.",
+    "tags": [
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/d3310f7aa78ac22419949fd72a041c2e.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Chemin de fer format tabloïd",
+    "description": "Bichromie choisie pour tenir le budget d'impression sans perdre le contraste.",
+    "tags": [
+      "editorial",
+      "people",
+      "layout"
+    ]
+  },
+  {
+    "file": "seed/editorial/da257473449a80feca072dcf36803c4e.jpg",
+    "category": "editorial",
+    "authorIndex": 2,
+    "title": "Composition format tabloïd",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/da7263b2556251ac1bd386865ff0a711.jpg",
+    "category": "editorial",
+    "authorIndex": 3,
+    "title": "Maquette format tabloïd",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/e4307bb1f76b3bb42ffac6be89ede8bf.jpg",
+    "category": "editorial",
+    "authorIndex": 4,
+    "title": "Cahier format tabloïd",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "type",
+      "people",
+      "layout"
+    ]
+  },
+  {
+    "file": "seed/editorial/e9eaaeb928f15315da427445058a29f8.jpg",
+    "category": "editorial",
+    "authorIndex": 5,
+    "title": "Mise en page à marges larges",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "people",
+      "layout",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/editorial/ee1977884af65737eba10e3d6b51c47d.jpg",
+    "category": "editorial",
+    "authorIndex": 0,
+    "title": "Double page à marges larges",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "layout",
+      "print",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/editorial/f21518ce4b3de4bd49984103db412689.jpg",
+    "category": "editorial",
+    "authorIndex": 1,
+    "title": "Chemin de fer à marges larges",
+    "description": "Grille de douze colonnes, gouttières larges. La photo occupe six colonnes.",
+    "tags": [
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/editorial/fa87530b0786f2ef5d6a7c93fc986329.jpg",
+    "category": "editorial",
+    "authorIndex": 2,
+    "title": "Composition à marges larges",
+    "description": "Chemin de fer complet avant maquette : penser le rythme avant les pages.",
+    "tags": [
+      "editorial",
+      "print",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/editorial/fc9f9896d46267fc5328abbc848ebddc.jpg",
+    "category": "editorial",
+    "authorIndex": 3,
+    "title": "Maquette à marges larges",
+    "description": "Bichromie choisie pour tenir le budget d'impression sans perdre le contraste.",
+    "tags": [
+      "editorial",
+      "grid",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/illustration/1e09e9e8e1bc03dde0c69c7b1dc7b80d.jpg",
+    "category": "illustration",
+    "authorIndex": 4,
+    "title": "Illustration à la gouache",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/23b20a21bc889e2af91fa59695b5f752.jpg",
+    "category": "illustration",
+    "authorIndex": 5,
+    "title": "Personnage à la gouache",
+    "description": "Étude préparatoire devenue image finale. Ça arrive.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/311c7a51427d68e21ba5086dfc212bbc.jpg",
+    "category": "illustration",
+    "authorIndex": 0,
+    "title": "Scène à la gouache",
+    "description": "Palette limitée à trois couleurs plus le blanc du papier.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/351ac66d44fa7d2e62955481eb636d38.jpg",
+    "category": "illustration",
+    "authorIndex": 1,
+    "title": "Planche à la gouache",
+    "description": "Le trait est resté visible sous les aplats, c'était l'intention.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/3a7ba4e90f220775aec586423ebf1f8d.jpg",
+    "category": "illustration",
+    "authorIndex": 2,
+    "title": "Étude à la gouache",
+    "description": "Texture scannée depuis un tirage raté, réutilisée en superposition.",
+    "tags": [
+      "illustration",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/3af51d84c500474a14db7bf884b1337c.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Décor à la gouache",
+    "description": "Le trait est resté visible sous les aplats, c'était l'intention.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/41983401c92d9d39ea6835e261cff5a2.jpg",
+    "category": "illustration",
+    "authorIndex": 4,
+    "title": "Illustration en trois couleurs",
+    "description": "Palette limitée à trois couleurs plus le blanc du papier.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/4a9acc78ecd35a087a7140320fd24112.jpg",
+    "category": "illustration",
+    "authorIndex": 5,
+    "title": "Personnage en trois couleurs",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/5f2bc71b3e559899eee824f792dcdbd7.jpg",
+    "category": "illustration",
+    "authorIndex": 0,
+    "title": "Scène en trois couleurs",
+    "description": "Palette limitée à trois couleurs plus le blanc du papier.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/5ff42e7a78c817485574c23b07675eb1.jpg",
+    "category": "illustration",
+    "authorIndex": 1,
+    "title": "Planche en trois couleurs",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "story",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/illustration/686538398385460f31463acfe849aa0a.jpg",
+    "category": "illustration",
+    "authorIndex": 2,
+    "title": "Étude en trois couleurs",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/75eb51e0f46e25eb4171cfb88a1b0c81.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Décor en trois couleurs",
+    "description": "Le trait est resté visible sous les aplats, c'était l'intention.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/8a0b4a37847cb0510fec08ede80444d2.jpg",
+    "category": "illustration",
+    "authorIndex": 4,
+    "title": "Illustration au trait",
+    "description": "Texture scannée depuis un tirage raté, réutilisée en superposition.",
+    "tags": [
+      "illustration",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/97fa30a63c8dcecfa195bf9797a8fb27.jpg",
+    "category": "illustration",
+    "authorIndex": 5,
+    "title": "Personnage au trait",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/993e2165e691636207e33d105523beac.jpg",
+    "category": "illustration",
+    "authorIndex": 0,
+    "title": "Scène au trait",
+    "description": "Étude préparatoire devenue image finale. Ça arrive.",
+    "tags": [
+      "illustration",
+      "story",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/9c904e6fc5fb00a9c16e61c0b9572ffc.jpg",
+    "category": "illustration",
+    "authorIndex": 1,
+    "title": "Planche au trait",
+    "description": "Le trait est resté visible sous les aplats, c'était l'intention.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/9dfb593b558bb299fd0a48416f51ed9c.jpg",
+    "category": "illustration",
+    "authorIndex": 2,
+    "title": "Étude au trait",
+    "description": "Gouache sur papier teinté, retouches numériques minimales.",
+    "tags": [
+      "illustration",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/a8e0b41fa88f1d0c4a709dbfa73d55e5.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Décor au trait",
+    "description": "Palette limitée à trois couleurs plus le blanc du papier.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/b7af78ca1465caaf123b2e01f9df5bf1.jpg",
+    "category": "illustration",
+    "authorIndex": 4,
+    "title": "Illustration texturée",
+    "description": "Étude préparatoire devenue image finale. Ça arrive.",
+    "tags": [
+      "illustration",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/c1a22d5ae4e7ffbaecda9025ac24cd2e.jpg",
+    "category": "illustration",
+    "authorIndex": 5,
+    "title": "Personnage texturée",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "colour",
+      "texture",
+      "story"
+    ]
+  },
+  {
+    "file": "seed/illustration/c876f7a1d829f92e3fe61718f057257f.jpg",
+    "category": "illustration",
+    "authorIndex": 0,
+    "title": "Scène texturée",
+    "description": "Gouache sur papier teinté, retouches numériques minimales.",
+    "tags": [
+      "illustration",
+      "drawing"
+    ]
+  },
+  {
+    "file": "seed/illustration/cbcc2595dc06c496a1869bb169514575.jpg",
+    "category": "illustration",
+    "authorIndex": 1,
+    "title": "Planche texturée",
+    "description": "Étude préparatoire devenue image finale. Ça arrive.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/cf2a5e0aff79a6d855c17dce4b2e7351.jpg",
+    "category": "illustration",
+    "authorIndex": 2,
+    "title": "Étude texturée",
+    "description": "Texture scannée depuis un tirage raté, réutilisée en superposition.",
+    "tags": [
+      "illustration",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/illustration/d1380922f91271c45d0dfbe49bd6604a.jpg",
+    "category": "illustration",
+    "authorIndex": 3,
+    "title": "Décor texturée",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour",
+      "texture"
+    ]
+  },
+  {
+    "file": "seed/illustration/d688eb24e330321fb573f8b47d269b0e.jpg",
+    "category": "illustration",
+    "authorIndex": 4,
+    "title": "Illustration sur papier teinté",
+    "description": "Palette limitée à trois couleurs plus le blanc du papier.",
+    "tags": [
+      "illustration",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/d6b1673751ad2ccadd9d240c2cd1f365.jpg",
+    "category": "illustration",
+    "authorIndex": 5,
+    "title": "Personnage sur papier teinté",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "story",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/illustration/f9258f19f468e126f4478cb91b2f0ed9.jpg",
+    "category": "illustration",
+    "authorIndex": 0,
+    "title": "Scène sur papier teinté",
+    "description": "Composition en diagonale, le regard entre par le bas à gauche.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character",
+      "colour"
+    ]
+  },
+  {
+    "file": "seed/illustration/fb3fcf7f6776709e6a7b9566b0d039ed.jpg",
+    "category": "illustration",
+    "authorIndex": 1,
+    "title": "Planche sur papier teinté",
+    "description": "Étude préparatoire devenue image finale. Ça arrive.",
+    "tags": [
+      "illustration",
+      "drawing",
+      "character"
+    ]
+  },
+  {
+    "file": "seed/motion/1ac9a89e2c6714a13199b20fa750b615.jpg",
+    "category": "motion",
+    "authorIndex": 2,
+    "title": "Boucle en boucle courte",
+    "description": "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+    "tags": [
+      "motion",
+      "timing"
+    ]
+  },
+  {
+    "file": "seed/motion/201e749d807515823d5f3599477bbd47.jpg",
+    "category": "motion",
+    "authorIndex": 3,
+    "title": "Transition en boucle courte",
+    "description": "Rendu à 24 images/seconde pour garder un peu de matière dans le mouvement.",
+    "tags": [
+      "motion",
+      "easing",
+      "transition"
+    ]
+  },
+  {
+    "file": "seed/motion/2457d1a987f7e2e8bbb5f185afa367d8.jpg",
+    "category": "motion",
+    "authorIndex": 4,
+    "title": "Animation en boucle courte",
+    "description": "Étude de rythme avant la version finale. Celle-ci est restée plus lisible.",
+    "tags": [
+      "motion",
+      "transition"
+    ]
+  },
+  {
+    "file": "seed/motion/547b316e06725d4a1ad2cc637f15ab24.jpg",
+    "category": "motion",
+    "authorIndex": 5,
+    "title": "Séquence en boucle courte",
+    "description": "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+    "tags": [
+      "motion",
+      "kinetic"
+    ]
+  },
+  {
+    "file": "seed/motion/58062352d414f6beceac6f45fc71bd68.gif",
+    "category": "motion",
+    "authorIndex": 0,
+    "title": "Étude en boucle courte",
+    "description": "Courbe d'accélération douce à l'entrée, franche à la sortie.",
+    "tags": [
+      "motion",
+      "kinetic",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/5e80dcae3d23e0b20c13145341ef81de.gif",
+    "category": "motion",
+    "authorIndex": 1,
+    "title": "Générique en boucle courte",
+    "description": "Rendu à 24 images/seconde pour garder un peu de matière dans le mouvement.",
+    "tags": [
+      "motion",
+      "loop",
+      "timing"
+    ]
+  },
+  {
+    "file": "seed/motion/765e6f374528b6652daee414717553cb.jpg",
+    "category": "motion",
+    "authorIndex": 2,
+    "title": "Boucle à 24 images/seconde",
+    "description": "Transition testée sur trois durées, la plus courte gagne.",
+    "tags": [
+      "motion",
+      "loop",
+      "timing",
+      "easing"
+    ]
+  },
+  {
+    "file": "seed/motion/826a33282ca61d816926e88a952734f9.jpg",
+    "category": "motion",
+    "authorIndex": 3,
+    "title": "Transition à 24 images/seconde",
+    "description": "Typographie cinétique : le texte arrive par le bas, décalé de trois images.",
+    "tags": [
+      "motion",
+      "transition",
+      "kinetic",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/990c891d088e34e6fa3d4be069990743.jpg",
+    "category": "motion",
+    "authorIndex": 4,
+    "title": "Animation à 24 images/seconde",
+    "description": "Étude de rythme avant la version finale. Celle-ci est restée plus lisible.",
+    "tags": [
+      "motion",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- 35 Stylish living room makeover ideas that are worth saving if you love elegant details and creative inspiration for beginners.mp4",
+    "category": "motion",
+    "authorIndex": 5,
+    "title": "Séquence à 24 images/seconde",
+    "description": "Courbe d'accélération douce à l'entrée, franche à la sortie.",
+    "tags": [
+      "motion",
+      "easing",
+      "transition"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- 78 Genius Office Decor Inspiration-pin-id-5207355816009435.mp4",
+    "category": "motion",
+    "authorIndex": 0,
+    "title": "Étude à 24 images/seconde",
+    "description": "Courbe d'accélération douce à l'entrée, franche à la sortie.",
+    "tags": [
+      "motion",
+      "kinetic",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- 79 Wedding Aisle Ideas Youll Want to Save-pin-id-422281212822125-carousel-1.mp4",
+    "category": "motion",
+    "authorIndex": 1,
+    "title": "Générique à 24 images/seconde",
+    "description": "Courbe d'accélération douce à l'entrée, franche à la sortie.",
+    "tags": [
+      "motion",
+      "timing",
+      "easing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Classy bathroom storage solutions that feel fresh elevated and surprisingly easy to recreate at home for creators who love poli.mp4",
+    "category": "motion",
+    "authorIndex": 2,
+    "title": "Boucle sur courbe douce",
+    "description": "Étude de rythme avant la version finale. Celle-ci est restée plus lisible.",
+    "tags": [
+      "motion",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Coastal shoreline dreams for inspiration you can revisit anytime for creative people with saltwater-pin-id-9570217953808021.mp4",
+    "category": "motion",
+    "authorIndex": 3,
+    "title": "Transition sur courbe douce",
+    "description": "Étude de rythme avant la version finale. Celle-ci est restée plus lisible.",
+    "tags": [
+      "motion",
+      "kinetic"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Colorful Workout Motivation Tips for a Cozy Vibe-pin-id-140806235224065-carousel-1.mp4",
+    "category": "motion",
+    "authorIndex": 4,
+    "title": "Animation sur courbe douce",
+    "description": "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+    "tags": [
+      "motion",
+      "transition"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Earthy flower field vibes and clever inspiration for creative people that feel deeply relaxing-pin-id-2674081026469844.mp4",
+    "category": "motion",
+    "authorIndex": 5,
+    "title": "Séquence sur courbe douce",
+    "description": "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+    "tags": [
+      "motion",
+      "easing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Grace-led scripture reflections for people who love beauty for thoughtful sharing with grace and hop-pin-id-2181499817475553.mp4",
+    "category": "motion",
+    "authorIndex": 0,
+    "title": "Étude sur courbe douce",
+    "description": "Rendu à 24 images/seconde pour garder un peu de matière dans le mouvement.",
+    "tags": [
+      "motion",
+      "loop",
+      "timing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Home office decor ideas that are perfect when you want something stylish modern and easy to copy for creators who love polished.mp4",
+    "category": "motion",
+    "authorIndex": 1,
+    "title": "Générique sur courbe douce",
+    "description": "Courbe d'accélération douce à l'entrée, franche à la sortie.",
+    "tags": [
+      "motion",
+      "loop",
+      "timing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Morning Routine Ideas That Feel So Put Together 11911-pin-id-914862422385000.mp4",
+    "category": "motion",
+    "authorIndex": 2,
+    "title": "Boucle en typographie cinétique",
+    "description": "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+    "tags": [
+      "motion",
+      "transition"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Need fresh inspiration Try these fresh invitation suite ideas everyone will ask you about with smart steps cute details and coz.mp4",
+    "category": "motion",
+    "authorIndex": 3,
+    "title": "Transition en typographie cinétique",
+    "description": "Transition testée sur trois durées, la plus courte gagne.",
+    "tags": [
+      "motion",
+      "loop",
+      "timing",
+      "easing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Pin this viral dog walk essentials roundup that bring style function and personality together with realistic ideas for busy day.mp4",
+    "category": "motion",
+    "authorIndex": 4,
+    "title": "Animation en typographie cinétique",
+    "description": "Transition testée sur trois durées, la plus courte gagne.",
+    "tags": [
+      "motion",
+      "loop",
+      "timing",
+      "easing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Steal these 26 Classy boho home decor ideas that look expensive while staying practical realistic and beginner friendly for bus.mp4",
+    "category": "motion",
+    "authorIndex": 5,
+    "title": "Séquence en typographie cinétique",
+    "description": "Typographie cinétique : le texte arrive par le bas, décalé de trois images.",
+    "tags": [
+      "motion",
+      "kinetic",
+      "loop",
+      "timing"
+    ]
+  },
+  {
+    "file": "seed/motion/From Klickpin.com- Try these creative growth mindset ideas that help you get the look without the stress with smart steps cute details and cozy vi.mp4",
+    "category": "motion",
+    "authorIndex": 0,
+    "title": "Étude en typographie cinétique",
+    "description": "Boucle de deux secondes, raccord invisible. Le timing a été refait quatre fois.",
+    "tags": [
+      "motion",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/c3c72323b79037f5a486fa9d8a47239c.jpg",
+    "category": "motion",
+    "authorIndex": 1,
+    "title": "Générique en typographie cinétique",
+    "description": "Rendu à 24 images/seconde pour garder un peu de matière dans le mouvement.",
+    "tags": [
+      "motion",
+      "kinetic",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/c8220a54d68f27d094b89e2b867b14b4.jpg",
+    "category": "motion",
+    "authorIndex": 2,
+    "title": "Boucle sans raccord",
+    "description": "Typographie cinétique : le texte arrive par le bas, décalé de trois images.",
+    "tags": [
+      "motion",
+      "easing",
+      "transition",
+      "kinetic"
+    ]
+  },
+  {
+    "file": "seed/motion/d87a7b37e8c1459a7fb1c3b6e506e78d.gif",
+    "category": "motion",
+    "authorIndex": 3,
+    "title": "Transition sans raccord",
+    "description": "Étude de rythme avant la version finale. Celle-ci est restée plus lisible.",
+    "tags": [
+      "motion",
+      "loop"
+    ]
+  },
+  {
+    "file": "seed/motion/dc7e2736e097d5a66f8c981c322c3f25.jpg",
+    "category": "motion",
+    "authorIndex": 4,
+    "title": "Animation sans raccord",
+    "description": "Transition testée sur trois durées, la plus courte gagne.",
+    "tags": [
+      "motion",
+      "kinetic",
+      "loop",
+      "timing"
+    ]
+  },
+  {
+    "file": "seed/motion/e90ff953e32a5da53aa677d0080ad83d.jpg",
+    "category": "motion",
+    "authorIndex": 5,
+    "title": "Séquence sans raccord",
+    "description": "Transition testée sur trois durées, la plus courte gagne.",
+    "tags": [
+      "motion",
+      "easing",
+      "transition",
+      "kinetic"
+    ]
+  },
+  {
+    "file": "seed/photography/0966567bd74650ab2ef5bf07a1c500e4.jpg",
+    "category": "photography",
+    "authorIndex": 0,
+    "title": "Vue argentique",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "photo",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/0c026ef60bb9a2f73ade5401486765db.jpg",
+    "category": "photography",
+    "authorIndex": 1,
+    "title": "Scène argentique",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "photo",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/0fadc79425c857132f61e9135c3f1676.jpg",
+    "category": "photography",
+    "authorIndex": 2,
+    "title": "Instant argentique",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/14f29cc22ab787c0478aa0e47f6eea4d.jpg",
+    "category": "photography",
+    "authorIndex": 3,
+    "title": "Série argentique",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/182c5a7736064af74e7e0e468563b9db.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Fragment argentique",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "film",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/2786a0034a6e3891ac2499a30140b1d3.jpg",
+    "category": "photography",
+    "authorIndex": 5,
+    "title": "Paysage argentique",
+    "description": "Argentique, 400 ISO poussé à 800. Le grain fait partie de l'image.",
+    "tags": [
+      "photography",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/2be5b0e12e2461d73809b92118e92587.jpg",
+    "category": "photography",
+    "authorIndex": 0,
+    "title": "Vue au petit matin",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "photo",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/301a9959ca31086987ea4e08871413a9.jpg",
+    "category": "photography",
+    "authorIndex": 1,
+    "title": "Scène au petit matin",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/333a361642b941f81331f88d7c2c574a.jpg",
+    "category": "photography",
+    "authorIndex": 2,
+    "title": "Instant au petit matin",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/3bc73c15a4fa4cf12e88f7d612ca4c4a.jpg",
+    "category": "photography",
+    "authorIndex": 3,
+    "title": "Série au petit matin",
+    "description": "Une seule prise, pas de recadrage. Ce qui est là était là.",
+    "tags": [
+      "photography",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/3c3f138a994301b4a5853d353307aa6f.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Fragment au petit matin",
+    "description": "Argentique, 400 ISO poussé à 800. Le grain fait partie de l'image.",
+    "tags": [
+      "photography",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/3d88d7103b5529516d14453b0cb482e1.jpg",
+    "category": "photography",
+    "authorIndex": 5,
+    "title": "Paysage au petit matin",
+    "description": "Série de douze images, celle-ci est la seule qui tient seule.",
+    "tags": [
+      "photography",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/42459577cdee12d4e49c3bfdc8b7293b.jpg",
+    "category": "photography",
+    "authorIndex": 0,
+    "title": "Vue en lumière rasante",
+    "description": "Longue pose de trente secondes, appareil posé à même le sol.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/4f6e44f7fdac85747bc1cbe6d24d3d05.jpg",
+    "category": "photography",
+    "authorIndex": 1,
+    "title": "Scène en lumière rasante",
+    "description": "Longue pose de trente secondes, appareil posé à même le sol.",
+    "tags": [
+      "photography",
+      "light",
+      "film",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/525b820787b4a02d759e3fd581586de8.jpg",
+    "category": "photography",
+    "authorIndex": 2,
+    "title": "Instant en lumière rasante",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/604edaa23da2c3b7ab482d81e2bbb12d.jpg",
+    "category": "photography",
+    "authorIndex": 3,
+    "title": "Série en lumière rasante",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "light",
+      "film",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/690e5c13bb92d737f287b5aa4b8689d9.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Fragment en lumière rasante",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "photo",
+      "light",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/6a958390de7924f68e1dfbd57d8c41d6.jpg",
+    "category": "photography",
+    "authorIndex": 5,
+    "title": "Paysage en lumière rasante",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/77cfbef59fa37cc344bb5c1605cbb72d.jpg",
+    "category": "photography",
+    "authorIndex": 0,
+    "title": "Vue sur pellicule 400 ISO",
+    "description": "Lumière rasante de fin d'après-midi, aucun éclairage d'appoint.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/7c468df5d264edf6c1de399dc82802a4.jpg",
+    "category": "photography",
+    "authorIndex": 1,
+    "title": "Scène sur pellicule 400 ISO",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "studio",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/photography/7f148be2309858cbe95257274ce62651.jpg",
+    "category": "photography",
+    "authorIndex": 2,
+    "title": "Instant sur pellicule 400 ISO",
+    "description": "Argentique, 400 ISO poussé à 800. Le grain fait partie de l'image.",
+    "tags": [
+      "photography",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/88afe03e172426244d571a7757cf7feb.jpg",
+    "category": "photography",
+    "authorIndex": 3,
+    "title": "Série sur pellicule 400 ISO",
+    "description": "Argentique, 400 ISO poussé à 800. Le grain fait partie de l'image.",
+    "tags": [
+      "photography",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/photography/9a7e99a2c84cc890e55053ef007b2c1c.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Fragment sur pellicule 400 ISO",
+    "description": "Longue pose de trente secondes, appareil posé à même le sol.",
+    "tags": [
+      "photography",
+      "mood",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/9cb48063d26fffdfa24587e67c9ae4d4.jpg",
+    "category": "photography",
+    "authorIndex": 5,
+    "title": "Paysage sur pellicule 400 ISO",
+    "description": "Une seule prise, pas de recadrage. Ce qui est là était là.",
+    "tags": [
+      "photography",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/ac59a43381a501404f8070edb0f27075.jpg",
+    "category": "photography",
+    "authorIndex": 0,
+    "title": "Vue à main levée",
+    "description": "Prise au petit matin, avant que la lumière ne devienne dure.",
+    "tags": [
+      "photography",
+      "photo",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/b3d534dec359d44e4b9405d94c514d68.jpg",
+    "category": "photography",
+    "authorIndex": 1,
+    "title": "Scène à main levée",
+    "description": "Argentique, 400 ISO poussé à 800. Le grain fait partie de l'image.",
+    "tags": [
+      "photography",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/photography/ccd52a871a6da359719755730c73dd1e.jpg",
+    "category": "photography",
+    "authorIndex": 2,
+    "title": "Instant à main levée",
+    "description": "Une seule prise, pas de recadrage. Ce qui est là était là.",
+    "tags": [
+      "photography",
+      "film"
+    ]
+  },
+  {
+    "file": "seed/photography/d3adc96cc10731915f821475d59adb10.jpg",
+    "category": "photography",
+    "authorIndex": 3,
+    "title": "Série à main levée",
+    "description": "Une seule prise, pas de recadrage. Ce qui est là était là.",
+    "tags": [
+      "photography",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/photography/fa7a2ca3b5a67be62016c874f1f7632c.jpg",
+    "category": "photography",
+    "authorIndex": 4,
+    "title": "Fragment à main levée",
+    "description": "Argentique, 400 ISO poussé à 800. Le grain fait partie de l'image.",
+    "tags": [
+      "photography",
+      "photo"
+    ]
+  },
+  {
+    "file": "seed/portrait/008ae5b7cd1ad92a751c61fbb6efc65c.jpg",
+    "category": "portrait",
+    "authorIndex": 5,
+    "title": "Portrait à contre-jour",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/2ac30cf7a9122312080cdc4c5f325a47.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Visage à contre-jour",
+    "description": "Deux sources croisées, une chaude et une froide, pour creuser le relief.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/3f918c3561ca0a2c886389fe4c43578f.jpg",
+    "category": "portrait",
+    "authorIndex": 1,
+    "title": "Regard à contre-jour",
+    "description": "Portrait au 85 mm, ouverture pleine. Arrière-plan volontairement laissé flou.",
+    "tags": [
+      "portrait",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/525bf2c9338649150c95d01b65c6e325.jpg",
+    "category": "portrait",
+    "authorIndex": 2,
+    "title": "Silhouette à contre-jour",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/58cde313dd145f21724830e33be61393.jpg",
+    "category": "portrait",
+    "authorIndex": 3,
+    "title": "Étude à contre-jour",
+    "description": "Prise en fin de journée, quand la lumière descend et devient chaude.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/6d3c7fa63e0a2a28ebca41b6b8baf3db.jpg",
+    "category": "portrait",
+    "authorIndex": 4,
+    "title": "Profil à contre-jour",
+    "description": "Portrait au 85 mm, ouverture pleine. Arrière-plan volontairement laissé flou.",
+    "tags": [
+      "portrait",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/71c41c44c20620d18aa948609ac9eb95.jpg",
+    "category": "portrait",
+    "authorIndex": 5,
+    "title": "Portrait en lumière douce",
+    "description": "Prise en fin de journée, quand la lumière descend et devient chaude.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/748e339ce20bc2993e49cc389a99ae49.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Visage en lumière douce",
+    "description": "Prise en fin de journée, quand la lumière descend et devient chaude.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/76c2e44e5eec4554a6dbb73bef0a6169.jpg",
+    "category": "portrait",
+    "authorIndex": 1,
+    "title": "Regard en lumière douce",
+    "description": "Test de lumière avant une série plus longue. Celui-ci est resté.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/7853ca833f7ba36976ff63a1a736a91c.jpg",
+    "category": "portrait",
+    "authorIndex": 2,
+    "title": "Silhouette en lumière douce",
+    "description": "Deux sources croisées, une chaude et une froide, pour creuser le relief.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/7a4a5756a8f430d5c59359ccc512bf61.jpg",
+    "category": "portrait",
+    "authorIndex": 3,
+    "title": "Étude en lumière douce",
+    "description": "Prise en fin de journée, quand la lumière descend et devient chaude.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/91fe842b4025ce384b19bdb8b189596c.jpg",
+    "category": "portrait",
+    "authorIndex": 4,
+    "title": "Profil en lumière douce",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/9d657e9dc9e79ee3aacd08e14eb08a4e.jpg",
+    "category": "portrait",
+    "authorIndex": 5,
+    "title": "Portrait au flash direct",
+    "description": "Test de lumière avant une série plus longue. Celui-ci est resté.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/a5bd257ea63cfaa9fa356c55aa04a347.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Visage au flash direct",
+    "description": "Portrait au 85 mm, ouverture pleine. Arrière-plan volontairement laissé flou.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/portrait/af362fa4db14c124a89c4e1ab380ae46.jpg",
+    "category": "portrait",
+    "authorIndex": 1,
+    "title": "Regard au flash direct",
+    "description": "Test de lumière avant une série plus longue. Celui-ci est resté.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/afc1f047b6da968f1f6e5249b86d0f90.jpg",
+    "category": "portrait",
+    "authorIndex": 2,
+    "title": "Silhouette au flash direct",
+    "description": "Test de lumière avant une série plus longue. Celui-ci est resté.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/portrait/b7aa12ee3634660c245cfccc766e3318.jpg",
+    "category": "portrait",
+    "authorIndex": 3,
+    "title": "Étude au flash direct",
+    "description": "Test de lumière avant une série plus longue. Celui-ci est resté.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/portrait/ba75d7dfa1963150b04dd0d319c11251.jpg",
+    "category": "portrait",
+    "authorIndex": 4,
+    "title": "Profil au flash direct",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/bba62f41782113d21d096cab4181c5d0.jpg",
+    "category": "portrait",
+    "authorIndex": 5,
+    "title": "Portrait en studio",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/bc8965fbad420e498def3c6a6c9aafd8.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Visage en studio",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/be3a4646dc217c09f1cb6df7f1436ebc.jpg",
+    "category": "portrait",
+    "authorIndex": 1,
+    "title": "Regard en studio",
+    "description": "Séance en lumière naturelle, un seul réflecteur. Le grain vient du film.",
+    "tags": [
+      "portrait",
+      "editorial"
+    ]
+  },
+  {
+    "file": "seed/portrait/c961051eb5181769d0439b3135faad07.jpg",
+    "category": "portrait",
+    "authorIndex": 2,
+    "title": "Silhouette en studio",
+    "description": "Deux sources croisées, une chaude et une froide, pour creuser le relief.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/ca692b6477568a9b6c5533ce4c6bf521.jpg",
+    "category": "portrait",
+    "authorIndex": 3,
+    "title": "Étude en studio",
+    "description": "Portrait au 85 mm, ouverture pleine. Arrière-plan volontairement laissé flou.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/portrait/cb38956688b160c5582d8c344824d590.jpg",
+    "category": "portrait",
+    "authorIndex": 4,
+    "title": "Profil en studio",
+    "description": "Deux sources croisées, une chaude et une froide, pour creuser le relief.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/d21c019d19414ffd84ef85d50be96936.jpg",
+    "category": "portrait",
+    "authorIndex": 5,
+    "title": "Portrait à la fenêtre",
+    "description": "Deux sources croisées, une chaude et une froide, pour creuser le relief.",
+    "tags": [
+      "portrait",
+      "people",
+      "studio",
+      "light"
+    ]
+  },
+  {
+    "file": "seed/portrait/d9e14c251d468cc476c0ec33f969b5da.jpg",
+    "category": "portrait",
+    "authorIndex": 0,
+    "title": "Visage à la fenêtre",
+    "description": "Deux sources croisées, une chaude et une froide, pour creuser le relief.",
+    "tags": [
+      "portrait",
+      "mood",
+      "editorial",
+      "people"
+    ]
+  },
+  {
+    "file": "seed/portrait/f57b5c5b5bee379afb03805e94b4b462.jpg",
+    "category": "portrait",
+    "authorIndex": 1,
+    "title": "Regard à la fenêtre",
+    "description": "Cadrage serré, presque frontal. Le sujet fixe l'objectif sans sourire.",
+    "tags": [
+      "portrait",
+      "studio"
+    ]
+  },
+  {
+    "file": "seed/portrait/fae9e34f897d1ea91dfc1925e526323e.jpg",
+    "category": "portrait",
+    "authorIndex": 2,
+    "title": "Silhouette à la fenêtre",
+    "description": "Test de lumière avant une série plus longue. Celui-ci est resté.",
+    "tags": [
+      "portrait",
+      "light",
+      "mood"
+    ]
+  },
+  {
+    "file": "seed/typography/053876a80c83b393c40b1f991a58641e.jpg",
+    "category": "typography",
+    "authorIndex": 3,
+    "title": "Lettrage dessiné à la main",
+    "description": "Construction sur module carré, une seule courbe réutilisée partout.",
+    "tags": [
+      "typography",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/typography/06094c79163dbb38f1b73794e7f6323a.jpg",
+    "category": "typography",
+    "authorIndex": 4,
+    "title": "Alphabet dessiné à la main",
+    "description": "Contraste poussé entre pleins et déliés, à la limite de la lisibilité.",
+    "tags": [
+      "typography",
+      "lettering",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/0b365e04c4d4ece7b6fed7f5b4efda75.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Spécimen dessiné à la main",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/13602c19bc93b586e082fa01c1a06378.jpg",
+    "category": "typography",
+    "authorIndex": 0,
+    "title": "Composition dessiné à la main",
+    "description": "Contraste poussé entre pleins et déliés, à la limite de la lisibilité.",
+    "tags": [
+      "typography",
+      "grid",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/2727366439f6d9fc3fe7df5cd5f7e3a1.jpg",
+    "category": "typography",
+    "authorIndex": 1,
+    "title": "Caractère dessiné à la main",
+    "description": "Construction sur module carré, une seule courbe réutilisée partout.",
+    "tags": [
+      "typography",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/2af51cbf1ab4f82cc69b7f20b30e6f8d.jpg",
+    "category": "typography",
+    "authorIndex": 2,
+    "title": "Affiche dessiné à la main",
+    "description": "Construction sur module carré, une seule courbe réutilisée partout.",
+    "tags": [
+      "typography",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/typography/2f71acd686349cf9f4107b43e48fbbfd.jpg",
+    "category": "typography",
+    "authorIndex": 3,
+    "title": "Lettrage en grotesque étroite",
+    "description": "Test d'impression en typographie plomb, sur papier de chiffon.",
+    "tags": [
+      "typography",
+      "lettering",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/52ff476c97a9a25bc83e49f897eb69ba.jpg",
+    "category": "typography",
+    "authorIndex": 4,
+    "title": "Alphabet en grotesque étroite",
+    "description": "Spécimen complet : capitales, bas de casse, chiffres elzéviriens.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/54077f55595ad5e4473db45090e9cf6e.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Spécimen en grotesque étroite",
+    "description": "Contraste poussé entre pleins et déliés, à la limite de la lisibilité.",
+    "tags": [
+      "typography",
+      "print",
+      "type",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/6d067e99c36717364df290c2b491e4de.jpg",
+    "category": "typography",
+    "authorIndex": 0,
+    "title": "Composition en grotesque étroite",
+    "description": "Spécimen complet : capitales, bas de casse, chiffres elzéviriens.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/6dd9d30cfda569583a9f5458e614678f.jpg",
+    "category": "typography",
+    "authorIndex": 1,
+    "title": "Caractère en grotesque étroite",
+    "description": "Contraste poussé entre pleins et déliés, à la limite de la lisibilité.",
+    "tags": [
+      "typography",
+      "print",
+      "type",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/7335395e5c58a8c8a294b3eaaf3ff92b.jpg",
+    "category": "typography",
+    "authorIndex": 2,
+    "title": "Affiche en grotesque étroite",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/736a26667d7539991de24c02619039ec.jpg",
+    "category": "typography",
+    "authorIndex": 3,
+    "title": "Lettrage à empattements fins",
+    "description": "Interlettrage resserré au maximum avant que les formes ne se touchent.",
+    "tags": [
+      "typography",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/89a4fcccd863c45f3d89e7866b4439ef.jpg",
+    "category": "typography",
+    "authorIndex": 4,
+    "title": "Alphabet à empattements fins",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/8d06375e5bb2bc2aa0cb5fe113f7bab9.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Spécimen à empattements fins",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/99326db1d56cf356b92638ec8f3efe2f.jpg",
+    "category": "typography",
+    "authorIndex": 0,
+    "title": "Composition à empattements fins",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/From Klickpin.com- 29 Refined home office decor ideas that are trending right now and still timeless enough to save for later for busy people who.mp4",
+    "category": "typography",
+    "authorIndex": 1,
+    "title": "Caractère à empattements fins",
+    "description": "Spécimen complet : capitales, bas de casse, chiffres elzéviriens.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/From Klickpin.com- Try these 34 Beautiful side hustle ideas that help you create a polished look with very simple and affordable details for peopl.mp4",
+    "category": "typography",
+    "authorIndex": 2,
+    "title": "Affiche à empattements fins",
+    "description": "Spécimen complet : capitales, bas de casse, chiffres elzéviriens.",
+    "tags": [
+      "typography",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/b48f6617ae565db220f788386d6b69a3.jpg",
+    "category": "typography",
+    "authorIndex": 3,
+    "title": "Lettrage en capitales",
+    "description": "Contraste poussé entre pleins et déliés, à la limite de la lisibilité.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print",
+      "type"
+    ]
+  },
+  {
+    "file": "seed/typography/b4963db5a99aad807f7766e24a0f7227.jpg",
+    "category": "typography",
+    "authorIndex": 4,
+    "title": "Alphabet en capitales",
+    "description": "Contraste poussé entre pleins et déliés, à la limite de la lisibilité.",
+    "tags": [
+      "typography",
+      "lettering",
+      "grid",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/ce16e4a10817d698610de966ecba472a.jpg",
+    "category": "typography",
+    "authorIndex": 5,
+    "title": "Spécimen en capitales",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/typography/e121a79928cb0d4b3eea232a2c699d0a.jpg",
+    "category": "typography",
+    "authorIndex": 0,
+    "title": "Composition en capitales",
+    "description": "Construction sur module carré, une seule courbe réutilisée partout.",
+    "tags": [
+      "typography",
+      "experimental"
+    ]
+  },
+  {
+    "file": "seed/typography/e51401f510f68e5fda97f66bb825f5f3.jpg",
+    "category": "typography",
+    "authorIndex": 1,
+    "title": "Caractère en capitales",
+    "description": "Spécimen complet : capitales, bas de casse, chiffres elzéviriens.",
+    "tags": [
+      "typography",
+      "experimental",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/f54c71d54a2657df4d32e013fa7548aa.jpg",
+    "category": "typography",
+    "authorIndex": 2,
+    "title": "Affiche en capitales",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "print"
+    ]
+  },
+  {
+    "file": "seed/typography/f8425468b8e945abaff528594728b968.jpg",
+    "category": "typography",
+    "authorIndex": 3,
+    "title": "Lettrage sur module carré",
+    "description": "Lettrage tracé au crayon puis vectorisé. Les irrégularités sont volontaires.",
+    "tags": [
+      "typography",
+      "lettering"
+    ]
+  },
+  {
+    "file": "seed/uxui/10feda4bf3cb77c9163909b9e018722f.jpg",
+    "category": "uxui",
+    "authorIndex": 4,
+    "title": "Interface mobile",
+    "description": "Écran principal après trois itérations. La densité a beaucoup baissé.",
+    "tags": [
+      "uxui",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/15354bcc5cd7ba35bbdf3c2ddd4b6f88.jpg",
+    "category": "uxui",
+    "authorIndex": 5,
+    "title": "Écran mobile",
+    "description": "Mode sombre pensé dès le départ, pas ajouté après coup.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/27699f998a7faec9dc335d2f7a1ed205.jpg",
+    "category": "uxui",
+    "authorIndex": 0,
+    "title": "Parcours mobile",
+    "description": "Parcours réduit de sept à quatre étapes après tests utilisateurs.",
+    "tags": [
+      "uxui",
+      "product",
+      "interface",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/uxui/2a658077365ab18fa949950662538516.jpg",
+    "category": "uxui",
+    "authorIndex": 1,
+    "title": "Tableau de bord mobile",
+    "description": "Écran principal après trois itérations. La densité a beaucoup baissé.",
+    "tags": [
+      "uxui",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/3e0125f0a1af7cf79e749a1b4df44746.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Système mobile",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/40a5333d077c5e44dc91f0b27318af04.jpg",
+    "category": "uxui",
+    "authorIndex": 3,
+    "title": "Composant mobile",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "product",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/47986c0a3133ae911c7ebc593778ff5f.jpg",
+    "category": "uxui",
+    "authorIndex": 4,
+    "title": "Interface en mode sombre",
+    "description": "Contrastes vérifiés en AA sur tous les états, y compris désactivé.",
+    "tags": [
+      "uxui",
+      "interface",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/47ee7265a53eb2c62aaf68e3242917a3.jpg",
+    "category": "uxui",
+    "authorIndex": 5,
+    "title": "Écran en mode sombre",
+    "description": "Écran principal après trois itérations. La densité a beaucoup baissé.",
+    "tags": [
+      "uxui",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/uxui/5ae09eb3fabc6880f6fa2ad42da8e13f.jpg",
+    "category": "uxui",
+    "authorIndex": 0,
+    "title": "Parcours en mode sombre",
+    "description": "Mode sombre pensé dès le départ, pas ajouté après coup.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/5f5b38755d8703f4fd1f5e9a5cb81c42.jpg",
+    "category": "uxui",
+    "authorIndex": 1,
+    "title": "Tableau de bord en mode sombre",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/64c2b88cfb2e5077013d90d59fce8c22.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Système en mode sombre",
+    "description": "Un seul niveau de hiérarchie visible à la fois : le reste attend.",
+    "tags": [
+      "uxui",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/75b9fc97089b6408977d276d99aa73b9.jpg",
+    "category": "uxui",
+    "authorIndex": 3,
+    "title": "Composant en mode sombre",
+    "description": "Mode sombre pensé dès le départ, pas ajouté après coup.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/856b9162d7110ff7ee47b40e71875d92.jpg",
+    "category": "uxui",
+    "authorIndex": 4,
+    "title": "Interface pour application web",
+    "description": "Parcours réduit de sept à quatre étapes après tests utilisateurs.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/8b05a7870f7a404d5dd27a7bda8bfbff.jpg",
+    "category": "uxui",
+    "authorIndex": 5,
+    "title": "Écran pour application web",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "interface",
+      "grid"
+    ]
+  },
+  {
+    "file": "seed/uxui/8f6dc7625fe47e0a7d4120d2ac01eadf.jpg",
+    "category": "uxui",
+    "authorIndex": 0,
+    "title": "Parcours pour application web",
+    "description": "Un seul niveau de hiérarchie visible à la fois : le reste attend.",
+    "tags": [
+      "uxui",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/95123462aaaa0cb98fceed47943534ee.jpg",
+    "category": "uxui",
+    "authorIndex": 1,
+    "title": "Tableau de bord pour application web",
+    "description": "Mode sombre pensé dès le départ, pas ajouté après coup.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/9edc7e88f6cb3128775378c678c9fe74.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Système pour application web",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/ab0d24906e97ceb7c0f8c1efea625183.jpg",
+    "category": "uxui",
+    "authorIndex": 3,
+    "title": "Composant pour application web",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/b51fdb1874a395c2605710ad44e5d0fc.jpg",
+    "category": "uxui",
+    "authorIndex": 4,
+    "title": "Interface à densité réduite",
+    "description": "Parcours réduit de sept à quatre étapes après tests utilisateurs.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/b9dfc0185a67260b0591cb5554c5f405.jpg",
+    "category": "uxui",
+    "authorIndex": 5,
+    "title": "Écran à densité réduite",
+    "description": "Mode sombre pensé dès le départ, pas ajouté après coup.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/c87c234c1e9d9ef91dded8a1c0d05ff0.jpg",
+    "category": "uxui",
+    "authorIndex": 0,
+    "title": "Parcours à densité réduite",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "minimal",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/cb6108ad631d63d3fea4f65ff5fc510c.jpg",
+    "category": "uxui",
+    "authorIndex": 1,
+    "title": "Tableau de bord à densité réduite",
+    "description": "Contrastes vérifiés en AA sur tous les états, y compris désactivé.",
+    "tags": [
+      "uxui",
+      "grid",
+      "interaction",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/d102cebc98768136016c72d0e592b010.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Système à densité réduite",
+    "description": "Écran principal après trois itérations. La densité a beaucoup baissé.",
+    "tags": [
+      "uxui",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/db3bd50218eeeb1173b353effe1773b7.jpg",
+    "category": "uxui",
+    "authorIndex": 3,
+    "title": "Composant à densité réduite",
+    "description": "Un seul niveau de hiérarchie visible à la fois : le reste attend.",
+    "tags": [
+      "uxui",
+      "minimal"
+    ]
+  },
+  {
+    "file": "seed/uxui/e78ba10e525de292567122689512bf96.jpg",
+    "category": "uxui",
+    "authorIndex": 4,
+    "title": "Interface accessible",
+    "description": "Un seul niveau de hiérarchie visible à la fois : le reste attend.",
+    "tags": [
+      "uxui",
+      "interface"
+    ]
+  },
+  {
+    "file": "seed/uxui/f3f93cc9541f1e0c2369052642f375ba.jpg",
+    "category": "uxui",
+    "authorIndex": 5,
+    "title": "Écran accessible",
+    "description": "Parcours réduit de sept à quatre étapes après tests utilisateurs.",
+    "tags": [
+      "uxui",
+      "interface",
+      "grid",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/f949fe159f509c8560260100c995e44d.jpg",
+    "category": "uxui",
+    "authorIndex": 0,
+    "title": "Parcours accessible",
+    "description": "Un seul niveau de hiérarchie visible à la fois : le reste attend.",
+    "tags": [
+      "uxui",
+      "interaction"
+    ]
+  },
+  {
+    "file": "seed/uxui/fae26f19ac04376352a2fdaf7afe9bff.jpg",
+    "category": "uxui",
+    "authorIndex": 1,
+    "title": "Tableau de bord accessible",
+    "description": "Un seul niveau de hiérarchie visible à la fois : le reste attend.",
+    "tags": [
+      "uxui",
+      "product"
+    ]
+  },
+  {
+    "file": "seed/uxui/fdfc4f109e0327255480d6dfeeeb73f0.jpg",
+    "category": "uxui",
+    "authorIndex": 2,
+    "title": "Système accessible",
+    "description": "Composants issus du design system, aucune valeur codée en dur.",
+    "tags": [
+      "uxui",
+      "interaction",
+      "minimal"
+    ]
+  }
+]

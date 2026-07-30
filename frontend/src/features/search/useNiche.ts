@@ -12,6 +12,7 @@ import type { Niche } from './search.types'
 export function useNiche(): {
   niche: Niche | null
   enterNiche: (term: string) => void
+  enterTag: (tag: string) => void
   exitNiche: () => void
 } {
   const [params, setParams] = useSearchParams()
@@ -22,7 +23,22 @@ export function useNiche(): {
       const slug = resolveSearch(term).niche.slug
       setParams((prev) => {
         const next = new URLSearchParams(prev)
+        next.delete('creator')
         next.set('q', slug)
+        return next
+      })
+    },
+    [setParams],
+  )
+
+  // A chosen tag enters its own universe verbatim (getNiche synthesizes a niche
+  // for it) — no resolveSearch mapping, so #beauty stays #beauty, not Portrait.
+  const enterTag = useCallback(
+    (tag: string) => {
+      setParams((prev) => {
+        const next = new URLSearchParams(prev)
+        next.delete('creator')
+        next.set('q', tag)
         return next
       })
     },
@@ -37,5 +53,5 @@ export function useNiche(): {
     })
   }, [setParams])
 
-  return { niche, enterNiche, exitNiche }
+  return { niche, enterNiche, enterTag, exitNiche }
 }

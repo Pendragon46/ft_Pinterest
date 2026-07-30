@@ -30,4 +30,11 @@ export class SearchController {
   findTag(@Query() query: CreateSearchDto) {
     return this.searchService.findTag(query);
   }
+
+  // Complète la saisie : renvoie de vrais tags (nom + compteur), pas des œuvres.
+  @Public()
+  @Get('suggest')
+  suggestTags(@Query('q') q?: string, @Query('limit') limit?: string) {
+    return this.searchService.suggestTags(q ?? '', limit ? Number(limit) : 8);
+  }
 }

@@ -9,6 +9,8 @@
   --animate-shimmer: shimmer 1.4s ease-in-out infinite;
   --animate-reveal: reveal 0.45s ease-out both;
   --animate-settle: settle 0.18s ease-out;
+  --animate-chat-view: chat-view 0.24s ease-out both;
+  --animate-typing: typing 1.1s ease-in-out infinite;
 }
 
 *,
@@ -74,6 +76,33 @@ body {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* Chat view swap (inbox ↔ thread ↔ new): a light fade + upward settle so the
+   panel reads as turning a page. Vertical, so it stays correct in RTL. */
+@keyframes chat-view {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Typing dots: three staggered bumps (each dot delays this base cycle). */
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-2px);
   }
 }
 

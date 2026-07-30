@@ -38,13 +38,12 @@ export class ArtworkService {
   }
 
   async Updatedfile(
-    userId: string,
+    artworkId: string,
     file: Express.Multer.File,
     updatedata: UpdateArtworkDto,
     oldPublicId: string,
   ) {
-    let upload;
-    let updatedArtwork;
+    let upload,updatedArtwork;
     try {
       const normalizedtags = updatedata.tags
         ?.map((tag) => tag.trim().toLowerCase())
@@ -52,11 +51,15 @@ export class ArtworkService {
       upload = await this.cloudinaryService.uploadImage(file);
       updatedArtwork = await this.prisma.artwork.update({
         where: {
-          id: userId,
+          id: artworkId,
         },
         data: {
           mediaUrl: upload.secure_url,
           mediaPublicId: upload.public_id,
+          ...(updatedata.title !== undefined && { title: updatedata.title }),
+          ...(updatedata.description !== undefined && {
+            description: updatedata.description,
+          }),
           ...(normalizedtags &&
             normalizedtags.length > 0 && {
               tags: {
@@ -67,6 +70,13 @@ export class ArtworkService {
                 })),
               },
             }),
+        },
+        include: {
+          author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+          tags: { select: { name: true } },
+          _count: { select: { likes: true, comments: true } },
         },
       });
       await this.deletetagswithoutartworks();
@@ -158,35 +168,51 @@ export class ArtworkService {
       },
     });
     const followingIds = following.map((f) => f.followingId);
-    let feedFollowedUser = await this.prisma.artwork.findMany({
-      where: {
-        authorId: { in: followingIds },
-      },
-      orderBy: {
-        updatedAt: 'desc',
+    const friends = await this.friendService.getFriends(userId);
+    const authorIds = [
+      ...new Set([...followingIds, ...friends.map((friend) => friend.id)]),
+    ];
+    // Friends first (they land in the central tiles), then the whole pool
+    // deduped — the canvas stays full and varied even with a single follow.
+    const friendWorks = authorIds.length
+      ? await this.prisma.artwork.findMany({
+          where: { authorId: { in: authorIds } },
+          orderBy: { updatedAt: 'desc' },
+          include: {
+            author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+            tags: { select: { name: true } },
+            _count: { select: { likes: true, comments: true } },
+          },
+        })
+      : [];
+    const seen = new Set(friendWorks.map((a) => a.id));
+    const general = await this.prisma.artwork.findMany({
+      orderBy: { updatedAt: 'desc' },
+      take: 200,
+      include: {
+        author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
-	const friends = this.friendService.getFriends(userId);
-	const friendIds = (await friends).map((friend) => friend.id);
-	const feedFriends = await this.prisma.artwork.findMany({
-			where: {
-				authorId: { in: friendIds },
-			},
-			orderBy: {
-				updatedAt: 'desc',
-			},
-	});
-	const feedArtworks = [...feedFollowedUser, ...feedFriends];
-	if (feedArtworks.length === 0) {
-		      feedFollowedUser = await this.findAll(); // If no artworks from followed users, return all artworks
-    }
-    return feedArtworks;
+    return [...friendWorks, ...general.filter((a) => !seen.has(a.id))];
   }
 
   async findOne(id: string) {
     const artwork = await this.prisma.artwork.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
     if (!artwork) {
@@ -231,6 +257,10 @@ export class ArtworkService {
         id: artworkId,
       },
       data: {
+        ...(updatedata.title !== undefined && { title: updatedata.title }),
+        ...(updatedata.description !== undefined && {
+          description: updatedata.description,
+        }),
         ...(normalizedtags &&
           normalizedtags.length > 0 && {
             tags: {
@@ -241,6 +271,13 @@ export class ArtworkService {
               })),
             },
           }),
+      },
+      include: {
+        author: {
+          select: { id: true, username: true, fullname: true, avatarUrl: true },
+        },
+        tags: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
   }

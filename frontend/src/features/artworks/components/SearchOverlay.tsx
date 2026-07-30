@@ -1,15 +1,20 @@
 import { Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, KeyboardEvent, RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { OnlineDot } from '@/components/ui/OnlineDot'
 import {
   fetchContextualTags,
   fetchSuggestions,
   searchKeys,
 } from '@/features/search/search.api'
-import { recordSearch, resolveSearch } from '@/features/search/search.mock'
+import {
+  isDisciplineSlug,
+  recordSearch,
+  resolveSearch,
+} from '@/features/search/search.mock'
 import type { Niche, Suggestion } from '@/features/search/search.types'
 
 import { HeroTitle } from './HeroTitle'
@@ -18,9 +23,15 @@ interface SearchOverlayProps {
   inputRef: RefObject<HTMLInputElement | null>
   /** The active niche (drives the title + pre-fill), or null at home. */
   niche: Niche | null
+  /** The active creator universe (drives the title), or null. */
+  creator?: { id: string; name: string } | null
   /** Submit a resolved term (Enter / Go / tag / suggestion) — same path (§4.5). */
   onSubmit?: (term: string) => void
-  /** Clearing the bar while in a niche returns to the global map (§6.4). */
+  /** Open a creator's universe when their suggestion is picked. */
+  onEnterCreator?: (userId: string) => void
+  /** Enter a tag's universe (its works) when a tag suggestion is picked. */
+  onEnterTag?: (tag: string) => void
+  /** Clearing the bar while in a niche/creator returns to the global map (§6.4). */
   onExit?: () => void
 }
 
@@ -30,7 +41,10 @@ interface SearchOverlayProps {
 export function SearchOverlay({
   inputRef,
   niche,
+  creator,
   onSubmit,
+  onEnterCreator,
+  onEnterTag,
   onExit,
 }: SearchOverlayProps) {
   const { t } = useTranslation('common')
@@ -40,6 +54,13 @@ export function SearchOverlay({
 
   // Pre-fill the bar with the niche label when a niche is entered, reset on leave
   // (§6.4). Adjusting state during render (not an effect) keeps it lint-clean.
+  // A real discipline shows its translated label; a synthesized tag niche shows
+  // the raw #tag (there is no `category.<tag>` key to translate).
+  const nicheLabel = niche
+    ? isDisciplineSlug(niche.slug)
+      ? t(`category.${niche.slug}`)
+      : `#${niche.slug}`
+    : ''
   const nicheSlug = niche?.slug ?? null
   const [lastNicheSlug, setLastNicheSlug] = useState<string | null>(null)
   if (nicheSlug !== lastNicheSlug) {
@@ -47,7 +68,7 @@ export function SearchOverlay({
     setHighlight(-1)
     if (niche) {
       // Entering a niche: pre-fill with its label and drop focus.
-      setQuery(t(`category.${niche.slug}`))
+      setQuery(nicheLabel)
       setActive(false)
     } else {
       // Leaving (the bar was cleared): empty it but keep the focus state so the
@@ -57,10 +78,17 @@ export function SearchOverlay({
   }
 
   const trimmed = query.trim()
+  // Debounce 200ms and gate at 2 chars: typing fast shouldn't fire a request per
+  // keystroke, and 1-char queries are too noisy to suggest on (§4.2).
+  const [debounced, setDebounced] = useState('')
+  useEffect(() => {
+    const id = window.setTimeout(() => setDebounced(trimmed), 200)
+    return () => window.clearTimeout(id)
+  }, [trimmed])
   const suggestionsQuery = useQuery({
-    queryKey: searchKeys.suggestions(trimmed),
-    queryFn: () => fetchSuggestions(trimmed),
-    enabled: active && trimmed.length > 0,
+    queryKey: searchKeys.suggestions(debounced),
+    queryFn: () => fetchSuggestions(debounced),
+    enabled: active && debounced.length >= 2,
     staleTime: 60_000,
   })
   const tagsQuery = useQuery({
@@ -70,16 +98,19 @@ export function SearchOverlay({
   })
 
   const data = suggestionsQuery.data
-  const groups = data ?? { disciplines: [], creators: [] }
-  // Flatten across categories for one keyboard cursor (§4.4).
+  const groups = data ?? { disciplines: [], tags: [], creators: [] }
+  // Flatten across categories for one keyboard cursor (§4.4). Order MUST match the
+  // visual render order below (disciplines → tags → creators), otherwise the
+  // highlighted aria-activedescendant points at the wrong row.
   const flat = useMemo(
-    () => (data ? [...data.disciplines, ...data.creators] : []),
+    () => (data ? [...data.disciplines, ...data.tags, ...data.creators] : []),
     [data],
   )
   // Clamp the cursor at read time so a shrinking result set can't point past it.
   const activeIndex = highlight >= 0 && highlight < flat.length ? highlight : -1
   const hasSuggestions = flat.length > 0
-  const showDropdown = active && trimmed.length > 0
+  const debouncing = trimmed !== debounced
+  const showDropdown = active && trimmed.length >= 2
   const showTags = !active || trimmed.length === 0
 
   const close = () => {
@@ -96,9 +127,27 @@ export function SearchOverlay({
     close()
   }
 
+  // A creator suggestion opens their universe; everything else resolves to a niche.
+  const pick = (s: Suggestion) => {
+    if (s.kind === 'creator' && s.userId) {
+      recordSearch(s.term)
+      onEnterCreator?.(s.userId)
+      close()
+      return
+    }
+    // A tag opens ITS universe (its works), never the nearest discipline.
+    if (s.kind === 'tag') {
+      recordSearch(s.term)
+      onEnterTag?.(s.term)
+      close()
+      return
+    }
+    submit(s.term)
+  }
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (activeIndex >= 0) submit(flat[activeIndex].term)
+    if (activeIndex >= 0) pick(flat[activeIndex])
     else submit(query)
   }
 
@@ -124,13 +173,17 @@ export function SearchOverlay({
       ? t(`category.${s.categoryKey}`)
       : (s.username ?? s.term)
 
-  // Home tagline, or the niche's "Exploring {niche} Universe" (§5.2). Two lines,
-  // "\n"-separated, so HeroTitle types across them.
-  const titleText = niche
-    ? `${t('search.exploringTitle1')}\n${t('search.exploringTitle2', {
-        niche: t(`category.${niche.slug}`),
+  // Home tagline, a niche's "Exploring {niche} Universe", or a creator's
+  // "Exploring {Name}'s Universe". Two "\n"-separated lines for HeroTitle.
+  const titleText = creator
+    ? `${t('search.exploringTitle1')}\n${t('search.creatorUniverse', {
+        name: creator.name,
       })}`
-    : `${t('home.heroLine1')}\n${t('home.heroLine2')}`
+    : niche
+      ? `${t('search.exploringTitle1')}\n${t('search.exploringTitle2', {
+          niche: nicheLabel,
+        })}`
+      : `${t('home.heroLine1')}\n${t('home.heroLine2')}`
 
   return (
     <section className="pointer-events-auto absolute left-0 top-0 flex w-[min(480px,88vw)] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-6 text-center">
@@ -153,8 +206,8 @@ export function SearchOverlay({
               const value = event.target.value
               setQuery(value)
               setHighlight(-1)
-              // Emptying the bar while in a niche returns to the global map (§6.4).
-              if (niche && value.trim() === '') onExit?.()
+              // Emptying the bar while in a niche/creator returns to the map (§6.4).
+              if ((niche || creator) && value.trim() === '') onExit?.()
             }}
             onFocus={() => {
               setActive(true)
@@ -179,7 +232,7 @@ export function SearchOverlay({
           </kbd>
           <button
             type="submit"
-            className="rounded-full bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            className="rounded-full cursor-pointer bg-neutral-900 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
           >
             {t('home.searchAction')}
           </button>
@@ -204,7 +257,18 @@ export function SearchOverlay({
                     highlight={activeIndex}
                     labelOf={suggestionLabel}
                     onHover={setHighlight}
-                    onPick={submit}
+                    onPick={pick}
+                  />
+                ) : null}
+                {groups.tags.length > 0 ? (
+                  <SuggestionGroup
+                    label={t('search.groupTags')}
+                    items={groups.tags}
+                    flat={flat}
+                    highlight={activeIndex}
+                    labelOf={suggestionLabel}
+                    onHover={setHighlight}
+                    onPick={pick}
                   />
                 ) : null}
                 {groups.creators.length > 0 ? (
@@ -215,11 +279,11 @@ export function SearchOverlay({
                     highlight={activeIndex}
                     labelOf={suggestionLabel}
                     onHover={setHighlight}
-                    onPick={submit}
+                    onPick={pick}
                   />
                 ) : null}
               </ul>
-            ) : suggestionsQuery.isPending ? (
+            ) : debouncing || suggestionsQuery.isFetching ? (
               <p className="px-4 py-6 text-center text-sm text-neutral-400">
                 {t('search.searching')}
               </p>
@@ -244,7 +308,10 @@ export function SearchOverlay({
                 key={suggestion}
                 type="button"
                 onClick={() => {
-                  submit(suggestion)
+                  // These are real tags → open the tag's works, not the nearest
+                  // discipline (which is what submit()/enterNiche would do).
+                  onEnterTag?.(suggestion)
+                  close()
                 }}
                 className="rounded-full border border-neutral-200 bg-white px-3 py-1 text-sm text-neutral-700 transition duration-100 hover:border-neutral-300 hover:bg-neutral-50 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
               >
@@ -265,7 +332,7 @@ interface SuggestionGroupProps {
   highlight: number
   labelOf: (s: Suggestion) => string
   onHover: (index: number) => void
-  onPick: (term: string) => void
+  onPick: (item: Suggestion) => void
 }
 
 // One labelled category of rows, each with a micro-preview (§4.1, §4.2).
@@ -278,9 +345,13 @@ function SuggestionGroup({
   onHover,
   onPick,
 }: SuggestionGroupProps) {
+  const { t } = useTranslation('common')
   return (
-    <li>
-      <p className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-neutral-400">
+    <li role="group" aria-label={label}>
+      <p
+        aria-hidden="true"
+        className="px-4 pb-1 pt-2 text-xs font-medium uppercase tracking-wide text-neutral-400"
+      >
         {label}
       </p>
       <ul>
@@ -298,19 +369,22 @@ function SuggestionGroup({
                   onHover(index)
                 }}
                 onClick={() => {
-                  onPick(item.term)
+                  onPick(item)
                 }}
                 className={`flex min-h-11 w-full items-center gap-3 px-4 py-2 text-start transition-colors motion-reduce:transition-none ${
                   isActive ? 'bg-neutral-100' : 'hover:bg-neutral-50'
                 }`}
               >
                 {item.kind === 'creator' ? (
-                  <span
-                    aria-hidden="true"
-                    style={{ backgroundColor: item.previews[0] }}
-                    className="flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                  >
-                    {labelOf(item).charAt(0).toUpperCase()}
+                  <span className="relative shrink-0">
+                    <span
+                      aria-hidden="true"
+                      style={{ backgroundColor: item.previews[0] }}
+                      className="flex size-7 items-center justify-center rounded-full text-xs font-semibold text-white"
+                    >
+                      {labelOf(item).charAt(0).toUpperCase()}
+                    </span>
+                    {item.userId ? <OnlineDot userId={item.userId} /> : null}
                   </span>
                 ) : (
                   <span aria-hidden="true" className="flex shrink-0 gap-0.5">
@@ -324,9 +398,17 @@ function SuggestionGroup({
                   </span>
                 )}
                 <span className="min-w-0 flex-1 truncate">
-                  <span className="text-sm text-neutral-900">{labelOf(item)}</span>
+                  <span className="text-sm text-neutral-900">
+                    {item.kind === 'tag' ? `#${labelOf(item)}` : labelOf(item)}
+                  </span>
                   {item.kind === 'creator' && item.handle ? (
                     <span className="text-sm text-neutral-400"> @{item.handle}</span>
+                  ) : null}
+                  {item.kind === 'tag' && item.count != null ? (
+                    <span className="text-sm text-neutral-400">
+                      {' · '}
+                      {t('search.tagCount', { count: item.count })}
+                    </span>
                   ) : null}
                   {item.kind === 'discipline' && item.path?.length ? (
                     <span className="text-xs text-neutral-400">

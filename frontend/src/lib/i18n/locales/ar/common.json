@@ -4,7 +4,62 @@
   },
   "intro": {
     "wordLead": "تِه",
-    "wordTrail": "عن قصد"
+    "wordTrail": "عن قصد",
+    "welcome": "مرحباً"
+  },
+  "presence": {
+    "online": "متصل"
+  },
+  "edit": {
+    "title": "تعديل العمل",
+    "subtitle": "حدّث العنوان والوصف والوسوم. تبقى الوسائط كما هي.",
+    "save": "حفظ التغييرات",
+    "saved": "تم حفظ التغييرات",
+    "mediaKept": "تُحفظ الوسائط المرفوعة."
+  },
+  "chat": {
+    "title": "الرسائل",
+    "open": "فتح الرسائل",
+    "unread": "{{count}} رسائل غير مقروءة",
+    "close": "إغلاق",
+    "back": "العودة إلى المحادثات",
+    "search": "ابحث عن محادثة",
+    "searchNoResult": "لا توجد محادثة مطابقة",
+    "newMessage": "رسالة جديدة",
+    "newMessageTitle": "بدء محادثة",
+    "you": "أنت: ",
+    "sharedArtworkPreview": "أرسل إليك منشورًا",
+    "sharedArtworkSent": "لقد أرسلت منشورًا",
+    "openArtwork": "عرض العمل",
+    "artworkBy": "{{title}} · {{author}}",
+    "today": "اليوم",
+    "yesterday": "أمس",
+    "readAt": "قُرئ · {{time}}",
+    "online": "متصل",
+    "composerPlaceholder": "اكتب رسالة…",
+    "send": "إرسال",
+    "sendFailed": "لم تُرسل الرسالة",
+    "retry": "إعادة المحاولة",
+    "loading": "جارٍ تحميل المحادثات…",
+    "loadingMessages": "جارٍ تحميل الرسائل…",
+    "loadError": "تعذّر تحميل المحادثات",
+    "loadMore": "تحميل الرسائل السابقة",
+    "emptyTitle": "لا رسائل",
+    "emptyBody": "ستظهر محادثاتك هنا.",
+    "emptyThread": "ألقِ التحية.",
+    "noMutualsTitle": "لا محادثات ممكنة بعد",
+    "noMutualsBody": "يمكنك مراسلة المبدعين الذين يتابعونك بالمثل.",
+    "noMutualsAction": "استكشاف",
+    "notMutual": "يجب أن يتابع كلٌّ منكما الآخر للمحادثة.",
+    "messageFrom": "رسالة من {{name}}",
+    "messageFromYou": "رسالتك",
+    "conversationWith": "محادثة مع {{name}}",
+    "viewProfile": "عرض ملف {{name}}",
+    "message": "مراسلة",
+    "typing": "{{name}} يكتب…",
+    "system": {
+      "mutualFollow": "أصبحتما صديقين الآن. يمكنكما تبادل الرسائل.",
+      "unknown": "تحديث المحادثة"}
   },
   "language": {
     "label": "اللغة"
@@ -14,7 +69,8 @@
     "signUp": "إنشاء حساب",
     "continueWithGoogle": "المتابعة باستخدام Google",
     "signOut": "تسجيل الخروج",
-    "dismiss": "إغلاق"
+    "dismiss": "إغلاق",
+    "edit": "تعديل"
   },
   "auth": {
     "avatarAlt": "الصورة الرمزية لـ {{username}}",
@@ -74,7 +130,162 @@
     "emailInvalid": "أدخل بريدًا إلكترونيًا صالحًا.",
     "passwordRequired": "كلمة المرور مطلوبة.",
     "passwordWeak": "8+ أحرف تتضمن حروفًا كبيرة وصغيرة ورقمًا ورمزًا.",
-    "network": "خطأ في الشبكة — تحقّق من اتصالك."
+    "network": "خطأ في الشبكة — تحقّق من اتصالك.",
+    "fileTooLarge": "الملف كبير جدًا (10 ميغابايت كحد أقصى).",
+    "fileType": "صيغة ملف غير مدعومة."
+  },
+  "gdpr": {
+    "nav": "الخصوصية",
+    "section": {
+      "title": "بياناتي والخصوصية",
+      "description": "اطّلع على بياناتك الشخصية أو نزّلها أو احذفها."
+    },
+    "view": {
+      "button": "عرض بياناتي",
+      "loading": "جارٍ التحميل…",
+      "summary": "{{artworks}} أعمال · {{comments}} تعليقات · {{likes}} إعجابات · {{following}} متابَعون · {{followers}} متابِعون"
+    },
+    "download": {
+      "hint": "ملف JSON أو CSV قابل للقراءة بكل ما نخزّنه — لا يتضمّن كلمة المرور أبدًا.",
+      "json": "تنزيل (JSON)",
+      "csv": "تنزيل (CSV)"
+    },
+    "danger": {
+      "title": "حذف الحساب",
+      "description": "يحذف حسابك وكل محتواه نهائيًا. لا يمكن التراجع عن ذلك.",
+      "button": "حذف حسابي"
+    },
+    "delete": {
+      "title": "حذف حسابك؟",
+      "warning": "هذا الإجراء نهائي. سيُمحى حسابك وكل محتواه.",
+      "willDelete": "ستُحذف أعمالك وتعليقاتك وإعجاباتك ومتابعاتك.",
+      "confirmLabel": "اكتب اسم المستخدم ({{username}}) للتأكيد",
+      "confirmPlaceholder": "اسم المستخدم",
+      "cancel": "إلغاء",
+      "confirm": "حذف الحساب",
+      "deleting": "جارٍ الحذف…",
+      "error": "تعذّر حذف حسابك. حاول مجددًا."
+    }
+  },
+  "userModal": {
+    "works": "الأعمال",
+    "followers": "المتابِعون",
+    "following": "المتابَعون",
+    "viewFull": "عرض الملف الكامل",
+    "noWorks": "لا أعمال بعد."
+  },
+  "admin": {
+    "menuLink": "الإدارة",
+    "breadcrumb": {
+      "root": "الإدارة"
+    },
+    "nav": {
+      "users": "المستخدمون",
+      "artworks": "الأعمال",
+      "other": "أخرى",
+      "overview": "نظرة عامة"
+    },
+    "title": "المستخدمون",
+    "subtitle": "أدِر المستخدمين وأدوارهم وصلاحياتهم.",
+    "refresh": "تحديث",
+    "stats": {
+      "total": "إجمالي المستخدمين",
+      "admins": "المشرفون",
+      "members": "المستخدمون",
+      "guests": "الضيوف"
+    },
+    "search": {
+      "label": "بحث عن مستخدمين",
+      "placeholder": "ابحث بالاسم أو @المعرّف أو البريد…"
+    },
+    "filter": {
+      "role": "تصفية حسب الدور",
+      "allRoles": "كل الأدوار"
+    },
+    "sort": {
+      "label": "ترتيب حسب",
+      "recent": "الأحدث",
+      "oldest": "الأقدم",
+      "name": "الاسم"
+    },
+    "table": {
+      "user": "المستخدم",
+      "email": "البريد",
+      "role": "الدور",
+      "joined": "التسجيل",
+      "updated": "آخر تعديل",
+      "artworks": "الأعمال",
+      "actions": "إجراءات"
+    },
+    "role": {
+      "user": "مستخدم",
+      "guest": "ضيف",
+      "admin": "مشرف"
+    },
+    "action": {
+      "changeRole": "تغيير الدور",
+      "delete": "حذف المستخدم"
+    },
+    "pagination": {
+      "showing": "عرض {{from}} إلى {{to}} من {{total}}",
+      "perPage": "{{n}} / صفحة",
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
+    },
+    "empty": {
+      "title": "لا يوجد مستخدمون",
+      "body": "لا يطابق أي مستخدم بحثك أو عوامل التصفية."
+    },
+    "error": {
+      "title": "تعذّر تحميل المستخدمين",
+      "body": "حدث خطأ. تحقّق من اتصالك ثم أعد المحاولة.",
+      "retry": "إعادة المحاولة",
+      "roleRefused": "رفض الخادم هذا التغيير (آخر مشرف أو خفض رتبتك بنفسك)."
+    },
+    "add": {
+      "button": "إضافة مستخدم",
+      "title": "إضافة مستخدم",
+      "subtitle": "أنشئ حسابًا وعيّن له دورًا.",
+      "fullname": "الاسم الكامل",
+      "username": "اسم المستخدم",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "passwordHint": "8+ أحرف، حروف كبيرة وصغيرة، رقم ورمز.",
+      "role": "الدور",
+      "cancel": "إلغاء",
+      "submit": "إنشاء المستخدم"
+    },
+    "delete": {
+      "title": "حذف المستخدم؟",
+      "body": "هذا الإجراء نهائي. سيفقد «{{name}}» (@{{handle}}) الوصول إلى حسابه وكل بياناته.",
+      "cancel": "إلغاء",
+      "confirm": "حذف"
+    },
+    "artworks": {
+      "title": "الأعمال",
+      "subtitle": "تصفّح جميع الأعمال المنشورة وأشرِف عليها.",
+      "search": "ابحث بالعنوان أو المؤلف…",
+      "by": "بواسطة {{author}}",
+      "empty": "لم يُعثر على أعمال",
+      "delete": "حذف العمل",
+      "deleteTitle": "حذف العمل؟",
+      "deleteBody": "هذا الإجراء نهائي. سيُحذف «{{title}}» وكل إعجاباته وتعليقاته.",
+      "deleteCancel": "إلغاء",
+      "deleteConfirm": "حذف"
+    },
+    "analytics": {
+      "title": "نظرة عامة",
+      "subtitle": "نشاط المنصّة في لمحة.",
+      "artworks": "الأعمال",
+      "likes": "إجمالي الإعجابات",
+      "comments": "إجمالي التعليقات",
+      "userGrowth": "نمو المستخدمين",
+      "contentGrowth": "نمو المحتوى",
+      "roles": "الأدوار",
+      "topCreators": "أبرز المبدعين",
+      "topTags": "الوسوم الأكثر استخدامًا",
+      "empty": "لا توجد بيانات بعد"
+    }
   },
   "home": {
     "heroLine1": "لا تتصفّح الإلهام.",
@@ -103,6 +314,12 @@
     "commentPlaceholder": "أضف تعليقًا…",
     "post": "نشر",
     "reply": "رد",
+    "deleteComment": "حذف",
+    "delete": "حذف العمل",
+    "deleteTitle": "حذف هذا العمل؟",
+    "deleteBody": "«{{title}}» سيُحذف نهائيًا. لا يمكن التراجع.",
+    "deleteConfirm": "حذف",
+    "deleteCancel": "إلغاء",
     "timeNow": "الآن",
     "timeHours": "{{hours}} س",
     "close": "إغلاق",
@@ -112,6 +329,7 @@
     "backHome": "العودة إلى الخريطة",
     "commentsEmpty": "كن أول من يعلّق.",
     "commentPosted": "تم نشر التعليق.",
+    "commentMinLength": "٣ أحرف على الأقل.",
     "commentFailed": "تعذّر نشر تعليقك.",
     "retry": "إعادة المحاولة",
     "unfollow": "إلغاء المتابعة"
@@ -129,7 +347,6 @@
   "login": {
     "title": "مرحبًا بعودتك",
     "subtitle": "سجّل الدخول للإعجاب والحفظ والإنشاء.",
-    "forgotPassword": "هل نسيت كلمة المرور؟",
     "noAccount": "جديد هنا؟",
     "registerLink": "أنشئ حسابًا"
   },
@@ -256,9 +473,12 @@
     "searching": "جارٍ البحث…",
     "groupDisciplines": "التخصصات",
     "groupCreators": "المبدعون",
+    "groupTags": "وسوم",
+    "tagCount": "{{count}} أعمال",
     "nearestRegion": "أقرب منطقة",
     "exploringTitle1": "استكشاف",
     "exploringTitle2": "عالم {{niche}}",
+    "creatorUniverse": "عالم {{name}}",
     "whereNext": "لقد استكشفت كل {{niche}}. إلى أين بعد؟",
     "whereNextShort": "إلى أين بعد؟",
     "refreshNeighbours": "عرض جيران آخرين"

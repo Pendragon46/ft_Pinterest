@@ -1,7 +1,7 @@
-import { memo } from 'react'
+import { memo, useRef } from 'react'
+import { Video } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
-import { Sparkles } from 'lucide-react'
 
 import type { CanvasArtwork } from '../artwork.types'
 
@@ -24,60 +24,82 @@ export const ArtworkCard = memo(function ArtworkCard({
 }: ArtworkCardProps) {
   const { t } = useTranslation('common')
   const location = useLocation()
+  const videoRef = useRef<HTMLVideoElement>(null)
 
-  // Fold the kind into the accessible name: the Link's aria-label overrides its
-  // descendants, so the Sponsor/AI badges are otherwise never announced (§2.1).
-  const baseLabel = t('artwork.openAria', {
+  // Lecture au survol/focus ; no-op pour les images (ref null).
+  const playHover = () => {
+    void videoRef.current?.play().catch(() => {})
+  }
+  const stopHover = () => {
+    const v = videoRef.current
+    if (v) {
+      v.pause()
+      v.currentTime = 0
+    }
+  }
+
+  const ariaLabel = t('artwork.openAria', {
     title: artwork.title,
     author: artwork.author.username,
   })
-  const kindLabel =
-    artwork.kind === 'sponsor'
-      ? t('artwork.badgeSponsor')
-      : artwork.kind === 'ai'
-        ? t('artwork.badgeAi')
-        : ''
-  const ariaLabel = kindLabel ? `${baseLabel}, ${kindLabel}` : baseLabel
 
-  // Modal-route pattern: stash the current page so detail opens as an overlay;
-  // a refresh or shared link lands on the standalone page instead.
-  return (
-    <Link
-      to={`/artwork/${artwork.sourceId ?? artwork.id}`}
-      state={{ background: location }}
-      // No native drag: a card drag must pan the map.
-      draggable={false}
-      aria-label={ariaLabel}
-      className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
-        layout === 'grid' ? 'relative w-full' : ''
-      }`}
-      style={{
-        backgroundColor: artwork.color,
-        animationDelay: `${revealDelay}ms`,
-        ...(layout === 'canvas'
-          ? {
-              position: 'absolute' as const,
-              left: artwork.x,
-              top: artwork.y,
-              width: artwork.width,
-              height: artwork.height,
-            }
-          : { aspectRatio: `${artwork.width} / ${artwork.height}` }),
-      }}
-    >
-      {/* Badges use logical sides so they swap in RTL. */}
-      {artwork.kind === 'sponsor' ? (
-        <span className="absolute start-3 top-3 rounded-full bg-black/25 px-3 py-1 text-xs font-medium text-white">
-          {t('artwork.badgeSponsor')}
-        </span>
+  const cardStyle = {
+    backgroundColor: artwork.color,
+    animationDelay: `${revealDelay}ms`,
+    ...(layout === 'canvas'
+      ? {
+          position: 'absolute' as const,
+          left: artwork.x,
+          top: artwork.y,
+          width: artwork.width,
+          height: artwork.height,
+        }
+      : { aspectRatio: `${artwork.width} / ${artwork.height}` }),
+  }
+
+  const media = (
+    <>
+      {/* Uploaded media fills the card; the `color` background shows through
+          only while it loads or when a work has no media. */}
+      {artwork.mediaUrl ? (
+        artwork.mediaType === 'video' ? (
+          <video
+            ref={videoRef}
+            src={artwork.mediaUrl}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            // A native drag on the media would fight the canvas pan.
+            draggable={false}
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
+            className="pointer-events-none absolute inset-0 size-full object-cover"
+          />
+        ) : (
+          <img
+            src={artwork.mediaUrl}
+            alt=""
+            loading="lazy"
+            draggable={false}
+            // A dead media URL hides itself so the card's `color` shows through,
+            // instead of leaving a broken frame over the canvas.
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+            }}
+            className="pointer-events-none absolute inset-0 size-full object-cover"
+          />
+        )
       ) : null}
-      {artwork.kind === 'ai' ? (
+
+      {artwork.mediaType === 'video' ? (
         <span
           role="img"
-          aria-label={t('artwork.badgeAi')}
-          className="absolute end-3 top-3 flex size-8 items-center justify-center rounded-full bg-black/20 text-white"
+          aria-label={t('create.videoBadge')}
+          className="absolute end-3 top-3 flex items-center justify-center rounded-full bg-neutral-900/60 p-1.5 text-white backdrop-blur"
         >
-          <Sparkles aria-hidden="true" className="size-4" />
+          <Video aria-hidden="true" className="size-4" />
         </span>
       ) : null}
 
@@ -90,6 +112,45 @@ export const ArtworkCard = memo(function ArtworkCard({
           {artwork.author.username}
         </span>
       </span>
+    </>
+  )
+
+  // A card without a real sourceId is a placeholder cell, not a work: its `id`
+  // is a grid-cell key (`w_x_y`), so a <Link> would navigate to a 404. Render it
+  // inert instead of pretending it leads somewhere.
+  if (!artwork.sourceId) {
+    return (
+      <div
+        aria-hidden="true"
+        className={`block animate-reveal overflow-hidden rounded-md motion-reduce:animate-none ${
+          layout === 'grid' ? 'relative w-full' : ''
+        }`}
+        style={cardStyle}
+      >
+        {media}
+      </div>
+    )
+  }
+
+  // Modal-route pattern: stash the current page so detail opens as an overlay;
+  // a refresh or shared link lands on the standalone page instead.
+  return (
+    <Link
+      to={`/artwork/${artwork.sourceId}`}
+      state={{ background: location }}
+      // No native drag: a card drag must pan the map.
+      draggable={false}
+      onMouseEnter={playHover}
+      onMouseLeave={stopHover}
+      onFocus={playHover}
+      onBlur={stopHover}
+      aria-label={ariaLabel}
+      className={`group block animate-reveal overflow-hidden rounded-md outline-none transition duration-200 hover:z-10 hover:scale-[1.02] hover:shadow-xl focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:animate-none motion-reduce:transition-none ${
+        layout === 'grid' ? 'relative w-full' : ''
+      }`}
+      style={cardStyle}
+    >
+      {media}
     </Link>
   )
 })

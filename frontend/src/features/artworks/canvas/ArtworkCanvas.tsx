@@ -1,13 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useQueries } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 
+import { useAuthStore } from '@/features/auth/auth.store'
 import { Crossroads } from '@/features/search/components/Crossroads'
-import { fetchNicheTile, searchKeys } from '@/features/search/search.api'
+import {
+  fetchCreatorTile,
+  fetchNicheTile,
+  searchKeys,
+} from '@/features/search/search.api'
+import { useCreator } from '@/features/search/useCreator'
 import { useNiche } from '@/features/search/useNiche'
 import { useNicheCompletion } from '@/features/search/useNicheCompletion'
+import { fetchProfile, userKeys } from '@/features/users/user.api'
+import type { User } from '@/features/auth/auth.types'
 
-import { artworkKeys, fetchTileArtworks } from '../artwork.api'
+import {
+  artworkKeys,
+  fetchArtworkCount,
+  fetchFeedTile,
+  fetchTileArtworks,
+} from '../artwork.api'
 import { tileSlots } from '../artwork.mock'
 import type { CanvasArtwork } from '../artwork.types'
 import { ArtworkCard } from '../components/ArtworkCard'
@@ -23,6 +36,18 @@ const WAVE_SPEED = 1.5 // world px per ms
 const WAVE_CAP = 700 // ms — farthest tile never waits longer than this
 const WAVE_DURATION = 1100 // ms — window during which the stagger applies
 
+// "Sedra Rabemanantsoa" → "Sedra R." ; falls back to "@handle".
+function creatorDisplayName(user?: User): string {
+  const full = user?.fullname?.trim()
+  if (full) {
+    const parts = full.split(/\s+/)
+    return parts.length >= 2
+      ? `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.`
+      : parts[0]
+  }
+  return user?.username ? `@${user.username}` : '…'
+}
+
 // The discovery map: the camera hook drives the transform and reports which
 // tiles to mount; TanStack Query is both the data layer and the tile cache.
 export function ArtworkCanvas() {
@@ -37,16 +62,40 @@ export function ArtworkCanvas() {
     requestSync,
   } = useCanvasCamera()
   const searchInputRef = useRef<HTMLInputElement | null>(null)
-  const { niche, enterNiche, exitNiche } = useNiche()
+  const { niche, enterNiche, enterTag, exitNiche } = useNiche()
   const nicheSlug = niche?.slug ?? null
+  const currentUser = useAuthStore((state) => state.user)
+  const { creatorId, enterCreator, exitCreator } = useCreator()
+  const creatorProfile = useQuery({
+    queryKey: userKeys.profile(creatorId ?? 'none'),
+    queryFn: () => fetchProfile(creatorId as string),
+    enabled: Boolean(creatorId),
+    staleTime: 300_000,
+  })
+  // Total works → how many 16-item pages the default map can spread tiles over.
+  // The tiles below gate on it (enabled) so pageForTile is sized correctly on
+  // the first fetch — no page churn. Niche/feed/creator tiles are unaffected.
+  const totalCount = useQuery({
+    queryKey: artworkKeys.count(),
+    queryFn: fetchArtworkCount,
+    staleTime: Infinity,
+  })
+  const totalPages = Math.max(1, Math.ceil((totalCount.data ?? 0) / 16))
+  const creator = creatorId
+    ? { id: creatorId, name: creatorDisplayName(creatorProfile.data) }
+    : null
+  // What the canvas shows: creator > niche > (signed-in) personalized feed >
+  // the public global map. The feed only supplants the global surface.
+  const showFeed = !creatorId && !niche && Boolean(currentUser)
+  const activeKey = creatorId ?? nicheSlug ?? (showFeed ? 'feed' : null)
 
-  // The hero never moves (§5.0). Entering a niche reorganises the content in
-  // place: a centre-out wave staggers the tile reveal for ~WAVE_DURATION.
+  // The hero never moves (§5.0). Entering a niche/creator reorganises the content
+  // in place: a centre-out wave staggers the tile reveal for ~WAVE_DURATION.
   const [waving, setWaving] = useState(false)
-  const lastSlug = useRef(nicheSlug)
+  const lastKey = useRef(activeKey)
   useEffect(() => {
-    if (nicheSlug === lastSlug.current) return
-    lastSlug.current = nicheSlug
+    if (activeKey === lastKey.current) return
+    lastKey.current = activeKey
     let cancelled = false
     // setState only inside timers → not synchronous in the effect body.
     const on = setTimeout(() => {
@@ -60,7 +109,7 @@ export function ArtworkCanvas() {
       clearTimeout(on)
       clearTimeout(off)
     }
-  }, [nicheSlug])
+  }, [activeKey])
 
   const revealDelayFor = (centreX: number, centreY: number): number =>
     waving ? Math.min(WAVE_CAP, Math.hypot(centreX, centreY) / WAVE_SPEED) : 0
@@ -83,17 +132,30 @@ export function ArtworkCanvas() {
   // search is what makes the surrounding tiles reorganise in place.
   const tileQueries = useQueries({
     queries: tiles.map(({ tx, ty }) =>
-      niche
+      showFeed
         ? {
-            queryKey: searchKeys.nicheTile(niche.slug, tx, ty),
-            queryFn: () => fetchNicheTile(niche.slug, tx, ty),
+            queryKey: artworkKeys.feedTile(tx, ty),
+            queryFn: () => fetchFeedTile(tx, ty),
             staleTime: Infinity,
           }
-        : {
-            queryKey: artworkKeys.tile(tx, ty),
-            queryFn: () => fetchTileArtworks(tx, ty),
-            staleTime: Infinity,
-          },
+        : creatorId
+          ? {
+              queryKey: searchKeys.creatorTile(creatorId, tx, ty),
+              queryFn: () => fetchCreatorTile(creatorId, tx, ty),
+              staleTime: Infinity,
+            }
+          : niche
+            ? {
+                queryKey: searchKeys.nicheTile(niche.slug, tx, ty),
+                queryFn: () => fetchNicheTile(niche.slug, tx, ty),
+                staleTime: Infinity,
+              }
+            : {
+                queryKey: artworkKeys.tile(tx, ty, totalPages),
+                queryFn: () => fetchTileArtworks(tx, ty, totalPages),
+                staleTime: Infinity,
+                enabled: totalCount.isSuccess,
+              },
     ),
   })
 
@@ -191,9 +253,13 @@ export function ArtworkCanvas() {
           <SearchOverlay
             inputRef={searchInputRef}
             niche={niche}
+            creator={creator}
             onSubmit={enterNiche}
+            onEnterCreator={enterCreator}
+            onEnterTag={enterTag}
             onExit={() => {
-              exitNiche()
+              if (creatorId) exitCreator()
+              else exitNiche()
               refocus()
             }}
           />

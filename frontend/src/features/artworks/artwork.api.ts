@@ -1,147 +1,219 @@
-// The artworks "API": every read the UI performs goes through here. Today each
-// function resolves from the mock; when the backend lands only the bodies
-// change (signatures and query keys stay identical). The artificial latency
-// keeps loading states exercised.
-
-import { addCreatedArtwork, getCreatedDetail } from '@/features/users/user.mock'
-import { maybeFailMutation } from '@/lib/devFail'
-
+import { http, isApiError, multipartConfig } from '@/lib/http'
+import { TILE_CELLS } from '@/features/artworks/canvas/canvas.constants'
+import { layoutTile, pageForTile } from '@/features/search/tile.layout'
 import {
-  addPostedComment,
-  generateComments,
-  generateDetail,
-  generateTile,
-} from './artwork.mock'
+  realArtworkId,
+  toArtworkComment,
+  toArtworkDetail,
+  type ServerArtwork,
+  type ServerComment,
+  type ServerLike,
+} from '@/lib/mappers'
+
 import type {
   ArtworkComment,
   ArtworkDetail,
-  AuthorSummary,
   CanvasArtwork,
-  MediaType,
-  ProfileArtwork,
 } from './artwork.types'
 
-const TILE_LATENCY_MS = 60
-const DETAIL_LATENCY_MS = 220
-const POST_LATENCY_MS = 260
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
-// React Query key factory — single source of truth for cache keys, kept next
-// to the fetchers so invalidation can't drift from fetching.
 export const artworkKeys = {
-  tile: (tx: number, ty: number) => ['artworks', 'tile', tx, ty] as const,
+  tile: (tx: number, ty: number, totalPages: number) =>
+    ['artworks', 'tile', tx, ty, totalPages] as const,
+  count: () => ['artworks', 'count'] as const,
+  feed: () => ['artworks', 'feed'] as const,
+  feedTile: (tx: number, ty: number) =>
+    ['artworks', 'feed', 'tile', tx, ty] as const,
   detail: (id: string) => ['artworks', 'detail', id] as const,
   comments: (id: string) => ['artworks', 'comments', id] as const,
 }
 
-/** Cards of one map tile.
-    TODO(backend): GET /artworks/map?tx=&ty= → CanvasArtwork[] */
+// Total published works → number of 16-item pages the canvas can spread tiles
+// across. Without it, pageForTile assumed a fixed 5 pages: with more works most
+// stayed off the map, with fewer some tiles hit empty pages. One cached request.
+export async function fetchArtworkCount(): Promise<number> {
+  const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
+    params: { page: 1, limit: 1000, sort: 'recent' },
+  })
+  return data.length
+}
+
 export async function fetchTileArtworks(
   tx: number,
   ty: number,
+  totalPages: number,
 ): Promise<CanvasArtwork[]> {
-  await delay(TILE_LATENCY_MS)
-  return generateTile(tx, ty)
+  const page = pageForTile(tx, ty, totalPages)
+  const { data } = await http.get<ServerArtwork[]>('/search/artworks', {
+    params: { page, limit: 16, sort: 'recent' },
+  })
+  return layoutTile(data, undefined, tx, ty)
 }
 
-/** One artwork, full.
-    TODO(backend): GET /artworks/:id → ArtworkDetail (404 if unknown) */
+// Friends-first pool rotated by tile distance: the centre shows friends, outward
+// tiles vary into the general pool (no wall of repeats).
+export async function fetchFeedTile(
+  tx: number,
+  ty: number,
+): Promise<CanvasArtwork[]> {
+  try {
+    const { data } = await http.get<ServerArtwork[]>('/artworks/feed')
+    if (data.length === 0) return []
+    const offset =
+      ((Math.abs(tx) + Math.abs(ty)) * TILE_CELLS * TILE_CELLS) % data.length
+    const rotated = offset
+      ? [...data.slice(offset), ...data.slice(0, offset)]
+      : data
+    return layoutTile(rotated, undefined, tx, ty)
+  } catch {
+    return []
+  }
+}
+
 export async function fetchArtworkDetail(id: string): Promise<ArtworkDetail> {
-  await delay(DETAIL_LATENCY_MS)
-  // Works published this session resolve from the created store first (§5).
-  const created = getCreatedDetail(id)
-  if (created) return created
-  const detail = generateDetail(id)
-  if (!detail) throw new Error(`Artwork not found: ${id}`)
-  return detail
+  const { data } = await http.get<ServerArtwork>(
+    `/artworks/${realArtworkId(id)}`,
+  )
+  return toArtworkDetail(data)
 }
 
-/** Comments of one artwork, newest first.
-    TODO(backend): GET /artworks/:id/comments → ArtworkComment[] */
 export async function fetchArtworkComments(
   id: string,
 ): Promise<ArtworkComment[]> {
-  await delay(DETAIL_LATENCY_MS)
-  return generateComments(id)
+  const { data } = await http.get<ServerComment[]>(
+    `/artworks/${realArtworkId(id)}/comments`,
+  )
+  return data.map(toArtworkComment).sort((a, b) => a.hoursAgo - b.hoursAgo)
 }
 
-/** Post a comment; the mock echoes it back with a server-shaped id (and a
-    "just now" timestamp). This is the write seam — the caller inserts optimistically
-    and reconciles with what this returns.
-    TODO(backend): POST /artworks/:id/comments → ArtworkComment (server owns id +
-    createdAt); pass the request's AbortSignal through. */
+// Server DTO expects `comment`; any other key trips forbidNonWhitelisted (400).
 export async function postArtworkComment(
   id: string,
-  input: { content: string; author: AuthorSummary },
+  input: { content: string },
 ): Promise<ArtworkComment> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  const comment: ArtworkComment = {
-    id: `s_${id}_${Date.now()}`,
-    author: input.author,
-    content: input.content,
-    likeCount: 0,
-    hoursAgo: 0,
-  }
-  addPostedComment(id, comment)
-  return comment
+  const { data } = await http.post<ServerComment>(
+    `/artworks/${realArtworkId(id)}/comment`,
+    { comment: input.content },
+  )
+  return toArtworkComment(data)
+}
+
+export async function deleteArtworkComment(
+  artworkId: string,
+  commentId: string,
+): Promise<void> {
+  await http.delete(
+    `/artworks/${realArtworkId(artworkId)}/comment/${commentId}`,
+  )
 }
 
 export interface ArtworkLikeInput {
   id: string
   liked: boolean
-  loggedUser: string
 }
 
-/** Toggle a like (optimistic caller). The mock echoes the requested state.
-    TODO(backend): POST/DELETE /artworks/:id/like (body { loggedUser }). */
-export async function setArtworkLike(input: ArtworkLikeInput): Promise<boolean> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  return input.liked
+// The server returns 400 when the requested state is already set — effectively
+// idempotent, so we keep the optimistic state instead of rolling back.
+export async function setArtworkLike(
+  input: ArtworkLikeInput,
+): Promise<boolean> {
+  const id = realArtworkId(input.id)
+  try {
+    if (input.liked) {
+      await http.post(`/artworks/${id}/like`)
+    } else {
+      await http.delete(`/artworks/${id}/like`)
+    }
+    return input.liked
+  } catch (error) {
+    if (isApiError(error) && error.status === 400) return input.liked
+    throw error
+  }
 }
 
-export interface ArtworkSaveInput {
-  id: string
-  saved: boolean
-  loggedUser: string
-}
-
-/** Toggle a save (optimistic caller). The mock echoes the requested state.
-    TODO(backend): POST/DELETE /artworks/:id/save (body { loggedUser }). */
-export async function setArtworkSave(input: ArtworkSaveInput): Promise<boolean> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  return input.saved
+// No dedicated endpoint: read the likes list and look for the current user.
+export async function fetchIsLiked(
+  artworkId: string,
+  currentUserId: string,
+): Promise<boolean> {
+  const { data } = await http.get<ServerLike[]>(
+    `/artworks/${realArtworkId(artworkId)}/likes`,
+  )
+  return data.some((like) => like.authorId === currentUserId)
 }
 
 export interface CreateArtworkInput {
-  file: File
-  mediaType: MediaType
   title: string
-  description: string
-  tags: string[]
-  userId: string
+  description?: string
+  tags?: string[]
+  file: File
 }
 
-/** Publish a new artwork; the mock persists it in the session store and returns
-    its profile-grid shape (id lets the caller open the fresh detail).
-    TODO(backend): POST /artworks/user/:userId — multipart/form-data, file field
-    `art` (≤10 MB; jpeg/png/gif/webp/mp4), fields { title, description?, tags[],
-    userId } → Artwork (server owns id, mediaUrl, mediaPublicId, timestamps). On
-    success invalidate userKeys.works(userId) + userKeys.profile(userId). Send
-    tags as repeated `tags` parts and verify a SINGLE tag still parses as an array
-    in Swagger — if it fails @IsArray, the backend needs an @Transform (add to
-    E.2, alongside the broken GET /artworks/user/:userId @Param('id')). */
 export async function createArtwork(
   input: CreateArtworkInput,
-): Promise<ProfileArtwork> {
-  await delay(POST_LATENCY_MS)
-  maybeFailMutation()
-  return addCreatedArtwork(input)
+  onProgress?: (pct: number) => void,
+): Promise<ArtworkDetail> {
+  const form = new FormData()
+  form.append('title', input.title)
+  if (input.description) form.append('description', input.description)
+
+  // Repeated key (tags=a&tags=b); the DTO is ArrayNotEmpty, so send nothing when empty.
+  input.tags
+    ?.map((t) => t.trim().toLowerCase())
+    .filter((t) => t.length > 0)
+    .forEach((tag) => {
+      form.append('tags', tag)
+    })
+
+  form.append('art', input.file)
+
+  const { data } = await http.post<ServerArtwork>(`/artworks`, form, {
+    ...multipartConfig,
+    onUploadProgress: onProgress
+      ? (event) => {
+          if (event.total) {
+            onProgress(Math.round((event.loaded / event.total) * 100))
+          }
+        }
+      : undefined,
+  })
+  return toArtworkDetail(data)
+}
+
+export interface UpdateArtworkInput {
+  title?: string
+  description?: string
+  tags?: string[]
+  file?: File
+}
+
+// Metadata edit (media kept when no file). Omit tags when empty (DTO is ArrayNotEmpty).
+export async function updateArtwork(
+  id: string,
+  input: UpdateArtworkInput,
+): Promise<ArtworkDetail> {
+  const form = new FormData()
+  if (input.title !== undefined) form.append('title', input.title)
+  if (input.description !== undefined) {
+    form.append('description', input.description)
+  }
+
+  input.tags
+    ?.map((t) => t.trim().toLowerCase())
+    .filter((t) => t.length > 0)
+    .forEach((tag) => {
+      form.append('tags', tag)
+    })
+
+  if (input.file) form.append('art', input.file)
+
+  const { data } = await http.patch<ServerArtwork>(
+    `/artworks/${realArtworkId(id)}`,
+    form,
+    multipartConfig,
+  )
+  return toArtworkDetail(data)
+}
+
+export async function deleteArtwork(id: string): Promise<void> {
+  await http.delete(`/artworks/${realArtworkId(id)}`)
 }

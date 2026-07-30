@@ -7,6 +7,7 @@ import { Public } from 'src/decorators/public.decorator';
 export class HealthController {
   constructor(private readonly healthService: HealthService) {}
 
+  @Public()
   @Get()
   async getHealth() {
     return this.healthService.check();

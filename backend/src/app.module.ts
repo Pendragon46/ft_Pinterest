@@ -13,14 +13,20 @@ import { FollowModule } from './follow/follow.module';
 import { LikesModule } from './likes/likes.module';
 import { HealthService } from './health/health.service';
 import { HealthModule } from './health/health.module';
+import { MetricsService } from './metrics/metrics.service';
+import { MetricsModule } from './metrics/metrics.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MetricsInterceptor } from './metrics/metrics.interceptor';
 import { CommentModule } from './comment/comment.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthModule } from './auth/auth.module';
 import { SearchModule } from './search/search.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { FriendsModule } from './friends/friends.module';
-import { WebsocketGateway } from './websocket/websocket.gateway';
 import { OnlineStatusModule } from './websocket/onlineStatus.module';
+import { WebsocketModule } from './websocket/websocket.module';
+import { ChatModule } from './chat/chat.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -29,27 +35,28 @@ import { OnlineStatusModule } from './websocket/onlineStatus.module';
     ArtworkModule,
     CloudinaryModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([{ ttl: 10000, limit: 20 }]),
     MulterModule.register({ storage: memoryStorage() }),
-    CloudinaryModule,
     FollowModule,
     LikesModule,
-    HealthModule,
+    	HealthModule,
     CommentModule,
     AuthModule,
     SearchModule,
     FriendsModule,
     OnlineStatusModule,
-  ],
+    WebsocketModule,
+    ChatModule,
+  	MetricsModule],
   controllers: [AppController],
   providers: [
     AppService,
     CloudinaryService,
     HealthService,
-    WebsocketGateway,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-  ],
+  { provide: APP_INTERCEPTOR, useClass: MetricsInterceptor }],
 })
 export class AppModule {}

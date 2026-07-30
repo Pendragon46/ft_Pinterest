@@ -90,7 +90,25 @@ export const NICHES: Niche[] = CATEGORIES.map((slug, index) => ({
 const NICHE_BY_SLUG = new Map<Category, Niche>(NICHES.map((n) => [n.slug, n]))
 
 export function getNiche(slug: string): Niche | null {
-  return NICHE_BY_SLUG.get(slug as Category) ?? null
+  if (!slug) return null
+  const known = NICHE_BY_SLUG.get(slug as Category)
+  if (known) return known
+  // Not one of the 8 disciplines → a tag chosen from the suggestions. Synthesize a
+  // niche keyed on the tag so the canvas fetches /search/tags?q=<tag> and shows its
+  // works, rather than resolving the tag to the nearest discipline.
+  const seed = [...slug].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7)
+  return {
+    slug: slug as Category,
+    tags: [slug],
+    contentAnchor: anchorFor(seed % CATEGORIES.length),
+    hue: seed % 360,
+    contentSize: NICHE_CONTENT_SIZE,
+  }
+}
+
+/** True for the 8 real discipline slugs (vs a synthesized tag niche). */
+export function isDisciplineSlug(slug: string): boolean {
+  return NICHE_BY_SLUG.has(slug as Category)
 }
 
 // ── Colours & previews ──────────────────────────────────────────────────────
@@ -130,7 +148,16 @@ function nearestScore(q: string, niche: Niche): number {
   return score
 }
 
-/** Resolve a submitted term to a niche, or the nearest region if none match (§7). */
+/**
+ * Resolve a submitted term to a niche, or the nearest region if none match (§7).
+ *
+ * DESIGN DECISION — search never dead-ends. Any term always resolves to a niche
+ * (the closest one, `best`, when nothing matches), so the discovery canvas is
+ * never a cold "no results" screen. This is why there is no server-side
+ * empty-results fallback (SEARCH_SPEC S3 / `/search/unified`): that fallback
+ * exists to fill a flat results list, and this app has none — search is spatial,
+ * `onSubmit` enters a niche rather than listing works.
+ */
 export function resolveSearch(term: string): SearchResolution {
   const q = normalise(term)
   if (q.length > 0) {
@@ -162,7 +189,8 @@ const MAX_PER_CATEGORY = 3
 /** Categorised suggestions for the current query: disciplines + creators. */
 export function suggest(term: string): SuggestionGroups {
   const q = normalise(term)
-  if (q.length === 0) return { disciplines: [], creators: [] }
+  // Tags come from the backend (/search/suggest), never the local mock.
+  if (q.length === 0) return { disciplines: [], tags: [], creators: [] }
 
   const disciplines: Suggestion[] = NICHES.filter((n) => nicheMatches(q, n))
     .slice(0, MAX_PER_CATEGORY)
@@ -188,7 +216,7 @@ export function suggest(term: string): SuggestionGroups {
       previews: [a.color],
     }))
 
-  return { disciplines, creators }
+  return { disciplines, tags: [], creators }
 }
 
 // ── Niche content & toroidal tiling (§6) ────────────────────────────────────
@@ -326,8 +354,12 @@ export function recordSearch(term: string): void {
   }
 }
 
-/** Suggested tags under the bar: recent exploration ⊕ trending, [default] 3 (§2.2). */
+/** Recent local search history (most recent first), for the contextual tags. */
+export function recentSearches(): string[] {
+  return readHistory().slice(0, 2)
+}
+
+/** Local fallback for the contextual tags when the network is unavailable. */
 export function contextualTags(): string[] {
-  const recent = readHistory().slice(0, 2)
-  return [...new Set([...recent, ...SUGGESTED_QUERIES])].slice(0, 3)
+  return [...new Set([...recentSearches(), ...SUGGESTED_QUERIES])].slice(0, 3)
 }

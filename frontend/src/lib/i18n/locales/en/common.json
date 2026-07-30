@@ -4,7 +4,63 @@
   },
   "intro": {
     "wordLead": "Get lost",
-    "wordTrail": "on purpose"
+    "wordTrail": "on purpose",
+    "welcome": "Welcome"
+  },
+  "presence": {
+    "online": "Online"
+  },
+  "edit": {
+    "title": "Edit artwork",
+    "subtitle": "Update the title, description and tags. The media stays.",
+    "save": "Save changes",
+    "saved": "Changes saved",
+    "mediaKept": "The uploaded media is kept."
+  },
+  "chat": {
+    "title": "Messages",
+    "open": "Open messages",
+    "unread": "{{count}} unread messages",
+    "close": "Close",
+    "back": "Back to conversations",
+    "search": "Search a conversation",
+    "searchNoResult": "No conversation matches",
+    "newMessage": "New message",
+    "newMessageTitle": "Start a conversation",
+    "you": "You: ",
+    "sharedArtworkPreview": "Sent you a post",
+    "sharedArtworkSent": "You sent a post",
+    "openArtwork": "View artwork",
+    "artworkBy": "{{title}} · {{author}}",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "readAt": "Read · {{time}}",
+    "online": "Online",
+    "composerPlaceholder": "Write a message…",
+    "send": "Send",
+    "sendFailed": "Message not sent",
+    "retry": "Retry",
+    "loading": "Loading conversations…",
+    "loadingMessages": "Loading messages…",
+    "loadError": "Couldn't load conversations",
+    "loadMore": "Load earlier messages",
+    "emptyTitle": "No messages",
+    "emptyBody": "Your conversations will show up here.",
+    "emptyThread": "Say hello.",
+    "noMutualsTitle": "No conversations yet",
+    "noMutualsBody": "You can message creators who follow you back.",
+    "noMutualsAction": "Explore",
+    "notMutual": "You must follow each other to chat.",
+    "messageFrom": "Message from {{name}}",
+    "messageFromYou": "Your message",
+    "conversationWith": "Conversation with {{name}}",
+    "viewProfile": "View {{name}}'s profile",
+    "message": "Message",
+    "typing": "{{name}} is typing…",
+    "system": {
+      "mutualFollow": "You are now friends. You can message each other.",
+      "unknown": "Conversation update"
+    }
   },
   "language": {
     "label": "Language"
@@ -14,7 +70,8 @@
     "signUp": "Sign up",
     "continueWithGoogle": "Continue with Google",
     "signOut": "Sign out",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "edit": "Edit"
   },
   "auth": {
     "avatarAlt": "{{username}}'s avatar",
@@ -74,7 +131,162 @@
     "emailInvalid": "Enter a valid email address.",
     "passwordRequired": "Password is required.",
     "passwordWeak": "8+ characters with upper and lower case letters, a number and a symbol.",
-    "network": "Network error — check your connection."
+    "network": "Network error — check your connection.",
+    "fileTooLarge": "File too large (10 MB maximum).",
+    "fileType": "Unsupported file format."
+  },
+  "gdpr": {
+    "nav": "Privacy",
+    "section": {
+      "title": "Your data & privacy",
+      "description": "Review, download or delete the personal data we hold about you."
+    },
+    "view": {
+      "button": "View my data",
+      "loading": "Loading…",
+      "summary": "{{artworks}} artworks · {{comments}} comments · {{likes}} likes · {{following}} following · {{followers}} followers"
+    },
+    "download": {
+      "hint": "A readable JSON or CSV file with everything we store — never your password.",
+      "json": "Download (JSON)",
+      "csv": "Download (CSV)"
+    },
+    "danger": {
+      "title": "Delete account",
+      "description": "Permanently delete your account and all associated content. This cannot be undone.",
+      "button": "Delete my account"
+    },
+    "delete": {
+      "title": "Delete your account?",
+      "warning": "This is permanent. Your account and all its content will be erased.",
+      "willDelete": "Your artworks, comments, likes and follows will all be removed.",
+      "confirmLabel": "Type your username ({{username}}) to confirm",
+      "confirmPlaceholder": "your username",
+      "cancel": "Cancel",
+      "confirm": "Delete account",
+      "deleting": "Deleting…",
+      "error": "Couldn't delete your account. Please try again."
+    }
+  },
+  "userModal": {
+    "works": "Works",
+    "followers": "Followers",
+    "following": "Following",
+    "viewFull": "View full profile",
+    "noWorks": "No artworks yet."
+  },
+  "admin": {
+    "menuLink": "Administration",
+    "breadcrumb": {
+      "root": "Admin"
+    },
+    "nav": {
+      "users": "Users",
+      "artworks": "Artworks",
+      "other": "Other",
+      "overview": "Overview"
+    },
+    "title": "Users",
+    "subtitle": "Manage users, their roles and access.",
+    "refresh": "Refresh",
+    "stats": {
+      "total": "Total users",
+      "admins": "Administrators",
+      "members": "Users",
+      "guests": "Guests"
+    },
+    "search": {
+      "label": "Search users",
+      "placeholder": "Search by name, @handle or email…"
+    },
+    "filter": {
+      "role": "Filter by role",
+      "allRoles": "All roles"
+    },
+    "sort": {
+      "label": "Sort by",
+      "recent": "Newest",
+      "oldest": "Oldest",
+      "name": "Name"
+    },
+    "table": {
+      "user": "User",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined",
+      "updated": "Updated",
+      "artworks": "Artworks",
+      "actions": "Actions"
+    },
+    "role": {
+      "user": "User",
+      "guest": "Guest",
+      "admin": "Admin"
+    },
+    "action": {
+      "changeRole": "Change role",
+      "delete": "Delete user"
+    },
+    "pagination": {
+      "showing": "Showing {{from}}–{{to}} of {{total}}",
+      "perPage": "{{n}} / page",
+      "previous": "Previous page",
+      "next": "Next page"
+    },
+    "empty": {
+      "title": "No users found",
+      "body": "No user matches your search or filters."
+    },
+    "error": {
+      "title": "Couldn't load users",
+      "body": "Something went wrong. Check your connection and try again.",
+      "retry": "Retry",
+      "roleRefused": "The server refused this change (e.g. last administrator or self-demotion)."
+    },
+    "add": {
+      "button": "Add user",
+      "title": "Add a user",
+      "subtitle": "Create an account and assign it a role.",
+      "fullname": "Full name",
+      "username": "Username",
+      "email": "Email address",
+      "password": "Password",
+      "passwordHint": "8+ chars, upper & lower case, a number and a symbol.",
+      "role": "Role",
+      "cancel": "Cancel",
+      "submit": "Create user"
+    },
+    "delete": {
+      "title": "Delete user?",
+      "body": "This is permanent. “{{name}}” (@{{handle}}) will lose access to their account and all their data.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "artworks": {
+      "title": "Artworks",
+      "subtitle": "Browse and moderate every published artwork.",
+      "search": "Search by title or author…",
+      "by": "by {{author}}",
+      "empty": "No artworks found",
+      "delete": "Delete artwork",
+      "deleteTitle": "Delete artwork?",
+      "deleteBody": "This is permanent. “{{title}}” and all its likes and comments will be removed.",
+      "deleteCancel": "Cancel",
+      "deleteConfirm": "Delete"
+    },
+    "analytics": {
+      "title": "Overview",
+      "subtitle": "Platform activity at a glance.",
+      "artworks": "Artworks",
+      "likes": "Total likes",
+      "comments": "Total comments",
+      "userGrowth": "User growth",
+      "contentGrowth": "Content growth",
+      "roles": "Roles",
+      "topCreators": "Top creators",
+      "topTags": "Top tags",
+      "empty": "No data yet"
+    }
   },
   "home": {
     "heroLine1": "Don't scroll inspiration.",
@@ -104,6 +316,12 @@
     "commentPlaceholder": "Add a comment…",
     "post": "Post",
     "reply": "Reply",
+    "deleteComment": "Delete",
+    "delete": "Delete artwork",
+    "deleteTitle": "Delete this artwork?",
+    "deleteBody": "\"{{title}}\" will be permanently removed. This can't be undone.",
+    "deleteConfirm": "Delete",
+    "deleteCancel": "Cancel",
     "timeNow": "now",
     "timeHours": "{{hours}}h",
     "close": "Close",
@@ -113,6 +331,7 @@
     "backHome": "Back to the map",
     "commentsEmpty": "Be the first to comment.",
     "commentPosted": "Comment posted.",
+    "commentMinLength": "At least 3 characters.",
     "commentFailed": "Couldn't post your comment.",
     "retry": "Retry"
   },
@@ -129,7 +348,6 @@
   "login": {
     "title": "Welcome back",
     "subtitle": "Sign in to like, save and create.",
-    "forgotPassword": "Forgot Password?",
     "noAccount": "New here?",
     "registerLink": "Create an account"
   },
@@ -279,9 +497,12 @@
     "searching": "Searching…",
     "groupDisciplines": "Disciplines",
     "groupCreators": "Creators",
+    "groupTags": "Tags",
+    "tagCount": "{{count}} works",
     "nearestRegion": "Closest region",
     "exploringTitle1": "Exploring",
     "exploringTitle2": "{{niche}} Universe",
+    "creatorUniverse": "{{name}}'s Universe",
     "whereNext": "You've explored all of {{niche}}. Where next?",
     "whereNextShort": "Where next?",
     "refreshNeighbours": "Show other neighbours"

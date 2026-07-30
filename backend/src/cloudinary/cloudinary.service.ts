@@ -15,7 +15,10 @@ export class CloudinaryService {
   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       v2.uploader
-        .upload_stream({ folder: 'uploads' }, (error, result) => {
+        // 'auto' : détecte image vs vidéo (sinon 'image' par défaut rejette les vidéos).
+        .upload_stream(
+          { folder: 'uploads', resource_type: 'auto' },
+          (error, result) => {
           if (error) {
             reject(error);
           } else if (result) {
