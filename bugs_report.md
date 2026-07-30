@@ -23,7 +23,6 @@ When there is no user and artwork , when we search something and click on an art
 
 - there is no exit button, after editing the artwork
 
-
 ---
 
 ###  Comment
@@ -65,7 +64,9 @@ in the prisma schema there is no Displayname should we add it to the user model 
 
 ###  login
 
-When the user enter invalid credentials it will return a 400 bad request in the console. we should display a message to the user that the credentials are invalid.
+When the user enter invalid credentials it display unauthorized	
+
+
 
 
 #### Throttler
@@ -93,7 +94,7 @@ if the title of the artwork exceed the UI size it's not responsive
 - The exit and edit button is not displayed in profile /works	
 - No artwork is diplayed in home page as the guest user 
 
-### chat
+### chat to check after the chat bug is resolved
 - spam messages trigger exceptions in the console
 - chat to non following users trigger 403 forbidden error
 - chat responsiveness is not good in mobile view
@@ -110,4 +111,4 @@ if the title of the artwork exceed the UI size it's not responsive
 ### auth
 - many exceptions are thrown in the console when trying to login with oauth providers google
 - there is throttling issues when trying to delete the account that i just created .
--
+- Some account don't display avatar sometimes with google auth
