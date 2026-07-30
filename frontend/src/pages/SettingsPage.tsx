@@ -188,10 +188,10 @@ export function SettingsPage() {
     { id: 'appearance', label: t('settings.navAppearance') },
   ]
 
-  // Signed-out direct visit → sign in first, then return here (§3.2).
-  if (!authUser) {
-    return <Navigate to="/login" state={{ background: location }} replace />
-  }
+	// Signed-out direct visit → sign in first, then return here (§3.2).
+	if (!authUser) {
+	  return <Navigate to="/login" replace />
+	}
 
   return (
     <div className="min-h-svh bg-white">
