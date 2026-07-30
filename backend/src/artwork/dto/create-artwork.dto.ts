@@ -12,12 +12,16 @@ import { Transform } from 'class-transformer';
 export class CreateArtworkDto {
   @MinLength(3, { message: 'Title must be at least 3 characters long' })
   @MaxLength(100, { message: 'Title must be at most 100 characters long' })
-  @IsString()
+  @Transform(({value}) => value?.trim())
   @IsNotEmpty()
+  @IsString()
   title!: string;
 
-  @IsString()
+  @Transform(({value}) => value?.trim())
+  
   @IsOptional()
+
+  @IsString()
   @MaxLength(2000, {
     message: 'Description must be at most 500 characters long',
   })

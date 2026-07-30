@@ -10,6 +10,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
 import { Role } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class UsersService {
@@ -18,50 +20,13 @@ export class UsersService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(data: Prisma.UserCreateInput, file?: Express.Multer.File) {
-    let uploadResult: UploadApiResponse | undefined;
-    let user = await this.prisma.user.findUnique({
-      where: { username: data.username },
-    });
-    if (user) {
-      throw new ConflictException('Username already taken');
-    }
-    user = await this.prisma.user.findUnique({ where: { email: data.email } });
-    if (user) {
-      throw new ConflictException('Email already exist');
-    }
-    try {
-      if (file) {
-        uploadResult = await this.cloudinaryService.uploadImage(file);
-        data.avatarUrl = uploadResult.secure_url;
-        data.avatarPublicId = uploadResult.public_id;
-      }
-      return await this.prisma.user.create({
-        data: data,
-      });
-    } catch (error) {
-      if (uploadResult && uploadResult?.public_id)
-        await this.cloudinaryService.deleteImage(uploadResult.public_id);
-      throw error;
-    }
-  }
-
   async findAll() {
     return await this.prisma.user.findMany({
       orderBy: {
         createdAt: 'desc',
       },
-      select: {
-        id: true,
-        fullname: true,
-        username: true,
-        email: true,
-        bio: true,
-        avatarUrl: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-        _count: { select: { artworks: true, comments: true } },
+      select: { id: true,fullname: true,username: true,email: true,bio: true,avatarUrl: true,role: true,createdAt: true,updatedAt: true,
+		_count: { select: { artworks: true, comments: true } },
       },
     });
   }
@@ -77,15 +42,7 @@ export class UsersService {
       orderBy: {
         username: 'asc',
       },
-      select: {
-        id: true,
-        username: true,
-        email: true,
-        bio: true,
-        avatarUrl: true,
-        role: true,
-        createdAt: true,
-      },
+      select: {id: true,username: true,email: true,bio: true,avatarUrl: true,role: true,createdAt: true,},
     });
     if (!user || user.length === 0) {
       throw new NotFoundException('User not found');
@@ -101,10 +58,7 @@ export class UsersService {
       include: {
         artworks: true,
         _count: {
-          select: {
-            artworks: true,
-            followers: true,
-            following: true,
+          select: {artworks: true,followers: true,following: true,
           },
         },
       },
@@ -158,6 +112,10 @@ export class UsersService {
         throw new ConflictException('Username already taken');
       }
     }
+	if (data.password)
+	{
+		data.password = await bcrypt.hash(data.password as string , 10);
+	}
     if (data.email) {
       const existingUser = await this.prisma.user.findUnique({
         where: { email: data.email as string },
@@ -201,15 +159,7 @@ export class UsersService {
     return await this.prisma.user.update({
       where: { id },
       data,
-      select: {
-        id: true,
-        username: true,
-        fullname: true,
-        email: true,
-        bio: true,
-        avatarUrl: true,
-        role: true,
-        createdAt: true,
+      select: {id: true,username: true,fullname: true,email: true,bio: true,avatarUrl: true,role: true,createdAt: true,
       },
     });
   }
@@ -221,10 +171,7 @@ export class UsersService {
         artworks: {
           include: {
             _count: {
-              select: {
-                likes: true,
-                comments: true,
-              },
+              select: {likes: true,comments: true,},
             },
           },
         },
@@ -253,9 +200,7 @@ export class UsersService {
       },
       include: {
         _count: {
-          select: {
-            likes: true,
-            comments: true,
+          select: {likes: true,comments: true,
           },
         },
       },
@@ -348,16 +293,7 @@ export class UsersService {
     return await this.prisma.user.update({
       where: { id },
       data: { role },
-      select: {
-        id: true,
-        username: true,
-        fullname: true,
-        email: true,
-        bio: true,
-        avatarUrl: true,
-        role: true,
-        createdAt: true,
-      },
+      select: {id: true,username: true,fullname: true,email: true,bio: true,avatarUrl: true,role: true,createdAt: true,},
     });
   }
 

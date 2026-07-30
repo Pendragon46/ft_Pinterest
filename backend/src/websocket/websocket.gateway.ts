@@ -30,6 +30,15 @@ export class WebsocketGateway
     return token;
   }
 
+  async notifyUser(userId: string, status: 'online' | 'offline') {
+	const socketIds = this.onlineStatusService.getSocketIdsForUser(userId);
+		if (socketIds) {
+			socketIds.forEach((socketId) => {
+				this.server.to(socketId).emit('friendStatusChange', { userId, status });
+			});
+		}
+  } 
+
   async notifyFriendsAboutStatusChange(
     userId: string,
     status: 'online' | 'offline',
@@ -76,6 +85,32 @@ export class WebsocketGateway
     });
   }
 
+//in front should connect with this socket when friend requests are accepted and immediately change the status to online for the user who accepted the request, so that the other user can see it in real time
+  @SubscribeMessage('friendRequest:accepted')
+  handleFriendRequestAccepted(
+	@ConnectedSocket() client: Socket,
+	data: { friendUserId: string }
+  ){
+	let token: any;
+    try {
+      token = this.verifyToken(client);
+      if (!token) {
+        console.error('No token provided');
+        client.disconnect();
+        return;
+      }
+      client.data.userId = token.sub;
+  }catch (error) {
+      console.error('Token verification failed:', error);
+      client.disconnect();
+      return;
+    }
+    this.onlineStatusService.addOnlineUser(client.id, token.sub);
+	this.notifyUser(data.friendUserId, 'online');
+	// if this don't work use = this.notifyFriendsAboutStatusChange(token.sub, 'online'); instead
+}
+
+
   handleConnection(client: Socket) {
     let token: any;
     try {
@@ -98,7 +133,8 @@ export class WebsocketGateway
   async handleDisconnect(client: Socket) {
     const userId = client.data.userId as string | undefined;
     if (!userId) return; // unauthenticated socket: nothing was registered
-    this.onlineStatusService.removeOnlineUser(userId, client.id);
-    this.notifyFriendsAboutStatusChange(userId, 'offline');
+    const userOffline = this.onlineStatusService.removeOnlineUser(userId, client.id);
+	if (userOffline)
+    	this.notifyFriendsAboutStatusChange(userId, 'offline');
   }
 }

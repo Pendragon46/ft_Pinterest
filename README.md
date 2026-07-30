@@ -1,14 +1,24 @@
 *This project has been created as part of the 42 curriculum by <trindran>, <cramaros>, <nrakotom>, <srabeman>*
 
-### Description
-### Instruction
-### Resources
- - **NestJS** : [official site documentation ] (https://docs.nestjs.com/)
- - **Prisma** : [official documentation ] (https://www.prisma.io/docs)
- - **Socket.IO** : [official documentation ] (https://socket.io/docs/v4/)
-### Team Information:
-### Project Management:
-### Technical Stack:
+## Description
+## Instruction
+## 📚 Resources
+### Official Documentation
+
+- **NestJS**: [Official Documentation](https://docs.nestjs.com/)
+- **Prisma**: [Official Documentation](https://www.prisma.io/docs)
+- **Socket.IO**: [Official Documentation](https://socket.io/docs/v4/)
+- **React**: [Official Documentation](https://react.dev/)
+
+### Video Tutorials
+
+- **NestJS**: [Anson](https://youtu.be/uWZ_6pDbLpU)
+- **Prisma**: [Web Dev Simplified](https://www.youtube.com/watch?v=RebA5J-rlwg&t=3018s)
+- **Socket.IO**: [Marius Espejo](https://youtu.be/atbdpX4CViM)
+- **Cloudinary**: [Cloudinary](https://youtu.be/l7TUGdRN-f0)
+## Team Information:
+## Project Management:
+## Technical Stack:
  - Backend :
    - NestJS
    - Prisma
@@ -17,17 +27,17 @@
   - React
   - TypeScript
 
-
-### Database Schema:
+  
+## Database Schema:
 
 ![Database Schema](diagram_prisma.png)
 
-### Features List:
+## Features List:
 
-### Modules:
+## Modules:
  - Major :
     - [x] Use a framework for the frontend and backend(React, NestJS).
-    - [] Implement real-time features using WebSockets or similar technology.
+    - [x] Implement real-time features using WebSockets or similar technology.
     - [] Allow users to interact with other users
 	
     - [x] Advanced Permission System *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
@@ -49,19 +59,22 @@
     - [x] Multilingue
     - [x] Support for additional browsers
     - [x] RTL Arabic
-    - [x] GDPR compliance features *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
+    - [x] GDPR compliance features
 	- [] file upload
 	- [] Oauth2.0 authentication with Google
 	- [] User activity analytics and insights dashboard
 
-Excpected points: 17/28
+Excpected points: 23/28
 
-### Individual Contributions:
+## Individual Contributions:
 - trindran :
   - create prisma schema  
   - Implement basis user CRUD with the dto validation
   - Upload avatar, file and artwork with dto validation
-  - follow, like, comment system
+  - follow, like, comment friendship system with dto validation
+  - Role based access control for USER/ADMIN with dto validation
+  - Online status with socket.io
+  - Search system with filters, sorting and pagination
 
 - nrakotom :
 - cramaros :

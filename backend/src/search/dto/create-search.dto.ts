@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsEnum,
   IsInt,
@@ -9,8 +9,9 @@ import {
 import { sort } from 'src/enums/sort.enum';
 
 export class CreateSearchDto {
-  @IsString()
   @IsOptional()
+  @Transform(({ value }) => value?.trim())
+  @IsString()
   q!: string;
 
   @IsOptional()
@@ -19,8 +20,10 @@ export class CreateSearchDto {
   @IsPositive()
   page: number = 1;
 
-  @IsEnum(sort)
   @IsOptional()
+  @Transform(({ value }) => value?.trim())
+  @IsString()
+  @IsEnum(sort)
   sort: sort = sort.RECENT;
 
   @IsOptional()
