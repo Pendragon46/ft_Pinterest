@@ -30,6 +30,7 @@ model User {
   friendshipsReceived friendship[] @relation("Addressee")
   conversations       ConversationParticipant[]
   messagesSent        Message[]
+
 }
 
 model friendship {
@@ -64,6 +65,9 @@ model Artwork {
   sharedInMessages Message[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@index([authorId])
+  @@index([createdAt])
 }
 
 model Like {
@@ -104,6 +108,8 @@ model Tag {
   artworks  Artwork[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@index([name])
 }
 
 enum Role {
