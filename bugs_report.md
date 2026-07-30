@@ -39,9 +39,6 @@ Users cannot follow another user if that user does not have any uploaded artwork
 
 
 ---
-### Chat system
-- we can't start a chat with a user 
-- an internal server error is thrown in the console
 
 
 ---
@@ -94,6 +91,10 @@ if the title of the artwork exceed the UI size it's not responsive
 - The exit and edit button is not displayed in profile /works	
 - No artwork is diplayed in home page as the guest user 
 
+### Chat inaccessible
+- we can't start a chat with a user 
+- an internal server error is thrown in the console
+
 ### chat to check after the chat bug is resolved
 - spam messages trigger exceptions in the console
 - chat to non following users trigger 403 forbidden error
@@ -107,8 +108,25 @@ if the title of the artwork exceed the UI size it's not responsive
 ### Admin Panel
 - When trying to delete the unique admin user an exception is thrown in the console.
 - after deleting my account as an admin user, a 401 unauthorized error is thrown in the console
+- the video artwork is not displayed in the artwork panel
+- Creating a new user with an existing username and mail throw a conflict excpection
 
 ### auth
-- many exceptions are thrown in the console when trying to login with oauth providers google
 - there is throttling issues when trying to delete the account that i just created .
 - Some account don't display avatar sometimes with google auth
+
+
+### register
+- When trying to register with an existing username or email a conflict exception is thrown in the console
+
+
+cloudinary est un cloud pour sauvegarder des images et des video . est un CDN (qui est un reseau de serveur mondial ) optimise les cache .  fait aussi de la modification d'image et video et de la transformation 
+
+le Free plan contient 25 credits
+1 credit =
+- 1000 transformation d'image ou video
+- 1 Gb de stockage
+- 1 Gb de bande passante
+- 1 Gb de bande passante video 
+
+nous avons convenu qu'une image/videos pour avatar ou artwork ne devrait pas depasser les 10 mo . donc au total on a 2560 images/videos pour le free plan . donc si on depasse ce nombre on ne pourra plus sauvegarder des images/videos sur cloudinary et on aura une exception dans la console . vaut mieux creer un nouveau compte avant l'evaluation pour eviter les imprevu 
