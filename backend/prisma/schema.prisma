@@ -57,6 +57,7 @@ model Artwork {
   description   String?
   mediaUrl      String?
   mediaPublicId String?
+  resourceType  String?
   author        User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId      String
   comments      Comment[]

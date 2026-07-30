@@ -9,7 +9,7 @@ This is a markdown that contains a list of bugs found in the project. Each bug i
 ### . Artwork Page Redirects to Invalid URL When No Artwork Exists
 
 **Description:**  
-When there is no user and artwork , when we search something and click on an artwork there is 404 exception in the console
+When there is no user and artwork , when we search something and click on an artwork there is 404 exception in the console. we should not redirect user to https://localhost:8443/api/artworks/w_-4_-2 but just show empty case 
 
 
 ---

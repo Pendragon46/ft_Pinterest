@@ -12,36 +12,63 @@ export class CloudinaryService {
     });
   }
 
-  async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-    return new Promise((resolve, reject) => {
-      v2.uploader
-        // 'auto' : détecte image vs vidéo (sinon 'image' par défaut rejette les vidéos).
-        .upload_stream(
-          { folder: 'uploads', resource_type: 'auto' },
-          (error, result) => {
-          if (error) {
-            reject(error);
-          } else if (result) {
-            resolve(result);
-          } else {
-            reject(new Error('Upload failed: no result returned'));
-          }
-        })
-        .end(file.buffer);
-    });
-  }
+//   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
+//     return new Promise((resolve, reject) => {
+//       v2.uploader.upload_stream(
+//         { folder: 'uploads', resource_type: 'auto' },
+//         (error, result) => {
+//           if (error) {
+//             reject(error);
+//           } else if (result) {
+//             resolve(result);
+//           } else {
+//             reject(new Error('Upload failed: no result returned'));
+//           }
+//         }
+//       ).end(file.buffer);
+//     });
+//   }
 
-  async deleteImage(publicId: string): Promise<UploadApiResponse> {
-    return new Promise((resolve, reject) => {
-      v2.uploader.destroy(publicId, (error, result) => {
-        if (error) {
-          reject(error);
-        } else if (result) {
-          resolve(result);
-        } else {
-          reject(new Error('Delete failed: no result returned'));
-        }
-      });
-    });
+async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
+   await v2.uploader.upload_stream(
+	  { folder: 'uploads', resource_type: 'auto' },
+	  (error, result) => {
+		if (error) {
+		  reject(error);
+		} else if (result) {
+		  resolve(result);
+		} else {
+		  reject(new Error('Upload failed: no result returned'));
+		}
+	  }
+	).end(file.buffer);
   }
+}
+
+//   async deleteImage(publicId: string): Promise<UploadApiResponse> {
+//     return new Promise((resolve, reject) => {
+//       v2.uploader.destroy(publicId, (error, result) => {
+//         if (error) {
+//           reject(error);
+//         } else if (result) {
+//           resolve(result);
+//         } else {
+//           reject(new Error('Delete failed: no result returned'));
+//         }
+//       });
+//     });
+//   }
+// }
+
+	async deleteImage(publicId: string, resource_type: string): Promise<UploadApiResponse> {
+		return await v2.uploader.destroy(publicId,{resource_type}, (error, result) => {
+				if (error) {
+					reject(error);
+				} else if (result) {
+					resolve(result);
+				} else {
+					reject(new Error('Delete failed: no result returned'));
+				}
+			});
+		}
 }

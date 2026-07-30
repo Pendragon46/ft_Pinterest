@@ -54,6 +54,7 @@ export class ArtworkService {
           id: artworkId,
         },
         data: {
+		  resourceType: upload.resource_type,
           mediaUrl: upload.secure_url,
           mediaPublicId: upload.public_id,
           ...(updatedata.title !== undefined && { title: updatedata.title }),

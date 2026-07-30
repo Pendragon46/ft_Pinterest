@@ -18,19 +18,17 @@ export class SearchService {
   // find artworks
   async findArtwork(query: CreateSearchDto) {
     const { q, page, sort, limit } = query;
-    const skip = (Number(page) - 1) * Number(limit);
-    const take = limit ? Number(limit) : 10;
+    const skip = (page - 1) * limit;
+    const take = limit ? limit : 10;
 
     if (sort !== 'recent' && sort !== 'oldest') {
       throw new BadRequestException('Invalid sort value');
     }
-    if (Number(page) < 1 || Number(limit) < 1) {
+    if (page < 1 || limit < 1) {
       throw new BadRequestException('Page and limit must be greater than 0');
     }
     const artworks = await this.prisma.artwork.findMany({
-      where: {
-        ...(q
-          ? {
+      where: q ? {
               OR: [
                 { title: { contains: q, mode: 'insensitive' } },
                 { description: { contains: q, mode: 'insensitive' } },
@@ -45,8 +43,7 @@ export class SearchService {
                 { author: { fullname: { contains: q, mode: 'insensitive' } } },
               ],
             }
-          : {}),
-      },
+          : {},
       skip,
       take,
       orderBy: {
@@ -69,26 +66,23 @@ export class SearchService {
   // find users
   async findUser(query: CreateSearchDto) {
     const { q, page, sort, limit } = query;
-    const skip = (Number(page) - 1) * Number(limit);
-    const take = limit ? Number(limit) : 10;
+    const skip = (page - 1) * limit;
+    const take = limit ? limit : 10;
 
     if (sort !== 'recent' && sort !== 'oldest') {
       throw new BadRequestException('Invalid sort value');
     }
-    if (Number(page) < 1 || Number(limit) < 1) {
+    if (page < 1 || limit < 1) {
       throw new BadRequestException('Page and limit must be greater than 0');
     }
     const user = await this.prisma.user.findMany({
-      where: {
-        ...(q
-          ? {
+      where: q ? {
               OR: [
                 { username: { contains: q, mode: 'insensitive' } },
                 { fullname: { contains: q, mode: 'insensitive' } },
               ],
             }
-          : {}),
-      },
+          : {},
       skip,
       take,
       orderBy: {
@@ -103,27 +97,24 @@ export class SearchService {
   // find tags
   async findTag(query: CreateSearchDto) {
     const { q, page, sort, limit } = query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const skip = (page - 1) * limit;
     const take = limit ? Number(limit) : 10;
 
     if (sort !== 'recent' && sort !== 'oldest') {
       throw new BadRequestException('Invalid sort value');
     }
-    if (Number(page) < 1 || Number(limit) < 1) {
+    if (page < 1 || limit < 1) {
       throw new BadRequestException('Page and limit must be greater than 0');
     }
     const artworks = await this.prisma.artwork.findMany({
-      where: {
-        ...(q
-          ? {
+      where: q? {
               tags: {
                 some: {
                   name: { contains: q, mode: 'insensitive' },
                 },
               },
             }
-          : {}),
-      },
+          	: {},
       skip,
       take,
       orderBy: {
