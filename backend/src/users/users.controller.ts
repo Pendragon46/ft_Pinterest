@@ -1,7 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
+
+import {Controller,Get, 
   Body,
   Patch,
   Param,
@@ -44,14 +42,16 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOneById(@Param('id') id: string) {
-    return this.usersService.findOneById(id);
-  }
+ 
 
   @Get('username/:username')
   findOne(@Param('username') username: string) {
     return this.usersService.findOneByUsername(username);
+  }
+
+   @Get(':id')
+  findOneById(@Param('id') id: string) {
+    return this.usersService.findOneById(id);
   }
 
   @Patch(':id')
