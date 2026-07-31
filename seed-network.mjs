@@ -18,6 +18,7 @@
 import { readFile, writeFile, access } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomBytes } from 'node:crypto'
+import { execFileSync } from 'node:child_process'
 import process from 'node:process'
 
 const API = process.env.SEED_API ?? 'https://localhost:8443/api'
@@ -59,7 +60,7 @@ const AUTHORS = [
   { u: 'jonas_wilde',      full: 'Jonas Wilde',        disc: 'uxui',         bio: 'Product designer. Interfaces calmes et lisibles.',                          existing: true },
   { u: 'sarah_ben_ali',    full: 'Sarah Ben Ali',      disc: 'branding',     bio: 'Brand designer. Identities with a backbone.',                               existing: true },
   // — Nouveaux : scène malgache (Antananarivo) —
-  { u: 'tsiory_rakoto',    full: 'Tsiory Rakotoarisoa', disc: 'photography', bio: "Photographe basée à Antananarivo. Portraits de rue et lumière des hautes terres." },
+  { u: 'tsiory_rakoto',    full: 'Tsiory Rakotoarisoa', disc: 'photography', bio: "Photographe basée à Antananarivo. Portraits de rue et lumière des hautes terres.", admin: true },
   { u: 'naina_rando',      full: 'Naina Randrianarisoa', disc: 'portrait',   bio: 'Portraitiste. Je cherche le regard juste, celui qui reste.' },
   { u: 'hery_razaf',       full: 'Hery Razafindrakoto', disc: 'motion',      bio: 'Motion & 3D designer. Loops, textures, mouvement.' },
   { u: 'miora_raso',       full: 'Miora Rasoanaivo',    disc: 'illustration', bio: "Illustratrice à Tana. Aquarelle numérique et récits doux." },
@@ -177,6 +178,32 @@ async function follow(token, targetId) {
 }
 
 // ── Main ────────────────────────────────────────────────────────────────────
+// Bootstrap the first admin(s): register only mints USER and the role API needs an
+// existing admin, so flip the role straight in Postgres. Best-effort.
+async function promoteAdmins(authors) {
+  const admins = authors.filter((a) => a.admin && a.id)
+  if (admins.length === 0) return
+  let user = 'postgres'
+  let db = 'ft_pinterest'
+  try {
+    const env = await readFile('./.env', 'utf8')
+    user = env.match(/^POSTGRES_USER=(.*)$/m)?.[1]?.trim() || user
+    db = env.match(/^POSTGRES_DB=(.*)$/m)?.[1]?.trim() || db
+  } catch { /* défauts */ }
+  const names = admins.map((a) => `'${a.u.replace(/'/g, "''")}'`).join(', ')
+  try {
+    execFileSync(
+      'docker',
+      ['exec', 'ft_pinterest_postgres', 'psql', '-U', user, '-d', db, '-c',
+        `UPDATE "User" SET role='ADMIN' WHERE username IN (${names});`],
+      { stdio: 'ignore' },
+    )
+    console.log(`  ${c.green('✓')} admin : ${admins.map((a) => a.u).join(', ')}`)
+  } catch (e) {
+    console.log(c.yellow(`  ⚠ promotion admin ignorée (docker/psql indisponible ?) : ${e.message}`))
+  }
+}
+
 async function main() {
   console.log(c.bold('\nSeed réseau Atlaas\n'))
 
@@ -239,6 +266,9 @@ async function main() {
   }
   const live = AUTHORS.filter((a) => a.id)
 
+  // 1b) Rôles : promeut les comptes marqués `admin` (bootstrap du 1er admin).
+  await promoteAdmins(live)
+
   // 2) Répartition des œuvres par discipline (round-robin entre auteurs de la discipline)
   console.log(c.bold('\n2. Publication'))
   const authorsByDisc = {}
@@ -295,6 +325,7 @@ async function main() {
   // 4) Credentials des nouveaux comptes
   const newCreds = AUTHORS.filter((a) => !a.existing).map((a) => ({
     username: a.u, email: a.email, password: a.password, fullname: a.full, discipline: a.disc,
+    role: a.admin ? 'ADMIN' : 'USER',
   }))
   await writeFile(CREDS_OUT, JSON.stringify(newCreds, null, 2), 'utf8')
   console.log(c.dim(`\nIdentifiants des nouveaux comptes → ${CREDS_OUT}`))
