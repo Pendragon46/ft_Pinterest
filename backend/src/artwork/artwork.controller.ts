@@ -78,22 +78,9 @@ export class ArtworkController {
     @Param('artworkId') artworkId: string,
     @Req() req,
     @Body() data: UpdateArtworkDto,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB limit
-          new FileTypeValidator({
-            fileType:
-              /(image\/jpeg|image\/png|image\/gif|image\/webp|video\/mp4)$/,
-          }),
-        ],
-        fileIsRequired: false,
-      }),
-    )
-    file?: Express.Multer.File,
   ) {
     const user = { id: req.user.id, role: req.user.role };
-    return this.artworkService.update(artworkId, data, user, file);
+    return this.artworkService.update(artworkId, data, user);
   }
 
   @Delete(':id')

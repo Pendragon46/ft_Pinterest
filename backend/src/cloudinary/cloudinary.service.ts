@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { UploadApiResponse, v2 } from 'cloudinary';
 
@@ -12,63 +12,27 @@ export class CloudinaryService {
     });
   }
 
-//   async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-//     return new Promise((resolve, reject) => {
-//       v2.uploader.upload_stream(
-//         { folder: 'uploads', resource_type: 'auto' },
-//         (error, result) => {
-//           if (error) {
-//             reject(error);
-//           } else if (result) {
-//             resolve(result);
-//           } else {
-//             reject(new Error('Upload failed: no result returned'));
-//           }
-//         }
-//       ).end(file.buffer);
-//     });
-//   }
+  async upload(file: Express.Multer.File): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
+      v2.uploader.upload_stream(
+        { folder: 'uploads', resource_type: 'auto' },
+        (error, result) => {
+          if (error) return reject(error);
+          if (result) return resolve(result);
+		  return reject(new Error('Cloudinary upload failed: no result'));
+        }
+      ).end(file.buffer);
+	  
+    });
+  }
 
-async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
-   await v2.uploader.upload_stream(
-	  { folder: 'uploads', resource_type: 'auto' },
-	  (error, result) => {
-		if (error) {
-		  reject(error);
-		} else if (result) {
-		  resolve(result);
-		} else {
-		  reject(new Error('Upload failed: no result returned'));
-		}
-	  }
-	).end(file.buffer);
+  async deleteImage(publicId: string, resource_type: string = "image"): Promise<UploadApiResponse> {
+    try {
+      return await v2.uploader.destroy(publicId, { resource_type });
+    } catch (error) {
+      console.error('Error deleting image from Cloudinary:', error);
+      throw error;
+    }
   }
 }
 
-//   async deleteImage(publicId: string): Promise<UploadApiResponse> {
-//     return new Promise((resolve, reject) => {
-//       v2.uploader.destroy(publicId, (error, result) => {
-//         if (error) {
-//           reject(error);
-//         } else if (result) {
-//           resolve(result);
-//         } else {
-//           reject(new Error('Delete failed: no result returned'));
-//         }
-//       });
-//     });
-//   }
-// }
-
-	async deleteImage(publicId: string, resource_type: string): Promise<UploadApiResponse> {
-		return await v2.uploader.destroy(publicId,{resource_type}, (error, result) => {
-				if (error) {
-					reject(error);
-				} else if (result) {
-					resolve(result);
-				} else {
-					reject(new Error('Delete failed: no result returned'));
-				}
-			});
-		}
-}

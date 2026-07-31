@@ -128,7 +128,7 @@ export class UsersService {
       const OldImagePublicId = user.avatarPublicId;
       let uploadResult: UploadApiResponse | undefined;
       try {
-        uploadResult = await this.cloudinaryService.uploadImage(file);
+        uploadResult = await this.cloudinaryService.upload(file);
         const updatedUser = await this.prisma.user.update({
           where: { id },
           data: {
@@ -142,7 +142,7 @@ export class UsersService {
           OldImagePublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID
         ) {
           try {
-            await this.cloudinaryService.deleteImage(OldImagePublicId);
+            await this.cloudinaryService.deleteImage(OldImagePublicId, 'image');
           } catch (error) {
             console.error('Error deleting old avatar', error);
             throw error;
@@ -152,7 +152,7 @@ export class UsersService {
         return result;
       } catch (error) {
         if (uploadResult?.public_id)
-          await this.cloudinaryService.deleteImage(uploadResult.public_id);
+          await this.cloudinaryService.deleteImage(uploadResult.public_id, uploadResult.resource_type);
         throw error;
       }
     }
@@ -238,7 +238,7 @@ export class UsersService {
       user.avatarPublicId !== process.env.DEFAULT_AVATAR_PUBLIC_ID
     ) {
       try {
-        await this.cloudinaryService.deleteImage(user.avatarPublicId);
+        await this.cloudinaryService.deleteImage(user.avatarPublicId, 'image');
       } catch (error) {
         console.error('Error deleting user avatar', error);
       }
@@ -249,7 +249,7 @@ export class UsersService {
     for (const artwork of artworks) {
       if (artwork.mediaPublicId) {
         try {
-          await this.cloudinaryService.deleteImage(artwork.mediaPublicId);
+          await this.cloudinaryService.deleteImage(artwork.mediaPublicId, artwork.resourceType!);
         } catch (error) {
           throw new BadRequestException(
             `Failed to delete artwork image with publicId: ${artwork.mediaPublicId}`,

@@ -37,65 +37,7 @@ export class ArtworkService {
     });
   }
 
-  async Updatedfile(
-    artworkId: string,
-    file: Express.Multer.File,
-    updatedata: UpdateArtworkDto,
-    oldPublicId: string,
-  ) {
-    let upload,updatedArtwork;
-    try {
-      const normalizedtags = updatedata.tags
-        ?.map((tag) => tag.trim().toLowerCase())
-        .filter((tag) => tag.length > 0);
-      upload = await this.cloudinaryService.uploadImage(file);
-      updatedArtwork = await this.prisma.artwork.update({
-        where: {
-          id: artworkId,
-        },
-        data: {
-		  resourceType: upload.resource_type,
-          mediaUrl: upload.secure_url,
-          mediaPublicId: upload.public_id,
-          ...(updatedata.title !== undefined && { title: updatedata.title }),
-          ...(updatedata.description !== undefined && {
-            description: updatedata.description,
-          }),
-          ...(normalizedtags &&
-            normalizedtags.length > 0 && {
-              tags: {
-                set: [], // Clear existing tags before connecting new ones
-                connectOrCreate: normalizedtags.map((tag) => ({
-                  where: { name: tag },
-                  create: { name: tag },
-                })),
-              },
-            }),
-        },
-        include: {
-          author: {
-          select: { id: true, username: true, fullname: true, avatarUrl: true },
-        },
-          tags: { select: { name: true } },
-          _count: { select: { likes: true, comments: true } },
-        },
-      });
-      await this.deletetagswithoutartworks();
-    } catch (error) {
-      if (upload && upload.public_id) {
-        await this.cloudinaryService.deleteImage(upload.public_id);
-      }
-      throw new BadRequestException('Failed to update artwork');
-    }
-    try {
-      await this.cloudinaryService.deleteImage(oldPublicId);
-    } catch (error) {
-      throw new BadRequestException(
-        'Failed to delete old artwork image from Cloudinary',
-      );
-    }
-    return updatedArtwork;
-  }
+
 
   async create(
     data: CreateArtworkDto,
@@ -121,12 +63,13 @@ export class ArtworkService {
       ?.map((tag) => tag.trim().toLowerCase())
       .filter((tag) => tag.length > 0);
     try {
-      upload = await this.cloudinaryService.uploadImage(file);
+      upload = await this.cloudinaryService.upload(file);
       return await this.prisma.artwork.create({
         data: {
           ...artworkdata,
           mediaUrl: upload.secure_url,
           mediaPublicId: upload.public_id,
+		  resourceType: upload.resource_type,
           author: {
             connect: {
               id: user.id,
@@ -145,7 +88,7 @@ export class ArtworkService {
       });
     } catch (error) {
       if (upload && upload.public_id) {
-        await this.cloudinaryService.deleteImage(upload.public_id);
+        await this.cloudinaryService.deleteImage(upload.public_id, upload.resource_type);
       }
       throw new BadRequestException('Failed to create artwork');
     }
@@ -226,7 +169,6 @@ export class ArtworkService {
     artworkId: string,
     updatedata: UpdateArtworkDto,
     user: { id: string; role: string },
-    file?: Express.Multer.File,
   ) {
     const artwork = await this.prisma.artwork.findUnique({
       where: {
@@ -239,14 +181,6 @@ export class ArtworkService {
     if (artwork.authorId !== user.id && user.role !== 'ADMIN') {
       throw new ForbiddenException(
         'You are not authorized to update this artwork',
-      );
-    }
-    if (file && artwork.mediaPublicId) {
-      return await this.Updatedfile(
-        artworkId,
-        file,
-        updatedata,
-        artwork.mediaPublicId,
       );
     }
     const normalizedtags = updatedata.tags
@@ -309,7 +243,7 @@ export class ArtworkService {
     }
     if (artwork.mediaPublicId) {
       try {
-        await this.cloudinaryService.deleteImage(artwork.mediaPublicId);
+        await this.cloudinaryService.deleteImage(artwork.mediaPublicId, artwork.resourceType!);
       } catch (error) {
         throw new BadRequestException(
           'Failed to delete artwork image from Cloudinary',
@@ -348,7 +282,7 @@ export class ArtworkService {
     for (const artwork of artworks) {
       if (artwork.mediaPublicId) {
         try {
-          await this.cloudinaryService.deleteImage(artwork.mediaPublicId);
+          await this.cloudinaryService.deleteImage(artwork.mediaPublicId, artwork.resourceType!);
         } catch (error) {
           throw new BadRequestException(
             `Failed to delete artwork image with publicId: ${artwork.mediaPublicId}`,

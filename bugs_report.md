@@ -63,8 +63,7 @@ in the prisma schema there is no Displayname should we add it to the user model 
 
 When the user enter invalid credentials it display unauthorized	
 
-
-
+// expection
 
 #### Throttler
 

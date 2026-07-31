@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -42,5 +43,6 @@ export class CreateArtworkDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
+  @MaxLength(30, { each: true, message: 'Each tag must be at most 50 characters long' })
   tags?: string[];
 }
