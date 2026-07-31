@@ -101,10 +101,10 @@ team before being integrated into the project. No code was blindly copy-pasted.
 
 | Login | Role(s) | Responsibilities |
 |-------|---------|-----------------|
-| \<trindran\> | Project Manager / Backend Developer | [describe: Auth, API, database, etc.] |
-| \<cramaros\> | [role] | [responsibilities] |
-| \<nrakotom\> | [role] | [responsibilities] |
-| \<srabeman\> | [role] | [responsibilities] |
+| \<trindran\> | Technical Lead / Backend Developer | API, database |
+| \<cramaros\> | Technical Lead / Devops | Docker, Grafana&Prometheus |
+| \<nrakotom\> | Project Manager / Backend Developer | Auth |
+| \<srabeman\> | Project Owner / Frontend Developer | frontend |
 
 
 
