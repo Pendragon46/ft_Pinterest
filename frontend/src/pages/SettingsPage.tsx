@@ -3,7 +3,7 @@ import type { ChangeEvent, FormEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Check } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
@@ -32,7 +32,6 @@ export function SettingsPage() {
   const login = useAuthStore((state) => state.login)
   const queryClient = useQueryClient()
   const userId = authUser?.id ?? ''
-  const location = useLocation()
   const toast = useToast()
   // Auto-clear timers for the "Saved ✓" confirmation, tracked so an overlapping
   // re-save (or an unmount) cancels the pending one instead of clobbering state.

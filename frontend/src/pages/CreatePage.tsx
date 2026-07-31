@@ -3,7 +3,7 @@ import type { ChangeEvent, DragEvent, FormEvent, KeyboardEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ImageUp, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
@@ -39,7 +39,6 @@ interface CreateErrors {
 export function CreatePage() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
-  const location = useLocation()
   const queryClient = useQueryClient()
   const toast = useToast()
   const authUser = useAuthStore((state) => state.user)

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
 
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
@@ -33,7 +33,6 @@ const GRID = 'grid grid-cols-2 gap-x-5 gap-y-6 md:grid-cols-3 xl:grid-cols-4'
 export function ProfilePage() {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
-  const location = useLocation()
   const requireAuth = useRequireAuth()
   const compact = useCompact()
   const authUser = useAuthStore((state) => state.user)
