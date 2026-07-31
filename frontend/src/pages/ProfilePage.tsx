@@ -43,6 +43,8 @@ export function ProfilePage() {
   const selfId = authUser?.id
   const userId = routeUserId ?? selfId ?? ''
   const isOwnProfile = userId !== '' && userId === selfId
+  // On logout the id briefly becomes '' before unmount; gate fetches on a real id.
+  const hasUser = userId !== ''
 
   const [tab, setTab] = useState<Tab>('works')
   const [shareHint, setShareHint] = useState(false)
@@ -51,23 +53,28 @@ export function ProfilePage() {
   const profileQuery = useQuery({
     queryKey: userKeys.profile(userId),
     queryFn: () => fetchProfile(userId),
+    enabled: hasUser,
     retry: false,
   })
   const worksQuery = useQuery({
     queryKey: userKeys.works(userId),
     queryFn: () => fetchUserWorks(userId),
+    enabled: hasUser,
   })
   const likedQuery = useQuery({
     queryKey: userKeys.liked(userId),
     queryFn: () => fetchUserLiked(userId),
+    enabled: hasUser,
   })
   const followerQuery = useQuery({
     queryKey: userKeys.followerCount(userId),
     queryFn: () => fetchFollowerCount(userId),
+    enabled: hasUser,
   })
   const followingQuery = useQuery({
     queryKey: userKeys.followingCount(userId),
     queryFn: () => fetchFollowingCount(userId),
+    enabled: hasUser,
   })
 
   const handleShare = () => {
@@ -109,10 +116,9 @@ export function ProfilePage() {
   const items = activeQuery.data ?? []
   const profile = profileQuery.data
 
-	// Signed-out visit to your OWN profile → sign in first, then return here (§3.2).
-	// A specific /profile/:userId stays publicly viewable.
+	// No user (logged-out visit or just after logout) → home; /profile/:userId stays public.
 	if (!userId) {
-	  return <Navigate to="/login" replace />
+	  return <Navigate to="/" replace />
 	}
 
   return (

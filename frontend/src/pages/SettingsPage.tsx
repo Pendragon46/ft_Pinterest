@@ -12,7 +12,9 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { useAuthStore } from '@/features/auth/auth.store'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import {
+  validateBio,
   validateEmail,
+  validateFullname,
   validatePassword,
   validateUsername,
 } from '@/features/auth/auth.validation'
@@ -50,7 +52,11 @@ export function SettingsPage() {
   // The actual File to upload; null = avatar unchanged (profile saves as JSON).
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [avatarError, setAvatarError] = useState<UploadErrorKey | undefined>()
-  const [profileError, setProfileError] = useState<AuthErrorKey | undefined>()
+  const [profileErrors, setProfileErrors] = useState<{
+    fullname?: AuthErrorKey
+    username?: AuthErrorKey
+    bio?: AuthErrorKey
+  }>({})
   const [profileSaved, setProfileSaved] = useState(false)
 
   // Email & password form.
@@ -159,9 +165,13 @@ export function SettingsPage() {
 
   const handleProfileSave = (event: FormEvent) => {
     event.preventDefault()
-    const usernameError = validateUsername(username)
-    setProfileError(usernameError)
-    if (usernameError) return
+    const nextErrors = {
+      fullname: validateFullname(fullname),
+      username: validateUsername(username),
+      bio: validateBio(bio),
+    }
+    setProfileErrors(nextErrors)
+    if (nextErrors.fullname || nextErrors.username || nextErrors.bio) return
     setProfileSaved(false)
     profileMutation.mutate()
   }
@@ -188,9 +198,8 @@ export function SettingsPage() {
     { id: 'appearance', label: t('settings.navAppearance') },
   ]
 
-	// Signed-out direct visit → sign in first, then return here (§3.2).
 	if (!authUser) {
-	  return <Navigate to="/login" replace />
+	  return <Navigate to="/" replace />
 	}
 
   return (
@@ -270,15 +279,22 @@ export function SettingsPage() {
                     value={fullname}
                     onChange={(event) => {
                       setFullname(event.target.value)
+                      setProfileErrors((prev) => ({ ...prev, fullname: undefined }))
                     }}
+                    error={
+                      profileErrors.fullname ? t(profileErrors.fullname) : undefined
+                    }
                   />
                   <Input
                     label={t('settings.username')}
                     value={username}
                     onChange={(event) => {
                       setUsername(event.target.value)
+                      setProfileErrors((prev) => ({ ...prev, username: undefined }))
                     }}
-                    error={profileError ? t(profileError) : undefined}
+                    error={
+                      profileErrors.username ? t(profileErrors.username) : undefined
+                    }
                   />
                   <div className="flex flex-col gap-1.5">
                     <label
@@ -292,10 +308,24 @@ export function SettingsPage() {
                       value={bio}
                       onChange={(event) => {
                         setBio(event.target.value)
+                        setProfileErrors((prev) => ({ ...prev, bio: undefined }))
                       }}
                       rows={3}
+                      aria-invalid={profileErrors.bio ? true : undefined}
+                      aria-describedby={
+                        profileErrors.bio ? 'settings-bio-error' : undefined
+                      }
                       className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3 text-base text-neutral-900 transition-colors placeholder:text-neutral-400 hover:border-neutral-400 focus:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-neutral-200 motion-reduce:transition-none"
                     />
+                    {profileErrors.bio ? (
+                      <p
+                        id="settings-bio-error"
+                        role="alert"
+                        className="text-sm text-red-600"
+                      >
+                        {t(profileErrors.bio)}
+                      </p>
+                    ) : null}
                   </div>
                   <div className="flex items-center gap-3">
                     <Button type="submit" loading={profileMutation.isPending}>
