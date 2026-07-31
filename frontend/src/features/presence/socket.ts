@@ -13,7 +13,12 @@ export function connectSocket(): Socket | null {
   if (socket?.connected) return socket
   const token = tokenStore.get()
   if (!token) return null
-  socket = io(import.meta.env.VITE_WS_URL ?? '/', { auth: { token } })
+  // Prefer WebSocket: polling fires repeated XHRs that spam Firefox's "Local Network
+  // Access" console log on localhost. nginx proxies the WS upgrade; polling is fallback.
+  socket = io(import.meta.env.VITE_WS_URL ?? '/', {
+    auth: { token },
+    transports: ['websocket', 'polling'],
+  })
   return socket
 }
 
