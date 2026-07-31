@@ -74,10 +74,11 @@ The app will be available at `http://localhost:8443`
 - **Prisma**: [Official Documentation](https://www.prisma.io/docs)
 - **Socket.IO**: [Official Documentation](https://socket.io/docs/v4/)
 - **React**: [Official Documentation](https://react.dev/)
+- **Cloudinary**: [Official Documentation](https://cloudinary.com/documentation)
 
 ### Video Tutorials
 
-- **NestJS**: [Anson](https://youtu.be/uWZ_6pDbLpU)
+- **NestJS**: [Anson](https://youtu.be/uWZ_6pDbLpU), [Marius Espejo](https://www.youtube.com/watch?v=2n3xS89TJMI&list=PLlaDAvA2MhR2jb8zavu6I-w1BA878aHcB)
 - **Prisma**: [Web Dev Simplified](https://www.youtube.com/watch?v=RebA5J-rlwg&t=3018s)
 - **Socket.IO**: [Marius Espejo](https://youtu.be/atbdpX4CViM)
 - **Cloudinary**: [Cloudinary](https://youtu.be/l7TUGdRN-f0)
@@ -244,7 +245,7 @@ Excpected points: 23/28
 
 ## Individual Contributions:
 - trindran :
-  - create prisma schema  
+  - prisma model for user, artwork, comment, like, follow, Tag
   - Implement basis user CRUD with the dto validation
   - Upload avatar, file and artwork with dto validation
   - follow, like, comment friendship system with dto validation
