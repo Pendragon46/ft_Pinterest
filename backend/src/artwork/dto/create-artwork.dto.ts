@@ -19,9 +19,7 @@ export class CreateArtworkDto {
   title!: string;
 
   @Transform(({value}) => value?.trim())
-  
   @IsOptional()
-
   @IsString()
   @MaxLength(2000, {
     message: 'Description must be at most 500 characters long',
