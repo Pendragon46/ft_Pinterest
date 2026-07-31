@@ -16,7 +16,7 @@ model User {
   provider            Provider     @default(LOCAL)
   googleId            String?      @unique
   bio                 String?
-  avatarUrl           String       @default("https://res.cloudinary.com/i1i52wjs/image/upload/default_avatar_loajjw.png")
+  avatarUrl           String       @default("https://res.cloudinary.com/oopriv9v/image/upload/v1785522670/avatars/default_avatar.jpg")
   avatarPublicId      String?
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt

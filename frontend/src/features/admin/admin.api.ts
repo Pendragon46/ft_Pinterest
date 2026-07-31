@@ -50,14 +50,24 @@ export async function fetchAllUsers(): Promise<AdminUserRow[]> {
   return data
 }
 
-/** Change le rôle (403 si auto-rétrogradation ou dernier admin). */
-export async function updateUserRole(id: string, role: AppRole): Promise<void> {
-  await http.patch(`/users/${id}/roles`, { role })
+// 2xx result (not 403) so the browser logs no network error.
+export type AdminActionResult = { ok: true } | { ok: false; reason: string }
+
+/** Change le rôle. Résultat `ok:false` si auto-rétrogradation ou dernier admin. */
+export async function updateUserRole(
+  id: string,
+  role: AppRole,
+): Promise<AdminActionResult> {
+  const { data } = await http.patch<AdminActionResult>(`/users/${id}/roles`, {
+    role,
+  })
+  return data
 }
 
-/** Supprime un compte en tant qu'administrateur. Irréversible. */
-export async function deleteUserAsAdmin(id: string): Promise<void> {
-  await http.delete(`/users/${id}`)
+/** Supprime un compte en tant qu'administrateur. `ok:false` si dernier admin. */
+export async function deleteUserAsAdmin(id: string): Promise<AdminActionResult> {
+  const { data } = await http.delete<AdminActionResult>(`/users/${id}`)
+  return data
 }
 
 export interface CreateUserInput {
@@ -79,16 +89,29 @@ function jwtSub(token: string): string | null {
   }
 }
 
+export type CreateUserResult =
+  | { ok: true }
+  | { ok: false; fieldErrors?: Record<string, string> }
+
 /** Crée un compte via l'inscription, puis applique le rôle si ≠ USER (id lu dans le JWT). */
-export async function createUserAsAdmin(input: CreateUserInput): Promise<void> {
-  const { data } = await http.post<{ access_token: string }>('/auth/register', {
+export async function createUserAsAdmin(
+  input: CreateUserInput,
+): Promise<CreateUserResult> {
+  const { data } = await http.post<{
+    access_token?: string
+    fieldErrors?: Record<string, string>
+  }>('/auth/register', {
     fullname: input.fullname,
     username: input.username,
     email: input.email,
     password: input.password,
   })
-  if (input.role !== 'USER' && data?.access_token) {
+  if (!data.access_token) {
+    return { ok: false, fieldErrors: data.fieldErrors }
+  }
+  if (input.role !== 'USER') {
     const id = jwtSub(data.access_token)
     if (id) await http.patch(`/users/${id}/roles`, { role: input.role })
   }
+  return { ok: true }
 }

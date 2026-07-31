@@ -230,7 +230,8 @@ export class UsersService {
         where: { role: Role.ADMIN },
       });
       if (adminCount <= 1) {
-        throw new ForbiddenException('Cannot delete the last administrator');
+        // 2xx result (not 403) so the browser logs no network error.
+        return { ok: false as const, reason: 'last_admin' };
       }
     }
     if (
@@ -257,9 +258,22 @@ export class UsersService {
         }
       }
     }
+    // Capture the user's conversations before the delete (participant rows
+    // cascade with the user), then drop them so none is left orphaned.
+    const convoIds = (
+      await this.prisma.conversationParticipant.findMany({
+        where: { userId: id },
+        select: { conversationId: true },
+      })
+    ).map((p) => p.conversationId);
     await this.prisma.user.delete({
       where: { id },
     });
+    if (convoIds.length > 0) {
+      await this.prisma.conversation.deleteMany({
+        where: { id: { in: convoIds } },
+      });
+    }
     await this.prisma.tag.deleteMany({
       where: {
         artworks: {
@@ -267,7 +281,7 @@ export class UsersService {
         },
       },
     });
-    return { message: 'User deleted successfully' };
+    return { ok: true as const };
   }
 
   async updateRoles(id: string, role: Role, actorId: string) {
@@ -277,24 +291,23 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // Un administrateur ne peut pas se rétrograder lui-même.
+    // 2xx results (not 403) so the browser logs no network error.
     if (id === actorId && role !== Role.ADMIN) {
-      throw new ForbiddenException('You cannot change your own admin role');
+      return { ok: false as const, reason: 'self_demote' };
     }
-    // On ne rétrograde pas le dernier administrateur.
     if (user.role === Role.ADMIN && role !== Role.ADMIN) {
       const adminCount = await this.prisma.user.count({
         where: { role: Role.ADMIN },
       });
       if (adminCount <= 1) {
-        throw new ForbiddenException('Cannot demote the last administrator');
+        return { ok: false as const, reason: 'last_admin' };
       }
     }
-    return await this.prisma.user.update({
+    await this.prisma.user.update({
       where: { id },
       data: { role },
-      select: {id: true,username: true,fullname: true,email: true,bio: true,avatarUrl: true,role: true,createdAt: true,},
     });
+    return { ok: true as const };
   }
 
   // Export RGPD (type GdprExport côté frontend), sans le mot de passe.

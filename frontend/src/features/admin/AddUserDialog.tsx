@@ -8,7 +8,11 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import type { AppRole } from '@/features/auth/useRole'
-import { isApiError } from '@/lib/http'
+import {
+  validateEmail,
+  validatePassword,
+  validateUsername,
+} from '@/features/auth/auth.validation'
 import { useToast } from '@/lib/toast.store'
 
 import { adminKeys, createUserAsAdmin } from './admin.api'
@@ -31,6 +35,7 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<AppRole>('USER')
+  const [errors, setErrors] = useState<{ username?: string; email?: string }>({})
 
   const reset = () => {
     setFullname('')
@@ -38,6 +43,7 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
     setEmail('')
     setPassword('')
     setRole('USER')
+    setErrors({})
   }
 
   const mutation = useMutation({
@@ -49,22 +55,29 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
         password,
         role,
       }),
-    onSuccess: () => {
+    onSuccess: (result) => {
+      if (!result.ok) {
+        const fe = result.fieldErrors
+        if (fe?.username || fe?.email) {
+          setErrors({ username: fe.username, email: fe.email })
+        } else {
+          toast({ variant: 'error', message: t('errors.network') })
+        }
+        return
+      }
       void qc.invalidateQueries({ queryKey: adminKeys.users() })
       reset()
       onClose()
     },
-    onError: (error) => {
-      // 409 = username/email pris ; 400 = validation (mot de passe faible…).
-      toast({
-        variant: 'error',
-        message: isApiError(error) ? error.message : t('errors.network'),
-      })
+    onError: () => {
+      toast({ variant: 'error', message: t('errors.network') })
     },
   })
 
   const canSubmit =
-    username.trim().length >= 3 && email.includes('@') && password.length >= 8
+    validateUsername(username) === undefined &&
+    validateEmail(email) === undefined &&
+    validatePassword(password) === undefined
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
@@ -98,7 +111,13 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
             value={username}
             onChange={(event) => {
               setUsername(event.target.value)
+              setErrors((prev) => ({ ...prev, username: undefined }))
             }}
+            error={
+              errors.username
+                ? t(errors.username as 'auth.usernameTaken')
+                : undefined
+            }
             placeholder="mayac"
             autoCapitalize="off"
           />
@@ -109,7 +128,9 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
           value={email}
           onChange={(event) => {
             setEmail(event.target.value)
+            setErrors((prev) => ({ ...prev, email: undefined }))
           }}
+          error={errors.email ? t(errors.email as 'auth.emailTaken') : undefined}
           placeholder="maya@example.com"
         />
         <Input

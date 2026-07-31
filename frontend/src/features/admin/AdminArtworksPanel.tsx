@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Search,
   Trash2,
+  Video,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -117,7 +118,32 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
             <li key={a.id} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white">
               <div className="relative aspect-[4/3] bg-neutral-100">
                 {a.mediaUrl ? (
-                  <img src={a.mediaUrl} alt={a.title} loading="lazy" draggable={false} className="size-full object-cover" />
+                  // Videos live at /video/upload/ — an <img> can't render an .mp4, so use <video>.
+                  a.mediaUrl.includes('/video/') ? (
+                    <>
+                      <video
+                        src={a.mediaUrl}
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        draggable={false}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                        }}
+                        className="size-full object-cover"
+                      />
+                      <span
+                        role="img"
+                        aria-label={t('create.videoBadge')}
+                        className="absolute start-2 top-2 flex items-center justify-center rounded-full bg-neutral-900/60 p-1.5 text-white backdrop-blur"
+                      >
+                        <Video aria-hidden="true" className="size-4" />
+                      </span>
+                    </>
+                  ) : (
+                    <img src={a.mediaUrl} alt={a.title} loading="lazy" draggable={false} className="size-full object-cover" />
+                  )
                 ) : (
                   <span aria-hidden="true" className="block size-full bg-neutral-200" />
                 )}

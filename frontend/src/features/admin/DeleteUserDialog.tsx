@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
-import { isApiError } from '@/lib/http'
+import { useAuthStore } from '@/features/auth/auth.store'
 import { useToast } from '@/lib/toast.store'
 
 import { adminKeys, deleteUserAsAdmin, type AdminUserRow } from './admin.api'
@@ -20,22 +21,29 @@ export function DeleteUserDialog({ user, onClose }: Props) {
   const { t } = useTranslation('common')
   const qc = useQueryClient()
   const toast = useToast()
+  const navigate = useNavigate()
+  const authUser = useAuthStore((state) => state.user)
+  const logout = useAuthStore((state) => state.logout)
 
   const mutation = useMutation({
     mutationFn: (id: string) => deleteUserAsAdmin(id),
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: adminKeys.users() })
+    onSuccess: (result, id) => {
+      if (!result.ok) {
+        toast({ variant: 'error', message: t('admin.error.roleRefused') })
+        return
+      }
       onClose()
+      // Deleting your own account ends the session — go home instead of refetching (401).
+      if (authUser && id === authUser.id) {
+        logout()
+        qc.clear()
+        navigate('/', { replace: true })
+        return
+      }
+      void qc.invalidateQueries({ queryKey: adminKeys.users() })
     },
-    onError: (error) => {
-      // 403 = dernier admin (garde-fou serveur).
-      toast({
-        variant: 'error',
-        message:
-          isApiError(error) && error.status === 403
-            ? t('admin.error.roleRefused')
-            : t('errors.network'),
-      })
+    onError: () => {
+      toast({ variant: 'error', message: t('errors.network') })
     },
   })
 

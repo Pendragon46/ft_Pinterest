@@ -3,7 +3,6 @@ import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import type { AppRole } from '@/features/auth/useRole'
-import { isApiError } from '@/lib/http'
 import { useToast } from '@/lib/toast.store'
 
 import { adminKeys, updateUserRole, type AdminUserRow } from './admin.api'
@@ -33,18 +32,17 @@ export function RoleSelect({ user, canEdit }: Props) {
       )
       return { previous }
     },
-    onError: (error, _role, context) => {
+    onSuccess: (result, _role, context) => {
+      if (!result.ok && context?.previous) {
+        qc.setQueryData(adminKeys.users(), context.previous)
+        toast({ variant: 'error', message: t('admin.error.roleRefused') })
+      }
+    },
+    onError: (_error, _role, context) => {
       if (context?.previous) {
         qc.setQueryData(adminKeys.users(), context.previous)
       }
-      // 403 = refus métier (dernier admin / auto-rétrogradation) : message dédié.
-      toast({
-        variant: 'error',
-        message:
-          isApiError(error) && error.status === 403
-            ? t('admin.error.roleRefused')
-            : t('errors.network'),
-      })
+      toast({ variant: 'error', message: t('errors.network') })
     },
     onSettled: () => {
       void qc.invalidateQueries({ queryKey: adminKeys.users() })
