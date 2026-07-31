@@ -108,7 +108,8 @@ export class ChatService {
     }
     const other = convo.participants.find((p) => p.userId !== userId);
     if (other && !(await this.friends.areMutuals(userId, other.userId))) {
-      throw new ForbiddenException('You must follow each other to chat');
+      // 2xx result (not 403) so the browser logs no network error.
+      return { ok: false as const, reason: 'not_mutual' };
     }
     if (!dto.content && !dto.artworkId) {
       throw new BadRequestException('A message needs text or an artwork');

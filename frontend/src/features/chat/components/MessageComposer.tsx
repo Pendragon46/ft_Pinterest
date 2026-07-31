@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { type InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowUp } from 'lucide-react'
@@ -8,9 +8,15 @@ import { useAuthStore } from '@/features/auth/auth.store'
 import { getSocket } from '@/features/presence/socket'
 import { useToast } from '@/lib/toast.store'
 
-import { chatKeys, sendMessage } from '../chat.api'
+import { chatKeys, sendMessage, type SendMessageResult } from '../chat.api'
 import { useChatStore } from '../chat.store'
 import type { ChatMessage, MessagesPage } from '../chat.types'
+
+// Mirrors the backend @MaxLength(2000): a too-long message never reaches a 400.
+const MESSAGE_MAX = 2000
+// Mirrors the server throttle (20 per 10s): blocks a spam burst before it 429s.
+const RATE_WINDOW_MS = 10_000
+const RATE_MAX = 20
 
 interface Context {
   prev?: InfiniteData<MessagesPage>
@@ -30,6 +36,9 @@ export function MessageComposer({
   const myId = useAuthStore((s) => s.user?.id ?? '')
   const draft = useChatStore((s) => s.drafts[conversationId] ?? '')
   const setDraft = useChatStore((s) => s.setDraft)
+  const [notMutual, setNotMutual] = useState(false)
+  const sendTimesRef = useRef<number[]>([])
+  const lastSlowToastRef = useRef(0)
 
   const isMountedRef = useRef(true)
   useEffect(() => {
@@ -50,7 +59,7 @@ export function MessageComposer({
     getSocket()?.emit('chat:typing', { conversationId, toUserId: otherUserId })
   }
 
-  const mutation = useMutation<ChatMessage, Error, string, Context>({
+  const mutation = useMutation<SendMessageResult, Error, string, Context>({
     mutationFn: (content) => sendMessage({ conversationId, content }),
     onMutate: (content) => {
       const key = chatKeys.messages(conversationId)
@@ -93,7 +102,16 @@ export function MessageComposer({
         },
       })
     },
-    onSuccess: () => {
+    onSuccess: (result, content, ctx) => {
+      if ('ok' in result && result.ok === false) {
+        if (ctx?.prev) {
+          qc.setQueryData(chatKeys.messages(conversationId), ctx.prev)
+        }
+        setDraft(conversationId, content)
+        setNotMutual(true)
+        toast({ variant: 'error', message: t('chat.notMutual') })
+        return
+      }
       void qc.invalidateQueries({ queryKey: chatKeys.messages(conversationId) })
       void qc.invalidateQueries({ queryKey: chatKeys.conversations() })
     },
@@ -101,7 +119,19 @@ export function MessageComposer({
 
   const submit = () => {
     const text = draft.trim()
-    if (!text || mutation.isPending) return
+    if (!text || mutation.isPending || notMutual) return
+    const now = Date.now()
+    sendTimesRef.current = sendTimesRef.current.filter(
+      (ts) => now - ts < RATE_WINDOW_MS,
+    )
+    if (sendTimesRef.current.length >= RATE_MAX) {
+      if (now - lastSlowToastRef.current > 3000) {
+        lastSlowToastRef.current = now
+        toast({ variant: 'error', message: t('chat.slowDown') })
+      }
+      return
+    }
+    sendTimesRef.current.push(now)
     mutation.mutate(text)
   }
   const onSubmit = (e: FormEvent) => {
@@ -115,6 +145,14 @@ export function MessageComposer({
     }
   }
 
+  if (notMutual) {
+    return (
+      <p className="border-t border-neutral-100 p-4 text-center text-sm text-neutral-500">
+        {t('chat.notMutual')}
+      </p>
+    )
+  }
+
   return (
     <form
       onSubmit={onSubmit}
@@ -126,6 +164,7 @@ export function MessageComposer({
       <textarea
         id="chat-composer"
         rows={1}
+        maxLength={MESSAGE_MAX}
         value={draft}
         onChange={(e) => {
           setDraft(conversationId, e.target.value)

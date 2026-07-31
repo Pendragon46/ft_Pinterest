@@ -37,12 +37,15 @@ export async function fetchMessages(
   return data
 }
 
+// 2xx result (not 403) so the browser logs no network error.
+export type SendMessageResult = ChatMessage | { ok: false; reason: string }
+
 export async function sendMessage(input: {
   conversationId: string
   content: string
-}): Promise<ChatMessage> {
+}): Promise<SendMessageResult> {
   const { conversationId, content } = input
-  const { data } = await http.post<ChatMessage>(
+  const { data } = await http.post<SendMessageResult>(
     `/conversations/${conversationId}/messages`,
     { content },
   )
