@@ -19,7 +19,6 @@ import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
 import { useIntroStore } from '@/features/auth/intro.store'
 import { tokenStore } from '@/features/auth/token'
-import { isApiError } from '@/lib/http'
 import { formatShortName } from '@/lib/name'
 
 interface RegisterErrors {
@@ -78,8 +77,16 @@ export function RegisterPage() {
     const startedAt = Date.now()
     try {
       // register signs a token, so we can log in without a second round-trip.
-      const token = await registerRequest({ username, email, password })
-      tokenStore.set(token)
+      const result = await registerRequest({ username, email, password })
+      if (!result.ok) {
+        if (result.fieldErrors) {
+          setErrors((prev) => ({ ...prev, ...mapFieldErrors(result.fieldErrors) }))
+        } else {
+          setFormError(t('errors.network'))
+        }
+        return
+      }
+      tokenStore.set(result.token)
       const user = await fetchMe()
       storeLogin(user)
       const elapsed = Date.now() - startedAt
@@ -91,14 +98,9 @@ export function RegisterPage() {
       useIntroStore.getState().playWelcome(formatShortName(user))
       if (inModal) navigate(-1)
       else navigate('/')
-    } catch (error) {
+    } catch {
       tokenStore.clear()
-      // 409 → email/username taken, mapped onto the offending field; else global.
-      if (isApiError(error) && error.status === 409 && error.fieldErrors) {
-        setErrors((prev) => ({ ...prev, ...mapFieldErrors(error.fieldErrors) }))
-      } else {
-        setFormError(t('errors.network'))
-      }
+      setFormError(t('errors.network'))
     } finally {
       setSubmitting(false)
     }

@@ -15,7 +15,6 @@ import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import { AuthCard } from '@/features/auth/components/AuthCard'
 import { useIntroStore } from '@/features/auth/intro.store'
 import { tokenStore } from '@/features/auth/token'
-import { isApiError } from '@/lib/http'
 import { formatShortName } from '@/lib/name'
 
 interface LoginErrors {
@@ -60,6 +59,10 @@ export function LoginPage() {
     const startedAt = Date.now()
     try {
       const token = await loginRequest(email, password)
+      if (!token) {
+        setFormError(t('auth.invalidCredentials'))
+        return
+      }
       tokenStore.set(token)
       const user = await fetchMe()
       storeLogin(user)
@@ -72,14 +75,9 @@ export function LoginPage() {
       useIntroStore.getState().playWelcome(formatShortName(user))
       if (inModal) navigate(-1)
       else navigate('/')
-    } catch (error) {
+    } catch {
       tokenStore.clear()
-      // 401 = wrong email/password; anything else is a transport/server fault.
-      setFormError(
-        isApiError(error) && error.status === 401
-          ? t('auth.invalidCredentials')
-          : t('errors.network'),
-      )
+      setFormError(t('errors.network'))
     } finally {
       setSubmitting(false)
     }

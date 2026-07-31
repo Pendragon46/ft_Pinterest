@@ -1,8 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma, User, Provider } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -52,15 +48,10 @@ export class AuthService {
         const field = Array.isArray(target)
           ? String(target[0])
           : String(target);
+        // 2xx result (not 409) so the browser logs no network error.
         if (field.includes('username'))
-          throw new ConflictException({
-            message: 'auth.usernameTaken',
-            fieldErrors: { username: 'auth.usernameTaken' },
-          });
-        throw new ConflictException({
-          message: 'auth.emailTaken',
-          fieldErrors: { email: 'auth.emailTaken' },
-        });
+          return { fieldErrors: { username: 'auth.usernameTaken' } };
+        return { fieldErrors: { email: 'auth.emailTaken' } };
       }
       throw error;
     }
@@ -71,11 +62,15 @@ export class AuthService {
       where: { email: dto.email },
     });
 
-    if (!user || !user.password)
-      throw new UnauthorizedException('Invalid credentials');
+    // 2xx result (not 401) so the browser logs no network error.
+    if (!user || !user.password) {
+      return { error: 'invalid_credentials' as const };
+    }
 
     const passwordMatch = await bcrypt.compare(dto.password, user.password);
-    if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
+    if (!passwordMatch) {
+      return { error: 'invalid_credentials' as const };
+    }
 
     return this.signToken(user);
   }
