@@ -37,7 +37,7 @@ const HeartBurst = lazy(() =>
 
 // Fixed outer height so the modal frame doesn't change with comment count.
 const SHELL =
-  'grid h-[85svh] max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:h-[40rem] md:grid-cols-[1.15fr_1fr] md:grid-rows-1'
+  'grid h-[85svh] max-h-[85svh] grid-rows-[auto_1fr] overflow-hidden rounded-xl md:h-[40rem] md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] md:grid-rows-1'
 
 interface ArtworkDetailProps {
   artwork: Detail
@@ -70,8 +70,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     void queryClient.invalidateQueries({ queryKey: userKeys.profile(authorId) })
     void queryClient.invalidateQueries({ queryKey: userKeys.liked(authorId) })
     void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
-    if (onClose) onClose()
-    else navigate(`/profile/${authorId}`)
+    // Go to the profile, not back in history: a prior /artwork entry would refetch the deleted work.
+    navigate(`/profile/${authorId}`, { replace: true })
+    toast({ message: t('artwork.deleted'), duration: 10000 })
   }
 
   // Optimistic override; null means "defer to the backend's persisted state".
@@ -354,7 +355,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         ) : null}
       </div>
 
-      <div className="flex min-h-0 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-col">
         <header className="flex items-center gap-3 border-b border-neutral-100 p-4">
           {/* Avatar + name open the author's profile. */}
           <Link
@@ -423,8 +424,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           ) : null}
         </header>
 
-        <div className="min-h-0 flex-1 overflow-y-auto p-4">
-          <h1 id="artwork-title" className="font-serif text-2xl text-neutral-900">
+        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto p-4">
+          <h1 id="artwork-title" className="min-w-0 break-words font-serif text-2xl text-neutral-900">
             {artwork.title}
           </h1>
           {artwork.category ? (
@@ -434,14 +435,16 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           ) : null}
 
           {artwork.description ? (
-            <p className="mt-3 text-neutral-700">{artwork.description}</p>
+            <p className="mt-3 break-words text-neutral-700">
+              {artwork.description}
+            </p>
           ) : null}
 
           <ul className="mt-3 flex flex-wrap gap-2">
             {artwork.tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-600"
+                className="max-w-full truncate rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-600"
               >
                 #{tag}
               </li>
@@ -578,6 +581,13 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         </div>
 
         <div className="border-t border-neutral-100 p-3">
+          {/* Explique le bouton grisé plutôt que de laisser l'utilisateur deviner :
+              visible seulement quand il a commencé à taper mais reste sous 3. */}
+          {draft.trim().length > 0 && draft.trim().length < 3 ? (
+            <p className="mt-1.5 px-1 text-xs text-neutral-500">
+              {t('artwork.commentMinLength')}
+            </p>
+          ) : null}
           <div className="flex items-center gap-2">
             <input
               ref={composerRef}
@@ -605,13 +615,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               {t('artwork.post')}
             </Button>
           </div>
-          {/* Explique le bouton grisé plutôt que de laisser l'utilisateur deviner :
-              visible seulement quand il a commencé à taper mais reste sous 3. */}
-          {draft.trim().length > 0 && draft.trim().length < 3 ? (
-            <p className="mt-1.5 px-1 text-xs text-neutral-500">
-              {t('artwork.commentMinLength')}
-            </p>
-          ) : null}
           {/* Success is announced politely here; failure is announced by the toast
               (role="alert"), so it isn't duplicated. */}
           <p role="status" aria-live="polite" className="sr-only">

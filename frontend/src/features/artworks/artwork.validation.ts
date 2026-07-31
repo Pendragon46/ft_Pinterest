@@ -31,6 +31,7 @@ export const TITLE_MAX = 100
 export const DESCRIPTION_MAX = 2000 // validator is 2000 (server message says 500 — cosmetic bug)
 export const TAGS_MIN = 1
 export const TAGS_MAX = 5
+export const TAG_MAX_LENGTH = 30 // per-tag chars; mirrors backend @MaxLength(30, { each: true })
 
 /** Image vs video, from the file's MIME type (backend derives the same from Cloudinary). */
 export function mediaTypeOf(file: File): MediaType {

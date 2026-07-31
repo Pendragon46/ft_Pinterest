@@ -15,7 +15,9 @@ import {
   updateArtwork,
 } from '@/features/artworks/artwork.api'
 import {
+  DESCRIPTION_MAX,
   normalizeTags,
+  TAG_MAX_LENGTH,
   TAGS_MAX,
   validateDescription,
   validateTags,
@@ -101,6 +103,11 @@ export function EditArtworkPage() {
     validateDescription(description) === undefined &&
     validateTags(tags) === undefined
 
+  // Save is disabled while the title is invalid, so handleSubmit never fires —
+  // surface the length rule live once the field has content.
+  const titleError =
+    errors.title ?? (title.trim().length > 0 ? validateTitle(title) : undefined)
+
   const mutation = useMutation({
     mutationFn: () =>
       updateArtwork(id, {
@@ -119,7 +126,11 @@ export function EditArtworkPage() {
         })
       }
       toast({ message: t('edit.saved') })
-      navigate(`/artwork/${id}`)
+      // Reopen as a modal over the profile (canonical pattern); replace drops the edit page.
+      navigate(`/artwork/${id}`, {
+        replace: true,
+        state: { background: { pathname: '/profile' } },
+      })
     },
     onError: () => {
       toast({
@@ -143,7 +154,7 @@ export function EditArtworkPage() {
   }
 
   if (!authUser) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/" replace />
   }
   if (detailQuery.isPending) {
     return (
@@ -216,7 +227,7 @@ export function EditArtworkPage() {
                 setTitle(event.target.value)
                 setErrors((prev) => ({ ...prev, title: undefined }))
               }}
-              error={errors.title ? t(errors.title) : undefined}
+              error={titleError ? t(titleError) : undefined}
             />
 
             <div className="flex flex-col gap-1.5">
@@ -234,9 +245,12 @@ export function EditArtworkPage() {
                   setErrors((prev) => ({ ...prev, description: undefined }))
                 }}
                 rows={4}
+                maxLength={DESCRIPTION_MAX}
                 aria-invalid={errors.description ? true : undefined}
                 aria-describedby={
-                  errors.description ? 'edit-description-error' : undefined
+                  errors.description
+                    ? 'edit-description-error edit-description-count'
+                    : 'edit-description-count'
                 }
                 className={`w-full rounded-xl border bg-white px-4 py-3 text-base text-neutral-900 transition-colors placeholder:text-neutral-400 focus:outline-none focus:ring-2 motion-reduce:transition-none ${
                   errors.description
@@ -244,15 +258,29 @@ export function EditArtworkPage() {
                     : 'border-neutral-300 hover:border-neutral-400 focus:border-neutral-500 focus:ring-neutral-200'
                 }`}
               />
-              {errors.description ? (
-                <p
-                  id="edit-description-error"
-                  role="alert"
-                  className="text-sm text-red-600"
+              <div className="flex items-start justify-between gap-3">
+                {errors.description ? (
+                  <p
+                    id="edit-description-error"
+                    role="alert"
+                    className="text-sm text-red-600"
+                  >
+                    {t(errors.description)}
+                  </p>
+                ) : (
+                  <span />
+                )}
+                <span
+                  id="edit-description-count"
+                  className={`shrink-0 text-xs tabular-nums ${
+                    description.length >= DESCRIPTION_MAX
+                      ? 'text-red-600'
+                      : 'text-neutral-400'
+                  }`}
                 >
-                  {t(errors.description)}
-                </p>
-              ) : null}
+                  {description.length} / {DESCRIPTION_MAX}
+                </span>
+              </div>
             </div>
 
             {/* Tags chip input */}
@@ -272,10 +300,10 @@ export function EditArtworkPage() {
                       removeTag(tag)
                     }}
                     aria-label={t('create.removeTag', { tag })}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-sm text-neutral-700 transition-colors hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+                    className="inline-flex max-w-full min-w-0 cursor-pointer items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-sm text-neutral-700 transition-colors hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
                   >
-                    #{tag}
-                    <X aria-hidden="true" className="size-3.5" />
+                    <span className="min-w-0 truncate">#{tag}</span>
+                    <X aria-hidden="true" className="size-3.5 shrink-0" />
                   </button>
                 ))}
                 <input
@@ -285,6 +313,7 @@ export function EditArtworkPage() {
                     setTagInput(event.target.value)
                   }}
                   onKeyDown={onTagKeyDown}
+                  maxLength={TAG_MAX_LENGTH}
                   aria-describedby={errors.tags ? 'edit-tags-error' : undefined}
                   placeholder={tags.length === 0 ? t('create.tagPlaceholder') : ''}
                   className="min-w-[8rem] flex-1 bg-transparent py-1 text-base text-neutral-900 outline-none placeholder:text-neutral-400"

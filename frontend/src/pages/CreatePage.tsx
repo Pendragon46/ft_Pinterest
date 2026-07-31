@@ -12,8 +12,10 @@ import { createArtwork } from '@/features/artworks/artwork.api'
 import type { MediaType } from '@/features/artworks/artwork.types'
 import {
   ACCEPT_ATTR,
+  DESCRIPTION_MAX,
   mediaTypeOf,
   normalizeTags,
+  TAG_MAX_LENGTH,
   TAGS_MAX,
   validateDescription,
   validateFile,
@@ -140,6 +142,12 @@ export function CreatePage() {
     validateDescription(description) === undefined &&
     validateTags(tags) === undefined
 
+  // Publish is disabled while the title is invalid, so handleSubmit never fires —
+  // surface the length rule live once the field has content, or the user gets no
+  // feedback on why the button stays disabled.
+  const titleError =
+    errors.title ?? (title.trim().length > 0 ? validateTitle(title) : undefined)
+
   const mutation = useMutation({
     mutationFn: () =>
       createArtwork(
@@ -183,9 +191,8 @@ export function CreatePage() {
     mutation.mutate()
   }
 
-	// Signed-out direct visit → sign in first, then return here (§2).
 	if (!authUser) {
-	  return <Navigate to="/login" replace />
+	  return <Navigate to="/" replace />
 	}
 
   return (
@@ -305,7 +312,7 @@ export function CreatePage() {
                 setTitle(event.target.value)
                 setErrors((prev) => ({ ...prev, title: undefined }))
               }}
-              error={errors.title ? t(errors.title) : undefined}
+              error={titleError ? t(titleError) : undefined}
             />
 
             <div className="flex flex-col gap-1.5">
@@ -323,9 +330,12 @@ export function CreatePage() {
                   setErrors((prev) => ({ ...prev, description: undefined }))
                 }}
                 rows={4}
+                maxLength={DESCRIPTION_MAX}
                 aria-invalid={errors.description ? true : undefined}
                 aria-describedby={
-                  errors.description ? 'create-description-error' : undefined
+                  errors.description
+                    ? 'create-description-error create-description-count'
+                    : 'create-description-count'
                 }
                 className={`w-full rounded-xl border bg-white px-4 py-3 text-base text-neutral-900 transition-colors placeholder:text-neutral-400 focus:outline-none focus:ring-2 motion-reduce:transition-none ${
                   errors.description
@@ -333,15 +343,29 @@ export function CreatePage() {
                     : 'border-neutral-300 hover:border-neutral-400 focus:border-neutral-500 focus:ring-neutral-200'
                 }`}
               />
-              {errors.description ? (
-                <p
-                  id="create-description-error"
-                  role="alert"
-                  className="text-sm text-red-600"
+              <div className="flex items-start justify-between gap-3">
+                {errors.description ? (
+                  <p
+                    id="create-description-error"
+                    role="alert"
+                    className="text-sm text-red-600"
+                  >
+                    {t(errors.description)}
+                  </p>
+                ) : (
+                  <span />
+                )}
+                <span
+                  id="create-description-count"
+                  className={`shrink-0 text-xs tabular-nums ${
+                    description.length >= DESCRIPTION_MAX
+                      ? 'text-red-600'
+                      : 'text-neutral-400'
+                  }`}
                 >
-                  {t(errors.description)}
-                </p>
-              ) : null}
+                  {description.length} / {DESCRIPTION_MAX}
+                </span>
+              </div>
             </div>
 
             {/* Tags chip input */}
@@ -361,10 +385,10 @@ export function CreatePage() {
                       removeTag(tag)
                     }}
                     aria-label={t('create.removeTag', { tag })}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-sm text-neutral-700 transition-colors hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
+                    className="inline-flex max-w-full min-w-0 cursor-pointer items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-sm text-neutral-700 transition-colors hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 motion-reduce:transition-none"
                   >
-                    #{tag}
-                    <X aria-hidden="true" className="size-3.5" />
+                    <span className="min-w-0 truncate">#{tag}</span>
+                    <X aria-hidden="true" className="size-3.5 shrink-0" />
                   </button>
                 ))}
                 <input
@@ -374,6 +398,7 @@ export function CreatePage() {
                     setTagInput(event.target.value)
                   }}
                   onKeyDown={onTagKeyDown}
+                  maxLength={TAG_MAX_LENGTH}
                   aria-describedby={errors.tags ? 'create-tags-error' : undefined}
                   placeholder={tags.length === 0 ? t('create.tagPlaceholder') : ''}
                   className="min-w-[8rem] flex-1 bg-transparent py-1 text-base text-neutral-900 outline-none placeholder:text-neutral-400"
