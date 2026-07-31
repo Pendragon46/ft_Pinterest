@@ -81,16 +81,6 @@ The app will be available at `http://localhost:8443`
 - **Prisma**: [Web Dev Simplified](https://www.youtube.com/watch?v=RebA5J-rlwg&t=3018s)
 - **Socket.IO**: [Marius Espejo](https://youtu.be/atbdpX4CViM)
 - **Cloudinary**: [Cloudinary](https://youtu.be/l7TUGdRN-f0)
-## Team Information:
-## Project Management:
-## Technical Stack:
- - Backend :
-   - NestJS
-   - Prisma
-   - PostgreSQL
-- Frontend :
-  - React
-  - TypeScript
 
 ### AI usage
 AI tools (Claude by Anthropic) were used during this project for the following tasks:
@@ -110,10 +100,10 @@ team before being integrated into the project. No code was blindly copy-pasted.
 
 | Login | Role(s) | Responsibilities |
 |-------|---------|-----------------|
-| \<login1\> | Project Manager / Backend Developer | [describe: auth, API, database, etc.] |
-| \<login2\> | [role] | [responsibilities] |
-| \<login3\> | [role] | [responsibilities] |
-| \<login4\> | [role] | [responsibilities] |
+| \<trindran\> | Project Manager / Backend Developer | [describe: Auth, API, database, etc.] |
+| \<cramaros\> | [role] | [responsibilities] |
+| \<nrakotom\> | [role] | [responsibilities] |
+| \<srabeman\> | [role] | [responsibilities] |
 
 
 
@@ -261,11 +251,10 @@ Excpected points: 23/28
   - Role based access control for USER/ADMIN with dto validation
   - Online status with socket.io
   - Search system with filters, sorting and pagination
-
-- nrakotom :
 - cramaros :
   - Set up the complete development environment (frontend, backend, Docker, and service dependencies).
   - Implemented the health monitoring system, including health checks, the status page, automated PostgreSQL backups, and disaster recovery procedures.
+- nrakotom :
 - srabeman :
 
 
