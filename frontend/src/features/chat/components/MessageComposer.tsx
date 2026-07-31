@@ -70,6 +70,8 @@ export function MessageComposer({
         conversationId,
         senderId: myId,
         content,
+        kind: 'USER',
+        systemKey: null,
         createdAt: new Date().toISOString(),
         artwork: null,
       }

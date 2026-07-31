@@ -22,7 +22,11 @@ export function MessageBubble({ message, mine, senderName }: Props) {
   if (message.kind === 'SYSTEM') {
     return (
       <li className="py-2 text-center text-xs text-neutral-500">
-        {t(`chat.system.${message.systemKey ?? 'unknown'}`)}
+        {t(
+          `chat.system.${message.systemKey ?? 'unknown'}` as
+            | 'chat.system.mutualFollow'
+            | 'chat.system.unknown',
+        )}
       </li>
     )
   }

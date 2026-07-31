@@ -25,7 +25,11 @@ export function ConversationRow({ conversation: c, active, onClick }: Props) {
   if (c.lastMessage) {
     if (c.lastMessage.kind === 'SYSTEM') {
       // No "Vous :" prefix — a system message belongs to neither participant.
-      preview = t(`chat.system.${c.lastMessage.systemKey ?? 'unknown'}`)
+      preview = t(
+        `chat.system.${c.lastMessage.systemKey ?? 'unknown'}` as
+          | 'chat.system.mutualFollow'
+          | 'chat.system.unknown',
+      )
     } else {
       const mine = c.lastMessage.senderId === myId
       if (c.lastMessage.hasArtwork) {
