@@ -109,11 +109,11 @@ export function ProfilePage() {
   const items = activeQuery.data ?? []
   const profile = profileQuery.data
 
-  // Signed-out visit to your OWN profile → sign in first, then return here (§3.2).
-  // A specific /profile/:userId stays publicly viewable.
-  if (!userId) {
-    return <Navigate to="/login" state={{ background: location }} replace />
-  }
+	// Signed-out visit to your OWN profile → sign in first, then return here (§3.2).
+	// A specific /profile/:userId stays publicly viewable.
+	if (!userId) {
+	  return <Navigate to="/login" replace />
+	}
 
   return (
     <div className="min-h-svh bg-white">
