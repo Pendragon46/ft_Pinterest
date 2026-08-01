@@ -15,7 +15,7 @@
  * Usage : node seed-network.mjs [--limit N] [--dry-run] [--skip-uploads]
  */
 
-import { readFile, writeFile, access } from 'node:fs/promises'
+import { readFile, writeFile, access, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { randomBytes } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
@@ -61,6 +61,7 @@ const AUTHORS = [
   { u: 'sarah_ben_ali',    full: 'Sarah Ben Ali',      disc: 'branding',     bio: 'Brand designer. Identities with a backbone.',                               existing: true },
   // — Nouveaux : scène malgache (Antananarivo) —
   { u: 'tsiory_rakoto',    full: 'Tsiory Rakotoarisoa', disc: 'photography', bio: "Photographe basée à Antananarivo. Portraits de rue et lumière des hautes terres.", admin: true },
+  { u: 'nicky_rindranirina', full: 'Nicky Rindranirina', disc: 'photography', bio: 'Photographe à Antananarivo. Portraits, rue et instants du quotidien.', admin: true, folder: 'seed/trindran' },
   { u: 'naina_rando',      full: 'Naina Randrianarisoa', disc: 'portrait',   bio: 'Portraitiste. Je cherche le regard juste, celui qui reste.' },
   { u: 'hery_razaf',       full: 'Hery Razafindrakoto', disc: 'motion',      bio: 'Motion & 3D designer. Loops, textures, mouvement.' },
   { u: 'miora_raso',       full: 'Miora Rasoanaivo',    disc: 'illustration', bio: "Illustratrice à Tana. Aquarelle numérique et récits doux." },
@@ -79,6 +80,7 @@ const AUTHORS = [
 // Mutuels → les deux se suivent (deviennent « amis », messagerie ouverte).
 const MUTUALS = [
   ['tsiory_rakoto', 'naina_rando'], ['tsiory_rakoto', 'hery_razaf'],
+  ['nicky_rindranirina', 'tsiory_rakoto'], ['nicky_rindranirina', 'naina_rando'],
   ['naina_rando', 'miora_raso'], ['hery_razaf', 'njaka_andrianina'],
   ['fanja_rahari', 'toky_ravaka'], ['onja_ratsimba', 'fanja_rahari'],
   ['miora_raso', 'toky_ravaka'], ['camille_fontaine', 'julien_mercier'],
@@ -204,6 +206,51 @@ async function promoteAdmins(authors) {
   }
 }
 
+// "Camera_girl.jpg" → "Camera Girl" ; "eyes_don't_lie.jpg" → "Eyes Don't Lie".
+function titleFromFilename(f) {
+  const base = f
+    .replace(/\.[^.]+$/, '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return base.replace(/(^|\s)([a-z])/g, (_m, s, ch) => s + ch.toUpperCase())
+}
+
+// Publishes every image of an author's personal folder (seed/trindran → Nicky).
+// Idempotent by title; skips files over the server's 10 MB cap.
+async function publishFolder(author) {
+  let files = []
+  try {
+    files = (await readdir(author.folder)).filter((f) =>
+      /\.(jpe?g|png|webp|gif)$/i.test(f),
+    )
+  } catch {
+    console.log(c.red(`  dossier introuvable : ${author.folder}`))
+    return
+  }
+  const seen = await existingTitles(author.token, author.id)
+  let ok = 0, skip = 0, fail = 0
+  for (const f of files.sort()) {
+    const title = titleFromFilename(f)
+    if (seen.has(title)) { skip += 1; continue }
+    let buffer
+    try { buffer = await readFile(join(author.folder, f)) } catch { fail += 1; continue }
+    if (buffer.length > 10 * 1024 * 1024) {
+      console.log(c.yellow(`  ⚠ ${f} > 10 Mo, ignoré`)); skip += 1; continue
+    }
+    const meta = {
+      title,
+      description: `Photographie de ${author.full}, Antananarivo.`,
+      tags: ['photography', 'portrait', 'antananarivo'],
+      file: join(author.folder, f),
+    }
+    try { await publishArtwork(author.token, meta, buffer); seen.add(title); ok += 1 }
+    catch (e) { fail += 1; console.log(c.dim(`  ✗ ${f} → ${e.message}`)) }
+    await sleep(180)
+  }
+  console.log(`  ${c.green(ok + ' publiées')} pour ${author.u}  ${c.dim(skip + ' ignorées')}  ${fail ? c.red(fail + ' échecs') : ''}`)
+}
+
 async function main() {
   console.log(c.bold('\nSeed réseau Atlaas\n'))
 
@@ -272,7 +319,9 @@ async function main() {
   // 2) Répartition des œuvres par discipline (round-robin entre auteurs de la discipline)
   console.log(c.bold('\n2. Publication'))
   const authorsByDisc = {}
-  for (const a of live) (authorsByDisc[a.disc] ??= []).push(a)
+  // Folder-authors (e.g. Nicky) publish only their own folder in step 2b, so keep
+  // them out of the discipline round-robin.
+  for (const a of live) if (!a.folder) (authorsByDisc[a.disc] ??= []).push(a)
   const cursor = {}
   const assign = (cat) => {
     const pool = authorsByDisc[cat] && authorsByDisc[cat].length ? authorsByDisc[cat] : live
@@ -303,6 +352,12 @@ async function main() {
   }
   console.log(`  ${c.green(ok + ' publiées')}  ${c.dim(skip + ' ignorées')}  ${fail ? c.red(fail + ' échecs') : '0 échec'}`)
   if (failures.length) failures.slice(0, 8).forEach((f) => console.log(c.dim('    ' + f)))
+
+  // 2b) Dossiers personnels : chaque auteur `folder` publie tout son dossier.
+  for (const a of live.filter((x) => x.folder)) {
+    console.log(c.bold(`\n2b. Dossier de ${a.u} (${a.folder})`))
+    await publishFolder(a)
+  }
 
   // 3) Follows
   console.log(c.bold('\n3. Réseau (follows)'))
