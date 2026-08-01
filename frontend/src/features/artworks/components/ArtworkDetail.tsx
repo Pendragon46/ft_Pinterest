@@ -61,8 +61,12 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const navigate = useNavigate()
   const isOwner = currentUser?.id === artwork.author.id
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleted, setDeleted] = useState(false)
 
   const onDeleted = () => {
+    // Stop the comments query from refetching an artwork that no longer exists
+    // (removeQueries on a mounted observer would otherwise GET /…/comments → 404).
+    setDeleted(true)
     const authorId = artwork.author.id
     queryClient.removeQueries({ queryKey: artworkKeys.detail(artwork.id) })
     queryClient.removeQueries({ queryKey: artworkKeys.comments(artwork.id) })
@@ -93,6 +97,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const commentsQuery = useQuery({
     queryKey: artworkKeys.comments(artwork.id),
     queryFn: () => fetchArtworkComments(artwork.id),
+    enabled: !deleted,
   })
   const comments = commentsQuery.data ?? []
 
