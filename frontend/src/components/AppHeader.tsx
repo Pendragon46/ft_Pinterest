@@ -17,38 +17,45 @@ export function AppHeader() {
   const requireAuth = useRequireAuth()
 
   return (
-    <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/90 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
-        <div className="flex items-center gap-2">
-          <Link
-            to="/"
-            aria-label={t('app.name')}
-            className="inline-flex h-10 cursor-pointer items-center rounded-full bg-neutral-100 px-4 text-neutral-900 transition-colors hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
-          >
-            <Logo withWordmark />
-          </Link>
-          <span className="inline-flex h-10 items-center rounded-full bg-neutral-100 px-3">
-            <LanguageSwitcher />
-          </span>
+    <>
+      <header className="sticky top-0 z-20 border-b border-neutral-200 bg-white/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+          <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              aria-label={t('app.name')}
+              className="inline-flex h-10 cursor-pointer items-center rounded-full bg-neutral-100 px-4 text-neutral-900 transition-colors hover:bg-neutral-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            >
+              <Logo withWordmark />
+            </Link>
+            <span className="inline-flex h-10 items-center rounded-full bg-neutral-100 px-3">
+              <LanguageSwitcher />
+            </span>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Always visible; a click while signed out opens the login modal. */}
+            <button
+              type="button"
+              onClick={() => {
+                requireAuth(() => {
+                  navigate('/create')
+                })
+              }}
+              className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            >
+              <Plus aria-hidden="true" className="size-4" />
+              {t('create.cta')}
+            </button>
+            <AuthButton />
+          </div>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          {/* Always visible; a click while signed out opens the login modal. */}
-          <button
-            type="button"
-            onClick={() => {
-              requireAuth(() => {
-                navigate('/create')
-              })
-            }}
-            className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-full bg-neutral-900 px-4 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
-          >
-            <Plus aria-hidden="true" className="size-4" />
-            {t('create.cta')}
-          </button>
-          <MessagesButton />
-          <AuthButton />
-        </div>
+      </header>
+      {/* Chat floats bottom-right on every page, matching the canvas home. It
+          sits outside the backdrop-blur header so `position: fixed` stays
+          viewport-anchored. */}
+      <div className="fixed bottom-4 end-4 z-40">
+        <MessagesButton placement="bottom" />
       </div>
-    </header>
+    </>
   )
 }
