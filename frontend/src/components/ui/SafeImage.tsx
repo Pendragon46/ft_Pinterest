@@ -21,6 +21,10 @@ export function SafeImage({ src, alt, className, ...rest }: SafeImageProps) {
       src={src}
       alt={alt}
       loading="lazy"
+      // CORS request (Cloudinary and Google avatars both send ACAO: *): the
+      // response is no longer "opaque", so Firefox's Opaque Response Blocking
+      // stops aborting cross-origin avatars, and canvas draws stay untainted.
+      crossOrigin="anonymous"
       onError={() => setFailed(true)}
       className={className}
       {...rest}
