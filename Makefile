@@ -12,6 +12,12 @@ build:
 
 start: certs build
 	docker compose up -d --build
+	@echo "Attente de l'API (backend + nginx + db)…"
+	@for i in $$(seq 1 60); do \
+		curl -fsk -o /dev/null https://localhost:8443/api/search/artworks && break; \
+		sleep 2; \
+	done
+	@$(MAKE) --no-print-directory seed || echo "⚠ seed échoué — relancer 'make seed' (Node 18+ requis sur l'hôte)"
 
 stop:
 	docker compose down
