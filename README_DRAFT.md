@@ -133,7 +133,7 @@ team before being integrated into the project. No code was blindly copy-pasted.
 | Login | Name | Role(s) | Responsibilities |
 |---|---|---|---|
 | `cramaros` | Ckeven Ramaroson | Architect / Developer | Infrastructure, Deployment, Security, Monitoring. |
-| `trindran` | Toky Nicky Rindranirina | Technical Lead / Developer | Backend architecture, API, Database, Security, Social features, User interactions. |
+| `trindran` | Toky Nicky Rindranirina | Technical Lead / Developer | Backend architecture, API, Database, Social features, User interactions, media upload. |
 | `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala | Project Manager / Scrum Master / Developer | Authentication, Google Authentication, Guest Role. |
 | `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | Product Owner / Developer / UX/UI Designer | User interface, Visual experience, Design system, Responsive design, frontend/backend integration, Chat. |
 ---
@@ -193,7 +193,7 @@ team before being integrated into the project. No code was blindly copy-pasted.
 # Database Schema
 
 PostgreSQL, managed by **Prisma**. Every primary key is a `String` UUID
-(`@default(uuid())`); every table carries `createdAt` (and, where noted, `updatedAt`).
+(`@default(uuid())`); table carries `createdAt` (and, where noted, `updatedAt`).
 
 ### Tables and relationships
 
@@ -315,19 +315,21 @@ are cleaned up by the app.
 
 | Feature | Description | Login |
 |---|---|---|
-| Authentication | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions |
-| User profiles | Edit profile, avatar upload (+ default), bio, public profile pages |
-| Follow system | Follow/unfollow, followers/following counts, mutual "friends" |
-| Online presence | Real-time online status via Socket.IO |
-| Artworks | Publish images/videos, edit, delete; likes and comments |
-| Discovery canvas | Interactive home canvas to explore artworks |
-| Search | Search artworks & authors, tag suggestions, sort, pagination |
+| Authentication | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions |  |
+| User profiles | Edit profile, avatar upload (+ default), bio, public profile pages | trindran |
+| Follow system | Follow/unfollow, followers/following counts, mutual "friends" | trindran |
+| Online presence | Real-time online status via Socket.IO | |
+| Artworks | Publish images/videos, edit, delete; likes and comments | trindran|
+| Discovery canvas | Interactive home canvas to explore artworks | |
+| Search | Search artworks & authors, tag suggestions, sort, pagination | trindran|
 | Real-time chat | 1:1 messaging between mutuals, typing indicators, history |
 | Admin back-office | User CRUD, roles, artwork moderation, analytics dashboard |
 | Internationalization | EN/FR/AR, full RTL, language switcher |
 | Privacy / GDPR | Privacy Policy & Terms pages, data export, account deletion |
 | Monitoring | Prometheus + Grafana dashboards + Alertmanager |
 | Backups | Automated backup, restore, disaster-recovery, health checks |
+| Responsive design | Fully responsive, mobile-first, cross-browser (Chrome, Firefox, Safari) |
+| Role-based access control | `USER`, `ADMIN`, `GUEST`  | trindran, nrakotom |
 
 ---
 
@@ -345,7 +347,6 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 | Web | Framework front **and** back (React + NestJS) | Major | 2 | `frontend/`, `backend/` |
 | Web | Real-time features (WebSockets) | Major | 2 | Socket.IO presence + chat |
 | Web | User interaction (chat + profiles + friends) | Major | 2 | chat, profiles, follows |
-| Web | Public API (Swagger docs + rate limiting + endpoints) | Major | 2 | `@nestjs/swagger`, `@nestjs/throttler` — *verify API-key wording* |
 | Web | Use an ORM | Minor | 1 | Prisma |
 | Web | Advanced search (filters, sorting, pagination) | Minor | 1 | search module |
 | Web | File upload & management | Minor | 1 | Cloudinary, images+videos, validation, delete |
@@ -363,6 +364,7 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 
 **Evidenced total (before selection): well above 14 points.**
 
+// total points = 2+2+2+1+1+1+1+1+1+1+2+1+2+2+1+2+1 = 22
 > Candidate/uncertain (verify against subject wording before claiming): complete WCAG 2.1 AA
 > accessibility (Major), notification system (Minor), data import (Minor). A **Modules of
 > choice** (e.g., the discovery canvas) may also be justified — add a full justification in
@@ -379,14 +381,26 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 - **srabeman** — TODO
 - **nrakotom** — TODO
 - **cramaros** — TODO
-- **trindran** — TODO
+- **trindran** :
+	- Prisma model for user, artwork, comment, like, follow, Tag
+	- Implement basis user CRUD with the dto validation
+	- Upload avatar, file and artwork with dto validation
+	- follow, like, comment friendship system with dto validation
+	- Role based access control for USER/ADMIN with dto validation
+	- Search system with filters, sorting and pagination
 
 ---
 
 # Known limitations & notes
+
+- an error is shown in the console when user try to connect using Google Oauth in Brave browser. desactivate the shield to make it work.
 
 - Google profile-picture avatars are loaded cross-origin (CORS) to stay compatible with
   Firefox's Opaque Response Blocking.
 - The demo seed publishes 41/42 images of the `seed/trindran` gallery (one filename yields a
   title shorter than the 3-character minimum and is skipped).
 - *TODO: add any other known limitations, license, and credits.*
+
+
+
+// git commit -m "docs: Update README with team contributions and modules"

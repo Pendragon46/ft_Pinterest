@@ -190,21 +190,19 @@ Weekly meetings. Each feature had a responsible for implementation and testing.
 
 | Feature | Description | Owner |
 |---------|-------------|-------|
-| User registration | Create an account with email and password | \<login\> |
-| User login | Authenticate and receive a JWT token | \<login\> |
-| Google OAuth | Sign in with a Google account | \<login\> |
-| Two-factor authentication | Optional 2FA via authenticator app | \<login\> |
-| User profile | View and edit profile info and avatar | \<login\> |
-| Artwork upload | Post images with title, description, and tags | \<login\> |
-| Infinite canvas | Navigate a 2D map of content clustered by tag | \<login\> |
-| Search | Filter canvas by keyword or tag | \<login\> |
-| Follow system | Follow/unfollow other users | \<login\> |
-| Like system | Like artworks | \<login\> |
-| Comment system | Comment on artworks | \<login\> |
-| Real-time chat | Direct messages between users | \<login\> |
-| Notifications | In-app alerts for activity | \<login\> |
-| Admin panel | Manage users and content | \<login\> |
-| [Add more as completed] | | |
+| User registration | Create an account with email and password | nrakotom |
+| User login | Authenticate and receive a JWT token | nrakotom |
+| Google OAuth | Sign in with a Google account | nrakotom |
+| User profile | View and edit profile info and avatar | trindran |
+| Artwork upload | Post images with title, description, and tags | trindran |
+| Infinite canvas | Navigate a 2D map of content clustered by tag | srabeman |
+| Search | Filter canvas by keyword or tag | trindran, srabeman |
+| Follow system | Follow/unfollow other users | trindran, srabeman |
+| Like system | Like artworks | trindran |
+| Comment system | Comment on artworks | trindran |
+| Real-time chat | Direct messages between users | srabeman |
+| Admin panel | Manage users and content | srabeman |
+| Role | Role-based access control (USER/ADMIN/Guest) | trindran, nrakotom |
 
 
 ---
