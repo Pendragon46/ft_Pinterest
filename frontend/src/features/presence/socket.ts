@@ -10,7 +10,11 @@ let socket: Socket | null = null
 // Idempotent: open the socket once, after explicit auth. Returns null with no
 // token (the gateway rejects unauthenticated handshakes).
 export function connectSocket(): Socket | null {
-  if (socket?.connected) return socket
+  // Reuse the instance in ANY state (connecting, connected, reconnecting), not
+  // only when already connected — otherwise two callers racing during the
+  // connect handshake (ChatProvider + PresenceProvider) each open a socket, and
+  // the orphaned one keeps the user "online" after logout closes just the ref.
+  if (socket) return socket
   const token = tokenStore.get()
   if (!token) return null
   // Prefer WebSocket: polling fires repeated XHRs that spam Firefox's "Local Network
