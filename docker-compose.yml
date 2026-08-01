@@ -25,6 +25,11 @@ services:
     restart: always
     env_file:
       - ./backend/.env
+    environment:
+      # backend/.env may point DATABASE_URL at localhost for host-side dev, which
+      # is unreachable inside the container — force the compose DB service so the
+      # entrypoint's `prisma migrate deploy` can always reach it.
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     expose:
       - "3000"
     depends_on:
