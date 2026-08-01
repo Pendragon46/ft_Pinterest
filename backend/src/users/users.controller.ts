@@ -19,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/fi
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/enums/role.enum';
 import { RolesGuard } from 'src/roles/roles.guard';
+import { Public } from 'src/decorators/public.decorator';
 
 @Controller('users')
 export class UsersController {
@@ -42,14 +43,14 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
- 
-
   @Get('username/:username')
   findOne(@Param('username') username: string) {
     return this.usersService.findOneByUsername(username);
   }
 
-   @Get(':id')
+  // Public profile: a guest can view any profile (no email is exposed).
+  @Public()
+  @Get(':id')
   findOneById(@Param('id') id: string) {
     return this.usersService.findOneById(id);
   }
@@ -96,11 +97,13 @@ export class UsersController {
     return this.usersService.removeById(id, req.user.id);
   }
 
+  @Public()
   @Get(':id/artworks')
   getUserArtworks(@Param('id') id: string) {
     return this.usersService.getUserArtworks(id);
   }
 
+  @Public()
   @Get(':id/artworks/liked')
   getUserLikedArtworks(@Param('id') id: string) {
     return this.usersService.getUserLikedArtworks(id);

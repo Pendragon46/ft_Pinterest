@@ -79,7 +79,8 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    const { password, googleId, role, provider, ...result } = user;
+    // Public profile: drop the email too (PII) — the profile view never shows it.
+    const { password, googleId, role, provider, email, ...result } = user;
     return result;
   }
 
