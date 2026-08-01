@@ -1,11 +1,5 @@
 *This project has been created as part of the 42 curriculum by trindran, cramaros, nrakotom, srabeman.*
 
-> **DRAFT** — This file follows the exact README structure required by the ft_transcendence
-> subject (Chapter VI). Sections filled from the codebase are ready to review; sections that
-> depend on the team (roles, who-did-what, project-management tools, detailed AI usage) are
-> marked with `TODO` and **must be completed honestly by the team** before submission.
-> Replace `README.md` with this content once reviewed.
-
 ---
 
 # Description
@@ -13,11 +7,11 @@
 **Atlaas** is a real-world web application: a visual discovery and sharing platform for
 creative work (photography, illustration, design…). Members publish **artworks**
 (images and short videos), explore them on an interactive discovery canvas, and connect
-around them — following creators, liking and commenting, and chatting in real time.
+around them: following creators, liking and commenting, and chatting in real time.
 
 The goal was to build a complete, production-shaped social platform as a team: a secure
 account system, real-time features, media handling, an admin back-office, monitoring, and
-full internationalization — all containerized and reachable over HTTPS with a single command.
+full internationalization, all containerized and reachable over HTTPS with a single command.
 
 ### Key features
 
@@ -46,7 +40,7 @@ full internationalization — all containerized and reachable over HTTPS with a 
 
 - **Docker** and **Docker Compose** (v2).
 - **OpenSSL** (used by `make` to generate a local self-signed dev certificate).
-- **Node.js 18+** on the host (only used to run the demo **seed** script after start).
+- **Node.js** on the host (only used to run the demo **seed** script after start).
 - A **Cloudinary** account and a **Google OAuth** client (for media upload and Google login).
 
 ### Environment setup
@@ -112,17 +106,24 @@ Useful targets:
 - Prometheus & Grafana — https://prometheus.io/docs / https://grafana.com/docs
 - NGINX (reverse proxy, TLS, WebSocket upgrade) — https://nginx.org/en/docs
 
-### AI usage
+### Video Tutorials
 
-> **TODO (team) — describe honestly for which tasks and which parts of the project AI was used.**
-> Per the subject, only AI-generated content the team fully understands and can explain
-> should be kept, and peer review is expected.
->
-> As a factual starting point, AI assistance during this project was used for: debugging and
-> reproducing reported issues, refactoring for a clean browser console, writing/adjusting the
-> demo seed script, and drafting documentation. Every change was reviewed and tested by the
-> team. Please expand this section with the specific tasks and components where each member
-> used AI, and what was written/validated by hand.
+- **NestJS**: [Anson](https://youtu.be/uWZ_6pDbLpU), [Marius Espejo](https://www.youtube.com/watch?v=2n3xS89TJMI&list=PLlaDAvA2MhR2jb8zavu6I-w1BA878aHcB)
+- **Prisma**: [Web Dev Simplified](https://www.youtube.com/watch?v=RebA5J-rlwg&t=3018s)
+- **Socket.IO**: [Marius Espejo](https://youtu.be/atbdpX4CViM)
+- **Cloudinary**: [Cloudinary](https://youtu.be/l7TUGdRN-f0)
+
+### AI usage
+AI tools were used during this project for the following tasks:
+
+- **Project architecture**: helping design the database schema and module structure
+- **Backend development**: guidance on NestJS authentication patterns, JWT implementation,
+  and Prisma query structure
+- **Debugging**: identifying errors in NestJS configuration and Prisma migrations
+- **Documentation**: drafting the initial structure of this README
+
+All AI-generated code and suggestions were reviewed, tested, and understood by the
+team before being integrated into the project. No code was blindly copy-pasted.
 
 ---
 
@@ -131,28 +132,20 @@ Useful targets:
 The team has **4 members**. Roles below must be confirmed by the team (the subject requires
 each member's assigned role(s) and responsibilities).
 
-| Login | Name | Role(s) *(TODO)* | Responsibilities *(TODO)* |
+| Login | Name | Role(s) | Responsibilities |
 |---|---|---|---|
-| `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | TODO (PO / PM / Tech Lead / Developer) | TODO |
-| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala | TODO | TODO |
-| `cramaros` | Ckeven Ramaroson | TODO | TODO |
-| `trindran` | Toky Nicky Rindranirina | TODO | TODO |
-
-> Each of the four required roles (Product Owner, Project Manager / Scrum Master, Technical
-> Lead / Architect, Developers) must be assigned. With 4 members, some members hold multiple
-> roles.
+| `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | Product Owner / Developer / UX/UI Designer | User interface, visual experience, design system, responsive design. |
+| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala | Project Manager / Scrum Master / Developer | Social features, user interactions, frontend/backend integration. |
+| `cramaros` | Ckeven Ramaroson | Architect / Developer | Infrastructure, deployment, security, performance and quality. |
+| `trindran` | Toky Nicky Rindranirina | Technical Lead / Developer | Backend architecture, API, database, authentication, security, real-time. |
 
 ---
 
 # Project Management
 
 - **How the work was organized** — *TODO: task distribution, meetings cadence, code reviews.*
-- **Tools** — **GitHub Issues** was used to track and triage bugs/tasks. *TODO: add any board
-  (Trello/GitHub Projects) if used.*
-- **Communication channels** — *TODO: Discord / Slack / other.*
-
-> During evaluation the team must be able to explain how roles were distributed, how work was
-> divided, and how each member contributed.
+- **Tools** — **GitHub Issues** was used to track and triage bugs/tasks.
+- **Communication channels** — Whatsapp / Slack
 
 ---
 
