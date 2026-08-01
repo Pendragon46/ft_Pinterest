@@ -129,21 +129,26 @@ team before being integrated into the project. No code was blindly copy-pasted.
 
 # Team Information
 
-The team has **4 members**. Roles below must be confirmed by the team (the subject requires
-each member's assigned role(s) and responsibilities).
 
 | Login | Name | Role(s) | Responsibilities |
 |---|---|---|---|
-| `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | Product Owner / Developer / UX/UI Designer | User interface, visual experience, design system, responsive design. |
-| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala | Project Manager / Scrum Master / Developer | Social features, user interactions, frontend/backend integration. |
-| `cramaros` | Ckeven Ramaroson | Architect / Developer | Infrastructure, deployment, security, performance and quality. |
-| `trindran` | Toky Nicky Rindranirina | Technical Lead / Developer | Backend architecture, API, database, authentication, security, real-time. |
-
+| `cramaros` | Ckeven Ramaroson | Architect / Developer | Infrastructure, Deployment, Security, Monitoring. |
+| `trindran` | Toky Nicky Rindranirina | Technical Lead / Developer | Backend architecture, API, Database, Security, Social features, User interactions. |
+| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala | Project Manager / Scrum Master / Developer | Authentication, Google Authentication, Guest Role. |
+| `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | Product Owner / Developer / UX/UI Designer | User interface, Visual experience, Design system, Responsive design, frontend/backend integration, Chat. |
 ---
+
 
 # Project Management
 
-- **How the work was organized** — *TODO: task distribution, meetings cadence, code reviews.*
+- **How the work was organized**:
+  - srabeman, frontend
+  - nrakotom, backend
+  - trindran, backend
+  - cramaros, devops
+
+  Weekly meetings on Fridays morning.
+
 - **Tools** — **GitHub Issues** was used to track and triage bugs/tasks.
 - **Communication channels** — Whatsapp / Slack
 
@@ -167,8 +172,7 @@ each member's assigned role(s) and responsibilities).
 - **Socket.IO gateway** (`@nestjs/websockets`) for presence and chat.
 - **Cloudinary** for image/video storage; **Multer** for uploads.
 - **class-validator / class-transformer** for DTO validation.
-- **helmet** (security headers), **@nestjs/throttler** (rate limiting), **@nestjs/swagger**
-  (API docs), **prom-client** (metrics).
+- **helmet** (security headers), **@nestjs/throttler** (rate limiting), **prom-client** (metrics).
 
 ### Database
 - **PostgreSQL** — a relational database chosen for the app's strongly-relational data
@@ -188,36 +192,129 @@ each member's assigned role(s) and responsibilities).
 
 # Database Schema
 
-PostgreSQL, managed by Prisma. Core models and relations:
+PostgreSQL, managed by **Prisma**. Every primary key is a `String` UUID
+(`@default(uuid())`); every table carries `createdAt` (and, where noted, `updatedAt`).
 
-- **User** — `id`, `fullname?`, `username` (unique), `email` (unique), `password?`,
-  `provider` (`LOCAL`|`GOOGLE`), `googleId?`, `bio?`, `avatarUrl`, `avatarPublicId?`,
-  `role` (`USER`|`ADMIN`|`GUEST`), timestamps.
-- **Artwork** — `id`, `title`, `description?`, `mediaUrl?`, `mediaPublicId?`, `resourceType?`
-  (`image`|`video`), `authorId → User`, timestamps. Indexed on `authorId` and `createdAt`.
-- **Like** — `authorId → User`, `artworkId → Artwork`, unique `(authorId, artworkId)`.
-- **Comment** — `authorId → User`, `artworkId → Artwork`, `content`, `createdAt`.
-- **Follow** — composite PK `(followerId, followingId)`, both → `User` (self-relation
-  `Follower`/`Following`).
-- **Tag** — many-to-many with `Artwork`.
-- **Conversation** / **ConversationParticipant** / **Message** — 1:1 conversations with
-  participants (`lastReadAt`) and messages (`kind` = `USER`|`SYSTEM`, optional `content`,
-  `systemKey`, shared `artworkId`).
+### Tables and relationships
 
-Relationships use `onDelete: Cascade` so deleting a user removes their artworks, likes,
-comments, follows, participations and messages (conversations left orphaned are cleaned up
-on user deletion).
+| Relationship | Type | Via |
+|---|---|---|
+| User → Artwork | one-to-many | `Artwork.authorId` |
+| User → Comment | one-to-many | `Comment.authorId` |
+| User → Like | one-to-many | `Like.authorId` |
+| User ↔ User (follow) | many-to-many (self, directed) | `Follow (followerId, followingId)` |
+| Artwork → Like | one-to-many | `Like.artworkId` |
+| Artwork → Comment | one-to-many | `Comment.artworkId` |
+| Artwork ↔ Tag | many-to-many | implicit `Artwork.tags` / `Tag.artworks` |
+| User ↔ Conversation | many-to-many | `ConversationParticipant (conversationId, userId)` |
+| Conversation → Message | one-to-many | `Message.conversationId` |
+| User → Message (sender) | one-to-many (optional) | `Message.senderId` |
+| Artwork → Message (shared) | one-to-many (optional) | `Message.artworkId` (`SetNull`) |
 
-> *TODO (optional): add an ER diagram image to this section.*
+Deletes cascade (`onDelete: Cascade`) from a user/artwork to their dependent rows; a message's
+shared artwork uses `SetNull`. Conversations left with no participant after a user is deleted
+are cleaned up by the app.
+
+### Key fields and data types
+
+**User**
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `fullname` | String? | |
+| `username` | String | unique |
+| `email` | String | unique |
+| `password` | String? | bcrypt hash; null for OAuth accounts |
+| `provider` | enum `Provider` | `LOCAL` \| `GOOGLE` (default `LOCAL`) |
+| `googleId` | String? | unique |
+| `bio` | String? | |
+| `avatarUrl` | String | default avatar URL |
+| `avatarPublicId` | String? | Cloudinary public id |
+| `role` | enum `Role` | `USER` \| `ADMIN` \| `GUEST` (default `USER`) |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**Artwork** — indexes on `authorId`, `createdAt`
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `title` | String | |
+| `description` | String? | |
+| `mediaUrl` | String? | Cloudinary URL |
+| `mediaPublicId` | String? | Cloudinary public id |
+| `resourceType` | String? | `image` \| `video` |
+| `authorId` | UUID | FK → User (Cascade) |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**Like** — unique `(authorId, artworkId)`
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `authorId` | UUID | FK → User (Cascade) |
+| `artworkId` | UUID | FK → Artwork (Cascade) |
+| `createdAt` | DateTime | |
+
+**Comment**
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `authorId` | UUID | FK → User (Cascade) |
+| `artworkId` | UUID | FK → Artwork (Cascade) |
+| `content` | String | |
+| `createdAt` | DateTime | |
+
+**Follow** — composite PK `(followerId, followingId)`
+| Field | Type | Notes |
+|---|---|---|
+| `followerId` | UUID | FK → User (Cascade) |
+| `followingId` | UUID | FK → User (Cascade) |
+| `createdAt` | DateTime | |
+
+**Tag** — index on `name`, many-to-many with Artwork
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `name` | String | unique |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**Conversation**
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `pairKey` | String | unique — canonical key of the participant pair |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**ConversationParticipant** — composite PK `(conversationId, userId)`, index on `userId`
+| Field | Type | Notes |
+|---|---|---|
+| `conversationId` | UUID | FK → Conversation (Cascade) |
+| `userId` | UUID | FK → User (Cascade) |
+| `lastReadAt` | DateTime? | read-marker for unread counts |
+
+**Message** — index on `(conversationId, createdAt)`
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `conversationId` | UUID | FK → Conversation (Cascade) |
+| `kind` | enum `MessageKind` | `USER` \| `SYSTEM` (default `USER`) |
+| `senderId` | UUID? | FK → User (Cascade) |
+| `content` | String? | text of a user message |
+| `systemKey` | String? | i18n key for a system message |
+| `artworkId` | UUID? | FK → Artwork (SetNull) — shared artwork |
+| `createdAt` | DateTime | |
+
+**Enums** — `Role` (`USER`, `ADMIN`, `GUEST`), `Provider` (`LOCAL`, `GOOGLE`),
+`MessageKind` (`USER`, `SYSTEM`).
+
+![Database Schema](diagram_prisma.png)
 
 ---
 
 # Features List
 
-> *TODO (team): add, per feature, which member(s) implemented it.*
 
-| Feature | Description |
-|---|---|
+
+| Feature | Description | Login |
+|---|---|---|
 | Authentication | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions |
 | User profiles | Edit profile, avatar upload (+ default), bio, public profile pages |
 | Follow system | Follow/unfollow, followers/following counts, mutual "friends" |
