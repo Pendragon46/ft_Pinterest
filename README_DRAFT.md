@@ -402,5 +402,3 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 - *TODO: add any other known limitations, license, and credits.*
 
 
-
-// git commit -m "docs: Update README with team contributions and modules"
