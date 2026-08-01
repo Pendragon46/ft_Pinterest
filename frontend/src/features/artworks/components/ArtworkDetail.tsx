@@ -241,6 +241,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         queryKey: ['artworks', 'isLiked', artwork.id],
       })
       void queryClient.invalidateQueries({ queryKey: ['users', 'liked'] })
+      // The profile Works grid shows this artwork's like count, so refresh the
+      // author's works — otherwise the tile stays stale until a page reload.
+      void queryClient.invalidateQueries({
+        queryKey: userKeys.works(artwork.author.id),
+      })
     },
   })
   const doLike = (next: boolean) => {
