@@ -81,29 +81,30 @@ Main objectives:
 
 # Docker Services
 
-| Service | Purpose |
-|----------|---------|
-| frontend | React application |
-| backend | NestJS REST API |
-| postgres | Database |
-| nginx | Reverse proxy |
-| prometheus | Metrics collection |
-| grafana | Dashboards and alerting |
-| postgres_exporter | PostgreSQL metrics |
-| node_exporter | Host metrics |
-| backup | Database backups |
+| Service           | Purpose                 |
+| ----------------- | ----------------------- |
+| frontend          | React application       |
+| backend           | NestJS REST API         |
+| postgres          | Database                |
+| nginx             | Reverse proxy           |
+| prometheus        | Metrics collection      |
+| alertmanager      | notification setup      |
+| grafana           | Dashboards and alerting |
+| postgres_exporter | PostgreSQL metrics      |
+| node_exporter     | Host metrics            |
+| backup            | Database backups        |
 
 ---
 
 # Available URLs
 
-| Service | URL |
-|----------|-----|
-| Frontend | https://localhost:8443 |
-| Backend API | https://localhost:8443/api |
-| Health | https://localhost:8443/api/health |
-| Grafana | https://localhost:8443/grafana |
-| Prometheus | https://localhost:8443/prometheus |
+| Service     | URL                               |
+| ----------- | --------------------------------- |
+| Frontend    | https://localhost:8443            |
+| Backend API | https://localhost:8443/api        |
+| Health      | https://localhost:8443/api/health |
+| Grafana     | https://localhost:8443/grafana    |
+| Prometheus  | https://localhost:8443/prometheus |
 
 ---
 
@@ -161,14 +162,18 @@ Prometheus scrapes metrics from:
 Configuration:
 
 ```
+
 monitoring/prometheus.yml
+
 ```
 
 Alert rules:
 
 ```
+
 monitoring/alert_rules.yml
-```
+
+````
 
 ---
 
@@ -211,7 +216,7 @@ Implemented alerts:
 
 ```bash
 curl -k https://localhost:8443/api/health
-```
+````
 
 ### Frontend
 
@@ -389,7 +394,7 @@ curl -k https://localhost:8443/api/health
 
 Run the custom health verification script:
 
-```bash
+````bash
 make health
 
 Expected response:
@@ -400,7 +405,7 @@ Expected response:
   "backend": "online",
   "database": "online"
 }
-```
+````
 
 ---
 
@@ -421,6 +426,7 @@ prometheus           healthy
 grafana              healthy
 postgres_exporter    healthy
 node_exporter        healthy
+alertmanager         healthy
 backup               healthy
 ```
 
@@ -459,6 +465,74 @@ If PostgreSQL becomes unavailable:
 }
 ```
 
+## PostgreSQL Backup & Recovery
+
+### Test Backup
+
+Create a test table:
+
+```sql
+CREATE TABLE backup_test (
+    id SERIAL PRIMARY KEY,
+    message TEXT
+);
+
+INSERT INTO backup_test (message)
+VALUES ('Backup test');
+```
+
+Run a manual backup:
+
+```bash
+make backup
+```
+
+---
+
+### Test Restore
+
+Delete the test table:
+
+```sql
+DROP TABLE backup_test;
+```
+
+Restore the latest backup:
+
+```bash
+make restore BACKUP_FILE=/backups/<backup_file>.sql.gz
+```
+
+Verify that the table has been restored:
+
+```sql
+SELECT * FROM backup_test;
+```
+
+Expected result:
+
+```text
+ id |   message
+----+--------------
+  1 | Backup test
+```
+
+---
+
+### Test Disaster Recovery
+
+Run the disaster recovery procedure:
+
+```bash
+make recover
+```
+
+Verify that PostgreSQL is running and that the test table is still available.
+
+```sql
+SELECT * FROM backup_test;
+```
+
 # References
 
 ## Docker
@@ -468,6 +542,10 @@ https://docs.docker.com/
 ## Nginx
 
 https://nginx.org/en/docs/
+
+## PostgreSQL
+
+https://www.postgresql.org/docs/
 
 ## Prisma
 

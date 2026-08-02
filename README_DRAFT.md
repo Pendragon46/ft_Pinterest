@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by trindran, cramaros, nrakotom, srabeman.*
+_This project has been created as part of the 42 curriculum by trindran, cramaros, nrakotom, srabeman._
 
 ---
 
@@ -74,14 +74,14 @@ The application is served over HTTPS at **https://localhost:8443** and Grafana a
 
 Useful targets:
 
-| Command | Description |
-|---|---|
-| `make start` | Build, start the stack, and seed the demo data |
-| `make stop` | Stop the stack |
-| `make seed` | (Re)seed demo accounts/artworks (idempotent) |
-| `make logs` | Follow container logs |
-| `make backup` / `make restore BACKUP_FILE=…` | Database backup / restore |
-| `make clean-volumes` / `make fclean` | Remove volumes / full cleanup |
+| Command                                      | Description                                    |
+| -------------------------------------------- | ---------------------------------------------- |
+| `make start`                                 | Build, start the stack, and seed the demo data |
+| `make stop`                                  | Stop the stack                                 |
+| `make seed`                                  | (Re)seed demo accounts/artworks (idempotent)   |
+| `make logs`                                  | Follow container logs                          |
+| `make backup` / `make restore BACKUP_FILE=…` | Database backup / restore                      |
+| `make clean-volumes` / `make fclean`         | Remove volumes / full cleanup                  |
 
 > Demo account credentials are listed in [`docs/CREDENTIALS.md`](docs/CREDENTIALS.md)
 > (two admin accounts + a network of users; all local accounts use `Atlaas!2026-<username>`).
@@ -114,6 +114,7 @@ Useful targets:
 - **Cloudinary**: [Cloudinary](https://youtu.be/l7TUGdRN-f0)
 
 ### AI usage
+
 AI tools were used during this project for the following tasks:
 
 - **Project architecture**: helping design the database schema and module structure
@@ -129,15 +130,14 @@ team before being integrated into the project. No code was blindly copy-pasted.
 
 # Team Information
 
-
-| Login | Name | Role(s) | Responsibilities |
-|---|---|---|---|
-| `cramaros` | Ckeven Ramaroson | Architect / Developer | Infrastructure, Deployment, Security, Monitoring. |
-| `trindran` | Toky Nicky Rindranirina | Technical Lead / Developer | Backend architecture, API, Database, Social features, User interactions, media upload. |
-| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala | Project Manager / Scrum Master / Developer | Authentication, Google Authentication, Guest Role. |
+| Login      | Name                                   | Role(s)                                    | Responsibilities                                                                                         |
+| ---------- | -------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `cramaros` | Ckeven Ramaroson                       | Architect / Developer                      | Infrastructure, Deployment, Security, Monitoring.                                                        |
+| `trindran` | Toky Nicky Rindranirina                | Technical Lead / Developer                 | Backend architecture, API, Database, Social features, User interactions, media upload.                   |
+| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala     | Project Manager / Scrum Master / Developer | Authentication, Google Authentication, Guest Role.                                                       |
 | `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | Product Owner / Developer / UX/UI Designer | User interface, Visual experience, Design system, Responsive design, frontend/backend integration, Chat. |
----
 
+---
 
 # Project Management
 
@@ -157,6 +157,7 @@ team before being integrated into the project. No code was blindly copy-pasted.
 # Technical Stack
 
 ### Frontend
+
 - **React 19 + TypeScript**, bundled with **Vite**.
 - **Tailwind CSS v4** for styling (custom design-system components under `src/components/ui`).
 - **TanStack Query** (server state) and **Zustand** (UI/presence state).
@@ -165,6 +166,7 @@ team before being integrated into the project. No code was blindly copy-pasted.
   icons, **lottie-web** for animations.
 
 ### Backend
+
 - **NestJS + TypeScript**.
 - **Prisma** ORM over **PostgreSQL**.
 - **JWT** auth (`@nestjs/jwt`, `passport-jwt`) + **Google OAuth 2.0** (`passport-google-oauth20`),
@@ -175,11 +177,13 @@ team before being integrated into the project. No code was blindly copy-pasted.
 - **helmet** (security headers), **@nestjs/throttler** (rate limiting), **prom-client** (metrics).
 
 ### Database
+
 - **PostgreSQL** — a relational database chosen for the app's strongly-relational data
   (users, artworks, likes, comments, follows, conversations) and for Prisma's first-class
   Postgres support, migrations, and constraints (unique keys, cascades).
 
 ### Infrastructure
+
 - **Docker Compose** orchestrates the whole stack, launched with a single `make start`.
 - **NGINX** reverse proxy terminating **HTTPS** (TLS) and proxying the API, the SPA, the
   Socket.IO upgrade, and Grafana.
@@ -197,19 +201,19 @@ PostgreSQL, managed by **Prisma**. Every primary key is a `String` UUID
 
 ### Tables and relationships
 
-| Relationship | Type | Via |
-|---|---|---|
-| User → Artwork | one-to-many | `Artwork.authorId` |
-| User → Comment | one-to-many | `Comment.authorId` |
-| User → Like | one-to-many | `Like.authorId` |
-| User ↔ User (follow) | many-to-many (self, directed) | `Follow (followerId, followingId)` |
-| Artwork → Like | one-to-many | `Like.artworkId` |
-| Artwork → Comment | one-to-many | `Comment.artworkId` |
-| Artwork ↔ Tag | many-to-many | implicit `Artwork.tags` / `Tag.artworks` |
-| User ↔ Conversation | many-to-many | `ConversationParticipant (conversationId, userId)` |
-| Conversation → Message | one-to-many | `Message.conversationId` |
-| User → Message (sender) | one-to-many (optional) | `Message.senderId` |
-| Artwork → Message (shared) | one-to-many (optional) | `Message.artworkId` (`SetNull`) |
+| Relationship               | Type                          | Via                                                |
+| -------------------------- | ----------------------------- | -------------------------------------------------- |
+| User → Artwork             | one-to-many                   | `Artwork.authorId`                                 |
+| User → Comment             | one-to-many                   | `Comment.authorId`                                 |
+| User → Like                | one-to-many                   | `Like.authorId`                                    |
+| User ↔ User (follow)       | many-to-many (self, directed) | `Follow (followerId, followingId)`                 |
+| Artwork → Like             | one-to-many                   | `Like.artworkId`                                   |
+| Artwork → Comment          | one-to-many                   | `Comment.artworkId`                                |
+| Artwork ↔ Tag              | many-to-many                  | implicit `Artwork.tags` / `Tag.artworks`           |
+| User ↔ Conversation        | many-to-many                  | `ConversationParticipant (conversationId, userId)` |
+| Conversation → Message     | one-to-many                   | `Message.conversationId`                           |
+| User → Message (sender)    | one-to-many (optional)        | `Message.senderId`                                 |
+| Artwork → Message (shared) | one-to-many (optional)        | `Message.artworkId` (`SetNull`)                    |
 
 Deletes cascade (`onDelete: Cascade`) from a user/artwork to their dependent rows; a message's
 shared artwork uses `SetNull`. Conversations left with no participant after a user is deleted
@@ -311,25 +315,23 @@ are cleaned up by the app.
 
 # Features List
 
-
-
-| Feature | Description | Login |
-|---|---|---|
-| Authentication | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions |  |
-| User profiles | Edit profile, avatar upload (+ default), bio, public profile pages | trindran |
-| Follow system | Follow/unfollow, followers/following counts, mutual "friends" | trindran |
-| Online presence | Real-time online status via Socket.IO | |
-| Artworks | Publish images/videos, edit, delete; likes and comments | trindran|
-| Discovery canvas | Interactive home canvas to explore artworks | |
-| Search | Search artworks & authors, tag suggestions, sort, pagination | trindran|
-| Real-time chat | 1:1 messaging between mutuals, typing indicators, history |
-| Admin back-office | User CRUD, roles, artwork moderation, analytics dashboard |
-| Internationalization | EN/FR/AR, full RTL, language switcher |
-| Privacy / GDPR | Privacy Policy & Terms pages, data export, account deletion |
-| Monitoring | Prometheus + Grafana dashboards + Alertmanager |
-| Backups | Automated backup, restore, disaster-recovery, health checks |
-| Responsive design | Fully responsive, mobile-first, cross-browser (Chrome, Firefox, Safari) |
-| Role-based access control | `USER`, `ADMIN`, `GUEST`  | trindran, nrakotom |
+| Feature                   | Description                                                             | Login              |
+| ------------------------- | ----------------------------------------------------------------------- | ------------------ |
+| Authentication            | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions                |                    |
+| User profiles             | Edit profile, avatar upload (+ default), bio, public profile pages      | trindran           |
+| Follow system             | Follow/unfollow, followers/following counts, mutual "friends"           | trindran           |
+| Online presence           | Real-time online status via Socket.IO                                   |                    |
+| Artworks                  | Publish images/videos, edit, delete; likes and comments                 | trindran           |
+| Discovery canvas          | Interactive home canvas to explore artworks                             |                    |
+| Search                    | Search artworks & authors, tag suggestions, sort, pagination            | trindran           |
+| Real-time chat            | 1:1 messaging between mutuals, typing indicators, history               |
+| Admin back-office         | User CRUD, roles, artwork moderation, analytics dashboard               |
+| Internationalization      | EN/FR/AR, full RTL, language switcher                                   |
+| Privacy / GDPR            | Privacy Policy & Terms pages, data export, account deletion             |
+| Monitoring                | Prometheus + Grafana dashboards + Alertmanager                          | cramaros           |
+| Backups                   | Automated backup, restore, disaster-recovery, health checks             | cramaros           |
+| Responsive design         | Fully responsive, mobile-first, cross-browser (Chrome, Firefox, Safari) |
+| Role-based access control | `USER`, `ADMIN`, `GUEST`                                                | trindran, nrakotom |
 
 ---
 
@@ -337,34 +339,35 @@ are cleaned up by the app.
 
 Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 
-> *TODO (team): confirm the final list you claim and can demonstrate — only fully functional,
+> _TODO (team): confirm the final list you claim and can demonstrate — only fully functional,
 > demonstrable modules count. Add which member(s) implemented each. The table below lists the
 > modules with clear evidence in the codebase; verify each against the subject's exact wording
-> before claiming it.*
+> before claiming it._
 
-| Category | Module | Type | Pts | Notes / where |
-|---|---|:---:|:---:|---|
-| Web | Framework front **and** back (React + NestJS) | Major | 2 | `frontend/`, `backend/` |
-| Web | Real-time features (WebSockets) | Major | 2 | Socket.IO presence + chat |
-| Web | User interaction (chat + profiles + friends) | Major | 2 | chat, profiles, follows |
-| Web | Use an ORM | Minor | 1 | Prisma |
-| Web | Advanced search (filters, sorting, pagination) | Minor | 1 | search module |
-| Web | File upload & management | Minor | 1 | Cloudinary, images+videos, validation, delete |
-| Web | Custom design system (10+ components) | Minor | 1 | `components/ui/*` |
-| A11y & i18n | Multiple languages (≥3) | Minor | 1 | EN/FR/AR |
-| A11y & i18n | RTL support | Minor | 1 | Arabic, layout mirroring |
-| A11y & i18n | Additional browsers | Minor | 1 | Firefox support/fixes |
-| User Mgmt | Standard user management | Major | 2 | profile, avatar, friends, online status |
-| User Mgmt | OAuth 2.0 remote auth | Minor | 1 | Google |
-| User Mgmt | Advanced permissions (CRUD + roles) | Major | 2 | admin panel, `RolesGuard`, `Role` enum |
-| DevOps | Monitoring (Prometheus + Grafana) | Major | 2 | services + exporters + dashboards + alerts |
-| DevOps | Health check + backups + disaster recovery | Minor | 1 | `scripts/*.sh`, backup service |
-| Data | Advanced analytics dashboard (+ CSV export) | Major | 2 | admin analytics |
-| Data | GDPR compliance | Minor | 1 | data export + account deletion |
+| Category    | Module                                         | Type  | Pts | Notes / where                                 |
+| ----------- | ---------------------------------------------- | :---: | :-: | --------------------------------------------- |
+| Web         | Framework front **and** back (React + NestJS)  | Major |  2  | `frontend/`, `backend/`                       |
+| Web         | Real-time features (WebSockets)                | Major |  2  | Socket.IO presence + chat                     |
+| Web         | User interaction (chat + profiles + friends)   | Major |  2  | chat, profiles, follows                       |
+| Web         | Use an ORM                                     | Minor |  1  | Prisma                                        |
+| Web         | Advanced search (filters, sorting, pagination) | Minor |  1  | search module                                 |
+| Web         | File upload & management                       | Minor |  1  | Cloudinary, images+videos, validation, delete |
+| Web         | Custom design system (10+ components)          | Minor |  1  | `components/ui/*`                             |
+| A11y & i18n | Multiple languages (≥3)                        | Minor |  1  | EN/FR/AR                                      |
+| A11y & i18n | RTL support                                    | Minor |  1  | Arabic, layout mirroring                      |
+| A11y & i18n | Additional browsers                            | Minor |  1  | Firefox support/fixes                         |
+| User Mgmt   | Standard user management                       | Major |  2  | profile, avatar, friends, online status       |
+| User Mgmt   | OAuth 2.0 remote auth                          | Minor |  1  | Google                                        |
+| User Mgmt   | Advanced permissions (CRUD + roles)            | Major |  2  | admin panel, `RolesGuard`, `Role` enum        |
+| DevOps      | Monitoring (Prometheus + Grafana)              | Major |  2  | services + exporters + dashboards + alerts    |
+| DevOps      | Health check + backups + disaster recovery     | Minor |  1  | `scripts/*.sh`, backup service                |
+| Data        | Advanced analytics dashboard (+ CSV export)    | Major |  2  | admin analytics                               |
+| Data        | GDPR compliance                                | Minor |  1  | data export + account deletion                |
 
 **Evidenced total (before selection): well above 14 points.**
 
 // total points = 2+2+2+1+1+1+1+1+1+1+2+1+2+2+1+2+1 = 22
+
 > Candidate/uncertain (verify against subject wording before claiming): complete WCAG 2.1 AA
 > accessibility (Major), notification system (Minor), data import (Minor). A **Modules of
 > choice** (e.g., the discovery canvas) may also be justified — add a full justification in
@@ -374,20 +377,31 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 
 # Individual Contributions
 
-> *TODO (team) — required section. For each member provide a detailed breakdown of the
+> _TODO (team) — required section. For each member provide a detailed breakdown of the
 > features/modules/components they implemented, and challenges faced and how they were
-> overcome. Be honest; every member must be able to explain their contributions.*
+> overcome. Be honest; every member must be able to explain their contributions._
 
 - **srabeman** — TODO
 - **nrakotom** — TODO
-- **cramaros** — TODO
+- **cramaros** :
+  - Docker & Docker Compose infrastructure.
+  - Frontend environment setup (React packages and dependencies).
+  - Backend environment setup (NestJS packages and dependencies).
+  - PostgreSQL and Prisma configuration.
+  - Nginx reverse proxy with HTTPS.
+  - Prometheus & Grafana monitoring stack.
+  - Prometheus metrics collection and exporters.
+  - Custom Grafana dashboards and alerting system.
+  - Grafana security and access management.
+  - Health check and service status monitoring.
+  - Automated PostgreSQL backup, restore and disaster recovery system.
 - **trindran** :
-	- Prisma model for user, artwork, comment, like, follow, Tag
-	- Implement basis user CRUD with the dto validation
-	- Upload avatar, file and artwork with dto validation
-	- follow, like, comment friendship system with dto validation
-	- Role based access control for USER/ADMIN with dto validation
-	- Search system with filters, sorting and pagination
+  - Prisma model for user, artwork, comment, like, follow, Tag
+  - Implement basis user CRUD with the dto validation
+  - Upload avatar, file and artwork with dto validation
+  - follow, like, comment friendship system with dto validation
+  - Role based access control for USER/ADMIN with dto validation
+  - Search system with filters, sorting and pagination
 
 ---
 
@@ -399,6 +413,4 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
   Firefox's Opaque Response Blocking.
 - The demo seed publishes 41/42 images of the `seed/trindran` gallery (one filename yields a
   title shorter than the 3-character minimum and is skipped).
-- *TODO: add any other known limitations, license, and credits.*
-
-
+- _TODO: add any other known limitations, license, and credits._
