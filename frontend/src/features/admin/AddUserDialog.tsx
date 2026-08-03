@@ -8,11 +8,17 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import type { AppRole } from '@/features/auth/useRole'
+import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import {
+  fieldErrorKey,
+  FULLNAME_MAX,
+  USERNAME_MAX,
   validateEmail,
+  validateFullname,
   validatePassword,
   validateUsername,
 } from '@/features/auth/auth.validation'
+import { isApiError } from '@/lib/http'
 import { useToast } from '@/lib/toast.store'
 
 import { adminKeys, createUserAsAdmin } from './admin.api'
@@ -35,7 +41,12 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<AppRole>('USER')
-  const [errors, setErrors] = useState<{ username?: string; email?: string }>({})
+  const [errors, setErrors] = useState<{
+    fullname?: AuthErrorKey
+    username?: AuthErrorKey
+    email?: AuthErrorKey
+    password?: AuthErrorKey
+  }>({})
 
   const reset = () => {
     setFullname('')
@@ -57,9 +68,13 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
       }),
     onSuccess: (result) => {
       if (!result.ok) {
+        // Register answers 2xx with i18n conflict keys (email / username taken).
         const fe = result.fieldErrors
         if (fe?.username || fe?.email) {
-          setErrors({ username: fe.username, email: fe.email })
+          setErrors({
+            username: fe.username as AuthErrorKey | undefined,
+            email: fe.email as AuthErrorKey | undefined,
+          })
         } else {
           toast({ variant: 'error', message: t('errors.network') })
         }
@@ -69,19 +84,45 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
       reset()
       onClose()
     },
-    onError: () => {
+    onError: (error) => {
+      // Safety net: a ValidationPipe 400 slipped past the client-side rules
+      // above. Land it on the field it names rather than on a generic toast —
+      // that mismatch is what left issue #21 showing only a console error.
+      const mapped: typeof errors = {}
+      if (isApiError(error) && error.fieldErrors) {
+        for (const field of Object.keys(error.fieldErrors)) {
+          const key = fieldErrorKey(field)
+          if (key) mapped[field as keyof typeof errors] = key
+        }
+      }
+      if (Object.keys(mapped).length > 0) {
+        setErrors(mapped)
+        return
+      }
       toast({ variant: 'error', message: t('errors.network') })
     },
   })
 
-  const canSubmit =
-    validateUsername(username) === undefined &&
-    validateEmail(email) === undefined &&
-    validatePassword(password) === undefined
-
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    if (canSubmit) mutation.mutate()
+    // Validate on submit so the reason is shown, instead of only greying out
+    // the button and leaving the admin to guess which field is at fault.
+    const nextErrors = {
+      fullname: validateFullname(fullname),
+      username: validateUsername(username),
+      email: validateEmail(email),
+      password: validatePassword(password),
+    }
+    setErrors(nextErrors)
+    if (
+      nextErrors.fullname ||
+      nextErrors.username ||
+      nextErrors.email ||
+      nextErrors.password
+    ) {
+      return
+    }
+    mutation.mutate()
   }
 
   const field =
@@ -103,7 +144,10 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
             value={fullname}
             onChange={(event) => {
               setFullname(event.target.value)
+              setErrors((prev) => ({ ...prev, fullname: undefined }))
             }}
+            error={errors.fullname ? t(errors.fullname) : undefined}
+            maxLength={FULLNAME_MAX}
             placeholder="Maya Chen"
           />
           <Input
@@ -113,11 +157,8 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
               setUsername(event.target.value)
               setErrors((prev) => ({ ...prev, username: undefined }))
             }}
-            error={
-              errors.username
-                ? t(errors.username as 'auth.usernameTaken')
-                : undefined
-            }
+            error={errors.username ? t(errors.username) : undefined}
+            maxLength={USERNAME_MAX}
             placeholder="mayac"
             autoCapitalize="off"
           />
@@ -130,7 +171,7 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
             setEmail(event.target.value)
             setErrors((prev) => ({ ...prev, email: undefined }))
           }}
-          error={errors.email ? t(errors.email as 'auth.emailTaken') : undefined}
+          error={errors.email ? t(errors.email) : undefined}
           placeholder="maya@example.com"
         />
         <Input
@@ -139,7 +180,9 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
           value={password}
           onChange={(event) => {
             setPassword(event.target.value)
+            setErrors((prev) => ({ ...prev, password: undefined }))
           }}
+          error={errors.password ? t(errors.password) : undefined}
           autoComplete="new-password"
           helperText={t('admin.add.passwordHint')}
         />
@@ -171,7 +214,9 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
           <Button variant="outline" type="button" onClick={onClose}>
             {t('admin.add.cancel')}
           </Button>
-          <Button type="submit" loading={mutation.isPending} disabled={!canSubmit}>
+          {/* Not gated on validity: a disabled button hides *why* it is
+              disabled. Submitting runs the checks and shows the reason. */}
+          <Button type="submit" loading={mutation.isPending}>
             <Plus aria-hidden="true" className="size-4" />
             {t('admin.add.submit')}
           </Button>

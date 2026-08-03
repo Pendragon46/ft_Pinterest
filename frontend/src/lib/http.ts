@@ -62,6 +62,26 @@ http.interceptors.response.use(
   },
 )
 
+// Nest's ValidationPipe answers `message: ["fullname must be shorter than or
+// equal to 50 characters", …]` — one sentence per broken rule, each prefixed by
+// its DTO field. Splitting the field back out is what lets a 400 land on the
+// right input instead of becoming a generic "network error" toast plus a raw
+// console 400. The sentence itself is English-only, so callers translate by
+// field name (see FIELD_ERROR_KEY) rather than displaying the value here.
+function fieldErrorsFromMessages(
+  messages: string[],
+): Record<string, string> | undefined {
+  const found: Record<string, string> = {}
+  for (const line of messages) {
+    const field = line.split(' ')[0]
+    // Only a leading bare identifier is a field name; anything else is prose.
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(field) && !(field in found)) {
+      found[field] = line
+    }
+  }
+  return Object.keys(found).length > 0 ? found : undefined
+}
+
 function normaliseError(error: unknown): ApiError {
   if (axios.isAxiosError(error)) {
     const status = error.response?.status ?? 0
@@ -73,10 +93,13 @@ function normaliseError(error: unknown): ApiError {
     const message = Array.isArray(raw)
       ? raw.join(' ')
       : raw || error.message || 'errors.network'
+    const fieldErrors =
+      data?.fieldErrors ??
+      (Array.isArray(raw) ? fieldErrorsFromMessages(raw) : undefined)
     return {
       status,
       message,
-      ...(data?.fieldErrors ? { fieldErrors: data.fieldErrors } : {}),
+      ...(fieldErrors ? { fieldErrors } : {}),
     }
   }
   return { status: 0, message: 'errors.network' }

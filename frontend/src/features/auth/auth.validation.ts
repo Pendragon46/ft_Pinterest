@@ -18,10 +18,28 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 // Length bounds mirror the backend DTOs (CreateUserDto / RegisterDto), so an
 // out-of-range value is caught client-side instead of returning a raw 400.
-const USERNAME_MIN = 3
-const USERNAME_MAX = 30
-const FULLNAME_MAX = 50
-const BIO_MAX = 280
+// Exported so inputs can carry the same cap as `maxLength` and stop the value
+// from ever being typed past it.
+export const USERNAME_MIN = 3
+export const USERNAME_MAX = 30
+export const FULLNAME_MAX = 50
+export const BIO_MAX = 280
+
+// A ValidationPipe 400 tells us which DTO field broke, but its sentence is
+// English-only. Translate by field instead of echoing the server's wording, so
+// the message still obeys the en/fr/ar contract.
+const FIELD_ERROR_KEY: Record<string, AuthErrorKey> = {
+  fullname: 'errors.fullnameLength',
+  username: 'errors.usernameLength',
+  email: 'errors.emailInvalid',
+  bio: 'errors.bioLength',
+  password: 'errors.passwordWeak',
+}
+
+/** i18n key for a DTO field named in an ApiError's `fieldErrors`. */
+export function fieldErrorKey(field: string): AuthErrorKey | undefined {
+  return FIELD_ERROR_KEY[field]
+}
 
 export function validateUsername(value: string): AuthErrorKey | undefined {
   const trimmed = value.trim()
