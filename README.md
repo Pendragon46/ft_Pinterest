@@ -357,6 +357,7 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 | User Mgmt   | OAuth 2.0 remote auth                          | Minor |  1  | Google                                        | nrakotom
 | User Mgmt   | Advanced permissions (CRUD + roles)            | Major |  2  | admin panel, `RolesGuard`, `Role` enum        | srabeman, trindran, nrakotom
 | User Mgmt | User activity analytics and insights dashboard. | Minor | 1 | admin can view user activity in the admin panel | srabeman
+| Data and analytics | Advanced analytics dashboard with data visualization | Major | 2 | graph, export, realtime, customizable data | srabeman
 | DevOps      | Health check + backups + disaster recovery     | Minor |  1  | `scripts/*.sh`, backup service                | cramaros
 | Module of choice | Implement a custom module that is not listed above | Major | 2 | Infinite canvas | srabeman
 
