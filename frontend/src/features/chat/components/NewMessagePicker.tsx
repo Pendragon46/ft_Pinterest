@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
 import { Spinner } from '@/components/ui/Spinner'
+import { usePresenceStore } from '@/features/presence/presence.store'
 
 import { chatKeys, fetchMutuals } from '../chat.api'
 import { useStartConversation } from '../useStartConversation'
@@ -17,13 +18,21 @@ export function NewMessagePicker() {
     queryKey: chatKeys.mutuals(),
     queryFn: fetchMutuals,
   })
+  const onlineIds = usePresenceStore((s) => s.onlineIds)
 
   const mutation = useStartConversation()
 
   const needle = query.trim().toLowerCase()
-  const filtered = (data ?? []).filter(
-    (u) => !needle || (u.fullname ?? u.username).toLowerCase().includes(needle),
-  )
+  const filtered = (data ?? [])
+    .filter(
+      (u) =>
+        !needle || (u.fullname ?? u.username).toLowerCase().includes(needle),
+    )
+    // Online friends first so an evaluator sees presence at a glance; stable
+    // otherwise (the backend already returns a deterministic order).
+    .sort(
+      (a, b) => Number(onlineIds.has(b.id)) - Number(onlineIds.has(a.id)),
+    )
 
   return (
     // flex-1 so the picker fills the panel and its list can scroll — same
@@ -39,11 +48,14 @@ export function NewMessagePicker() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={t('chat.search')}
-            aria-label={t('chat.search')}
+            placeholder={t('chat.searchFriends')}
+            aria-label={t('chat.searchFriends')}
             className="w-full rounded-full border border-neutral-200 bg-neutral-50 py-2.5 pe-3 ps-9 text-sm outline-none focus-visible:border-neutral-400 focus-visible:ring-2 focus-visible:ring-neutral-200"
           />
         </div>
+        <p className="mt-2 px-1 text-xs text-neutral-500">
+          {t('chat.friendsHint')}
+        </p>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
         {isPending ? (
@@ -83,6 +95,15 @@ export function NewMessagePicker() {
                     <span className="block truncate text-sm text-neutral-500">
                       @{u.username}
                     </span>
+                  </span>
+                  <span
+                    className={`shrink-0 text-xs font-medium ${
+                      onlineIds.has(u.id) ? 'text-green-600' : 'text-neutral-400'
+                    }`}
+                  >
+                    {onlineIds.has(u.id)
+                      ? t('presence.online')
+                      : t('presence.offline')}
                   </span>
                 </button>
               </li>

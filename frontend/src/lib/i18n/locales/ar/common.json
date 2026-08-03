@@ -8,7 +8,8 @@
     "welcome": "مرحباً"
   },
   "presence": {
-    "online": "متصل"
+    "online": "متصل",
+    "offline": "غير متصل"
   },
   "edit": {
     "title": "تعديل العمل",
@@ -25,8 +26,8 @@
     "back": "العودة إلى المحادثات",
     "search": "ابحث عن محادثة",
     "searchNoResult": "لا توجد محادثة مطابقة",
-    "newMessage": "رسالة جديدة",
-    "newMessageTitle": "بدء محادثة",
+    "newMessage": "أصدقائي",
+    "newMessageTitle": "أصدقائي",
     "you": "أنت: ",
     "sharedArtworkPreview": "أرسل إليك منشورًا",
     "sharedArtworkSent": "لقد أرسلت منشورًا",
@@ -39,7 +40,7 @@
     "composerPlaceholder": "اكتب رسالة…",
     "send": "إرسال",
     "sendFailed": "لم تُرسل الرسالة",
-    "notMutual": "لم يعد بإمكانك مراسلة هذا الشخص.",
+    "notMutual": "يجب أن يتابع كلٌّ منكما الآخر للمحادثة.",
     "slowDown": "أنت ترسل بسرعة كبيرة — تمهّل لحظة.",
     "retry": "إعادة المحاولة",
     "loading": "جارٍ تحميل المحادثات…",
@@ -49,10 +50,9 @@
     "emptyTitle": "لا رسائل",
     "emptyBody": "ستظهر محادثاتك هنا.",
     "emptyThread": "ألقِ التحية.",
-    "noMutualsTitle": "لا محادثات ممكنة بعد",
-    "noMutualsBody": "يمكنك مراسلة المبدعين الذين يتابعونك بالمثل.",
+    "noMutualsTitle": "لا أصدقاء بعد",
+    "noMutualsBody": "تابِع شخصًا يتابعك لتصبحا صديقين.",
     "noMutualsAction": "استكشاف",
-    "notMutual": "يجب أن يتابع كلٌّ منكما الآخر للمحادثة.",
     "messageFrom": "رسالة من {{name}}",
     "messageFromYou": "رسالتك",
     "conversationWith": "محادثة مع {{name}}",
@@ -61,7 +61,10 @@
     "typing": "{{name}} يكتب…",
     "system": {
       "mutualFollow": "أصبحتما صديقين الآن. يمكنكما تبادل الرسائل.",
-      "unknown": "تحديث المحادثة"}
+      "unknown": "تحديث المحادثة"
+    },
+    "searchFriends": "البحث عن صديق",
+    "friendsHint": "أصدقاؤك هم الأشخاص الذين تتابعهم ويتابعونك."
   },
   "language": {
     "label": "اللغة"

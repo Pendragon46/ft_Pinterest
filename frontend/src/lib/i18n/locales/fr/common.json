@@ -8,7 +8,8 @@
     "welcome": "Bienvenue"
   },
   "presence": {
-    "online": "En ligne"
+    "online": "En ligne",
+    "offline": "Hors ligne"
   },
   "edit": {
     "title": "Éditer l'œuvre",
@@ -25,8 +26,8 @@
     "back": "Retour aux conversations",
     "search": "Rechercher une conversation",
     "searchNoResult": "Aucune conversation ne correspond",
-    "newMessage": "Nouveau message",
-    "newMessageTitle": "Démarrer une conversation",
+    "newMessage": "Mes amis",
+    "newMessageTitle": "Mes amis",
     "you": "Vous : ",
     "sharedArtworkPreview": "Vous a envoyé une publication",
     "sharedArtworkSent": "Vous avez envoyé une publication",
@@ -39,7 +40,7 @@
     "composerPlaceholder": "Écrire un message…",
     "send": "Envoyer",
     "sendFailed": "Message non envoyé",
-    "notMutual": "Vous ne pouvez plus écrire à cette personne.",
+    "notMutual": "Vous devez vous suivre mutuellement pour discuter.",
     "slowDown": "Vous envoyez trop vite — patientez un instant.",
     "retry": "Réessayer",
     "loading": "Chargement des conversations…",
@@ -49,10 +50,9 @@
     "emptyTitle": "Aucun message",
     "emptyBody": "Vos conversations apparaîtront ici.",
     "emptyThread": "Dites bonjour.",
-    "noMutualsTitle": "Aucune conversation possible pour l'instant",
-    "noMutualsBody": "Vous pouvez écrire aux créateurs qui vous suivent en retour.",
+    "noMutualsTitle": "Pas encore d'amis",
+    "noMutualsBody": "Suivez quelqu’un qui vous suit en retour pour devenir amis.",
     "noMutualsAction": "Explorer",
-    "notMutual": "Vous devez vous suivre mutuellement pour discuter.",
     "messageFrom": "Message de {{name}}",
     "messageFromYou": "Votre message",
     "conversationWith": "Conversation avec {{name}}",
@@ -62,7 +62,9 @@
     "system": {
       "mutualFollow": "Vous êtes maintenant amis. Vous pouvez vous écrire.",
       "unknown": "Mise à jour de la conversation"
-    }
+    },
+    "searchFriends": "Rechercher un ami",
+    "friendsHint": "Vos amis sont les personnes que vous suivez mutuellement."
   },
   "language": {
     "label": "Langue"

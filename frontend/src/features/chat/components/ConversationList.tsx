@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { RefObject } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Plus, Search } from 'lucide-react'
+import { Search, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Spinner } from '@/components/ui/Spinner'
@@ -62,7 +62,7 @@ export function ConversationList({
           onClick={onNewMessage}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2 motion-reduce:transition-none"
         >
-          <Plus aria-hidden="true" className="size-4" />
+          <Users aria-hidden="true" className="size-4" />
           {t('chat.newMessage')}
         </button>
       </div>

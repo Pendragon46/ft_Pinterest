@@ -8,7 +8,8 @@
     "welcome": "Welcome"
   },
   "presence": {
-    "online": "Online"
+    "online": "Online",
+    "offline": "Offline"
   },
   "edit": {
     "title": "Edit artwork",
@@ -25,8 +26,8 @@
     "back": "Back to conversations",
     "search": "Search a conversation",
     "searchNoResult": "No conversation matches",
-    "newMessage": "New message",
-    "newMessageTitle": "Start a conversation",
+    "newMessage": "My friends",
+    "newMessageTitle": "My friends",
     "you": "You: ",
     "sharedArtworkPreview": "Sent you a post",
     "sharedArtworkSent": "You sent a post",
@@ -39,7 +40,7 @@
     "composerPlaceholder": "Write a message…",
     "send": "Send",
     "sendFailed": "Message not sent",
-    "notMutual": "You can no longer message this person.",
+    "notMutual": "You must follow each other to chat.",
     "slowDown": "You're sending too fast — slow down a moment.",
     "retry": "Retry",
     "loading": "Loading conversations…",
@@ -49,10 +50,9 @@
     "emptyTitle": "No messages",
     "emptyBody": "Your conversations will show up here.",
     "emptyThread": "Say hello.",
-    "noMutualsTitle": "No conversations yet",
-    "noMutualsBody": "You can message creators who follow you back.",
+    "noMutualsTitle": "No friends yet",
+    "noMutualsBody": "Follow someone who follows you back to become friends.",
     "noMutualsAction": "Explore",
-    "notMutual": "You must follow each other to chat.",
     "messageFrom": "Message from {{name}}",
     "messageFromYou": "Your message",
     "conversationWith": "Conversation with {{name}}",
@@ -62,7 +62,9 @@
     "system": {
       "mutualFollow": "You are now friends. You can message each other.",
       "unknown": "Conversation update"
-    }
+    },
+    "searchFriends": "Search friends",
+    "friendsHint": "Your friends are the people you follow who follow you back."
   },
   "language": {
     "label": "Language"
