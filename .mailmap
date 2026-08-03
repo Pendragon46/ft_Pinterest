@@ -1,0 +1,35 @@
+# Consolidates the many machine-local git identities the team accumulated at 42 (one
+# per workstation) into one entry per person, so `git shortlog -sn` and GitHub's
+# contributor view show the real distribution. trindran alone had committed from 17
+# different machines, which made 61 commits look like 10.
+#
+# Confirmed by the team: ckeven = cramaros, Sesedra = srabeman.
+# Not mapped: Pendragon46 <160462125+Pendragon46@users.noreply.github.com> — identity
+# unconfirmed, and guessing would misattribute someone's work.
+
+Ckeven Ramaroson <cramaros@student.42antananarivo.mg> <cramaros@c1r3s2.42antananarivo.mg>
+Ckeven Ramaroson <cramaros@student.42antananarivo.mg> <cramaros@c1r7s15.42antananarivo.mg>
+Sedra Ny Aina Barthelemy Rabemanantsoa <srabeman@student.42antananarivo.mg> <srabeman@c1r1s10.42antananarivo.mg>
+Sedra Ny Aina Barthelemy Rabemanantsoa <srabeman@student.42antananarivo.mg> <srabeman@c1r6s16.42antananarivo.mg>
+Sedra Ny Aina Barthelemy Rabemanantsoa <srabeman@student.42antananarivo.mg> <srabeman@c1r7s16.42antananarivo.mg>
+Sedra Ny Aina Barthelemy Rabemanantsoa <srabeman@student.42antananarivo.mg> <94762366+Sesedra@users.noreply.github.com>
+Sedra Ny Aina Barthelemy Rabemanantsoa <srabeman@student.42antananarivo.mg> <nyainarabemanantsoa@gmail.com>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r10s4.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r3s1.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r4s5.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r6s3.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r7s13.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r7s14.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r7s6.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s10.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s2.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s3.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s4.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s5.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s6.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r8s7.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r9s15.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r9s3.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r9s5.42antananarivo.mg>
+Toky Nicky Rindranirina <trindran@student.42antananarivo.mg> <trindran@c1r9s6.42antananarivo.mg>
+Ckeven Ramaroson <cramaros@student.42antananarivo.mg> <ckevenjack@gmail.com>
