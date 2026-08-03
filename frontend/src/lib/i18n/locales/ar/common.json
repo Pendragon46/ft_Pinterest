@@ -302,7 +302,8 @@
       "roleFilter": "تصفية حسب الدور",
       "tagFilter": "تصفية حسب الوسم",
       "allRoles": "كل الأدوار",
-      "allTags": "كل الوسوم"
+      "allTags": "كل الوسوم",
+      "updatedAt": "حُدّث {{time}}"
     },
     "status": {
       "title": "حالة النظام",

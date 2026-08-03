@@ -302,7 +302,8 @@
       "roleFilter": "Filter by role",
       "tagFilter": "Filter by tag",
       "allRoles": "All roles",
-      "allTags": "All tags"
+      "allTags": "All tags",
+      "updatedAt": "Updated {{time}}"
     },
     "status": {
       "title": "System status",

@@ -302,7 +302,8 @@
       "roleFilter": "Filtrer par rôle",
       "tagFilter": "Filtrer par tag",
       "allRoles": "Tous les rôles",
-      "allTags": "Tous les tags"
+      "allTags": "Tous les tags",
+      "updatedAt": "Mis à jour {{time}}"
     },
     "status": {
       "title": "État du système",

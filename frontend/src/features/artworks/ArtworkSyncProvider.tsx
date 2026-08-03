@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 
+import { adminKeys } from '@/features/admin/admin.api'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { connectSocket } from '@/features/presence/socket'
 
@@ -45,6 +46,9 @@ export function ArtworkSyncProvider({ children }: ArtworkSyncProviderProps) {
       // above and refetch it straight back into a 404.
       invalidateCanvas(queryClient)
       void queryClient.invalidateQueries({ queryKey: ['users'] })
+      // Keep the admin analytics dashboard live: its counts derive from these.
+      void queryClient.invalidateQueries({ queryKey: adminKeys.artworks() })
+      void queryClient.invalidateQueries({ queryKey: adminKeys.users() })
     }
 
     // A new publication should surface in every open canvas, not just the
@@ -53,6 +57,8 @@ export function ArtworkSyncProvider({ children }: ArtworkSyncProviderProps) {
     const onCreated = () => {
       invalidateCanvas(queryClient)
       void queryClient.invalidateQueries({ queryKey: ['users'] })
+      void queryClient.invalidateQueries({ queryKey: adminKeys.artworks() })
+      void queryClient.invalidateQueries({ queryKey: adminKeys.users() })
     }
 
     socket.on('artwork:deleted', onDeleted)

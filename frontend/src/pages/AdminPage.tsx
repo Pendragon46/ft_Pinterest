@@ -53,6 +53,8 @@ function AdminDashboard() {
   const query = useQuery({
     queryKey: adminKeys.users(),
     queryFn: fetchAllUsers,
+    // Live overview: poll so user counts move during a demo without a reload.
+    refetchInterval: 15_000,
   })
   const users = query.data ?? []
 

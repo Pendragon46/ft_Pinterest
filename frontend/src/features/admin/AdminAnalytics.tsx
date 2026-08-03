@@ -136,6 +136,9 @@ export function AdminAnalytics({
   const artworksQuery = useQuery({
     queryKey: adminKeys.artworks(),
     queryFn: fetchAllArtworks,
+    // Poll so the dashboard stays live during a demo even without a socket
+    // event; ArtworkSyncProvider also invalidates this key on publish/delete.
+    refetchInterval: 15_000,
   })
   const artworks = useMemo(() => artworksQuery.data ?? [], [artworksQuery.data])
   const artworksLoading = artworksQuery.isPending
@@ -305,15 +308,28 @@ export function AdminAnalytics({
             ))}
           </select>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" onClick={exportCsv}>
-            <Download aria-hidden="true" className="size-4" />
-            {t('admin.analytics.exportCsv')}
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => window.print()}>
-            <Printer aria-hidden="true" className="size-4" />
-            {t('admin.analytics.print')}
-          </Button>
+        <div className="flex flex-col items-end gap-2">
+          <span className="inline-flex items-center gap-1.5 text-xs text-neutral-400">
+            <span
+              aria-hidden="true"
+              className="size-2 rounded-full bg-green-500"
+            />
+            {t('admin.analytics.updatedAt', {
+              time: new Date(artworksQuery.dataUpdatedAt).toLocaleTimeString(
+                i18n.language,
+              ),
+            })}
+          </span>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download aria-hidden="true" className="size-4" />
+              {t('admin.analytics.exportCsv')}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => window.print()}>
+              <Printer aria-hidden="true" className="size-4" />
+              {t('admin.analytics.print')}
+            </Button>
+          </div>
         </div>
       </div>
 
