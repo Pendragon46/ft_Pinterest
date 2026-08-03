@@ -59,15 +59,16 @@ export class ChatService {
       throw new ForbiddenException('You must follow each other to chat');
     }
     const pairKey = [userId, otherUserId].sort().join(':');
-    let convo = await this.prisma.conversation.findUnique({ where: { pairKey } });
-    if (!convo) {
-      convo = await this.prisma.conversation.create({
-        data: {
-          pairKey,
-          participants: { create: [{ userId }, { userId: otherUserId }] },
-        },
-      });
-    }
+    // upsert on the unique pairKey so two simultaneous "message" clicks can't
+    // both create the conversation and race into a P2002 → 500.
+    const convo = await this.prisma.conversation.upsert({
+      where: { pairKey },
+      create: {
+        pairKey,
+        participants: { create: [{ userId }, { userId: otherUserId }] },
+      },
+      update: {},
+    });
     const full = await this.prisma.conversation.findUnique({
       where: { id: convo.id },
       include: {
