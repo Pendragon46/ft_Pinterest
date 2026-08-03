@@ -153,12 +153,19 @@ export function ProfilePage() {
                 {isOwnProfile ? null : <OnlineDot userId={userId} />}
               </div>
               <div className="min-w-0">
-                <h1 className="font-serif text-3xl text-neutral-900">
+                {/* break-words throughout: a display name, handle or bio typed
+                    as one unbroken run would otherwise widen the header and
+                    push the page into horizontal scroll. */}
+                <h1 className="break-words font-serif text-3xl text-neutral-900">
                   {profile.fullname ?? `@${profile.username}`}
                 </h1>
-                <p className="text-neutral-500">@{profile.username}</p>
+                <p className="break-words text-neutral-500">
+                  @{profile.username}
+                </p>
                 {profile.bio ? (
-                  <p className="mt-2 max-w-xl text-neutral-700">{profile.bio}</p>
+                  <p className="mt-2 max-w-xl whitespace-pre-wrap break-words text-neutral-700">
+                    {profile.bio}
+                  </p>
                 ) : null}
                 <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-neutral-500">
                   <span>

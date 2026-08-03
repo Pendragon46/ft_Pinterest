@@ -559,8 +559,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                         {comment.author.username.charAt(0).toUpperCase()}
                       </span>
                     )}
-                    <div className="min-w-0">
-                      <p className="text-sm">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm break-words">
                         <span className="font-serif text-neutral-900">
                           {comment.author.username}
                         </span>{' '}
@@ -571,7 +571,12 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                             : t('artwork.timeHours', { hours: comment.hoursAgo })}
                         </span>
                       </p>
-                      <p className="text-neutral-700">{comment.content}</p>
+                      {/* break-words: a single unbroken token (a 400-char
+                          "Raaaa…") would otherwise stretch the column and force
+                          the comment list to scroll sideways. */}
+                      <p className="whitespace-pre-wrap break-words text-neutral-700">
+                        {comment.content}
+                      </p>
                       <div className="mt-0.5 flex items-center gap-3">
                         <button
                           type="button"

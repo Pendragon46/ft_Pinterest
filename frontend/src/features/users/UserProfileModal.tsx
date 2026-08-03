@@ -85,7 +85,11 @@ export function UserProfileModal({ userId, onClose }: Props) {
               </div>
             </header>
 
-            {u.bio ? <p className="text-neutral-700">{u.bio}</p> : null}
+            {u.bio ? (
+              <p className="whitespace-pre-wrap break-words text-neutral-700">
+                {u.bio}
+              </p>
+            ) : null}
 
             <div className="flex gap-8 border-y border-neutral-100 py-3">
               {stat(workList.length, t('userModal.works'))}
