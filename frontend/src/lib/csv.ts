@@ -1,12 +1,10 @@
-// Minimal RFC 4180 CSV serialization. Values with a comma, quote, or newline are
-// wrapped in quotes with embedded quotes doubled; objects/arrays are JSON-encoded
-// so a nested field never breaks the row shape. CRLF line endings for Excel.
+// RFC 4180 CSV serialization; objects/arrays JSON-encoded so a nested field
+// never breaks the row shape. CRLF line endings for Excel.
 function escapeCell(value: unknown): string {
   if (value == null) return ''
   let raw = typeof value === 'object' ? JSON.stringify(value) : String(value)
-  // Neutralize spreadsheet formula injection: a cell starting with = + - @ (or a
-  // control char) executes in Excel/Sheets, so prefix it with a quote to force
-  // text. A field crafted like "=cmd|..." in a bio can't run when reopened.
+  // SECURITY: neutralize spreadsheet formula injection — a cell starting with
+  // = + - @ or a control char executes in Excel/Sheets; prefix a quote to force text.
   if (/^[=+\-@\t\r]/.test(raw)) raw = `'${raw}`
   return /[",\r\n]/.test(raw) ? `"${raw.replace(/"/g, '""')}"` : raw
 }
@@ -26,11 +24,8 @@ function unionKeys(rows: Record<string, unknown>[]): string[] {
   return keys
 }
 
-/**
- * Serialize flat records to a CSV block. Columns default to the union of the
- * rows' keys; pass an explicit list to fix the order or subset. An empty input
- * still emits the header row when columns are given, else an empty string.
- */
+/** Serialize flat records to CSV. Columns default to the union of row keys;
+    pass an explicit list to fix order/subset. */
 export function toCsv(
   rows: Record<string, unknown>[],
   columns?: string[],

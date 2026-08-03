@@ -18,7 +18,6 @@ interface ArtworkCardProps {
 }
 
 // Layout-agnostic: same component in the infinite canvas and the fallback grid.
-// The colored block is a placeholder for the future <img src={imageUrl}>.
 export const ArtworkCard = memo(function ArtworkCard({
   artwork,
   layout = 'canvas',

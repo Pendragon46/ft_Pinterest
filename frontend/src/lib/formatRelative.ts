@@ -1,5 +1,4 @@
-// Localized relative time ("now" / "2 min" / "1 h" / "yesterday" / "12/03") via
-// the built-in Intl APIs — no date library, RTL-correct in every locale.
+// Localized relative time via built-in Intl — no date library, RTL-correct.
 export function formatRelative(iso: string, locale: string): string {
   const then = new Date(iso).getTime()
   const diff = (then - Date.now()) / 1000

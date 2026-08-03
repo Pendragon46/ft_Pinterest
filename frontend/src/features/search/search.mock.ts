@@ -24,8 +24,6 @@ import type {
   SuggestionGroups,
 } from './search.types'
 
-// ── Niche definitions ───────────────────────────────────────────────────────
-
 /** Internal tags per discipline — crafted so every niche shares some with a few
     others (drives the crossroads neighbours). Not user-facing. */
 const NICHE_TAGS: Record<Category, string[]> = {
@@ -111,8 +109,6 @@ export function isDisciplineSlug(slug: string): boolean {
   return NICHE_BY_SLUG.has(slug as Category)
 }
 
-// ── Colours & previews ──────────────────────────────────────────────────────
-
 /** A soft, in-family colour for item `i` of a niche — deterministic, no PRNG. */
 function nicheItemColour(hue: number, i: number): string {
   const h = (hue + ((i * 37) % 24) - 12 + 360) % 360
@@ -126,8 +122,6 @@ function nichePreviews(niche: Niche, count: number): string[] {
     nicheItemColour(niche.hue, i * 3 + 1),
   )
 }
-
-// ── Term matching ───────────────────────────────────────────────────────────
 
 const normalise = (s: string): string => s.trim().toLowerCase()
 
@@ -150,13 +144,10 @@ function nearestScore(q: string, niche: Niche): number {
 
 /**
  * Resolve a submitted term to a niche, or the nearest region if none match (§7).
- *
- * DESIGN DECISION — search never dead-ends. Any term always resolves to a niche
- * (the closest one, `best`, when nothing matches), so the discovery canvas is
- * never a cold "no results" screen. This is why there is no server-side
- * empty-results fallback (SEARCH_SPEC S3 / `/search/unified`): that fallback
- * exists to fill a flat results list, and this app has none — search is spatial,
- * `onSubmit` enters a niche rather than listing works.
+ * Search never dead-ends: any term resolves to a niche (the closest, `best`, when
+ * nothing matches), so the canvas is never a cold "no results" screen. Hence no
+ * server-side empty-results fallback (SEARCH_SPEC S3) — search is spatial, not a
+ * flat results list.
  */
 export function resolveSearch(term: string): SearchResolution {
   const q = normalise(term)
@@ -181,8 +172,6 @@ export function resolveSearch(term: string): SearchResolution {
   }
   return { kind: 'nearest', niche: best, typed: term }
 }
-
-// ── Autocomplete (§4) ───────────────────────────────────────────────────────
 
 const MAX_PER_CATEGORY = 3
 
@@ -218,8 +207,6 @@ export function suggest(term: string): SuggestionGroups {
 
   return { disciplines, tags: [], creators }
 }
-
-// ── Niche content & toroidal tiling (§6) ────────────────────────────────────
 
 /** The N unique items of a niche: real world cells near its region, re-coloured
     to the niche family (so `id` → detail still resolves via the artwork mock). */
@@ -304,8 +291,6 @@ export function nicheCellIndex(slug: Category, cx: number, cy: number): number |
   return nicheItemIndex(cx, cy, niche.contentSize)
 }
 
-// ── Neighbours (§8.5) ───────────────────────────────────────────────────────
-
 function sharedTagCount(a: string[], b: string[]): number {
   const set = new Set(a)
   return b.reduce((n, t) => n + (set.has(t) ? 1 : 0), 0)
@@ -326,8 +311,6 @@ export function neighbours(slug: Category): NicheNeighbour[] {
       (a, b) => b.shared - a.shared || a.niche.slug.localeCompare(b.niche.slug),
     )
 }
-
-// ── Contextual suggested tags (§2.2) ────────────────────────────────────────
 
 const HISTORY_KEY = 'atlaas:search-history'
 const HISTORY_CAP = 8

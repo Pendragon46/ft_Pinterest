@@ -1,13 +1,9 @@
 /**
- * Atlaas brand mark ("picto") as raw path geometry.
- *
- * These are the same five petals as `@/assets/picto.svg`, but exposed as path
- * data so callers can inline them into an SVG — e.g. to punch a logo-shaped hole
- * through an animated `<mask>`. `Logo` keeps using the `<img>` (it carries a
- * grain filter); this module exists for cases that need the vector inline.
+ * Atlaas brand mark as raw path data so callers can inline the vector — e.g. to
+ * punch a logo-shaped hole through an animated `<mask>`. `Logo` still uses the
+ * `<img>` (it carries a grain filter); this exists for cases needing paths inline.
  */
 
-/** viewBox of the source picto. */
 export const ATLAAS_MARK_VIEWBOX = '0 0 194 195'
 
 /** Local-space centre of the mark — the pivot for scaling / rotating it. */

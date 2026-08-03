@@ -61,6 +61,5 @@ export interface NicheNeighbour {
   niche: Niche
   /** Shared-tag count with the current niche (proximity ordering). */
   shared: number
-  /** Circular micro-preview colours. */
   previews: string[]
 }

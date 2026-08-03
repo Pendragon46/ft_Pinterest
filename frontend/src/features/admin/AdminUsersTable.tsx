@@ -74,7 +74,6 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Controls: search + role filter + sort (stack on mobile). */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
           <Search
@@ -121,7 +120,6 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
         </select>
       </div>
 
-      {/* Table (scrolls horizontally on small screens). */}
       <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-start text-sm">
@@ -204,7 +202,6 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
           </table>
         </div>
 
-        {/* Pagination. */}
         <div className="flex flex-col items-center justify-between gap-3 border-t border-neutral-200 px-4 py-3 sm:flex-row">
           <p className="text-sm text-neutral-500">
             {t('admin.pagination.showing', { from, to, total: visible.length })}

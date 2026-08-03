@@ -420,7 +420,6 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
 
       <div className="flex min-h-0 min-w-0 flex-col">
         <header className="flex items-center gap-3 border-b border-neutral-100 p-4">
-          {/* Avatar + name open the author's profile. */}
           <Link
             to={`/profile/${artwork.author.id}`}
             className="group flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"

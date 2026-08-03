@@ -13,11 +13,8 @@ interface CrossroadsProps {
 }
 
 /**
- * The *Where next?* crossroads (§8). Shown once a niche is 100% explored: a
- * message plus three tag-proximity neighbours (each a dark pill with a colour
- * preview) and a refresh that walks outward to farther neighbours. Collapses to a
- * small pill when the user keeps exploring, and never reverts to plain Refocus
- * (§8.7). Picking a neighbour hands back to the shared transition.
+ * The *Where next?* crossroads (§8), shown once a niche is 100% explored.
+ * Collapses to a pill while exploring and never reverts to plain Refocus (§8.7).
  */
 export function Crossroads({ niche, onPick }: CrossroadsProps) {
   const { t } = useTranslation('common')

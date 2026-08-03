@@ -1,10 +1,6 @@
-// Default avatar — a brand-blue gradient as an inline data-URI, so it renders
-// offline and needs no network. Prisma gives every user a default avatarUrl;
-// this is the mock stand-in for it. TODO(backend): the server returns a real URL.
-/**
- * First letters of a display name, for the SafeImage `fallback` prop. Initials
- * read as "this person"; the grey square they replace read as "broken".
- */
+// Inline data-URI default avatar: renders offline, no network. Mock stand-in.
+// TODO(backend): the server returns a real avatarUrl.
+/** Initials for SafeImage `fallback`: they read as a person; a grey square reads as broken. */
 export function initialsOf(name: string | undefined | null): string {
   if (!name) return '?'
   const parts = name.trim().split(/\s+/).filter(Boolean)

@@ -1,8 +1,6 @@
 import type { CellSlot } from '../artwork.mock'
 
 // Neutral shimmer placeholder at a card slot, shown while its tile loads.
-// (Tinting toward the card's dominant colour is future — it needs the colour
-// served as tile metadata before the data arrives.)
 // `revealDelay` staggers its fade-in during the centre-out search wave (§5.3).
 export function SkeletonCell({
   slot,

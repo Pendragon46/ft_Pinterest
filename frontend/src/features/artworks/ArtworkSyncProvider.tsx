@@ -40,10 +40,9 @@ export function ArtworkSyncProvider({ children }: ArtworkSyncProviderProps) {
       // so opening that conversation renders the plain link instead of firing a
       // request that would 404 (issue #29).
       queryClient.setQueryData(artworkKeys.linkPreview(id), null)
-      // Refetch only the lists that may still show the card. invalidateCanvas
-      // targets prefixes rather than the whole 'artworks' key on purpose: the
-      // broad version would also invalidate the linkPreview entry seeded just
-      // above and refetch it straight back into a 404.
+      // Refetch the lists that may still show the card. invalidateCanvas targets
+      // prefixes, not the whole 'artworks' key, so it won't refetch the
+      // linkPreview miss seeded above straight back into a 404.
       invalidateCanvas(queryClient)
       void queryClient.invalidateQueries({ queryKey: ['users'] })
       // Keep the admin analytics dashboard live: its counts derive from these.

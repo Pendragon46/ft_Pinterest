@@ -1,8 +1,7 @@
 import type { User } from '@/features/auth/auth.types'
 
-// "Prénom + initiale" greeting name: "Sedra Rabemanantsoa" → "Sedra R.".
-// Falls back to the username when there is no fullname (OAuth/edge accounts),
-// and to the first name alone when there is no surname token.
+// Greeting name "Sedra Rabemanantsoa" → "Sedra R."; falls back to username when
+// there's no fullname (OAuth accounts), or first name alone when no surname.
 export function formatShortName(
   user: Pick<User, 'fullname' | 'username'>,
 ): string {

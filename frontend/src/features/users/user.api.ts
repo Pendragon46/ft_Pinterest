@@ -60,7 +60,6 @@ export async function fetchFollowingCount(id: string): Promise<number> {
   return data
 }
 
-// ── Mutations ───────────────────────────────────────────────────────────────
 // Profil, compte et follow passent par le backend ; l'identité voyage dans le
 // token, donc plus de `loggedUser` dans les corps.
 

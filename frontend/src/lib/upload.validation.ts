@@ -1,6 +1,5 @@
-// Miroir client des validateurs Nest (ParseFilePipe). Le serveur reste
-// l'autorité : ceci évite juste de faire attendre l'utilisateur pendant
-// l'envoi d'un fichier qui sera refusé à l'arrivée.
+// Miroir client des validateurs Nest (ParseFilePipe) ; le serveur reste
+// l'autorité. Évite d'attendre l'envoi d'un fichier qui sera refusé.
 
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 
@@ -13,8 +12,7 @@ const ARTWORK_TYPES = [
   'video/mp4',
 ]
 
-// Clés i18n possibles. Typées (plutôt que `string`) pour que `t(key)`
-// type-check face aux ressources i18next strictes.
+// Typées (pas `string`) pour que `t(key)` type-check contre les ressources i18next.
 export type UploadErrorKey = 'errors.fileTooLarge' | 'errors.fileType'
 
 /** Renvoie une clé i18n si le fichier est invalide, null s'il passe.

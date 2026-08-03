@@ -33,16 +33,10 @@ export const artworkKeys = {
 }
 
 /**
- * Refetch everything the infinite canvas draws from.
- *
- * Every tile query is `staleTime: Infinity` (ArtworkCanvas), which is what keeps
- * panning cheap — but it also means a tile never refreshes on its own. Publish,
- * edit or delete therefore has to say so explicitly, or the new work simply is
- * not on the map and a deleted one stays clickable.
- *
- * Prefixes, not the bare `['artworks']`: that would also match `linkPreview`,
- * whose cached "this artwork is gone" entry must survive (see
- * ArtworkSyncProvider).
+ * Refetch everything the infinite canvas draws from. Tile queries are
+ * `staleTime: Infinity`, so publish/edit/delete must invalidate explicitly.
+ * Invalidate by prefix, not the bare `['artworks']`, so `linkPreview`'s cached
+ * "gone" entry survives (see ArtworkSyncProvider).
  */
 export function invalidateCanvas(queryClient: QueryClient): void {
   // ['artworks','count'] — feeds totalPages, itself part of the tile key.

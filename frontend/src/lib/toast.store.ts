@@ -18,8 +18,8 @@ interface ShowInput {
   action?: ToastAction
   /**
    * Auto-dismiss after this many ms (0 = keep until dismissed). Defaults to 0 for
-   * toasts that carry an `action` — the retry path is the only way to recover a
-   * failed optimistic write, so a timer must never remove it — and 5s otherwise.
+   * `action` toasts — a retry is the only way to recover a failed optimistic write,
+   * so a timer must never remove it — and 5s otherwise.
    */
   duration?: number
 }
@@ -36,9 +36,8 @@ interface ToastState {
 let nextId = 1
 const DEFAULT_DURATION = 5000
 
-// Auto-dismiss bookkeeping kept outside React state: each timed toast's intended
-// lifetime and its live timer handle, so timers can be paused (hover/focus) and
-// cancelled (dismiss) individually.
+// Auto-dismiss bookkeeping kept outside React state so timers can be paused
+// (hover/focus) and cancelled (dismiss) individually.
 const lifetimes = new Map<number, number>()
 const timers = new Map<number, number>()
 
@@ -50,9 +49,8 @@ function clearTimer(id: number) {
   }
 }
 
-// App-wide toast queue. Callers pass already-translated strings; the viewport
-// (mounted once at the app root) renders them. Used for optimistic-rollback
-// "couldn't save — retry" messages and other transient confirmations.
+// App-wide toast queue; callers pass already-translated strings. Used for
+// optimistic-rollback "couldn't save — retry" messages and other confirmations.
 export const useToastStore = create<ToastState>((set, get) => {
   const schedule = (id: number, duration: number) => {
     timers.set(
@@ -81,9 +79,8 @@ export const useToastStore = create<ToastState>((set, get) => {
       lifetimes.delete(id)
       set((state) => ({ toasts: state.toasts.filter((toast) => toast.id !== id) }))
     },
-    // Hovering/focusing the viewport clears every pending timer so a toast can't
-    // vanish mid-read; leaving restarts each remaining toast from its full
-    // lifetime (a safe over-generosity — the point is to not lose it while read).
+    // Clear pending timers so a toast can't vanish mid-read; leaving restarts
+    // each from its full lifetime (safe over-generosity).
     pause: () => {
       for (const id of Array.from(timers.keys())) clearTimer(id)
     },
@@ -95,7 +92,6 @@ export const useToastStore = create<ToastState>((set, get) => {
   }
 })
 
-/** Convenience: the `show` action for firing toasts from components. */
 export function useToast() {
   return useToastStore((state) => state.show)
 }

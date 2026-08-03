@@ -1,6 +1,5 @@
-// Frontière unique entre les formes renvoyées par NestJS et les types du
-// frontend. Un changement de champ côté backend se corrige ici et nulle
-// part ailleurs.
+// Frontière unique entre les formes NestJS et les types frontend : un changement
+// de champ backend se corrige ici et nulle part ailleurs.
 
 import type {
   ArtworkComment,
@@ -11,10 +10,9 @@ import type {
 } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
 
-// ── Formes serveur ──────────────────────────────────────────────────────
-// Déclarées ici plutôt qu'importées des types frontend : elles décrivent le
-// contrat HTTP. Les garder distinctes évite qu'une évolution du backend se
-// propage silencieusement dans les composants.
+// Formes serveur : déclarées ici (pas importées des types frontend) car elles
+// décrivent le contrat HTTP ; les garder distinctes évite qu'une évolution
+// backend se propage silencieusement dans les composants.
 
 export interface ServerUser {
   id: string
@@ -65,10 +63,8 @@ export interface ServerFollow {
   createdAt: string
 }
 
-// ── Utilitaires ─────────────────────────────────────────────────────────
-
-/** Couleur stable dérivée d'un id : même entrée → même teinte, sans état
-    partagé. Sert de repli quand aucune image n'est disponible. */
+/** Couleur stable dérivée d'un id : même entrée → même teinte. Repli quand
+    aucune image n'est disponible. */
 export function colorFromId(id: string): string {
   let hash = 0
   for (let i = 0; i < id.length; i += 1) {
@@ -77,9 +73,8 @@ export function colorFromId(id: string): string {
   return `hsl(${Math.abs(hash) % 360} 58% 62%)`
 }
 
-/** Le backend ne stocke pas le type de média. Cloudinary conserve
-    l'extension d'origine dans l'URL : on la lit pour distinguer image et
-    vidéo, dont le rendu diffère sur toutes les surfaces. */
+/** Le backend ne stocke pas le type de média ; on le déduit de l'URL Cloudinary
+    (chemin ou extension) car le rendu image/vidéo diffère partout. */
 export function mediaTypeFromUrl(url?: string | null): MediaType {
   if (!url) return 'image'
   // Cloudinary : type dans le chemin (/video/upload/), pas d'extension ; repli sur l'extension.
@@ -87,15 +82,10 @@ export function mediaTypeFromUrl(url?: string | null): MediaType {
   return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(url) ? 'video' : 'image'
 }
 
-/** Vignette JPEG d'une vidéo Cloudinary (première image, `so_0`).
- *
- *  Monter un vrai `<video preload="metadata">` par vignette déclenche une
- *  requête Range par carte, et c'est ce cache média partiel que Chrome n'arrive
- *  parfois plus à relire — `ERR_CACHE_READ_FAILURE` (issue #24). Une image
- *  n'emprunte pas ce chemin, et pèse bien moins lourd dans une grille.
- *
- *  Renvoie `undefined` si l'URL n'est pas une vidéo Cloudinary : l'appelant
- *  retombe alors sur le `<video>`. */
+/** Vignette JPEG d'une vidéo Cloudinary (première image, `so_0`). Un vrai
+    `<video preload="metadata">` par carte déclenche une requête Range dont
+    Chrome rate parfois la relecture — `ERR_CACHE_READ_FAILURE` (issue #24).
+    Renvoie `undefined` hors vidéo Cloudinary : l'appelant retombe sur `<video>`. */
 export function videoPosterUrl(url?: string | null): string | undefined {
   if (!url) return undefined
   const marker = '/video/upload/'
@@ -112,8 +102,6 @@ export function hoursSince(iso: string): number {
   const ms = Date.now() - new Date(iso).getTime()
   return Math.max(0, Math.floor(ms / 3_600_000))
 }
-
-// ── Mappers ─────────────────────────────────────────────────────────────
 
 export function toUser(s: ServerUser): User {
   return {
@@ -151,8 +139,7 @@ export function toProfileArtwork(s: ServerArtwork): ProfileArtwork {
     mediaUrl: s.mediaUrl,
     mediaType: mediaTypeFromUrl(s.mediaUrl),
     tags: s.tags ?? [],
-    // `_count` absent = endpoint sans include : afficher 0 plutôt que de
-    // laisser un accès sur undefined faire planter la carte.
+    // `_count` absent (endpoint sans include) : afficher 0 plutôt que planter.
     _count: s._count ?? { likes: 0, comments: 0 },
   }
 }

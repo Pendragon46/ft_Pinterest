@@ -14,8 +14,6 @@ import type {
 import type { User } from '@/features/auth/auth.types'
 import { DEFAULT_AVATAR } from '@/lib/avatar'
 
-// ── Profile ─────────────────────────────────────────────────────────────────
-
 // The single mock account (id 'dev-user'), seeded to match the design. Mutable so
 // Settings edits persist across a profile refetch. TODO(backend): delete.
 let mockProfile: User = {
@@ -46,8 +44,6 @@ export function updateMockProfile(id: string, patch: ProfilePatch): User {
   return { ...mockProfile }
 }
 
-// ── Works & liked (backend-shaped artworks) ─────────────────────────────────
-
 // Soft gradient pairs — the mock's stand-in image, so the grid looks like the
 // design. TODO(backend): real `mediaUrl`s replace these.
 const GRADIENTS: readonly (readonly [string, string])[] = [
@@ -62,7 +58,6 @@ function gradientDataUri([a, b]: readonly [string, string]): string {
   return `data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%204%203'%3E%3Cdefs%3E%3ClinearGradient%20id='g'%20x1='0'%20y1='0'%20x2='1'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='${c(a)}'/%3E%3Cstop%20offset='1'%20stop-color='${c(b)}'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='4'%20height='3'%20fill='url(%23g)'/%3E%3C/svg%3E`
 }
 
-// ── Other users (the canvas authors) ────────────────────────────────────────
 // Tapping an author in the detail view opens their profile, so every canvas
 // author must resolve to a populated page. We synthesize one from the
 // AuthorSummary; only the signed-in account (above) is editable.
@@ -159,7 +154,6 @@ export function mockUserLiked(id: string): ProfileArtwork[] {
 export const MOCK_FOLLOWER_COUNT = 1300
 export const MOCK_FOLLOWING_COUNT = 142
 
-// ── User-created works (session store) ──────────────────────────────────────
 // Stand-in for POST /artworks + persistence: works published this session live
 // here so the whole loop (publish → detail → Profile Works) closes on mocks,
 // prepended ahead of the deterministic list. TODO(backend): delete — the server

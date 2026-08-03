@@ -227,7 +227,6 @@ export function EditArtworkPage() {
             <p className="text-sm text-neutral-400">{t('edit.mediaKept')}</p>
           </div>
 
-          {/* Form column */}
           <div className="flex flex-col gap-5">
             <Input
               label={t('create.fieldTitle')}
@@ -293,7 +292,6 @@ export function EditArtworkPage() {
               </div>
             </div>
 
-            {/* Tags chip input */}
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="edit-tags"

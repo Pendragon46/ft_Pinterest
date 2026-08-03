@@ -252,7 +252,6 @@ export function SettingsPage() {
           <div className="min-w-0">
             {section === 'account' ? (
               <div className="flex flex-col gap-6">
-                {/* Profile card */}
                 <form
                   onSubmit={handleProfileSave}
                   className="flex flex-col gap-5 rounded-2xl border border-neutral-200 p-6"
@@ -363,7 +362,6 @@ export function SettingsPage() {
                   </div>
                 </form>
 
-                {/* Email & password card */}
                 <form
                   onSubmit={handleAccountSave}
                   className="flex flex-col gap-5 rounded-2xl border border-neutral-200 p-6"
@@ -422,7 +420,6 @@ export function SettingsPage() {
                 </form>
               </div>
             ) : section === 'appearance' ? (
-              /* Appearance section */
               <div className="flex flex-col gap-5 rounded-2xl border border-neutral-200 p-6">
                 <h2 className="font-serif text-xl text-neutral-900">
                   {t('settings.appearanceHeading')}

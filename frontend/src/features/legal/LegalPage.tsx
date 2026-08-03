@@ -81,7 +81,6 @@ export function LegalPage({ doc }: LegalPageProps) {
 
   return (
     <main className="min-h-svh bg-white">
-      {/* Branded gradient header (the app's brand ramp), white chrome on top. */}
       <header className="bg-gradient-to-br from-neutral-950 from-30% via-[#252c55] via-70% to-[#a9b5ea] text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 pt-5">
           <Link
@@ -109,7 +108,6 @@ export function LegalPage({ doc }: LegalPageProps) {
       </header>
 
       <div className="mx-auto grid max-w-6xl gap-x-12 gap-y-8 px-6 py-12 md:grid-cols-[15rem_1fr]">
-        {/* Table of content — sticky scroll-spy; hidden on mobile where it stacks. */}
         <nav aria-label={t(`${doc}.toc`)} className="hidden md:block">
           <div className="sticky top-8">
             <p className="mb-4 font-serif text-lg text-neutral-900">
@@ -138,7 +136,6 @@ export function LegalPage({ doc }: LegalPageProps) {
           </div>
         </nav>
 
-        {/* Document body. */}
         <div className="min-w-0">
           <p className="text-sm text-neutral-400">
             {t(`${doc}.updated`, { date: LEGAL.lastUpdated })}

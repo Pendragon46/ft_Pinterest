@@ -12,15 +12,11 @@ interface CellRange {
 }
 
 /**
- * Tracks how much of a niche the user has actually explored. A niche repeats N
- * unique items toroidally, so completion is measured against that unique set —
- * the "unique tile" — never the infinite looped plane (§8.1). We accumulate the
- * unique items whose cells have been *on screen* (the surface parcoured), and
- * return true once every unique item has appeared. Resets when the niche changes.
- *
- * All the work happens in an effect + a ref (never during render), so tracking is
- * completely passive — it cannot disturb the search-transition render. There is
- * no progress read-out before 100% — the crossroads appearing is the only
+ * How much of a niche the user has explored. A niche repeats N unique items
+ * toroidally, so completion is measured against that unique set — never the
+ * infinite looped plane (§8.1). Resets when the niche changes. Runs entirely in
+ * an effect + ref (never during render) so it can't disturb the search-transition
+ * render. No progress read-out before 100% — the crossroads is the only
  * completion signal (§8.2).
  */
 export function useNicheCompletion(

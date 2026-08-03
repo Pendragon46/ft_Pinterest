@@ -214,7 +214,6 @@ export function CreatePage() {
           onSubmit={handleSubmit}
           className="mt-8 grid gap-8 md:grid-cols-2"
         >
-          {/* Media column */}
           <div className="flex flex-col gap-2">
             {/* One persistent, AT-operable input; the label (and Replace) drive it. */}
             <input
@@ -306,7 +305,6 @@ export function CreatePage() {
             ) : null}
           </div>
 
-          {/* Form column */}
           <div className="flex flex-col gap-5">
             <Input
               label={t('create.fieldTitle')}
@@ -372,7 +370,6 @@ export function CreatePage() {
               </div>
             </div>
 
-            {/* Tags chip input */}
             <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="create-tags"

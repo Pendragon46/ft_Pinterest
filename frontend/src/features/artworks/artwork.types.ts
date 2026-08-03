@@ -1,5 +1,4 @@
-// Shared shapes for the artworks feature. `color` is a temporary stand-in for
-// the future `imageUrl`; CanvasArtwork adds map placement that arrives as data.
+// `color` is a temporary stand-in for the future `imageUrl`.
 
 export const CATEGORIES = [
   'portrait',

@@ -11,11 +11,9 @@ import { PresenceProvider } from '@/features/presence/PresenceProvider'
 import { i18n } from '@/lib/i18n'
 import { isApiError } from '@/lib/http'
 
-// Single QueryClient, stable for the whole app lifetime.
-// A 4xx is a verdict, not a hiccup — retrying it only multiplies the console
-// noise (one deleted artwork used to log four 404s). Retry what a retry can
-// actually fix, and keep data fresh long enough that returning to the tab
-// doesn't refetch the whole screen.
+// Single QueryClient for the app. A 4xx is a verdict, not a hiccup — retrying
+// only multiplies console noise (a deleted artwork used to log four 404s), so
+// retry only what a retry can fix; staleTime keeps returning to the tab cheap.
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
