@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
 import { SafeImage } from '@/components/ui/SafeImage'
-import { artworkKeys } from '@/features/artworks/artwork.api'
+import { artworkKeys, invalidateCanvas } from '@/features/artworks/artwork.api'
 import { videoPosterUrl } from '@/lib/mappers'
 import { useToast } from '@/lib/toast.store'
 
@@ -54,7 +54,7 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
       // No observer is mounted on them from here, so removing cannot refetch.
       qc.removeQueries({ queryKey: artworkKeys.detail(id) })
       qc.removeQueries({ queryKey: artworkKeys.comments(id) })
-      void qc.invalidateQueries({ queryKey: artworkKeys.feed() })
+      invalidateCanvas(qc)
       setToDelete(null)
     },
     onError: () => {

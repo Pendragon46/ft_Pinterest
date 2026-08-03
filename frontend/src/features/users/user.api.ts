@@ -21,6 +21,11 @@ export const userKeys = {
   liked: (id: string) => ['users', 'liked', id] as const,
   followerCount: (id: string) => ['users', 'followerCount', id] as const,
   followingCount: (id: string) => ['users', 'followingCount', id] as const,
+  /** Suivi ou non, du point de vue de `me`. Clé partagée : c'est la seule
+      source de vérité, pour que deux boutons Follow visibles en même temps
+      (détail d'œuvre en modale au-dessus du profil) ne se contredisent pas. */
+  isFollowing: (me: string, target: string) =>
+    ['users', 'isFollowing', me, target] as const,
 }
 
 /** Profil d'un user. GET /users/:id → 404 si inconnu (remonté en ApiError). */

@@ -26,8 +26,6 @@ export function FollowButton({ userId }: FollowButtonProps) {
   const currentUser = useAuthStore((state) => state.user)
   const toast = useToast()
   const queryClient = useQueryClient()
-  // Optimistic override; null means "defer to the backend's persisted state".
-  const [followOverride, setFollowOverride] = useState<boolean | null>(null)
   const [bounce, setBounce] = useState(false)
   // A late follow rejection must not toast after this button unmounts (§1.1).
   const isMountedRef = useRef(true)
@@ -38,39 +36,41 @@ export function FollowButton({ userId }: FollowButtonProps) {
     }
   }, [])
 
-  // Initial follow state from the backend, so a reload reflects what's
-  // persisted; it seeds the optimistic toggle below.
+  // The cache entry is the single source of truth, shared by key across every
+  // FollowButton for this pair. Holding the optimistic value in component state
+  // instead meant the button in the artwork modal and the one on the profile
+  // behind it disagreed after a click — and clicking the stale one fired a
+  // redundant request the server rejects, which the browser logs.
+  const followKey = userKeys.isFollowing(currentUser?.id ?? '', userId)
   const isFollowingQuery = useQuery({
-    queryKey: ['users', 'isFollowing', currentUser?.id, userId],
+    queryKey: followKey,
     queryFn: () => fetchIsFollowing(currentUser?.id ?? '', userId),
     enabled: Boolean(currentUser),
   })
-  // Derived: an in-flight optimistic choice wins, else the persisted state.
-  const following = followOverride ?? isFollowingQuery.data ?? false
-
-  const flip = (next: boolean) => {
-    setFollowOverride(next)
-    if (next) {
-      setBounce(true)
-      window.setTimeout(() => {
-        setBounce(false)
-      }, 200)
-    }
-  }
+  const following = isFollowingQuery.data ?? false
 
   const mutation = useMutation({
     mutationFn: (next: boolean) => setFollow({ id: userId, following: next }),
-    // Flip in onMutate and snapshot the prior value as context, then restore that
-    // exact value on error (no re-bounce, and safe if opposite toggles interleave)
-    // rather than inverting this call's `next`.
-    onMutate: (next: boolean) => {
-      const previous = following
-      flip(next)
+    // Write the optimistic value into the cache and snapshot the prior one, then
+    // restore exactly that on error (no re-bounce, and safe if opposite toggles
+    // interleave) rather than inverting this call's `next`.
+    onMutate: async (next: boolean) => {
+      await queryClient.cancelQueries({ queryKey: followKey })
+      const previous = queryClient.getQueryData<boolean>(followKey)
+      queryClient.setQueryData<boolean>(followKey, next)
+      if (next) {
+        setBounce(true)
+        window.setTimeout(() => {
+          setBounce(false)
+        }, 200)
+      }
       return { previous }
     },
     onError: (_error, next, context) => {
-      if (!isMountedRef.current) return // no rollback/toast from a dead surface (§1.1)
-      setFollowOverride(context?.previous ?? !next)
+      // Cache rollback is cache-level and must run even after unmount, so a
+      // dead surface cannot leave the shared state wrong for the other button.
+      queryClient.setQueryData<boolean>(followKey, context?.previous ?? !next)
+      if (!isMountedRef.current) return // no toast from a dead surface (§1.1)
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
@@ -83,6 +83,8 @@ export function FollowButton({ userId }: FollowButtonProps) {
       })
     },
     onSettled: () => {
+      // Reconcile the optimistic value with what the server actually persisted.
+      void queryClient.invalidateQueries({ queryKey: followKey })
       // Counts on both profiles must refresh after a (un)follow.
       void queryClient.invalidateQueries({
         queryKey: userKeys.followerCount(userId),

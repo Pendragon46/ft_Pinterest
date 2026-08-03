@@ -19,6 +19,7 @@ import { useCompact } from '@/lib/useCompact'
 import {
   artworkKeys,
   deleteArtworkComment,
+  invalidateCanvas,
   fetchArtworkComments,
   fetchIsLiked,
   postArtworkComment,
@@ -84,7 +85,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     void queryClient.invalidateQueries({ queryKey: userKeys.works(authorId) })
     void queryClient.invalidateQueries({ queryKey: userKeys.profile(authorId) })
     void queryClient.invalidateQueries({ queryKey: userKeys.liked(authorId) })
-    void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+    // Tiles are Infinity-stale: without this the deleted work stays drawn on
+    // the map (and on the niche/creator canvas) and remains clickable.
+    invalidateCanvas(queryClient)
     // Go to the profile, not back in history: a prior /artwork entry would refetch the deleted work.
     navigate(`/profile/${authorId}`, { replace: true })
     toast({ message: t('artwork.deleted'), duration: 10000 })

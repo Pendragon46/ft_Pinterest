@@ -5,7 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { connectSocket } from '@/features/presence/socket'
 
-import { artworkKeys } from './artwork.api'
+import { artworkKeys, invalidateCanvas } from './artwork.api'
 
 interface ArtworkSyncProviderProps {
   children: ReactNode
@@ -39,12 +39,11 @@ export function ArtworkSyncProvider({ children }: ArtworkSyncProviderProps) {
       // so opening that conversation renders the plain link instead of firing a
       // request that would 404 (issue #29).
       queryClient.setQueryData(artworkKeys.linkPreview(id), null)
-      // Refetch only the lists that may still show the card. Invalidating the
-      // whole 'artworks' prefix would also invalidate the linkPreview entry we
-      // just seeded, and refetch it straight back into a 404.
-      void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
-      void queryClient.invalidateQueries({ queryKey: ['artworks', 'tile'] })
-      void queryClient.invalidateQueries({ queryKey: artworkKeys.count() })
+      // Refetch only the lists that may still show the card. invalidateCanvas
+      // targets prefixes rather than the whole 'artworks' key on purpose: the
+      // broad version would also invalidate the linkPreview entry seeded just
+      // above and refetch it straight back into a 404.
+      invalidateCanvas(queryClient)
       void queryClient.invalidateQueries({ queryKey: ['users'] })
     }
 

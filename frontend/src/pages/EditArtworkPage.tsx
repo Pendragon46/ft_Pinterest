@@ -12,6 +12,7 @@ import { Spinner } from '@/components/ui/Spinner'
 import {
   artworkKeys,
   fetchArtworkDetail,
+  invalidateCanvas,
   updateArtwork,
 } from '@/features/artworks/artwork.api'
 import {
@@ -126,6 +127,9 @@ export function EditArtworkPage() {
           queryKey: userKeys.profile(authUser.id),
         })
       }
+      // A retitled or re-tagged work moves on the map (tags drive its position),
+      // so the tiles have to be refetched, not just the detail.
+      invalidateCanvas(queryClient)
       toast({ message: t('edit.saved') })
       // Reopen as a modal over the profile (canonical pattern); replace drops the edit page.
       navigate(`/artwork/${id}`, {

@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -16,6 +16,7 @@ import {
   markRead,
 } from '../chat.api'
 import { useChatStore } from '../chat.store'
+import type { Conversation } from '../chat.types'
 import { ChatAvatar } from './ChatAvatar'
 import { DateSeparator } from './DateSeparator'
 import { MessageBubble } from './MessageBubble'
@@ -30,6 +31,7 @@ interface Props {
 export function ConversationThread({ conversationId, onBack }: Props) {
   const { t, i18n } = useTranslation('common')
   const myId = useAuthStore((s) => s.user?.id ?? '')
+  const queryClient = useQueryClient()
   const scrollRef = useRef<HTMLDivElement>(null)
   const stickBottomRef = useRef(true)
 
@@ -59,9 +61,27 @@ export function ConversationThread({ conversationId, onBack }: Props) {
   const newestId = ordered.length ? ordered[ordered.length - 1].id : null
 
   // Clear unread on open and whenever a newer message lands while viewing.
+  // The server call alone is not enough: the badge is summed from the cached
+  // conversation list (useUnreadTotal), so without writing the count back the
+  // user reads the message and the badge keeps showing it as unread until the
+  // list happens to refetch. The .catch also keeps a failed read receipt from
+  // surfacing as an unhandled rejection in the console.
   useEffect(() => {
-    if (newestId) void markRead(conversationId)
-  }, [conversationId, newestId])
+    if (!newestId) return
+    markRead(conversationId)
+      .then(() => {
+        queryClient.setQueryData<Conversation[]>(
+          chatKeys.conversations(),
+          (prev) =>
+            prev?.map((c) =>
+              c.id === conversationId ? { ...c, unreadCount: 0 } : c,
+            ),
+        )
+      })
+      .catch(() => {
+        // A read receipt is not worth interrupting the user over.
+      })
+  }, [conversationId, newestId, queryClient])
 
   const onScroll = () => {
     const el = scrollRef.current

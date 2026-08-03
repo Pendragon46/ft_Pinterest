@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
+import { invalidateCanvas } from '@/features/artworks/artwork.api'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useToast } from '@/lib/toast.store'
 
@@ -41,6 +42,11 @@ export function DeleteUserDialog({ user, onClose }: Props) {
         return
       }
       void qc.invalidateQueries({ queryKey: adminKeys.users() })
+      // Deleting a user cascades to their artworks, so every surface that lists
+      // works is now stale: the admin Artworks tab kept showing ghosts, and
+      // clicking one logged a 404.
+      void qc.invalidateQueries({ queryKey: adminKeys.artworks() })
+      invalidateCanvas(qc)
     },
     onError: () => {
       toast({ variant: 'error', message: t('errors.network') })

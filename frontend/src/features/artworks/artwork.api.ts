@@ -1,3 +1,5 @@
+import type { QueryClient } from '@tanstack/react-query'
+
 import { http, isApiError, multipartConfig } from '@/lib/http'
 import { TILE_CELLS } from '@/features/artworks/canvas/canvas.constants'
 import { layoutTile, pageForTile } from '@/features/search/tile.layout'
@@ -28,6 +30,29 @@ export const artworkKeys = {
   /** Chat link preview. Separate from `detail` because a miss is cached as
       `null` here, which must never leak into the real artwork page. */
   linkPreview: (id: string) => ['artworks', 'linkPreview', id] as const,
+}
+
+/**
+ * Refetch everything the infinite canvas draws from.
+ *
+ * Every tile query is `staleTime: Infinity` (ArtworkCanvas), which is what keeps
+ * panning cheap — but it also means a tile never refreshes on its own. Publish,
+ * edit or delete therefore has to say so explicitly, or the new work simply is
+ * not on the map and a deleted one stays clickable.
+ *
+ * Prefixes, not the bare `['artworks']`: that would also match `linkPreview`,
+ * whose cached "this artwork is gone" entry must survive (see
+ * ArtworkSyncProvider).
+ */
+export function invalidateCanvas(queryClient: QueryClient): void {
+  // ['artworks','count'] — feeds totalPages, itself part of the tile key.
+  void queryClient.invalidateQueries({ queryKey: artworkKeys.count() })
+  // ['artworks','tile',…] global map, ['artworks','feed',…] signed-in feed
+  // (covers feedTile, which nests under it).
+  void queryClient.invalidateQueries({ queryKey: ['artworks', 'tile'] })
+  void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+  // ['search',…] niche and creator tiles.
+  void queryClient.invalidateQueries({ queryKey: ['search'] })
 }
 
 // Total published works → number of 16-item pages the canvas can spread tiles

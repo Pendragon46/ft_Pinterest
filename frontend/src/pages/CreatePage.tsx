@@ -8,7 +8,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
-import { createArtwork } from '@/features/artworks/artwork.api'
+import { createArtwork, invalidateCanvas } from '@/features/artworks/artwork.api'
 import type { MediaType } from '@/features/artworks/artwork.types'
 import {
   ACCEPT_ATTR,
@@ -163,6 +163,9 @@ export function CreatePage() {
       setProgress(null)
       void queryClient.invalidateQueries({ queryKey: userKeys.works(userId) })
       void queryClient.invalidateQueries({ queryKey: userKeys.profile(userId) })
+      // Without this the work exists, shows on the profile we redirect to, and
+      // is still missing from the home canvas: every tile query is Infinity-stale.
+      invalidateCanvas(queryClient)
       toast({ message: t('create.published') })
       // Land on the author's profile so the fresh work is seen in context.
       navigate(`/profile/${userId}`)
