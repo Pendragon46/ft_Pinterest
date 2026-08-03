@@ -35,7 +35,20 @@ export function DeleteAccountDialog({ isOpen, onClose, user }: Props) {
 
   const mutation = useMutation({
     mutationFn: () => deleteMyAccount(user.id),
-    onSuccess: () => {
+    onSuccess: (result) => {
+      // 2xx ne veut pas dire supprimé : le serveur refuse en 200 pour garder la
+      // console propre. Sans ce test on déconnectait l'utilisateur alors que son
+      // compte existait toujours.
+      if (!result.ok) {
+        toast({
+          variant: 'error',
+          message:
+            result.reason === 'last_admin'
+              ? t('gdpr.delete.lastAdmin')
+              : t('gdpr.delete.error'),
+        })
+        return
+      }
       // Le compte n'existe plus : purger toute trace locale avant de rediriger,
       // sinon un refetch partirait avec un token orphelin.
       tokenStore.clear()

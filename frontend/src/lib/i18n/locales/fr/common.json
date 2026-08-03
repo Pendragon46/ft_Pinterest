@@ -170,7 +170,8 @@
       "cancel": "Annuler",
       "confirm": "Supprimer le compte",
       "deleting": "Suppression…",
-      "error": "Impossible de supprimer votre compte. Réessayez."
+      "error": "Impossible de supprimer votre compte. Réessayez.",
+      "lastAdmin": "Vous êtes le dernier administrateur. Promouvez un autre administrateur avant de supprimer votre compte."
     }
   },
   "userModal": {

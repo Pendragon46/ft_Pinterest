@@ -274,7 +274,15 @@ export class ArtworkService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    if (user.id !== connectedUserId && user.role !== 'ADMIN') {
+    // Authorize on the CALLER's role, never the target's. Testing
+    // `user.role !== 'ADMIN'` here read the victim's row: any signed-in user
+    // passed the check whenever the target happened to be an admin (so anyone
+    // could wipe an admin's gallery), while a real admin acting on an ordinary
+    // user was refused. Same shape as remove() above and users.service.
+    const caller = await this.prisma.user.findUnique({
+      where: { id: connectedUserId },
+    });
+    if (userId !== connectedUserId && caller?.role !== 'ADMIN') {
       throw new ForbiddenException(
         'You are not authorized to delete artworks for this user',
       );

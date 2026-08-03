@@ -75,7 +75,11 @@ export class SearchService {
     if (page < 1 || limit < 1) {
       throw new BadRequestException('Page and limit must be greater than 0');
     }
-    const user = await this.prisma.user.findMany({
+    // Whitelist the columns instead of blacklisting a few: search is @Public(),
+    // so anything left in the row is handed to anonymous callers. The previous
+    // destructure dropped password/googleId/role/provider but kept `email`,
+    // publishing every account's address to unauthenticated requests.
+    const result = await this.prisma.user.findMany({
       where: q ? {
               OR: [
                 { username: { contains: q, mode: 'insensitive' } },
@@ -83,15 +87,20 @@ export class SearchService {
               ],
             }
           : {},
+      select: {
+        id: true,
+        username: true,
+        fullname: true,
+        avatarUrl: true,
+        bio: true,
+        createdAt: true,
+      },
       skip,
       take,
       orderBy: {
         createdAt: sort === 'recent' ? 'desc' : 'asc',
       },
     });
-    const result = user.map(
-      ({ password, googleId, role, provider, ...rest }) => rest,
-    );
     return result;
   }
   // find tags

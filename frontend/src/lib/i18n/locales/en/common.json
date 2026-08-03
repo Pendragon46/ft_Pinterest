@@ -170,7 +170,8 @@
       "cancel": "Cancel",
       "confirm": "Delete account",
       "deleting": "Deleting…",
-      "error": "Couldn't delete your account. Please try again."
+      "error": "Couldn't delete your account. Please try again.",
+      "lastAdmin": "You are the last administrator. Promote another admin before deleting your account."
     }
   },
   "userModal": {

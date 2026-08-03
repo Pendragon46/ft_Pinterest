@@ -1,3 +1,4 @@
+import type { AdminActionResult } from '@/features/admin/admin.api'
 import { downloadFile, toCsv } from '@/lib/csv'
 import { http } from '@/lib/http'
 
@@ -58,7 +59,15 @@ export function downloadExportCsv(data: GdprExport, username: string): void {
   downloadFile(`\uFEFF${csv}`, exportFilename(username, 'csv'), 'text/csv')
 }
 
-/** Irréversible : l'appelant doit avoir obtenu une confirmation explicite. */
-export async function deleteMyAccount(userId: string): Promise<void> {
-  await http.delete(`/users/${userId}`)
+/** Irréversible : l'appelant doit avoir obtenu une confirmation explicite.
+ *
+ *  Le serveur répond 2xx même lorsqu'il refuse (dernier administrateur), pour
+ *  ne pas écrire d'erreur réseau dans la console — d'où le résultat à tester.
+ *  Ignorer ce corps déconnectait l'utilisateur en annonçant une suppression qui
+ *  n'avait pas eu lieu. */
+export async function deleteMyAccount(
+  userId: string,
+): Promise<AdminActionResult> {
+  const { data } = await http.delete<AdminActionResult>(`/users/${userId}`)
+  return data
 }

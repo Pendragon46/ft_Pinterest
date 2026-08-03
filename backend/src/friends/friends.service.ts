@@ -22,12 +22,21 @@ export class FriendsService {
     const iFollowIds = iFollow.map((f) => f.followingId);
     const mutuals = await this.Prisma.follow.findMany({
       where: { followerId: { in: iFollowIds }, followingId: ConnectedUserId },
-      include: { follower: true },
+      // Whitelist rather than strip: the blacklist above dropped password,
+      // role, googleId and provider but kept `email`, so the friends list
+      // handed out every mutual's address. The UI only needs identity + avatar.
+      include: {
+        follower: {
+          select: {
+            id: true,
+            username: true,
+            fullname: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
-    return mutuals.map(({ follower }) => {
-      const { password, role, googleId, provider, ...rest } = follower;
-      return rest;
-    });
+    return mutuals.map(({ follower }) => follower);
   }
 
   async getOnlineFriends(userId: string) {

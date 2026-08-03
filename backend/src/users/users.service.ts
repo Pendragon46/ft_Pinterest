@@ -42,7 +42,11 @@ export class UsersService {
       orderBy: {
         username: 'asc',
       },
-      select: {id: true,username: true,email: true,bio: true,avatarUrl: true,role: true,createdAt: true,},
+      // No email/role: this is a lookup by partial username open to every
+      // authenticated account, so it would hand out the address and privilege
+      // level of anyone whose name you can guess. findOneById already omits
+      // both for the same reason.
+      select: {id: true,username: true,fullname: true,bio: true,avatarUrl: true,createdAt: true,},
     });
     if (!user || user.length === 0) {
       throw new NotFoundException('User not found');
@@ -105,6 +109,14 @@ export class UsersService {
         );
       }
     }
+    // Avatar fields are server-derived from the uploaded file, never taken from
+    // the body. Accepting them let a caller point their own row at somebody
+    // else's Cloudinary publicId; the next avatar upload then destroyed that
+    // asset as if it were the previous one, leaving the victim's artwork or
+    // avatar as a dead URL nobody could restore.
+    delete (data as { avatarUrl?: unknown }).avatarUrl;
+    delete (data as { avatarPublicId?: unknown }).avatarPublicId;
+
     if (data.username) {
       const existingUser = await this.prisma.user.findUnique({
         where: { username: data.username as string },
