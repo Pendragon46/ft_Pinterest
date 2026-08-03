@@ -24,7 +24,11 @@ export function BarList({
   return (
     <ul className="flex flex-col gap-2.5">
       {bars.map((bar) => (
-        <li key={bar.label} className="flex items-center gap-3">
+        <li
+          key={bar.label}
+          title={`${bar.label}: ${bar.value}`}
+          className="-mx-1 flex items-center gap-3 rounded-lg px-1 py-0.5 transition-colors hover:bg-neutral-50 motion-reduce:transition-none"
+        >
           <span className="w-28 shrink-0 truncate text-sm text-neutral-600">
             {bar.label}
           </span>
