@@ -14,10 +14,22 @@ certs:
 			-addext "subjectAltName=DNS:localhost,IP:127.0.0.1" ; \
 	fi
 
+# docker-compose.yml declares `env_file: ./backend/.env` and `./frontend/.env`, and
+# interpolates ${POSTGRES_*}/${GRAFANA_*} from ./.env. All three are gitignored, so a
+# fresh clone has none of them and `docker compose up` aborts before starting anything.
+# Seed them from the checked-in examples; never overwrite a file that already exists.
+env:
+	@for f in .env backend/.env frontend/.env; do \
+		if ! test -f $$f; then \
+			cp $$f.example $$f && \
+			echo "→ $$f créé depuis $$f.example — renseignez-y vos secrets (Cloudinary, Google OAuth)"; \
+		fi; \
+	done
+
 build:
 	docker compose build
 
-start: certs build
+start: env certs build
 	docker compose up -d --build
 	@echo "Attente de l'API (backend + nginx + db)…"
 	@for i in $$(seq 1 60); do \
@@ -39,7 +51,7 @@ restart: stop start
 # NODE_EXTRA_CA_CERTS fait confiance au seul certificat de nginx, au lieu de
 # couper la vérification TLS du process entier (NODE_TLS_REJECT_UNAUTHORIZED=0),
 # qui faisait afficher un avertissement de sécurité à chaque `make`.
-seed: certs
+seed: env certs
 	NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt node seed-network.mjs
 
 logs:
