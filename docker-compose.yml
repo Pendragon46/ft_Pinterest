@@ -153,6 +153,13 @@ services:
       GF_SERVER_PROTOCOL: "http"
       GF_SERVER_ROOT_URL: "https://localhost:8443/grafana/"
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      # The news/splash panel calls grafana.com and the user-storage API, which
+      # 404s for a fresh install and logs it in the console (issue #19). None of
+      # it is needed for a self-hosted dashboard, so turn the callers off.
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
     expose:
       - "3000"
     volumes:
