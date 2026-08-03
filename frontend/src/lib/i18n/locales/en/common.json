@@ -296,7 +296,13 @@
       "topTags": "Top tags",
       "empty": "No data yet",
       "exportCsv": "Export CSV",
-      "print": "Print / PDF"
+      "print": "Print / PDF",
+      "range": "Date range",
+      "rangeDays": "{{days}}d",
+      "roleFilter": "Filter by role",
+      "tagFilter": "Filter by tag",
+      "allRoles": "All roles",
+      "allTags": "All tags"
     },
     "status": {
       "title": "System status",

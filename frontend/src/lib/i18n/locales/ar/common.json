@@ -296,7 +296,13 @@
       "topTags": "الوسوم الأكثر استخدامًا",
       "empty": "لا توجد بيانات بعد",
       "exportCsv": "تصدير CSV",
-      "print": "طباعة / PDF"
+      "print": "طباعة / PDF",
+      "range": "النطاق الزمني",
+      "rangeDays": "{{days}} ي",
+      "roleFilter": "تصفية حسب الدور",
+      "tagFilter": "تصفية حسب الوسم",
+      "allRoles": "كل الأدوار",
+      "allTags": "كل الوسوم"
     },
     "status": {
       "title": "حالة النظام",

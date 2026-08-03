@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   Download,
@@ -18,7 +18,8 @@ import { DonutChart } from '@/components/ui/charts/DonutChart'
 import { adminKeys, fetchAllArtworks, type AdminUserRow } from './admin.api'
 import { downloadAnalyticsCsv } from './analytics.export'
 
-const WINDOW_DAYS = 30
+const RANGE_OPTIONS = [7, 30, 90] as const
+type RangeDays = (typeof RANGE_OPTIONS)[number]
 
 function dayIndex(iso: string, startMs: number): number {
   const d = new Date(iso)
@@ -26,25 +27,29 @@ function dayIndex(iso: string, startMs: number): number {
   return Math.round((dayStart - startMs) / 86_400_000)
 }
 
-// Running total of `isoDates` over the trailing `WINDOW_DAYS`, seeded with the
-// count already present before the window so the curve ends at the real total.
-function growthSeries(isoDates: string[], locale: string): AreaPoint[] {
+// Running total of `isoDates` over the trailing `days`, seeded with the count
+// already present before the window so the curve still ends at the real total.
+function growthSeries(
+  isoDates: string[],
+  locale: string,
+  days: number,
+): AreaPoint[] {
   const today = new Date()
   const start = new Date(today.getFullYear(), today.getMonth(), today.getDate())
-  start.setDate(start.getDate() - (WINDOW_DAYS - 1))
+  start.setDate(start.getDate() - (days - 1))
   const startMs = start.getTime()
 
-  const perDay = new Array(WINDOW_DAYS).fill(0)
+  const perDay = new Array(days).fill(0)
   let cumulative = 0
   for (const iso of isoDates) {
     const idx = dayIndex(iso, startMs)
     if (idx < 0) cumulative += 1
-    else if (idx < WINDOW_DAYS) perDay[idx] += 1
+    else if (idx < days) perDay[idx] += 1
   }
 
   const fmt = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' })
   const points: AreaPoint[] = []
-  for (let i = 0; i < WINDOW_DAYS; i += 1) {
+  for (let i = 0; i < days; i += 1) {
     cumulative += perDay[i]
     const d = new Date(start)
     d.setDate(start.getDate() + i)
@@ -124,6 +129,10 @@ export function AdminAnalytics({
   usersLoading: boolean
 }) {
   const { t, i18n } = useTranslation('common')
+  const [rangeDays, setRangeDays] = useState<RangeDays>(30)
+  const [roleFilter, setRoleFilter] = useState<'all' | 'ADMIN' | 'USER'>('all')
+  const [tagFilter, setTagFilter] = useState<string>('all')
+
   const artworksQuery = useQuery({
     queryKey: adminKeys.artworks(),
     queryFn: fetchAllArtworks,
@@ -132,34 +141,66 @@ export function AdminAnalytics({
   const artworksLoading = artworksQuery.isPending
   const artworksError = artworksQuery.isError
 
-  const userGrowth = useMemo(
-    () => growthSeries(users.map((u) => u.createdAt), i18n.language),
-    [users, i18n.language],
+  // Every tag currently in use, for the tag filter's options.
+  const tagOptions = useMemo(() => {
+    const names = new Set<string>()
+    for (const art of artworks) {
+      for (const tag of art.tags ?? []) names.add(tag.name)
+    }
+    return [...names].sort((a, b) => a.localeCompare(b))
+  }, [artworks])
+
+  // Role/tag filters narrow the source rows; every panel below derives from
+  // these so the cards, charts and top-N lists always agree with the controls.
+  const filteredUsers = useMemo(
+    () => (roleFilter === 'all' ? users : users.filter((u) => u.role === roleFilter)),
+    [users, roleFilter],
   )
-  const artworkGrowth = useMemo(
-    () => growthSeries(artworks.map((a) => a.createdAt), i18n.language),
-    [artworks, i18n.language],
+  const filteredArtworks = useMemo(
+    () =>
+      tagFilter === 'all'
+        ? artworks
+        : artworks.filter((a) => (a.tags ?? []).some((t) => t.name === tagFilter)),
+    [artworks, tagFilter],
   )
 
-  const admins = users.filter((u) => u.role === 'ADMIN').length
+  const userGrowth = useMemo(
+    () => growthSeries(filteredUsers.map((u) => u.createdAt), i18n.language, rangeDays),
+    [filteredUsers, i18n.language, rangeDays],
+  )
+  const artworkGrowth = useMemo(
+    () =>
+      growthSeries(
+        filteredArtworks.map((a) => a.createdAt),
+        i18n.language,
+        rangeDays,
+      ),
+    [filteredArtworks, i18n.language, rangeDays],
+  )
+
+  const admins = filteredUsers.filter((u) => u.role === 'ADMIN').length
   const roleSegments = [
     { label: t('admin.stats.admins'), value: admins, color: '#2563eb' },
-    { label: t('admin.stats.members'), value: users.length - admins, color: '#059669' },
+    {
+      label: t('admin.stats.members'),
+      value: filteredUsers.length - admins,
+      color: '#059669',
+    },
   ]
 
   const topCreators = useMemo(
     () =>
-      [...users]
+      [...filteredUsers]
         .sort((a, b) => b._count.artworks - a._count.artworks)
         .filter((u) => u._count.artworks > 0)
         .slice(0, 6)
         .map((u) => ({ label: u.username, value: u._count.artworks })),
-    [users],
+    [filteredUsers],
   )
 
   const topTags = useMemo(() => {
     const counts = new Map<string, number>()
-    for (const art of artworks) {
+    for (const art of filteredArtworks) {
       for (const tag of art.tags ?? []) {
         counts.set(tag.name, (counts.get(tag.name) ?? 0) + 1)
       }
@@ -168,10 +209,13 @@ export function AdminAnalytics({
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
       .map(([label, value]) => ({ label, value }))
-  }, [artworks])
+  }, [filteredArtworks])
 
-  const totalLikes = artworks.reduce((sum, a) => sum + (a._count?.likes ?? 0), 0)
-  const totalComments = artworks.reduce(
+  const totalLikes = filteredArtworks.reduce(
+    (sum, a) => sum + (a._count?.likes ?? 0),
+    0,
+  )
+  const totalComments = filteredArtworks.reduce(
     (sum, a) => sum + (a._count?.comments ?? 0),
     0,
   )
@@ -195,9 +239,9 @@ export function AdminAnalytics({
   const exportCsv = () =>
     downloadAnalyticsCsv({
       totals: {
-        users: users.length,
+        users: filteredUsers.length,
         admins,
-        artworks: artworks.length,
+        artworks: filteredArtworks.length,
         likes: totalLikes,
         comments: totalComments,
       },
@@ -207,23 +251,76 @@ export function AdminAnalytics({
       topTags,
     })
 
+  const selectClass =
+    'h-9 rounded-xl border border-neutral-200 bg-white px-3 text-sm text-neutral-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900'
+
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap justify-end gap-2 print:hidden">
-        <Button variant="outline" size="sm" onClick={exportCsv}>
-          <Download aria-hidden="true" className="size-4" />
-          {t('admin.analytics.exportCsv')}
-        </Button>
-        <Button variant="outline" size="sm" onClick={() => window.print()}>
-          <Printer aria-hidden="true" className="size-4" />
-          {t('admin.analytics.print')}
-        </Button>
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
+        <div className="flex flex-wrap items-center gap-2">
+          <div
+            role="group"
+            aria-label={t('admin.analytics.range')}
+            className="inline-flex rounded-xl border border-neutral-200 bg-white p-0.5"
+          >
+            {RANGE_OPTIONS.map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setRangeDays(d)}
+                aria-pressed={rangeDays === d}
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors motion-reduce:transition-none ${
+                  rangeDays === d
+                    ? 'bg-neutral-900 text-white'
+                    : 'text-neutral-600 hover:bg-neutral-100'
+                }`}
+              >
+                {t('admin.analytics.rangeDays', { days: d })}
+              </button>
+            ))}
+          </div>
+          <select
+            value={roleFilter}
+            onChange={(e) =>
+              setRoleFilter(e.target.value as 'all' | 'ADMIN' | 'USER')
+            }
+            aria-label={t('admin.analytics.roleFilter')}
+            className={selectClass}
+          >
+            <option value="all">{t('admin.analytics.allRoles')}</option>
+            <option value="ADMIN">{t('admin.stats.admins')}</option>
+            <option value="USER">{t('admin.stats.members')}</option>
+          </select>
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value)}
+            aria-label={t('admin.analytics.tagFilter')}
+            className={selectClass}
+          >
+            <option value="all">{t('admin.analytics.allTags')}</option>
+            {tagOptions.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" size="sm" onClick={exportCsv}>
+            <Download aria-hidden="true" className="size-4" />
+            {t('admin.analytics.exportCsv')}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Printer aria-hidden="true" className="size-4" />
+            {t('admin.analytics.print')}
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <MetricCard
           icon={ImageIcon}
-          value={artworks.length}
+          value={filteredArtworks.length}
           label={t('admin.analytics.artworks')}
           tint="bg-blue-100 text-blue-600"
           loading={artworksLoading}
@@ -282,7 +379,7 @@ export function AdminAnalytics({
             <DonutChart
               segments={roleSegments}
               ariaLabel={t('admin.analytics.roles')}
-              centerValue={users.length}
+              centerValue={filteredUsers.length}
               centerLabel={t('admin.stats.total')}
             />
           )}

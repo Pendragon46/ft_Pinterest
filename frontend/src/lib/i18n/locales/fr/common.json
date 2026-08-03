@@ -296,7 +296,13 @@
       "topTags": "Tags populaires",
       "empty": "Aucune donnée",
       "exportCsv": "Exporter CSV",
-      "print": "Imprimer / PDF"
+      "print": "Imprimer / PDF",
+      "range": "Plage de dates",
+      "rangeDays": "{{days}} j",
+      "roleFilter": "Filtrer par rôle",
+      "tagFilter": "Filtrer par tag",
+      "allRoles": "Tous les rôles",
+      "allTags": "Tous les tags"
     },
     "status": {
       "title": "État du système",
