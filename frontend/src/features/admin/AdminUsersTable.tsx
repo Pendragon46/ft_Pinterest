@@ -168,12 +168,15 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
                           </span>
                         )}
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-neutral-900 group-hover:underline">{u.fullname ?? u.username}</p>
-                          <p className="truncate text-xs text-neutral-500">@{u.username}</p>
+                          {/* break-words, not truncate: a 50-character display
+                              name typed as one run has no space to cut at, so
+                              truncate simply widened the cell (issue #21). */}
+                          <p className="break-words font-medium text-neutral-900 group-hover:underline">{u.fullname ?? u.username}</p>
+                          <p className="break-words text-xs text-neutral-500">@{u.username}</p>
                         </div>
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-neutral-600">{u.email}</td>
+                    <td className="break-words px-4 py-3 text-neutral-600">{u.email}</td>
                     <td className="px-4 py-3"><RoleSelect user={u} canEdit={canAdmin} /></td>
                     <td className="whitespace-nowrap px-4 py-3 text-neutral-600">{fmtDate(u.createdAt)}</td>
                     <td className="whitespace-nowrap px-4 py-3 text-neutral-500">{fmtDate(u.updatedAt)}</td>
@@ -212,7 +215,7 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
                 type="button"
                 disabled={safePage <= 1}
                 onClick={() => {
-                  setPage((p) => Math.max(1, p - 1))
+                  setPage(Math.max(1, safePage - 1))
                 }}
                 aria-label={t('admin.pagination.previous')}
                 className="flex size-9 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
@@ -227,7 +230,7 @@ export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Pr
                 type="button"
                 disabled={safePage >= pageCount}
                 onClick={() => {
-                  setPage((p) => Math.min(pageCount, p + 1))
+                  setPage(Math.min(pageCount, safePage + 1))
                 }}
                 aria-label={t('admin.pagination.next')}
                 className="flex size-9 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"

@@ -164,6 +164,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           content,
           likeCount: 0,
           hoursAgo: 0,
+          createdAt: new Date().toISOString(),
         }
         queryClient.setQueryData<ArtworkComment[]>(
           artworkKeys.comments(artwork.id),
@@ -268,24 +269,60 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     },
   })
   const doLike = (next: boolean) => {
+    // Ignore clicks until the persisted state is known: before it resolves the
+    // heart renders "not liked" even on an artwork the user already liked, so a
+    // click sent a duplicate like the server rejects (and the browser logs).
+    if (isLikedQuery.isPending || likeMutation.isPending) return
     likeMutation.mutate(next)
   }
 
   // Delete one of the user's own comments; the server enforces ownership (403).
-  const deleteCommentMutation = useMutation({
+  // Optimistic, like the post above: the row used to linger until the refetch
+  // came back, so the click looked like it had done nothing and a second click
+  // sent a second DELETE — a 404 in the console plus a "save failed" toast
+  // after a delete that had in fact succeeded.
+  const deleteCommentMutation = useMutation<
+    unknown,
+    Error,
+    string,
+    { previous: ArtworkComment[] | undefined }
+  >({
     mutationFn: (commentId: string) =>
       deleteArtworkComment(artwork.id, commentId),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
+    onMutate: async (commentId: string) => {
+      await queryClient.cancelQueries({
         queryKey: artworkKeys.comments(artwork.id),
       })
+      const previous = queryClient.getQueryData<ArtworkComment[]>(
+        artworkKeys.comments(artwork.id),
+      )
+      queryClient.setQueryData<ArtworkComment[]>(
+        artworkKeys.comments(artwork.id),
+        (old) => (old ?? []).filter((c) => c.id !== commentId),
+      )
+      return { previous }
+    },
+    onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: artworkKeys.detail(artwork.id),
       })
     },
-    onError: () => {
+    onError: (_error, _commentId, context) => {
+      // Cache-level rollback runs even after unmount, so a failed delete cannot
+      // leave the row missing from a list the user comes back to.
+      if (context?.previous) {
+        queryClient.setQueryData(
+          artworkKeys.comments(artwork.id),
+          context.previous,
+        )
+      }
       if (!isMountedRef.current) return
       toast({ variant: 'error', message: t('toast.saveFailed') })
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({
+        queryKey: artworkKeys.comments(artwork.id),
+      })
     },
   })
 
@@ -479,6 +516,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-neutral-100 py-3">
             <ActionChip
               active={liked}
+              disabled={Boolean(currentUser) && isLikedQuery.isPending}
               onClick={() => {
                 requireAuth(() => {
                   doLike(!liked)
@@ -597,7 +635,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                             onClick={() => {
                               deleteCommentMutation.mutate(comment.id)
                             }}
-                            className="cursor-pointer text-xs text-neutral-400 transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:underline motion-reduce:transition-none"
+                            // Second guard behind the optimistic removal: the
+                            // row is already gone from the list, but a fast
+                            // double-click could still fire twice.
+                            disabled={deleteCommentMutation.isPending}
+                            className="cursor-pointer text-xs text-neutral-400 transition-colors hover:text-red-600 focus-visible:outline-none focus-visible:underline disabled:cursor-default disabled:opacity-50 motion-reduce:transition-none"
                           >
                             {t('artwork.deleteComment')}
                           </button>
@@ -761,6 +803,9 @@ interface ActionChipProps {
   icon: ReactNode
   /** 'span' for the non-interactive comment counter. */
   as?: 'button' | 'span'
+  /** Held while the persisted state is still unknown, so a click can't send a
+      toggle based on a default-false value. */
+  disabled?: boolean
 }
 
 function ActionChip({
@@ -770,8 +815,9 @@ function ActionChip({
   count,
   icon,
   as = 'button',
+  disabled = false,
 }: ActionChipProps) {
-  const className = `inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors motion-reduce:transition-none ${
+  const className = `inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-sm transition-colors disabled:cursor-default disabled:opacity-60 motion-reduce:transition-none ${
     active
       ? 'bg-neutral-900 text-white'
       : 'text-neutral-600 hover:bg-neutral-100'
@@ -790,6 +836,7 @@ function ActionChip({
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-pressed={active}
       className={`${className} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2`}
     >

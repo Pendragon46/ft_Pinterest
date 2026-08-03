@@ -109,6 +109,10 @@ export function EditArtworkPage() {
   // surface the length rule live once the field has content.
   const titleError =
     errors.title ?? (title.trim().length > 0 ? validateTitle(title) : undefined)
+  // Save is disabled while the tag list is invalid, so handleSubmit never runs
+  // — surface the rule live, or removing the last chip greys out Save with no
+  // explanation at all.
+  const tagsError = errors.tags ?? validateTags(tags)
 
   const mutation = useMutation({
     mutationFn: () =>
@@ -320,19 +324,19 @@ export function EditArtworkPage() {
                   }}
                   onKeyDown={onTagKeyDown}
                   maxLength={TAG_MAX_LENGTH}
-                  aria-describedby={errors.tags ? 'edit-tags-error' : undefined}
+                  aria-describedby={tagsError ? 'edit-tags-error' : undefined}
                   placeholder={tags.length === 0 ? t('create.tagPlaceholder') : ''}
                   className="min-w-[8rem] flex-1 bg-transparent py-1 text-base text-neutral-900 outline-none placeholder:text-neutral-400"
                 />
               </div>
               <div className="flex items-center justify-between gap-2">
-                {errors.tags ? (
+                {tagsError ? (
                   <p
                     id="edit-tags-error"
                     role="alert"
                     className="text-sm text-red-600"
                   >
-                    {t(errors.tags)}
+                    {t(tagsError)}
                   </p>
                 ) : (
                   <span />

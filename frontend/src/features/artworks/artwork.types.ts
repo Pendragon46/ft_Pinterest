@@ -90,6 +90,9 @@ export interface ArtworkComment {
   author: AuthorSummary
   content: string
   likeCount: number
-  // Age in hours; 0 = just now. Becomes `createdAt` once the API exists.
+  // Age in hours; 0 = just now. Kept for display.
   hoursAgo: number
+  /** ISO timestamp — the real one, used for ordering. `hoursAgo` is floored to
+      the hour, so sorting on it made comments from the same hour tie. */
+  createdAt: string
 }

@@ -183,6 +183,7 @@ export function toArtworkComment(s: ServerComment): ArtworkComment {
     // Le schéma Prisma n'a pas de likes sur les commentaires.
     likeCount: 0,
     hoursAgo: hoursSince(s.createdAt),
+    createdAt: s.createdAt,
   }
 }
 

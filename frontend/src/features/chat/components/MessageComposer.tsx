@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useAuthStore } from '@/features/auth/auth.store'
 import { getSocket } from '@/features/presence/socket'
+import { isApiError } from '@/lib/http'
 import { useToast } from '@/lib/toast.store'
 
 import { chatKeys, sendMessage, type SendMessageResult } from '../chat.api'
@@ -86,16 +87,21 @@ export function MessageComposer({
       setDraft(conversationId, '')
       return { prev, tempId }
     },
-    onError: (_error, content, ctx) => {
+    onError: (error, content, ctx) => {
       if (ctx?.prev) {
         qc.setQueryData(chatKeys.messages(conversationId), ctx.prev)
       }
       if (!isMountedRef.current) return
       const current = useChatStore.getState().drafts[conversationId] ?? ''
       setDraft(conversationId, current.length > 0 ? current : content)
+      // The client throttle below mirrors the server's (20 per 10s), but its
+      // window lives in a ref that resets when the thread remounts — switching
+      // conversations and back can still earn a real 429. Say "slow down"
+      // rather than "send failed", which would suggest a broken network.
+      const rateLimited = isApiError(error) && error.status === 429
       toast({
         variant: 'error',
-        message: t('chat.sendFailed'),
+        message: rateLimited ? t('chat.slowDown') : t('chat.sendFailed'),
         action: {
           label: t('chat.retry'),
           onClick: () => {

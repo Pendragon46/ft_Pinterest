@@ -13,8 +13,14 @@ export type AuthErrorKey =
   | 'auth.emailTaken'
   | 'auth.usernameTaken'
 
-// Deliberately loose shape check; the real guarantee is server-side.
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+// Mirrors what class-validator's @IsEmail() actually accepts, because anything
+// this lets through that the server rejects comes back as a raw 400 in the
+// console. The loose `[^\s@]+@[^\s@]+\.[^\s@]+` it replaces accepted
+// `a..b@x.com`, `.a@x.com`, `a@-x.com` and `a@x..com`, all of which the server
+// refuses. Rules encoded here: no leading/trailing/doubled dot in the local
+// part, domain labels neither start nor end with a hyphen, TLD of 2+ letters.
+const EMAIL_PATTERN =
+  /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/
 
 // Length bounds mirror the backend DTOs (CreateUserDto / RegisterDto), so an
 // out-of-range value is caught client-side instead of returning a raw 400.

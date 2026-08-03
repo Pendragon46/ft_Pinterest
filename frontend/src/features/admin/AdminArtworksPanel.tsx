@@ -186,7 +186,7 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
           <button
             type="button"
             disabled={safePage <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => setPage(Math.max(1, safePage - 1))}
             aria-label={t('admin.pagination.previous')}
             className="flex size-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -197,7 +197,7 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
           <button
             type="button"
             disabled={safePage >= pageCount}
-            onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+            onClick={() => setPage(Math.min(pageCount, safePage + 1))}
             aria-label={t('admin.pagination.next')}
             className="flex size-9 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
           >

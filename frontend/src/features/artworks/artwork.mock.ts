@@ -261,6 +261,7 @@ export function generateComments(id: string): ArtworkComment[] {
       content: pick(rng, COMMENT_BANK),
       likeCount: int(rng, 0, 18),
       hoursAgo,
+      createdAt: new Date(Date.now() - hoursAgo * 3_600_000).toISOString(),
     })
     hoursAgo += int(rng, 1, 9)
   }

@@ -110,7 +110,15 @@ export async function fetchArtworkComments(
   const { data } = await http.get<ServerComment[]>(
     `/artworks/${realArtworkId(id)}/comments`,
   )
-  return data.map(toArtworkComment).sort((a, b) => a.hoursAgo - b.hoursAgo)
+  // Newest first, on the real timestamp. Sorting on `hoursAgo` compared values
+  // floored to the hour, so a comment posted seconds ago tied with every other
+  // comment from the same hour and could be shown below them.
+  return data
+    .map(toArtworkComment)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
 }
 
 // Server DTO expects `comment`; any other key trips forbidNonWhitelisted (400).
