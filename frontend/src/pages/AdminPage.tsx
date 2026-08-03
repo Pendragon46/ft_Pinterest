@@ -72,7 +72,7 @@ function AdminDashboard() {
 
   return (
     <div className="flex min-h-svh bg-neutral-50">
-      <aside className="hidden w-64 shrink-0 flex-col border-e border-neutral-200 bg-white lg:flex">
+      <aside className="hidden w-64 shrink-0 flex-col border-e border-neutral-200 bg-white lg:flex print:hidden">
         <div className="flex items-center justify-between p-4">
           <Link to="/" aria-label={t('app.name')} className="text-lg text-neutral-900">
             <Logo withWordmark />
@@ -148,7 +148,7 @@ function AdminDashboard() {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6">
+        <header className="flex items-center justify-between gap-4 border-b border-neutral-200 bg-white/80 px-4 py-3 backdrop-blur sm:px-6 print:hidden">
           <p className="text-sm text-neutral-500">
             <span className="font-semibold text-neutral-900">{t('admin.breadcrumb.root')}</span>
             <span className="mx-2" aria-hidden="true">·</span>
@@ -157,7 +157,7 @@ function AdminDashboard() {
           <AuthButton />
         </header>
 
-        <div className="flex gap-1 border-b border-neutral-200 bg-white px-4 sm:px-6 lg:hidden">
+        <div className="flex gap-1 border-b border-neutral-200 bg-white px-4 sm:px-6 lg:hidden print:hidden">
           <button
             type="button"
             onClick={() => setTab('overview')}

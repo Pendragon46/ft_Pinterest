@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
+  Download,
   Heart,
   Image as ImageIcon,
   MessageCircle,
+  Printer,
   RefreshCw,
 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +16,7 @@ import { BarList } from '@/components/ui/charts/BarList'
 import { DonutChart } from '@/components/ui/charts/DonutChart'
 
 import { adminKeys, fetchAllArtworks, type AdminUserRow } from './admin.api'
+import { downloadAnalyticsCsv } from './analytics.export'
 
 const WINDOW_DAYS = 30
 
@@ -189,8 +192,34 @@ export function AdminAnalytics({
     </div>
   )
 
+  const exportCsv = () =>
+    downloadAnalyticsCsv({
+      totals: {
+        users: users.length,
+        admins,
+        artworks: artworks.length,
+        likes: totalLikes,
+        comments: totalComments,
+      },
+      userGrowth,
+      artworkGrowth,
+      topCreators,
+      topTags,
+    })
+
   return (
     <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap justify-end gap-2 print:hidden">
+        <Button variant="outline" size="sm" onClick={exportCsv}>
+          <Download aria-hidden="true" className="size-4" />
+          {t('admin.analytics.exportCsv')}
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => window.print()}>
+          <Printer aria-hidden="true" className="size-4" />
+          {t('admin.analytics.print')}
+        </Button>
+      </div>
+
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <MetricCard
           icon={ImageIcon}

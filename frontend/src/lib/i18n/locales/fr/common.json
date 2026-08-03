@@ -294,7 +294,9 @@
       "roles": "Rôles",
       "topCreators": "Meilleurs créateurs",
       "topTags": "Tags populaires",
-      "empty": "Aucune donnée"
+      "empty": "Aucune donnée",
+      "exportCsv": "Exporter CSV",
+      "print": "Imprimer / PDF"
     },
     "status": {
       "title": "État du système",
