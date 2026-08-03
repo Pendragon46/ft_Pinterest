@@ -12,6 +12,9 @@ import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { useAuthStore } from '@/features/auth/auth.store'
 import type { AuthErrorKey } from '@/features/auth/auth.validation'
 import {
+  BIO_MAX,
+  FULLNAME_MAX,
+  USERNAME_MAX,
   validateBio,
   validateEmail,
   validateFullname,
@@ -20,6 +23,7 @@ import {
 } from '@/features/auth/auth.validation'
 import { updateAccount, updateProfile, userKeys } from '@/features/users/user.api'
 import { SafeImage } from '@/components/ui/SafeImage'
+import { isApiError } from '@/lib/http'
 import { DEFAULT_AVATAR, initialsOf } from '@/lib/avatar'
 import { useToast } from '@/lib/toast.store'
 import { validateUpload, type UploadErrorKey } from '@/lib/upload.validation'
@@ -88,7 +92,13 @@ export function SettingsPage() {
         setProfileSaved(false)
       }, 2000)
     },
-    onError: () => {
+    onError: (error) => {
+      // A taken username is a 409, not a transient failure: land it on the
+      // field instead of offering a Retry that would fail identically.
+      if (isApiError(error) && error.status === 409) {
+        setProfileErrors((prev) => ({ ...prev, username: 'auth.usernameTaken' }))
+        return
+      }
       // A failed save must not be silent — surface it the way like/save/follow do.
       toast({
         variant: 'error',
@@ -120,7 +130,12 @@ export function SettingsPage() {
         setAccountSaved(false)
       }, 2000)
     },
-    onError: () => {
+    onError: (error) => {
+      // Same as above: an email already in use belongs on the email field.
+      if (isApiError(error) && error.status === 409) {
+        setAccountErrors((prev) => ({ ...prev, email: 'auth.emailTaken' }))
+        return
+      }
       toast({
         variant: 'error',
         message: t('toast.saveFailed'),
@@ -285,6 +300,7 @@ export function SettingsPage() {
                     error={
                       profileErrors.fullname ? t(profileErrors.fullname) : undefined
                     }
+                    maxLength={FULLNAME_MAX}
                   />
                   <Input
                     label={t('settings.username')}
@@ -296,6 +312,7 @@ export function SettingsPage() {
                     error={
                       profileErrors.username ? t(profileErrors.username) : undefined
                     }
+                    maxLength={USERNAME_MAX}
                   />
                   <div className="flex flex-col gap-1.5">
                     <label
@@ -312,6 +329,7 @@ export function SettingsPage() {
                         setProfileErrors((prev) => ({ ...prev, bio: undefined }))
                       }}
                       rows={3}
+                      maxLength={BIO_MAX}
                       aria-invalid={profileErrors.bio ? true : undefined}
                       aria-describedby={
                         profileErrors.bio ? 'settings-bio-error' : undefined

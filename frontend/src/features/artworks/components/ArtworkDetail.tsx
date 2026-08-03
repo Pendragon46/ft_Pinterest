@@ -29,6 +29,7 @@ import type {
   ArtworkDetail as Detail,
   AuthorSummary,
 } from '../artwork.types'
+import { COMMENT_MAX, COMMENT_MIN } from '../artwork.validation'
 import { DeleteArtworkDialog } from './DeleteArtworkDialog'
 import { FollowButton } from './FollowButton'
 
@@ -605,7 +606,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         <div className="border-t border-neutral-100 p-3">
           {/* Explique le bouton grisé plutôt que de laisser l'utilisateur deviner :
               visible seulement quand il a commencé à taper mais reste sous 3. */}
-          {draft.trim().length > 0 && draft.trim().length < 3 ? (
+          {draft.trim().length > 0 && draft.trim().length < COMMENT_MIN ? (
             <p className="mt-1.5 px-1 text-xs text-neutral-500">
               {t('artwork.commentMinLength')}
             </p>
@@ -615,6 +616,9 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               ref={composerRef}
               type="text"
               value={draft}
+              // Hard cap mirroring the DTO: without it a long comment reached
+              // the server and came back as a console 400.
+              maxLength={COMMENT_MAX}
               onChange={(event) => {
                 setDraft(event.target.value)
               }}
@@ -632,7 +636,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
               size="sm"
               onClick={handlePost}
               loading={postMutation.isPending}
-              disabled={draft.trim().length < 3}
+              disabled={draft.trim().length < COMMENT_MIN}
             >
               {t('artwork.post')}
             </Button>

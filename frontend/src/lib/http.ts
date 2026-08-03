@@ -73,11 +73,13 @@ function fieldErrorsFromMessages(
 ): Record<string, string> | undefined {
   const found: Record<string, string> = {}
   for (const line of messages) {
-    const field = line.split(' ')[0]
+    const first = line.split(' ')[0]
     // Only a leading bare identifier is a field name; anything else is prose.
-    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(field) && !(field in found)) {
-      found[field] = line
-    }
+    if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(first)) continue
+    // Custom DTO messages capitalise the field ("Comment must be at most…"),
+    // the default ones do not ("comment must be…"). Normalise so both match.
+    const field = first.charAt(0).toLowerCase() + first.slice(1)
+    if (!(field in found)) found[field] = line
   }
   return Object.keys(found).length > 0 ? found : undefined
 }

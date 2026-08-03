@@ -22,7 +22,7 @@ export class CreateArtworkDto {
   @IsOptional()
   @IsString()
   @MaxLength(2000, {
-    message: 'Description must be at most 500 characters long',
+    message: 'Description must be at most 2000 characters long',
   })
   description!: string;
 
@@ -41,6 +41,6 @@ export class CreateArtworkDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })
-  @MaxLength(30, { each: true, message: 'Each tag must be at most 50 characters long' })
+  @MaxLength(30, { each: true, message: 'Each tag must be at most 30 characters long' })
   tags?: string[];
 }

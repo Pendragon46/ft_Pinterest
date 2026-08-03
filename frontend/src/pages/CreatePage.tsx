@@ -16,6 +16,7 @@ import {
   mediaTypeOf,
   normalizeTags,
   TAG_MAX_LENGTH,
+  TITLE_MAX,
   TAGS_MAX,
   validateDescription,
   validateFile,
@@ -312,6 +313,7 @@ export function CreatePage() {
                 setErrors((prev) => ({ ...prev, title: undefined }))
               }}
               error={titleError ? t(titleError) : undefined}
+              maxLength={TITLE_MAX}
             />
 
             <div className="flex flex-col gap-1.5">

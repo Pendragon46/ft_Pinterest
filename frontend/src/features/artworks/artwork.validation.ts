@@ -32,6 +32,10 @@ export const DESCRIPTION_MAX = 2000 // validator is 2000 (server message says 50
 export const TAGS_MIN = 1
 export const TAGS_MAX = 5
 export const TAG_MAX_LENGTH = 30 // per-tag chars; mirrors backend @MaxLength(30, { each: true })
+// Mirrors CreateCommentDto (@MinLength(3) / @MaxLength(500)): the composer caps
+// the input so a too-long comment can never reach the server and log a 400.
+export const COMMENT_MIN = 3
+export const COMMENT_MAX = 500
 
 /** Image vs video, from the file's MIME type (backend derives the same from Cloudinary). */
 export function mediaTypeOf(file: File): MediaType {

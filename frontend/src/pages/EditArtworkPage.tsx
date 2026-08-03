@@ -19,6 +19,7 @@ import {
   normalizeTags,
   TAG_MAX_LENGTH,
   TAGS_MAX,
+  TITLE_MAX,
   validateDescription,
   validateTags,
   validateTitle,
@@ -228,6 +229,7 @@ export function EditArtworkPage() {
                 setErrors((prev) => ({ ...prev, title: undefined }))
               }}
               error={titleError ? t(titleError) : undefined}
+              maxLength={TITLE_MAX}
             />
 
             <div className="flex flex-col gap-1.5">

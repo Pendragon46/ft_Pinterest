@@ -11,6 +11,7 @@ import { TextLink } from '@/components/ui/TextLink'
 import { register as registerRequest, fetchMe } from '@/features/auth/auth.api'
 import { useAuthStore } from '@/features/auth/auth.store'
 import {
+  USERNAME_MAX,
   validateEmail,
   validatePassword,
   validateUsername,
@@ -138,6 +139,7 @@ export function RegisterPage() {
             setErrors((prev) => ({ ...prev, username: undefined }))
           }}
           error={errors.username ? t(errors.username) : undefined}
+          maxLength={USERNAME_MAX}
         />
 
         <Input
