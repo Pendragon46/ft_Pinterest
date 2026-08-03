@@ -469,16 +469,10 @@ If PostgreSQL becomes unavailable:
 
 ### Test Backup
 
-Create a test table:
+Delete all table:
 
 ```sql
-CREATE TABLE backup_test (
-    id SERIAL PRIMARY KEY,
-    message TEXT
-);
-
-INSERT INTO backup_test (message)
-VALUES ('Backup test');
+DROP SCHEMA public CASCADE;
 ```
 
 Run a manual backup:
@@ -491,46 +485,16 @@ make backup
 
 ### Test Restore
 
-Delete the test table:
-
-```sql
-DROP TABLE backup_test;
-```
-
 Restore the latest backup:
 
 ```bash
-make restore BACKUP_FILE=/backups/<backup_file>.sql.gz
+make restore BACKUP_FILE=/backups/<backup_file>.sql
 ```
 
 Verify that the table has been restored:
 
 ```sql
-SELECT * FROM backup_test;
-```
-
-Expected result:
-
-```text
- id |   message
-----+--------------
-  1 | Backup test
-```
-
----
-
-### Test Disaster Recovery
-
-Run the disaster recovery procedure:
-
-```bash
-make recover
-```
-
-Verify that PostgreSQL is running and that the test table is still available.
-
-```sql
-SELECT * FROM backup_test;
+\dt
 ```
 
 # References
