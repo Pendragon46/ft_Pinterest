@@ -56,6 +56,7 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
       qc.removeQueries({ queryKey: artworkKeys.comments(id) })
       invalidateCanvas(qc)
       setToDelete(null)
+      toast({ message: t('admin.artworkDeleted') })
     },
     onError: () => {
       toast({ variant: 'error', message: t('errors.network') })

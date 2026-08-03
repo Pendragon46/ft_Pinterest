@@ -47,6 +47,7 @@ export function DeleteUserDialog({ user, onClose }: Props) {
       // clicking one logged a 404.
       void qc.invalidateQueries({ queryKey: adminKeys.artworks() })
       invalidateCanvas(qc)
+      toast({ message: t('admin.userDeleted') })
     },
     onError: () => {
       toast({ variant: 'error', message: t('errors.network') })

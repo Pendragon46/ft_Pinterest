@@ -216,6 +216,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       })
       setPostStatus('posted')
       composerRef.current?.focus()
+      toast({ message: t('artwork.commentPosted') })
     },
   })
 
@@ -306,6 +307,7 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
       void queryClient.invalidateQueries({
         queryKey: artworkKeys.detail(artwork.id),
       })
+      toast({ message: t('artwork.commentDeleted') })
     },
     onError: (_error, _commentId, context) => {
       // Cache-level rollback runs even after unmount, so a failed delete cannot

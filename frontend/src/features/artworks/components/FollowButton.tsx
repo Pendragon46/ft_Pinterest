@@ -66,6 +66,14 @@ export function FollowButton({ userId }: FollowButtonProps) {
       }
       return { previous }
     },
+    onSuccess: (_data, next) => {
+      // Confirm the deliberate (un)follow. Guarded like the error toast: a button
+      // that has since unmounted must not notify from a dead surface (§1.1).
+      if (!isMountedRef.current) return
+      toast({
+        message: next ? t('follow.nowFollowing') : t('follow.unfollowed'),
+      })
+    },
     onError: (_error, next, context) => {
       // Cache rollback is cache-level and must run even after unmount, so a
       // dead surface cannot leave the shared state wrong for the other button.

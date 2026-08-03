@@ -308,7 +308,11 @@
       "version": "Version",
       "uptime": "Disponibilité",
       "checkedAt": "Vérifié à {{time}} · actualisation toutes les {{seconds}} s"
-    }
+    },
+    "artworkDeleted": "Œuvre supprimée",
+    "userDeleted": "Utilisateur supprimé",
+    "userCreated": "Utilisateur créé",
+    "roleUpdated": "Rôle mis à jour"
   },
   "home": {
     "heroLine1": "L'inspiration ne défile pas.",
@@ -356,7 +360,8 @@
     "commentMinLength": "Au moins 3 caractères.",
     "commentFailed": "Échec de l'envoi du commentaire.",
     "retry": "Réessayer",
-    "unfollow": "Ne plus suivre"
+    "unfollow": "Ne plus suivre",
+    "commentDeleted": "Commentaire supprimé"
   },
   "category": {
     "portrait": "Portrait",
@@ -529,5 +534,9 @@
   },
   "toast": {
     "saveFailed": "Impossible d'enregistrer votre modification."
+  },
+  "follow": {
+    "nowFollowing": "Vous suivez désormais ce créateur",
+    "unfollowed": "Vous ne suivez plus ce créateur"
   }
 }

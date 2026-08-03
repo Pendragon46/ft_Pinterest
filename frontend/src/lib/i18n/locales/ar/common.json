@@ -308,7 +308,11 @@
       "version": "الإصدار",
       "uptime": "مدة التشغيل",
       "checkedAt": "تم التحقق في {{time}} · يتحدّث كل {{seconds}} ثانية"
-    }
+    },
+    "artworkDeleted": "تم حذف العمل",
+    "userDeleted": "تم حذف المستخدم",
+    "userCreated": "تم إنشاء المستخدم",
+    "roleUpdated": "تم تحديث الدور"
   },
   "home": {
     "heroLine1": "لا تتصفّح الإلهام.",
@@ -356,7 +360,8 @@
     "commentMinLength": "٣ أحرف على الأقل.",
     "commentFailed": "تعذّر نشر تعليقك.",
     "retry": "إعادة المحاولة",
-    "unfollow": "إلغاء المتابعة"
+    "unfollow": "إلغاء المتابعة",
+    "commentDeleted": "تم حذف التعليق"
   },
   "category": {
     "portrait": "بورتريه",
@@ -529,5 +534,9 @@
   },
   "toast": {
     "saveFailed": "تعذّر حفظ التغيير."
+  },
+  "follow": {
+    "nowFollowing": "أنت الآن تتابع هذا المُبدِع",
+    "unfollowed": "لقد ألغيت متابعة هذا المُبدِع"
   }
 }

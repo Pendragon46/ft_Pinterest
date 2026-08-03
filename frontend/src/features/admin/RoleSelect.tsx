@@ -36,7 +36,9 @@ export function RoleSelect({ user, canEdit }: Props) {
       if (!result.ok && context?.previous) {
         qc.setQueryData(adminKeys.users(), context.previous)
         toast({ variant: 'error', message: t('admin.error.roleRefused') })
+        return
       }
+      toast({ message: t('admin.roleUpdated') })
     },
     onError: (_error, _role, context) => {
       if (context?.previous) {

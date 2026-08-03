@@ -308,7 +308,11 @@
       "version": "Version",
       "uptime": "Uptime",
       "checkedAt": "Checked at {{time}} · auto-refreshes every {{seconds}}s"
-    }
+    },
+    "artworkDeleted": "Artwork deleted",
+    "userDeleted": "User deleted",
+    "userCreated": "User created",
+    "roleUpdated": "Role updated"
   },
   "home": {
     "heroLine1": "Don't scroll inspiration.",
@@ -356,7 +360,8 @@
     "commentPosted": "Comment posted.",
     "commentMinLength": "At least 3 characters.",
     "commentFailed": "Couldn't post your comment.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "commentDeleted": "Comment deleted"
   },
   "category": {
     "portrait": "Portrait",
@@ -529,5 +534,9 @@
     "whereNext": "You've explored all of {{niche}}. Where next?",
     "whereNextShort": "Where next?",
     "refreshNeighbours": "Show other neighbours"
+  },
+  "follow": {
+    "nowFollowing": "You're now following this creator",
+    "unfollowed": "You unfollowed this creator"
   }
 }

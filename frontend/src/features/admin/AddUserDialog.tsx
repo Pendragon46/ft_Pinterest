@@ -83,6 +83,7 @@ export function AddUserDialog({ isOpen, onClose }: Props) {
       void qc.invalidateQueries({ queryKey: adminKeys.users() })
       reset()
       onClose()
+      toast({ message: t('admin.userCreated') })
     },
     onError: (error) => {
       // Safety net: a ValidationPipe 400 slipped past the client-side rules
