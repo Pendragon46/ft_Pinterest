@@ -47,9 +47,19 @@ export function ArtworkSyncProvider({ children }: ArtworkSyncProviderProps) {
       void queryClient.invalidateQueries({ queryKey: ['users'] })
     }
 
+    // A new publication should surface in every open canvas, not just the
+    // author's. Refresh the lists; the detail/comment caches fill lazily on
+    // first open, so only the canvas needs nudging here.
+    const onCreated = () => {
+      invalidateCanvas(queryClient)
+      void queryClient.invalidateQueries({ queryKey: ['users'] })
+    }
+
     socket.on('artwork:deleted', onDeleted)
+    socket.on('artwork:created', onCreated)
     return () => {
       socket.off('artwork:deleted', onDeleted)
+      socket.off('artwork:created', onCreated)
     }
   }, [user, queryClient])
 

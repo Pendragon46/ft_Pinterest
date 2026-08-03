@@ -66,7 +66,7 @@ export class ArtworkService {
       .filter((tag) => tag.length > 0);
     try {
       upload = await this.cloudinaryService.upload(file);
-      return await this.prisma.artwork.create({
+      const artwork = await this.prisma.artwork.create({
         data: {
           ...artworkdata,
           mediaUrl: upload.secure_url,
@@ -88,6 +88,10 @@ export class ArtworkService {
             }),
         },
       });
+      // Real-time propagation: mirror artwork:deleted so every open canvas
+      // refreshes when a new piece is published, without a manual reload.
+      this.gateway.broadcast('artwork:created', artwork);
+      return artwork;
     } catch (error) {
       if (upload && upload.public_id) {
         await this.cloudinaryService.deleteImage(upload.public_id, upload.resource_type);
