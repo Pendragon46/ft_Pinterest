@@ -27,7 +27,17 @@ const SP =
   '/tmp/claude-101265/-goinfre-srabeman-srabeman-transcendence-ft-Pinterest/b14e0a78-723b-4e5e-abf3-0e9f86948d98/scratchpad'
 const CREDS_IN = './seed-credentials.json'
 const CREDS_OUT = './seed-network-credentials.json'
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+// nginx serves a self-signed cert, so Node has to be told to trust it. We do NOT
+// set NODE_TLS_REJECT_UNAUTHORIZED=0: that disables verification process-wide and
+// makes Node print a security warning on every run. `make seed` instead exports
+// NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt, which trusts exactly this one cert.
+// (That variable is read at startup, so it cannot be set from in here.)
+if (API.startsWith('https:') && !process.env.NODE_EXTRA_CA_CERTS) {
+  console.warn(
+    'Astuce : lancez `make seed` (ou exportez NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt)\n' +
+      'pour que Node fasse confiance au certificat auto-signé de nginx.',
+  )
+}
 
 const MIME = {
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png',

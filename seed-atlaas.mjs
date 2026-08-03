@@ -42,8 +42,17 @@ const MANIFEST_FILE = './seed-manifest.json'
 const README_FILE = './READMELOGIN.md'
 
 // Le certificat nginx est auto-signé : sans ça, fetch refuse la connexion.
-// Uniquement pour ce script de développement, jamais en production.
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+// On ne coupe pas la vérification du process entier (NODE_TLS_REJECT_UNAUTHORIZED=0),
+// qui déclenche un avertissement de sécurité Node à chaque exécution ; on fait
+// confiance au seul certificat de nginx via NODE_EXTRA_CA_CERTS, lu au démarrage
+// du process et donc impossible à poser d'ici :
+//   NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt node seed-atlaas.mjs
+if (!process.env.NODE_EXTRA_CA_CERTS) {
+  console.warn(
+    'Astuce : exportez NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt pour que Node\n' +
+      'fasse confiance au certificat auto-signé de nginx.',
+  )
+}
 
 // Contraintes serveur (backend/src/artwork/dto) — répliquées pour échouer
 // vite plutôt qu'après un upload de plusieurs Mo.

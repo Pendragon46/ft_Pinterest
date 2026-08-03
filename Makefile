@@ -1,11 +1,18 @@
 # Self-signed dev TLS cert for nginx. Generated locally (not in git); idempotent.
+# subjectAltName is required, not decorative: Node and current browsers ignore CN
+# entirely, so a CN-only cert cannot be trusted even once it is in the trust
+# store — and `make seed` relies on exactly that (NODE_EXTRA_CA_CERTS below).
+# Certs generated before this rule have no SAN, so regenerate them.
 certs:
-	@test -f nginx/ssl/nginx.key || { \
+	@if ! test -f nginx/ssl/nginx.key || ! test -f nginx/ssl/nginx.crt || \
+		! openssl x509 -in nginx/ssl/nginx.crt -noout -text 2>/dev/null \
+			| grep -q "Subject Alternative Name"; then \
 		mkdir -p nginx/ssl && \
 		openssl req -x509 -newkey rsa:2048 -nodes -days 365 \
 			-keyout nginx/ssl/nginx.key -out nginx/ssl/nginx.crt \
-			-subj "/CN=localhost" ; \
-	}
+			-subj "/CN=localhost" \
+			-addext "subjectAltName=DNS:localhost,IP:127.0.0.1" ; \
+	fi
 
 build:
 	docker compose build
@@ -29,8 +36,11 @@ restart: stop start
 
 # Peuple la base via l'API (stack déjà démarrée). Node 18+ requis sur l'hôte ;
 # lit les manifestes de seed-data/ et publie le réseau de démo (18 auteurs).
-seed:
-	node seed-network.mjs
+# NODE_EXTRA_CA_CERTS fait confiance au seul certificat de nginx, au lieu de
+# couper la vérification TLS du process entier (NODE_TLS_REJECT_UNAUTHORIZED=0),
+# qui faisait afficher un avertissement de sécurité à chaque `make`.
+seed: certs
+	NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt node seed-network.mjs
 
 logs:
 	docker compose logs -f
