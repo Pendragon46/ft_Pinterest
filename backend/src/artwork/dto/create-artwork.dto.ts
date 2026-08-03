@@ -1,4 +1,5 @@
 import {
+  ArrayMaxSize,
   ArrayNotEmpty,
   IsArray,
   IsNotEmpty,
@@ -40,6 +41,7 @@ export class CreateArtworkDto {
   )
   @IsArray()
   @ArrayNotEmpty()
+  @ArrayMaxSize(5, { message: 'At most 5 tags are allowed' })
   @IsString({ each: true })
   @MaxLength(30, { each: true, message: 'Each tag must be at most 30 characters long' })
   tags?: string[];

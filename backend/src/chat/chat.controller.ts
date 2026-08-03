@@ -13,6 +13,7 @@ import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { ChatService } from './chat.service';
 import { CreateConversationDto } from './dto/create-conversation.dto';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { GetMessagesDto } from './dto/get-messages.dto';
 
 @Controller('conversations')
 export class ChatController {
@@ -31,16 +32,10 @@ export class ChatController {
   @Get(':id/messages')
   getMessages(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('page') page: string,
-    @Query('limit') limit: string,
+    @Query() query: GetMessagesDto,
     @Req() req,
   ) {
-    return this.chat.getMessages(
-      req.user.id,
-      id,
-      Number(page) || 1,
-      Number(limit) || 30,
-    );
+    return this.chat.getMessages(req.user.id, id, query.page, query.limit);
   }
 
   @Post(':id/messages')

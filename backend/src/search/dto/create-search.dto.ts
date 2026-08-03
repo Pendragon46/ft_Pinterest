@@ -6,6 +6,7 @@ import {
   IsPositive,
   IsString,
   Max,
+  MaxLength,
 } from 'class-validator';
 import { sort } from 'src/enums/sort.enum';
 
@@ -13,6 +14,7 @@ export class CreateSearchDto {
   @IsOptional()
   @Transform(({ value }) => value?.trim())
   @IsString()
+  @MaxLength(100, { message: 'Search query must be at most 100 characters long' })
   q!: string;
 
   @IsOptional()
