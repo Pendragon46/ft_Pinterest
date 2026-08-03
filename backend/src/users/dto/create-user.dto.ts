@@ -35,7 +35,7 @@ export class CreateUserDto {
   @trim()
   username!: string;
 
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }) => value?.trim().toLowerCase())
   @IsString()
   @IsEmail()
   @IsNotEmpty()

@@ -24,7 +24,7 @@ export class RegisterDto {
   @MaxLength(30)
   username!: string;
 
-  @Transform(({ value }) => value?.trim())
+  @Transform(({ value }) => value?.trim().toLowerCase())
   @IsNotEmpty()
   @IsEmail()
   email!: string;
