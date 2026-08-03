@@ -344,29 +344,30 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 > modules with clear evidence in the codebase; verify each against the subject's exact wording
 > before claiming it._
 
-| Category    | Module                                         | Type  | Pts | Notes / where                                 |
-| ----------- | ---------------------------------------------- | :---: | :-: | --------------------------------------------- |
-| Web         | Framework front **and** back (React + NestJS)  | Major |  2  | `frontend/`, `backend/`                       |
-| Web         | Real-time features (WebSockets)                | Major |  2  | Socket.IO presence + chat                     |
-| Web         | User interaction (chat + profiles + friends)   | Major |  2  | chat, profiles, follows                       |
-| Web         | Use an ORM                                     | Minor |  1  | Prisma                                        |
-| Web         | Advanced search (filters, sorting, pagination) | Minor |  1  | search module                                 |
-| Web         | File upload & management                       | Minor |  1  | Cloudinary, images+videos, validation, delete |
-| Web         | Custom design system (10+ components)          | Minor |  1  | `components/ui/*`                             |
-| A11y & i18n | Multiple languages (≥3)                        | Minor |  1  | EN/FR/AR                                      |
-| A11y & i18n | RTL support                                    | Minor |  1  | Arabic, layout mirroring                      |
-| A11y & i18n | Additional browsers                            | Minor |  1  | Firefox support/fixes                         |
-| User Mgmt   | Standard user management                       | Major |  2  | profile, avatar, friends, online status       |
-| User Mgmt   | OAuth 2.0 remote auth                          | Minor |  1  | Google                                        |
-| User Mgmt   | Advanced permissions (CRUD + roles)            | Major |  2  | admin panel, `RolesGuard`, `Role` enum        |
-| DevOps      | Monitoring (Prometheus + Grafana)              | Major |  2  | services + exporters + dashboards + alerts    |
-| DevOps      | Health check + backups + disaster recovery     | Minor |  1  | `scripts/*.sh`, backup service                |
-| Data        | Advanced analytics dashboard (+ CSV export)    | Major |  2  | admin analytics                               |
-| Data        | GDPR compliance                                | Minor |  1  | data export + account deletion                |
+| Category    | Module                                         | Type  | Pts | Notes / where                                 | login |
+| ----------- | ---------------------------------------------- | :---: | :-: | --------------------------------------------- | ---
+| Web         | Framework front **and** back (React + NestJS)  | Major |  2  | `frontend/`, `backend/`                       | srabeman, nrakotom, cramaros, trindran
+| Web		  | Use a frontend framework 		| Minor | 1 | React+Typescript | srabeman
+| Web		  | Use a backend framework 		| Minor | 1 | NestJs | nrakotom, trindran
+| Web         | Real-time features (WebSockets)                | Major |  2  | Socket.IO presence + chat                     | srabeman |
+| Web         | User interaction (chat + profiles + friends)   | Major |  2  | chat, profiles, friends                       | srabeman, trindran
+| Web         | Use an ORM                                     | Minor |  1  | Prisma                                        | srabeman, trindran, nrakotom, cramaros
+| Web         | Advanced search (filters, sorting, pagination) | Minor |  1  | search module                                 | srabeman, trindran
+| Web         | File upload & management                       | Minor |  1  | Cloudinary, images+videos, validation, delete | srabeman, trindran
+| Web         | Custom design system (10+ components)          | Minor |  1  | `components/ui/*`                             | srabeman
+| A11y & i18n | Multiple languages (≥3)                        | Minor |  1  | EN/FR/AR                                      | srabeman
+| A11y & i18n | RTL support                                    | Minor |  1  | Arabic, layout mirroring                      | srabeman
+| A11y & i18n | Additional browsers                            | Minor |  1  | Firefox support/fixes, Brave                         | srabeman, nrakotom, cramaros,trindran
+| User Mgmt   | Standard user management                       | Major |  2  | profile, avatar, friends, online status       | srabeman, trindran
+| User Mgmt   | OAuth 2.0 remote auth                          | Minor |  1  | Google                                        | nrakotom
+| User Mgmt   | Advanced permissions (CRUD + roles)            | Major |  2  | admin panel, `RolesGuard`, `Role` enum        | srabeman, trindran, nrakotom
+| User Mgmt | User activity analytics and insights dashboard. | Minor | 1 | admin can view user activity in the admin panel | srabeman
+| DevOps      | Health check + backups + disaster recovery     | Minor |  1  | `scripts/*.sh`, backup service                | cramaros
+| Module of choice | Implement a custom module that is not listed above | Major | 2 | Infinite canvas | srabeman
 
-**Evidenced total (before selection): well above 14 points.**
 
-// total points = 2+2+2+1+1+1+1+1+1+1+2+1+2+2+1+2+1 = 22
+**Evidenced total (before selection): well above 24 points.**
+
 
 > Candidate/uncertain (verify against subject wording before claiming): complete WCAG 2.1 AA
 > accessibility (Major), notification system (Minor), data import (Minor). A **Modules of
@@ -393,10 +394,6 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
   - Backend environment setup (NestJS packages and dependencies).
   - PostgreSQL and Prisma configuration.
   - Nginx reverse proxy with HTTPS.
-  - Prometheus & Grafana monitoring stack.
-  - Prometheus metrics collection and exporters.
-  - Custom Grafana dashboards and alerting system.
-  - Grafana security and access management.
   - Health check and service status monitoring.
   - Automated PostgreSQL backup, restore and disaster recovery system.
 - **trindran** :
