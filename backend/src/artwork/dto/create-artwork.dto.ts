@@ -22,7 +22,7 @@ export class CreateArtworkDto {
   @IsOptional()
   @IsString()
   @MaxLength(2000, {
-    message: 'Description must be at most 500 characters long',
+    message: 'Description must be at most 2000 characters long',
   })
   description!: string;
 
