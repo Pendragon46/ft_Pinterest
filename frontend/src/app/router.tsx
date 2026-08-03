@@ -5,7 +5,6 @@ import { Modal } from '@/components/ui/Modal'
 import { AdminPage } from '@/pages/AdminPage'
 import { ArtworkPage } from '@/pages/ArtworkPage'
 import { CreatePage } from '@/pages/CreatePage'
-import { DevUiPage } from '@/pages/DevUiPage'
 import { EditArtworkPage } from '@/pages/EditArtworkPage'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -47,8 +46,6 @@ export function AppRouter() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/status" element={<StatusPage />} />
-        {/* TEMPORARY: dev-only UI showcase — remove before production. */}
-        <Route path="/dev/ui" element={<DevUiPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
