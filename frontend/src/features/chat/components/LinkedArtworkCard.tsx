@@ -18,16 +18,21 @@ export function LinkedArtworkCard({
   /** The link text, shown verbatim if the artwork can't be loaded. */
   fallback: string
 }) {
-  const { data, isPending, isError } = useQuery({
-    queryKey: artworkKeys.detail(id),
-    queryFn: () => fetchArtworkDetail(id),
-    staleTime: 5 * 60 * 1000,
+  // A pasted link outlives the work it points at: the id is baked into the
+  // message text, so re-opening the conversation would re-request a deleted
+  // artwork and log a 404 every single time (issue #29). Resolve a miss to
+  // `null` and keep it forever, so each dead link costs at most one request per
+  // session — and none at all when ArtworkSyncProvider already saw the delete.
+  //
+  // Deliberately NOT artworkKeys.detail(id): caching a null under the shared
+  // detail key would make the real artwork page believe the work is gone.
+  const { data, isPending } = useQuery({
+    queryKey: artworkKeys.linkPreview(id),
+    queryFn: () => fetchArtworkDetail(id).catch(() => null),
+    staleTime: Infinity,
+    gcTime: Infinity,
     retry: false,
   })
-
-  if (isError || (!isPending && !data)) {
-    return <MessageText mine={mine}>{fallback}</MessageText>
-  }
 
   if (isPending) {
     return (
@@ -40,6 +45,11 @@ export function LinkedArtworkCard({
         <span className="block aspect-[16/9] rounded-xl bg-neutral-200 animate-pulse motion-reduce:animate-none" />
       </span>
     )
+  }
+
+  // Deleted, or never existed: show the raw link the user typed.
+  if (!data) {
+    return <MessageText mine={mine}>{fallback}</MessageText>
   }
 
   const shared: SharedArtwork = {

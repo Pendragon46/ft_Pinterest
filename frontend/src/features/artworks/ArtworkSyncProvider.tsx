@@ -35,9 +35,16 @@ export function ArtworkSyncProvider({ children }: ArtworkSyncProviderProps) {
       // handles the miss on its own.
       queryClient.removeQueries({ queryKey: artworkKeys.detail(id) })
       queryClient.removeQueries({ queryKey: artworkKeys.comments(id) })
-      // Refetch the lists that may still contain the card. The prefix covers
-      // the feed and every canvas tile in one call.
-      void queryClient.invalidateQueries({ queryKey: ['artworks'] })
+      // A chat message may still quote this artwork's URL. Record the miss now
+      // so opening that conversation renders the plain link instead of firing a
+      // request that would 404 (issue #29).
+      queryClient.setQueryData(artworkKeys.linkPreview(id), null)
+      // Refetch only the lists that may still show the card. Invalidating the
+      // whole 'artworks' prefix would also invalidate the linkPreview entry we
+      // just seeded, and refetch it straight back into a 404.
+      void queryClient.invalidateQueries({ queryKey: artworkKeys.feed() })
+      void queryClient.invalidateQueries({ queryKey: ['artworks', 'tile'] })
+      void queryClient.invalidateQueries({ queryKey: artworkKeys.count() })
       void queryClient.invalidateQueries({ queryKey: ['users'] })
     }
 

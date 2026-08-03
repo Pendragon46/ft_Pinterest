@@ -25,6 +25,9 @@ export const artworkKeys = {
     ['artworks', 'feed', 'tile', tx, ty] as const,
   detail: (id: string) => ['artworks', 'detail', id] as const,
   comments: (id: string) => ['artworks', 'comments', id] as const,
+  /** Chat link preview. Separate from `detail` because a miss is cached as
+      `null` here, which must never leak into the real artwork page. */
+  linkPreview: (id: string) => ['artworks', 'linkPreview', id] as const,
 }
 
 // Total published works → number of 16-item pages the canvas can spread tiles
