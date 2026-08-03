@@ -19,7 +19,8 @@ import {
   validateUsername,
 } from '@/features/auth/auth.validation'
 import { updateAccount, updateProfile, userKeys } from '@/features/users/user.api'
-import { DEFAULT_AVATAR } from '@/lib/avatar'
+import { SafeImage } from '@/components/ui/SafeImage'
+import { DEFAULT_AVATAR, initialsOf } from '@/lib/avatar'
 import { useToast } from '@/lib/toast.store'
 import { validateUpload, type UploadErrorKey } from '@/lib/upload.validation'
 import { DataPrivacySection } from '@/features/gdpr/DataPrivacySection'
@@ -245,10 +246,11 @@ export function SettingsPage() {
                     {t('settings.profileHeading')}
                   </h2>
                   <div className="flex items-center gap-4">
-                    <img
+                    <SafeImage
                       key={avatarPreview}
                       src={avatarPreview}
                       alt=""
+                      fallback={initialsOf(fullname || username)}
                       className="size-16 animate-reveal rounded-full object-cover motion-reduce:animate-none"
                     />
                     <input

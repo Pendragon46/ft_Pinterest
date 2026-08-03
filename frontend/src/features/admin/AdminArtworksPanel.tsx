@@ -16,6 +16,9 @@ import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
+import { SafeImage } from '@/components/ui/SafeImage'
+import { artworkKeys } from '@/features/artworks/artwork.api'
+import { videoPosterUrl } from '@/lib/mappers'
 import { useToast } from '@/lib/toast.store'
 
 import {
@@ -44,8 +47,14 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteArtworkAsAdmin(id),
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       void qc.invalidateQueries({ queryKey: adminKeys.artworks() })
+      // Drop the artwork's own cache entries too: an ArtworkDetail still open
+      // elsewhere would keep polling detail/comments for a row that is gone.
+      // No observer is mounted on them from here, so removing cannot refetch.
+      qc.removeQueries({ queryKey: artworkKeys.detail(id) })
+      qc.removeQueries({ queryKey: artworkKeys.comments(id) })
+      void qc.invalidateQueries({ queryKey: artworkKeys.feed() })
       setToDelete(null)
     },
     onError: () => {
@@ -118,19 +127,16 @@ export function AdminArtworksPanel({ canAdmin }: { canAdmin: boolean }) {
             <li key={a.id} className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white">
               <div className="relative aspect-[4/3] bg-neutral-100">
                 {a.mediaUrl ? (
-                  // Videos live at /video/upload/ — an <img> can't render an .mp4, so use <video>.
+                  // Videos live at /video/upload/. The admin grid only needs a
+                  // still, so show Cloudinary's JPEG derivative instead of a
+                  // <video>: no Range request, no media-cache read to fail.
                   a.mediaUrl.includes('/video/') ? (
                     <>
-                      <video
-                        src={a.mediaUrl}
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
+                      <SafeImage
+                        src={videoPosterUrl(a.mediaUrl) ?? a.mediaUrl}
+                        alt=""
+                        loading="lazy"
                         draggable={false}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                        }}
                         className="size-full object-cover"
                       />
                       <span

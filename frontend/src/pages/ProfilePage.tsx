@@ -8,6 +8,7 @@ import { AppHeader } from '@/components/AppHeader'
 import { Button } from '@/components/ui/Button'
 import { OnlineDot } from '@/components/ui/OnlineDot'
 import { SafeImage } from '@/components/ui/SafeImage'
+import { initialsOf } from '@/lib/avatar'
 import { FollowButton } from '@/features/artworks/components/FollowButton'
 import {
   ProfileArtworkCard,
@@ -146,7 +147,8 @@ export function ProfilePage() {
                 <SafeImage
                   src={profile.avatarUrl}
                   alt={profile.fullname ?? profile.username}
-                  className="size-24 rounded-full object-cover"
+                  fallback={initialsOf(profile.fullname ?? profile.username)}
+                  className="size-24 rounded-full object-cover text-2xl"
                 />
                 {isOwnProfile ? null : <OnlineDot userId={userId} />}
               </div>

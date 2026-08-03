@@ -87,6 +87,25 @@ export function mediaTypeFromUrl(url?: string | null): MediaType {
   return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(url) ? 'video' : 'image'
 }
 
+/** Vignette JPEG d'une vidéo Cloudinary (première image, `so_0`).
+ *
+ *  Monter un vrai `<video preload="metadata">` par vignette déclenche une
+ *  requête Range par carte, et c'est ce cache média partiel que Chrome n'arrive
+ *  parfois plus à relire — `ERR_CACHE_READ_FAILURE` (issue #24). Une image
+ *  n'emprunte pas ce chemin, et pèse bien moins lourd dans une grille.
+ *
+ *  Renvoie `undefined` si l'URL n'est pas une vidéo Cloudinary : l'appelant
+ *  retombe alors sur le `<video>`. */
+export function videoPosterUrl(url?: string | null): string | undefined {
+  if (!url) return undefined
+  const marker = '/video/upload/'
+  const at = url.indexOf(marker)
+  if (at === -1) return undefined
+  const head = url.slice(0, at + marker.length)
+  const tail = url.slice(at + marker.length).replace(/\.[a-z0-9]+(\?|$)/i, '$1')
+  return `${head}so_0,f_jpg,q_auto/${tail}.jpg`
+}
+
 /** Âge en heures depuis un timestamp ISO. Le frontend raisonne en
     `hoursAgo` (0 = à l'instant), le backend en dates absolues. */
 export function hoursSince(iso: string): number {

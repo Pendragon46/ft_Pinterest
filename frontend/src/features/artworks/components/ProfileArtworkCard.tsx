@@ -2,6 +2,7 @@ import { Video } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 
+import { videoPosterUrl } from '@/lib/mappers'
 import { useCompact } from '@/lib/useCompact'
 
 import type { ProfileArtwork } from '../artwork.types'
@@ -37,15 +38,13 @@ export function ProfileArtworkCard({
       <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-neutral-100">
         {artwork.mediaUrl ? (
           artwork.mediaType === 'video' ? (
-            // Static poster frame (preload=metadata) — no autoplay in grids (§5).
-            <video
-              src={artwork.mediaUrl}
-              muted
-              playsInline
-              preload="metadata"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
+            // Static poster frame — no autoplay in grids (§5). A Cloudinary
+            // JPEG derivative rather than <video preload="metadata">: one image
+            // request instead of a Range request per card (see videoPosterUrl).
+            <SafeImage
+              src={videoPosterUrl(artwork.mediaUrl) ?? artwork.mediaUrl}
+              alt=""
+              loading="lazy"
               className="size-full object-cover transition-transform duration-200 group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             />
           ) : (

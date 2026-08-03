@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 
 import { Modal } from '@/components/ui/Modal'
 import { SafeImage } from '@/components/ui/SafeImage'
+import { initialsOf } from '@/lib/avatar'
 import { ROLE_BADGE, ROLE_LABEL_KEY } from '@/features/admin/roleBadge'
 import type { AppRole } from '@/features/auth/useRole'
 import {
@@ -67,6 +68,7 @@ export function UserProfileModal({ userId, onClose }: Props) {
               <SafeImage
                 src={u.avatarUrl}
                 alt=""
+                fallback={initialsOf(u.fullname ?? u.username)}
                 className="size-16 shrink-0 rounded-full object-cover"
               />
               <div className="min-w-0 flex-1">

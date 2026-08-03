@@ -7,6 +7,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../auth.store'
 import { useRole } from '../useRole'
 import { SafeImage } from '@/components/ui/SafeImage'
+import { initialsOf } from '@/lib/avatar'
 
 // Shared pill; neutral-500 keeps the white text above WCAG AA contrast.
 // h-10 matches the other floating chrome pills (logo, language, refocus, footer).
@@ -81,6 +82,7 @@ export function AuthButton() {
           <SafeImage
             src={user.avatarUrl}
             alt={t('auth.avatarAlt', { username: user.username })}
+            fallback={initialsOf(user.fullname ?? user.username)}
             className="size-8 rounded-full object-cover"
           />
         ) : (

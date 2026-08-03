@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma, User, Provider } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { RegisterDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
@@ -11,6 +12,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private cloudinary: CloudinaryService,
   ) {}
 
   // One place that mints the token so login and register stay in sync. `role`
@@ -86,6 +88,24 @@ export class AuthService {
 
   // --- Google additions below ---
 
+  // Google hands us a lh3.googleusercontent.com URL. Never persist it: that host
+  // sends no CORS header and rate-limits hotlinking, so the browser ends up with
+  // a blank avatar (429 in Chrome, an aborted request in Firefox). Copy it into
+  // Cloudinary once and store our own URL instead. On failure we return
+  // undefined, so the caller falls back to the schema default rather than the
+  // unusable Google URL.
+  private async adoptGoogleAvatar(
+    remoteUrl?: string,
+  ): Promise<{ avatarUrl: string; avatarPublicId: string } | undefined> {
+    if (!remoteUrl) return undefined;
+    const uploaded = await this.cloudinary.uploadRemote(remoteUrl);
+    if (!uploaded) return undefined;
+    return {
+      avatarUrl: uploaded.secure_url,
+      avatarPublicId: uploaded.public_id,
+    };
+  }
+
   async validateGoogleUser(googleUser: {
     email: string;
     fullname?: string;
@@ -95,19 +115,42 @@ export class AuthService {
     let user = await this.prisma.user.findUnique({
       where: { googleId: googleUser.googleId },
     });
-    if (user) return user;
+    if (user) {
+      // A returning Google user whose stored avatar is still a Google URL (or
+      // was never set) predates this copy step — heal it on the next sign-in.
+      if (!user.avatarPublicId && googleUser.avatarUrl) {
+        const avatar = await this.adoptGoogleAvatar(googleUser.avatarUrl);
+        if (avatar) {
+          return this.prisma.user.update({
+            where: { id: user.id },
+            data: avatar,
+          });
+        }
+      }
+      return user;
+    }
 
     user = await this.prisma.user.findUnique({
       where: { email: googleUser.email },
     });
     if (user) {
+      // Linking Google to an existing local account: adopt the photo too, but
+      // only if the user never set one of their own.
+      const avatar = user.avatarPublicId
+        ? undefined
+        : await this.adoptGoogleAvatar(googleUser.avatarUrl);
       return this.prisma.user.update({
         where: { id: user.id },
-        data: { googleId: googleUser.googleId, provider: Provider.GOOGLE },
+        data: {
+          googleId: googleUser.googleId,
+          provider: Provider.GOOGLE,
+          ...(avatar ?? {}),
+        },
       });
     }
 
     const username = await this.generateUniqueUsername(googleUser.email);
+    const avatar = await this.adoptGoogleAvatar(googleUser.avatarUrl);
 
     return this.prisma.user.create({
       data: {
@@ -116,7 +159,7 @@ export class AuthService {
         username,
         googleId: googleUser.googleId,
         provider: Provider.GOOGLE,
-        ...(googleUser.avatarUrl ? { avatarUrl: googleUser.avatarUrl } : {}),
+        ...(avatar ?? {}),
       },
     });
   }

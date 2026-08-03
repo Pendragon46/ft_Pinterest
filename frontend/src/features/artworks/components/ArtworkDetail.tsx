@@ -7,6 +7,8 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/Button'
 import { OnlineDot } from '@/components/ui/OnlineDot'
+import { SafeImage } from '@/components/ui/SafeImage'
+import { initialsOf } from '@/lib/avatar'
 import { SilentBoundary } from '@/components/ui/SilentBoundary'
 import { useAuthStore } from '@/features/auth/auth.store'
 import { useRequireAuth } from '@/features/auth/useRequireAuth'
@@ -63,13 +65,21 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleted, setDeleted] = useState(false)
 
-  const onDeleted = () => {
-    // Stop the comments query from refetching an artwork that no longer exists
-    // (removeQueries on a mounted observer would otherwise GET /…/comments → 404).
-    setDeleted(true)
-    const authorId = artwork.author.id
+  // Purge only once the re-render has actually disabled the comments observer.
+  // removeQueries() on a still-enabled observer makes react-query re-create the
+  // query and immediately refetch it — that is the GET /…/comments → 404 this
+  // guards against. setDeleted() alone did not close the race: it is async,
+  // while the removals below it ran synchronously on the same click.
+  useEffect(() => {
+    if (!deleted) return
     queryClient.removeQueries({ queryKey: artworkKeys.detail(artwork.id) })
     queryClient.removeQueries({ queryKey: artworkKeys.comments(artwork.id) })
+  }, [deleted, artwork.id, queryClient])
+
+  const onDeleted = () => {
+    // Stop the comments query from refetching an artwork that no longer exists.
+    setDeleted(true)
+    const authorId = artwork.author.id
     void queryClient.invalidateQueries({ queryKey: userKeys.works(authorId) })
     void queryClient.invalidateQueries({ queryKey: userKeys.profile(authorId) })
     void queryClient.invalidateQueries({ queryKey: userKeys.liked(authorId) })
@@ -374,9 +384,10 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
           >
             <span className="relative shrink-0">
               {artwork.author.avatarUrl ? (
-                <img
+                <SafeImage
                   src={artwork.author.avatarUrl}
                   alt={artwork.author.username}
+                  fallback={initialsOf(artwork.author.username)}
                   className="size-10 rounded-full object-cover"
                 />
               ) : (
@@ -532,10 +543,11 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
                 {comments.map((comment) => (
                   <li key={comment.id} className="flex gap-3">
                     {comment.author.avatarUrl ? (
-                      <img
+                      <SafeImage
                         src={comment.author.avatarUrl}
                         alt={comment.author.username}
-                        className="size-8 shrink-0 rounded-full object-cover"
+                        fallback={initialsOf(comment.author.username)}
+                        className="size-8 shrink-0 rounded-full object-cover text-xs"
                       />
                     ) : (
                       <span
