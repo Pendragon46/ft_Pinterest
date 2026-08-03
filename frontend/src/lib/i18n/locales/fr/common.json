@@ -192,7 +192,8 @@
       "users": "Utilisateurs",
       "artworks": "Œuvres",
       "other": "Autre",
-      "overview": "Vue d'ensemble"
+      "overview": "Vue d'ensemble",
+      "status": "État"
     },
     "title": "Utilisateurs",
     "subtitle": "Gérez les utilisateurs, leurs rôles et leurs accès.",
@@ -294,6 +295,19 @@
       "topCreators": "Meilleurs créateurs",
       "topTags": "Tags populaires",
       "empty": "Aucune donnée"
+    },
+    "status": {
+      "title": "État du système",
+      "subtitle": "Santé en direct du backend et de la base de données.",
+      "refresh": "Actualiser",
+      "loading": "Chargement de l'état…",
+      "error": "Impossible de récupérer l'état du système.",
+      "overall": "État global",
+      "backend": "Backend",
+      "database": "Base de données",
+      "version": "Version",
+      "uptime": "Disponibilité",
+      "checkedAt": "Vérifié à {{time}} · actualisation toutes les {{seconds}} s"
     }
   },
   "home": {

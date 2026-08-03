@@ -15,7 +15,6 @@ import { ProfilePage } from '@/pages/ProfilePage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { TermsPage } from '@/pages/TermsPage'
-import { StatusPage } from '@/pages/StatusPage'
 
 export function AppRouter() {
   const location = useLocation()
@@ -45,7 +44,6 @@ export function AppRouter() {
         <Route path="/artwork/:id/edit" element={<EditArtworkPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
-        <Route path="/status" element={<StatusPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 

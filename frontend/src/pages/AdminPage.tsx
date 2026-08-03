@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
+  Activity,
   AlertTriangle,
   BarChart3,
   Image as ImageIcon,
@@ -24,11 +25,12 @@ import { AddUserDialog } from '@/features/admin/AddUserDialog'
 import { AdminAnalytics } from '@/features/admin/AdminAnalytics'
 import { AdminArtworksPanel } from '@/features/admin/AdminArtworksPanel'
 import { AdminStats } from '@/features/admin/AdminStats'
+import { AdminStatusPanel } from '@/features/admin/AdminStatusPanel'
 import { AdminUsersTable } from '@/features/admin/AdminUsersTable'
 import { DeleteUserDialog } from '@/features/admin/DeleteUserDialog'
 import { UserProfileModal } from '@/features/users/UserProfileModal'
 
-type AdminTab = 'overview' | 'users' | 'artworks'
+type AdminTab = 'overview' | 'users' | 'artworks' | 'status'
 
 export function AdminPage() {
   const { canViewDashboard } = useRole()
@@ -64,7 +66,9 @@ function AdminDashboard() {
       ? t('admin.nav.overview')
       : tab === 'users'
         ? t('admin.nav.users')
-        : t('admin.nav.artworks')
+        : tab === 'artworks'
+          ? t('admin.nav.artworks')
+          : t('admin.nav.status')
 
   return (
     <div className="flex min-h-svh bg-neutral-50">
@@ -107,6 +111,15 @@ function AdminDashboard() {
           >
             <ImageIcon aria-hidden="true" className="size-4" />
             {t('admin.nav.artworks')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('status')}
+            aria-current={tab === 'status' ? 'page' : undefined}
+            className={`${navItem} ${navState(tab === 'status')}`}
+          >
+            <Activity aria-hidden="true" className="size-4" />
+            {t('admin.nav.status')}
           </button>
 
           <p className="mt-4 px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">
@@ -169,6 +182,14 @@ function AdminDashboard() {
           >
             {t('admin.nav.artworks')}
           </button>
+          <button
+            type="button"
+            onClick={() => setTab('status')}
+            aria-current={tab === 'status' ? 'page' : undefined}
+            className={`-mb-px border-b-2 px-3 py-3 text-sm font-medium ${tab === 'status' ? 'border-neutral-900 text-neutral-900' : 'border-transparent text-neutral-500'}`}
+          >
+            {t('admin.nav.status')}
+          </button>
         </div>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
@@ -180,14 +201,18 @@ function AdminDashboard() {
                     ? t('admin.analytics.title')
                     : tab === 'users'
                       ? t('admin.title')
-                      : t('admin.artworks.title')}
+                      : tab === 'artworks'
+                        ? t('admin.artworks.title')
+                        : t('admin.status.title')}
                 </h1>
                 <p className="mt-1 text-neutral-500">
                   {tab === 'overview'
                     ? t('admin.analytics.subtitle')
                     : tab === 'users'
                       ? t('admin.subtitle')
-                      : t('admin.artworks.subtitle')}
+                      : tab === 'artworks'
+                        ? t('admin.artworks.subtitle')
+                        : t('admin.status.subtitle')}
                 </p>
               </div>
               {tab === 'users' ? (
@@ -261,8 +286,10 @@ function AdminDashboard() {
                   />
                 )}
               </>
-            ) : (
+            ) : tab === 'artworks' ? (
               <AdminArtworksPanel canAdmin={canAdmin} />
+            ) : (
+              <AdminStatusPanel />
             )}
           </div>
         </main>

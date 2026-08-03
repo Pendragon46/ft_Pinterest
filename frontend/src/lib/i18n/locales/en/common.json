@@ -192,7 +192,8 @@
       "users": "Users",
       "artworks": "Artworks",
       "other": "Other",
-      "overview": "Overview"
+      "overview": "Overview",
+      "status": "Status"
     },
     "title": "Users",
     "subtitle": "Manage users, their roles and access.",
@@ -294,6 +295,19 @@
       "topCreators": "Top creators",
       "topTags": "Top tags",
       "empty": "No data yet"
+    },
+    "status": {
+      "title": "System status",
+      "subtitle": "Live health of the backend and database.",
+      "refresh": "Refresh",
+      "loading": "Loading status…",
+      "error": "Couldn't fetch system status.",
+      "overall": "Overall status",
+      "backend": "Backend",
+      "database": "Database",
+      "version": "Version",
+      "uptime": "Uptime",
+      "checkedAt": "Checked at {{time}} · auto-refreshes every {{seconds}}s"
     }
   },
   "home": {
