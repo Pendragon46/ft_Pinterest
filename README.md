@@ -1,54 +1,64 @@
-*This project has been created as part of the 42 curriculum by trindran, cramaros, nrakotom, srabeman*
+_This project has been created as part of the 42 curriculum by trindran, cramaros, nrakotom, srabeman._
 
 ---
 
 # Description
 
-The project is an infinite canvas web app where user discover and share artwork.\
-It's like pinterest but with infinite canvas instead of standard scrolling.
+**Atlaas** is a real-world web application: a visual discovery and sharing platform for
+creative work (photography, illustration, design…). Members publish **artworks**
+(images and short videos), explore them on an interactive discovery canvas, and connect
+around them: following creators, liking and commenting, and chatting in real time.
+
+The goal was to build a complete, production-shaped social platform as a team: a secure
+account system, real-time features, media handling, an admin back-office, monitoring, and
+full internationalization, all containerized and reachable over HTTPS with a single command.
 
 ### Key features
 
-- Infinite canvas — content is displayed on a 2D navigable map, clustered by topic
-- Tag-based positioning — posts are placed automatically based on their tags
-- Search — filter the canvas by keyword to see only matching content
-- User accounts — register, log in, manage your profile
-- Social features — follow users, like and comment on posts
+- **Accounts & auth** : email/password sign-up & login (hashed + salted with bcrypt),
+  Google OAuth 2.0, JWT sessions.
+- **Profiles** : editable profile (name, bio, avatar with a default), public profiles,
+  followers/following, real-time **online status**.
+- **Artworks** : publish images and videos (Cloudinary), like, comment, tag; a discovery
+  canvas as the home experience.
+- **Social graph** : follow/unfollow, mutual-follow "friends".
+- **Real-time chat** : 1:1 messaging between mutuals, typing indicators, presence, message
+  history (Socket.IO).
+- **Search** : search artworks and authors with tag suggestions, sorting and pagination.
+- **Admin back-office** : user management (roles, delete), artwork moderation, analytics.
+- **Internationalization** : English, French, Arabic, with full **RTL** support and a
+  language switcher.
+- **Privacy** : Privacy Policy & Terms pages; GDPR data export and account deletion.
+
+-  **Emergency procedure** : backups and disaster-recovery scripts.
 
 ---
 
-# Instruction
+# Instructions
 
 ### Prerequisites
 
-Make sure the following are installed on your machine:
-
-| Tool | Version | Purpose |
-|------|---------|---------|
-| Docker | 24+ | Containerization |
-| Docker Compose | 2.0+ | Multi-container orchestration |
-| Node.js | 20 LTS | Backend runtime (dev only) |
-| npm | 10+ | Package manager (dev only) |
+- **Docker** and **Docker Compose** (v2).
+- **OpenSSL** (used by `make` to generate a local self-signed dev certificate).
+- **Node.js** on the host (only used to run the demo **seed** script after start).
+- A **Cloudinary** account and a **Google OAuth** client (for media upload and Google login).
 
 ### Environment setup
 
-Copy the example env files and fill in your values:
+Credentials live in `.env` files that are **git-ignored**; `.env.example` files are provided.
 
 ```bash
-cp .env.example .env
+cp .env.example .env                 
+cp backend/.env.example backend/.env # DATABASE_URL, JWT_SECRET, CLOUDINARY_*, GOOGLE_*
+cp frontend/.env.example frontend/.env
 ```
-Required variables in `.env`:
 
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/transcendence
-JWT_SECRET=your_long_random_secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-# [add any other required variables]
-```
+Then fill in the values:
+
+- Root `.env`: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `GRAFANA_ADMIN_USER`,
+  `GRAFANA_ADMIN_PASSWORD`.
+- `backend/.env`: `DATABASE_URL`, `JWT_SECRET`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
+  `CLOUDINARY_API_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`.
 
 ### Run with Docker (recommended)
 
@@ -56,25 +66,44 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 make start
 ```
 
-The app will be available at `http://localhost:8443`
+`make start` generates the dev TLS cert, builds the images, starts the whole stack, waits
+for the API to be ready, then seeds a demo network of accounts and artworks.
+
+The application is served over HTTPS at **https://localhost:8443** and Grafana at
+**https://localhost:8443/grafana**.
+
+Useful targets:
+
+| Command                                      | Description                                    |
+| -------------------------------------------- | ---------------------------------------------- |
+| `make start`                                 | Build, start the stack, and seed the demo data |
+| `make stop`                                  | Stop the stack                                 |
+| `make seed`                                  | (Re)seed demo accounts/artworks (idempotent)   |
+| `make logs`                                  | Follow container logs                          |
+| `make backup` / `make restore BACKUP_FILE=…` | Database backup / restore                      |
+| `make clean-volumes` / `make fclean`         | Remove volumes / full cleanup                  |
+
+> Demo account credentials are listed in [`docs/CREDENTIALS.md`](docs/CREDENTIALS.md)
+> (two admin accounts + a network of users; all local accounts use `Atlaas!2026-<username>`).
 
 ---
 
 # Resources
 
- - **NestJS** : [official site documentation ] (https://docs.nestjs.com/)
- - **Prisma** : [official documentation ] (https://www.prisma.io/docs)
- - **Socket.IO** : [official documentation ] (https://socket.io/docs/v4/)
-## Description
-## Instruction
-## 📚 Resources
-### Official Documentation
+### Official documentation
 
-- **NestJS**: [Official Documentation](https://docs.nestjs.com/)
-- **Prisma**: [Official Documentation](https://www.prisma.io/docs)
-- **Socket.IO**: [Official Documentation](https://socket.io/docs/v4/)
-- **React**: [Official Documentation](https://react.dev/)
-- **Cloudinary**: [Official Documentation](https://cloudinary.com/documentation)
+- NestJS — https://docs.nestjs.com
+- Prisma (ORM) — https://www.prisma.io/docs
+- PostgreSQL — https://www.postgresql.org/docs
+- React — https://react.dev
+- Vite — https://vite.dev
+- Tailwind CSS — https://tailwindcss.com/docs
+- TanStack Query — https://tanstack.com/query
+- Socket.IO — https://socket.io/docs
+- Cloudinary — https://cloudinary.com/documentation
+- Passport / Google OAuth 2.0 — https://www.passportjs.org
+- react-i18next — https://react.i18next.com
+- NGINX (reverse proxy, TLS, WebSocket upgrade) — https://nginx.org/en/docs
 
 ### Video Tutorials
 
@@ -84,7 +113,8 @@ The app will be available at `http://localhost:8443`
 - **Cloudinary**: [Cloudinary](https://youtu.be/l7TUGdRN-f0)
 
 ### AI usage
-AI tools (Claude by Anthropic) were used during this project for the following tasks:
+
+AI tools were used during this project for the following tasks:
 
 - **Project architecture**: helping design the database schema and module structure
 - **Backend development**: guidance on NestJS authentication patterns, JWT implementation,
@@ -97,164 +127,282 @@ team before being integrated into the project. No code was blindly copy-pasted.
 
 ---
 
-## Team Information:
+# Team Information
 
-| Login | Role(s) | Responsibilities |
-|-------|---------|-----------------|
-| \<trindran\> | Technical Lead / Backend Developer | API, database |
-| \<cramaros\> | Technical Lead / Devops | Docker, Grafana&Prometheus |
-| \<nrakotom\> | Project Manager / Backend Developer | Auth |
-| \<srabeman\> | Project Owner / Frontend Developer | frontend |
-
-
+| Login      | Name                                   | Role(s)                                    | Responsibilities                                                                                         |
+| ---------- | -------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `cramaros` | Ckeven Ramaroson                       | Architect / Developer                      | Infrastructure, Deployment, Security, Monitoring.                                                        |
+| `trindran` | Toky Nicky Rindranirina                | Technical Lead / Developer                 | Backend architecture, API, Database, Social features, User interactions, media upload.                   |
+| `nrakotom` | Ny Hanta Yves Mathieu Rakotomalala     | Project Manager / Scrum Master / Developer | Authentication, Google Authentication, Guest Role.                                                       |
+| `srabeman` | Sedra Ny Aina Barthelemy Rabemanantsoa | Product Owner / Developer / UX/UI Designer | User interface, Visual experience, Design system, Responsive design, frontend/backend integration, Chat. |
 
 ---
 
-## Project Management:
+# Project Management
 
-### How the team organized the work
-Weekly meetings. Each feature had a responsible for implementation and testing.
+- **How the work was organized**:
+  - srabeman, frontend
+  - nrakotom, backend
+  - trindran, backend
+  - cramaros, devops
 
-### Tools used
-- **Version control**: Git + GitHub
-- **Task tracking**: [GitHub Issues]
-- **Communication**: [Whatsapp / Slack]
+  Weekly meetings on Fridays morning.
+
+- **Tools** — **GitHub Issues** was used to track and triage bugs/tasks.
+- **Communication channels** — Whatsapp / Slack
 
 ---
 
-## Technical Stack:
+# Technical Stack
 
 ### Frontend
-- **Framework**: React + TypeScript
-- **Styling**: [Tailwind CSS / Bootstrap / other — fill in]
-- **Real-time**: WebSockets via [socket.io-client or native WebSocket]
-- **Other libraries**: [list anything significant]
+
+- **React 19 + TypeScript**, bundled with **Vite**.
+- **Tailwind CSS v4** for styling (custom design-system components under `src/components/ui`).
+- **TanStack Query** (server state) and **Zustand** (UI/presence state).
+- **react-i18next** (+ browser language detector) for i18n/RTL.
+- **react-router-dom** for routing, **Socket.IO client** for real-time, **lucide-react**
+  icons, **lottie-web** for animations.
 
 ### Backend
-- **Framework**: NestJS (Node.js + TypeScript)
-- **Authentication**: JWT (JSON Web Tokens) + Passport.js
-- **File storage**: Cloudinary
-- **ORM**: Prisma
-- **Real-time**: WebSockets via NestJS Gateway
+
+- **NestJS + TypeScript**.
+- **Prisma** ORM over **PostgreSQL**.
+- **JWT** auth (`@nestjs/jwt`, `passport-jwt`) + **Google OAuth 2.0** (`passport-google-oauth20`),
+  passwords hashed with **bcrypt**.
+- **Socket.IO gateway** (`@nestjs/websockets`) for presence and chat.
+- **Cloudinary** for image/video storage; **Multer** for uploads.
+- **class-validator / class-transformer** for DTO validation.
+- **helmet** (security headers), **@nestjs/throttler** (rate limiting), **prom-client** (metrics).
 
 ### Database
-- **System**: PostgreSQL
-- **Why we chose it**: PostgreSQL is a robust, open-source relational database with
-  strong support for complex queries and relationships, making it well-suited for a
-  social platform with interconnected data (users, posts, tags, follows, etc.).
+
+- **PostgreSQL** — a relational database chosen for the app's strongly-relational data
+  (users, artworks, likes, comments, follows, conversations) and for Prisma's first-class
+  Postgres support, migrations, and constraints (unique keys, cascades).
 
 ### Infrastructure
-- **Containerization**: Docker + Docker Compose
-- **[Add if applicable]**: ELK Stack (Elasticsearch, Logstash, Kibana) for log management
-- **[Add if applicable]**: WAF/ModSecurity for security
 
-### Justification for major technical choices
-- **NestJS over Express**: NestJS provides a structured, modular architecture that
-  scales well for a team project. Its built-in support for TypeScript, dependency
-  injection, and guards made implementing authentication and permissions straightforward.
-- **Prisma over raw SQL**: Prisma generates a fully typed client from the schema,
-  catching database errors at compile time rather than runtime.
-- **Cloudinary for file storage**: Handles image upload, transformation, and delivery
-  without requiring us to manage a file server manually.
+- **Docker Compose** orchestrates the whole stack, launched with a single `make start`.
+- **NGINX** reverse proxy terminating **HTTPS** (TLS) and proxying the API, the SPA, the
+  Socket.IO upgrade.
+- **Backups**: a dedicated backup service with `backup` / `restore` / `disaster_recovery` /
+  `health_check` scripts.
 
 ---
-  
-## Database Schema:
 
-![Database Schema](diagram_prisma.png)
+# Database Schema
+
+PostgreSQL, managed by **Prisma**. Every primary key is a `String` UUID
+(`@default(uuid())`); table carries `createdAt` (and, where noted, `updatedAt`).
 
 ### Tables and relationships
 
-| Table    | Description | Key relationships |
-|----------|-------------|-------------------|
-| User     | Stores account info, credentials, role, avatar | Has many Artworks, Comments, Likes, Follows |
-| Artwork  | User-created posts with image and description | Belongs to User, has many Tags, Comments, Likes |
-| Tag      | Keywords attached to artworks | Many-to-many with Artwork |
-| Like     | A user liking an artwork | Belongs to User and Artwork |
-| Comment  | A user commenting on an artwork | Belongs to User and Artwork |
-| Follow   | Follow relationship between two users | References User twice (follower / following) |
+| Relationship               | Type                          | Via                                                |
+| -------------------------- | ----------------------------- | -------------------------------------------------- |
+| User → Artwork             | one-to-many                   | `Artwork.authorId`                                 |
+| User → Comment             | one-to-many                   | `Comment.authorId`                                 |
+| User → Like                | one-to-many                   | `Like.authorId`                                    |
+| User ↔ User (follow)       | many-to-many (self, directed) | `Follow (followerId, followingId)`                 |
+| Artwork → Like             | one-to-many                   | `Like.artworkId`                                   |
+| Artwork → Comment          | one-to-many                   | `Comment.artworkId`                                |
+| Artwork ↔ Tag              | many-to-many                  | implicit `Artwork.tags` / `Tag.artworks`           |
+| User ↔ Conversation        | many-to-many                  | `ConversationParticipant (conversationId, userId)` |
+| Conversation → Message     | one-to-many                   | `Message.conversationId`                           |
+| User → Message (sender)    | one-to-many (optional)        | `Message.senderId`                                 |
+| Artwork → Message (shared) | one-to-many (optional)        | `Message.artworkId` (`SetNull`)                    |
 
-### Key fields
+Deletes cascade (`onDelete: Cascade`) from a user/artwork to their dependent rows; a message's
+shared artwork uses `SetNull`. Conversations left with no participant after a user is deleted
+are cleaned up by the app.
 
-**User**: `id (uuid)`, `username (unique)`, `email (unique)`, `password (hashed)`,
-`avatarUrl`, `role (USER/ADMIN)`, `createdAt`, `updatedAt`
+### Key fields and data types
 
-**Artwork**: `id (uuid)`, `title`, `description`, `mediaUrl`, `authorId (FK → User)`,
-`createdAt`, `updatedAt`
+**User**
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `fullname` | String? | |
+| `username` | String | unique |
+| `email` | String | unique |
+| `password` | String? | bcrypt hash; null for OAuth accounts |
+| `provider` | enum `Provider` | `LOCAL` \| `GOOGLE` (default `LOCAL`) |
+| `googleId` | String? | unique |
+| `bio` | String? | |
+| `avatarUrl` | String | default avatar URL |
+| `avatarPublicId` | String? | Cloudinary public id |
+| `role` | enum `Role` | `USER` \| `ADMIN` \| `GUEST` (default `USER`) |
+| `createdAt` / `updatedAt` | DateTime | |
 
-**Follow**: composite primary key `(followerId, followingId)` both referencing User
+**Artwork** — indexes on `authorId`, `createdAt`
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `title` | String | |
+| `description` | String? | |
+| `mediaUrl` | String? | Cloudinary URL |
+| `mediaPublicId` | String? | Cloudinary public id |
+| `resourceType` | String? | `image` \| `video` |
+| `authorId` | UUID | FK → User (Cascade) |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**Like** — unique `(authorId, artworkId)`
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `authorId` | UUID | FK → User (Cascade) |
+| `artworkId` | UUID | FK → Artwork (Cascade) |
+| `createdAt` | DateTime | |
+
+**Comment**
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `authorId` | UUID | FK → User (Cascade) |
+| `artworkId` | UUID | FK → Artwork (Cascade) |
+| `content` | String | |
+| `createdAt` | DateTime | |
+
+**Follow** — composite PK `(followerId, followingId)`
+| Field | Type | Notes |
+|---|---|---|
+| `followerId` | UUID | FK → User (Cascade) |
+| `followingId` | UUID | FK → User (Cascade) |
+| `createdAt` | DateTime | |
+
+**Tag** — index on `name`, many-to-many with Artwork
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `name` | String | unique |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**Conversation**
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `pairKey` | String | unique — canonical key of the participant pair |
+| `createdAt` / `updatedAt` | DateTime | |
+
+**ConversationParticipant** — composite PK `(conversationId, userId)`, index on `userId`
+| Field | Type | Notes |
+|---|---|---|
+| `conversationId` | UUID | FK → Conversation (Cascade) |
+| `userId` | UUID | FK → User (Cascade) |
+| `lastReadAt` | DateTime? | read-marker for unread counts |
+
+**Message** — index on `(conversationId, createdAt)`
+| Field | Type | Notes |
+|---|---|---|
+| `id` | UUID | PK |
+| `conversationId` | UUID | FK → Conversation (Cascade) |
+| `kind` | enum `MessageKind` | `USER` \| `SYSTEM` (default `USER`) |
+| `senderId` | UUID? | FK → User (Cascade) |
+| `content` | String? | text of a user message |
+| `systemKey` | String? | i18n key for a system message |
+| `artworkId` | UUID? | FK → Artwork (SetNull) — shared artwork |
+| `createdAt` | DateTime | |
+
+**Enums** — `Role` (`USER`, `ADMIN`, `GUEST`), `Provider` (`LOCAL`, `GOOGLE`),
+`MessageKind` (`USER`, `SYSTEM`).
+
+![Database Schema](diagram_prisma.png)
 
 ---
 
-## Features List:
+# Features List
 
-| Feature | Description | Owner |
-|---------|-------------|-------|
-| User registration | Create an account with email and password | nrakotom |
-| User login | Authenticate and receive a JWT token | nrakotom |
-| Google OAuth | Sign in with a Google account | nrakotom |
-| User profile | View and edit profile info and avatar | trindran |
-| Artwork upload | Post images with title, description, and tags | trindran |
-| Infinite canvas | Navigate a 2D map of content clustered by tag | srabeman |
-| Search | Filter canvas by keyword or tag | trindran, srabeman |
-| Follow system | Follow/unfollow other users | trindran, srabeman |
-| Like system | Like artworks | trindran |
-| Comment system | Comment on artworks | trindran |
-| Real-time chat | Direct messages between users | srabeman |
-| Admin panel | Manage users and content | srabeman |
-| Role | Role-based access control (USER/ADMIN/Guest) | trindran, nrakotom |
+| Feature                   | Description                                                             | Login              |
+| ------------------------- | ----------------------------------------------------------------------- | ------------------ |
+| Contenarization | Using Docker for portability and reproductibility | cramaros 
+| Nginx | For security reasons | cramaros
+| Authentication            | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions                | nrakotom           |
+| User profiles             | Edit profile, avatar upload (+ default), bio, public profile pages      | trindran           |
+| Follow system             | Follow/unfollow, followers/following counts, mutual "friends"           | trindran           |
+| Online presence           | Real-time online status via Socket.IO                                   |        srabeman             |
+| Artworks                  | Publish images/videos, edit, delete; likes and comments                 | trindran           |
+| Discovery canvas          | Interactive home canvas to explore artworks                             |      srabeman              |
+| Search                    | Search artworks & authors, tag suggestions, sort, pagination            | trindran           |
+| Real-time chat            | 1:1 messaging between mutuals, typing indicators, history               | srabeman
+| Admin back-office         | User CRUD, roles, artwork moderation, analytics dashboard               | srabeman
+| Internationalization      | EN/FR/AR, full RTL, language switcher                                   | srabeman
+| Privacy             | Privacy Policy & Terms pages, data export, account deletion             | srabeman
+| Backups                   | Automated backup, restore, disaster-recovery, health checks             | cramaros           |
+| Responsive design         | Fully responsive, mobile-first, cross-browser (Chrome, Firefox, brave) | srabeman
+| Role-based access control | `USER`, `ADMIN`, `GUEST`                                                | trindran, nrakotom |
 
 
 ---
 
-## Features List:
+# Modules
 
-## Modules:
- - Major :
-    - [x] Use a framework for the frontend and backend(React, NestJS).
-    - [x] Implement real-time features using WebSockets or similar technology.
-    - [] Allow users to interact with other users
-	
-    - [x] Advanced Permission System *(frontend committed; backend changes are local & uncommitted — see `local_backend_changes.md`)*
-    - [] Standard user management and authentication
-	- [x] Module of choice (infinite canvas)
-	- [] Monitoring system with Prometheus and Grafana.
-	
+Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 
- 
-- Minor :
-    - [x] Use a frontend framework (React).
-    - [x] Use a backend framework (NestJS).
-    - [x] Use an ORM (Prisma) for the database.
-    - [x] Health check and status page system with automated backups and disaster recovery procedures.
-    - [x] A complete notification system for all creation, update, and deletion actions.
-    - [x] File upload and management system
-    - [x] Custom-made design system with reusable components, including a proper color palette, typography, and icons.
-	- [x]  Implement advanced search functionality with filters, sorting, and pagination.
-    - [x] Multilingue
-    - [x] Support for additional browsers
-    - [x] RTL Arabic
-    - [x] GDPR compliance features
-	- [] file upload
-	- [] Oauth2.0 authentication with Google
-	- [] User activity analytics and insights dashboard
 
-Excpected points: 23/28
+| Category    | Module                                         | Type  | Pts | Notes / where                                 | login |
+| ----------- | ---------------------------------------------- | :---: | :-: | --------------------------------------------- | ---
+| Web         | Framework front **and** back (React + NestJS)  | Major |  2  | `frontend/`, `backend/`                       | srabeman, nrakotom, cramaros, trindran
+| Web		  | Use a frontend framework 		| Minor | 1 | React+Typescript | srabeman
+| Web		  | Use a backend framework 		| Minor | 1 | NestJs | nrakotom, trindran
+| Web         | Real-time features (WebSockets)                | Major |  2  | Socket.IO presence + chat                     | srabeman |
+| Web         | User interaction (chat + profiles + friends)   | Major |  2  | chat, profiles, friends                       | srabeman, trindran
+| Web         | Use an ORM                                     | Minor |  1  | Prisma                                        | srabeman, trindran, nrakotom, cramaros
+| Web         | Advanced search (filters, sorting, pagination) | Minor |  1  | search module                                 | srabeman, trindran
+| Web         | File upload & management                       | Minor |  1  | Cloudinary, images+videos, validation, delete | srabeman, trindran
+| Web         | Custom design system (10+ components)          | Minor |  1  | `components/ui/*`                             | srabeman
+| A11y & i18n | Multiple languages (≥3)                        | Minor |  1  | EN/FR/AR                                      | srabeman
+| A11y & i18n | RTL support                                    | Minor |  1  | Arabic, layout mirroring                      | srabeman
+| A11y & i18n | Additional browsers                            | Minor |  1  | Firefox support/fixes, Brave                         | srabeman, nrakotom, cramaros,trindran
+| User Mgmt   | Standard user management                       | Major |  2  | profile, avatar, friends, online status       | srabeman, trindran
+| User Mgmt   | OAuth 2.0 remote auth                          | Minor |  1  | Google                                        | nrakotom
+| User Mgmt   | Advanced permissions (CRUD + roles)            | Major |  2  | admin panel, `RolesGuard`, `Role` enum        | srabeman, trindran, nrakotom
+| User Mgmt | User activity analytics and insights dashboard. | Minor | 1 | admin can view user activity in the admin panel | srabeman
+| DevOps      | Health check + backups + disaster recovery     | Minor |  1  | `scripts/*.sh`, backup service                | cramaros
+| Module of choice | Implement a custom module that is not listed above | Major | 2 | Infinite canvas | srabeman
 
-## Individual Contributions:
-- trindran :
-  - prisma model for user, artwork, comment, like, follow, Tag
+
+**Evidenced total (before selection): well above 14 points.**
+
+
+---
+
+# Individual Contributions
+
+- **srabeman** :
+  - UXUI Design with Figma
+  - All of the frontend components and pages
+  - Real-time online status
+  - The interactive home canvas
+  - Chat
+  - Responsiveness
+- **nrakotom** :
+  - Register, login, JWT-based auth
+  - Global APP_GUARD applying JwtAuthGuard and RolesGuard to all routes
+  - Public decorator to exempt specific routes from auth
+  - Google OAuth
+- **cramaros** :
+  - Docker & Docker Compose infrastructure.
+  - Frontend environment setup (React packages and dependencies).
+  - Backend environment setup (NestJS packages and dependencies).
+  - PostgreSQL and Prisma configuration.
+  - Nginx reverse proxy with HTTPS.
+  - Health check and service status monitoring.
+  - Automated PostgreSQL backup, restore and disaster recovery system.
+- **trindran** :
+  - Prisma model for user, artwork, comment, like, follow, Tag
   - Implement basis user CRUD with the dto validation
   - Upload avatar, file and artwork with dto validation
   - follow, like, comment friendship system with dto validation
   - Role based access control for USER/ADMIN with dto validation
-  - Online status with socket.io
   - Search system with filters, sorting and pagination
-- cramaros :
-  - Set up the complete development environment (frontend, backend, Docker, and service dependencies).
-  - Implemented the health monitoring system, including health checks, the status page, automated PostgreSQL backups, and disaster recovery procedures.
-- nrakotom :
-- srabeman :
 
+---
 
+# Known limitations & notes
 
+- an error is shown in the console when user try to connect using Google Oauth in Brave browser. desactivate the shield to make it work.
+
+- Google profile-picture avatars are loaded cross-origin (CORS) to stay compatible with
+  Firefox's Opaque Response Blocking.
+- The demo seed publishes 41/42 images of the `seed/trindran` gallery (one filename yields a
+  title shorter than the 3-character minimum and is skipped).
