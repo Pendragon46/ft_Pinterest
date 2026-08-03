@@ -37,7 +37,10 @@ export function ConversationList({
   })
 
   return (
-    <div className="flex min-h-0 flex-col">
+    // flex-1 matches ConversationThread: without it this view sizes to its
+    // content instead of the panel, so the scroller below never bounds itself
+    // and conversations past the fold are clipped out of reach.
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex flex-col gap-3 px-4 pb-2 pt-1">
         <div className="relative">
           <Search

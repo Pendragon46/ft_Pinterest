@@ -26,7 +26,9 @@ export function NewMessagePicker() {
   )
 
   return (
-    <div className="flex min-h-0 flex-col">
+    // flex-1 so the picker fills the panel and its list can scroll — same
+    // reason as ConversationList.
+    <div className="flex min-h-0 flex-1 flex-col">
       <div className="px-4 pb-2 pt-1">
         <div className="relative">
           <Search
