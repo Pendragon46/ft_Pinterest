@@ -317,7 +317,7 @@ are cleaned up by the app.
 
 | Feature                   | Description                                                             | Login              |
 | ------------------------- | ----------------------------------------------------------------------- | ------------------ |
-| Authentication            | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions                |                    |
+| Authentication            | Email/password (bcrypt) + Google OAuth 2.0, JWT sessions                | nrakotom           |
 | User profiles             | Edit profile, avatar upload (+ default), bio, public profile pages      | trindran           |
 | Follow system             | Follow/unfollow, followers/following counts, mutual "friends"           | trindran           |
 | Online presence           | Real-time online status via Socket.IO                                   |                    |
@@ -382,7 +382,11 @@ Point rule: **Major = 2 pts, Minor = 1 pt** (14 points required).
 > overcome. Be honest; every member must be able to explain their contributions._
 
 - **srabeman** — TODO
-- **nrakotom** — TODO
+- **nrakotom** :
+  - Register, login, JWT-based auth
+  - Global APP_GUARD applying JwtAuthGuard and RolesGuard to all routes
+  - Public decorator to exempt specific routes from auth
+  - Google OAuth
 - **cramaros** :
   - Docker & Docker Compose infrastructure.
   - Frontend environment setup (React packages and dependencies).
