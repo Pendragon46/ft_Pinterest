@@ -69,6 +69,14 @@ export class WebsocketGateway
     );
   }
 
+  /** Emit to every connected socket. Used for content that is public and whose
+      disappearance every open window needs to know about — a deleted artwork
+      left in another tab's grid would otherwise be clickable, and the resulting
+      GET would 404 in the console (issue #27). */
+  broadcast(event: string, payload: unknown): void {
+    this.server?.emit(event, payload);
+  }
+
   /** Ephemeral "typing" relay for the 1-1 chat. The sender is taken from the
       authenticated socket (never trusted from the payload); the recipient is
       the conversation's other participant, known to the client. */

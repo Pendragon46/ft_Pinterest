@@ -9,6 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateArtworkDto } from './dto/create-artwork.dto';
 import { UpdateArtworkDto } from './dto/update-artwork.dto';
 import { FriendsService } from 'src/friends/friends.service';
+import { WebsocketGateway } from 'src/websocket/websocket.gateway';
 
 
 @Injectable()
@@ -17,6 +18,7 @@ export class ArtworkService {
     private readonly cloudinaryService: CloudinaryService,
     private readonly prisma: PrismaService,
 	private readonly friendService: FriendsService,
+    private readonly gateway: WebsocketGateway,
   ) {}
 
   async findAll() {
@@ -257,6 +259,9 @@ export class ArtworkService {
         id: id,
       },
     });
+    // Tell every open window the work is gone, so a stale grid elsewhere drops
+    // it instead of letting the user click a card whose GET would 404.
+    this.gateway.broadcast('artwork:deleted', { id });
     return { message: 'Artwork deleted successfully' };
   }
 
@@ -294,6 +299,7 @@ export class ArtworkService {
           id: artwork.id,
         },
       });
+      this.gateway.broadcast('artwork:deleted', { id: artwork.id });
     }
     await this.deletetagswithoutartworks();
     return {

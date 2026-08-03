@@ -1,7 +1,9 @@
-import { memo, useRef } from 'react'
+import { memo, useState } from 'react'
 import { Video } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
+
+import { videoPosterUrl } from '@/lib/mappers'
 
 import type { CanvasArtwork } from '../artwork.types'
 
@@ -24,18 +26,21 @@ export const ArtworkCard = memo(function ArtworkCard({
 }: ArtworkCardProps) {
   const { t } = useTranslation('common')
   const location = useLocation()
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const isVideo = artwork.mediaType === 'video'
+  // Cloudinary still frame. Mounting a <video preload="metadata"> per card made
+  // the front page fire one Range request per video, and Chrome intermittently
+  // failed to read those partial responses back out of its media cache
+  // (ERR_CACHE_READ_FAILURE 206). An <img> does not use that code path.
+  const poster = isVideo ? videoPosterUrl(artwork.mediaUrl) : undefined
+  // The real <video> is mounted only while hovered/focused, so idle cards cost
+  // one image and playback still starts on hover.
+  const [playing, setPlaying] = useState(false)
 
-  // Lecture au survol/focus ; no-op pour les images (ref null).
   const playHover = () => {
-    void videoRef.current?.play().catch(() => {})
+    if (isVideo) setPlaying(true)
   }
   const stopHover = () => {
-    const v = videoRef.current
-    if (v) {
-      v.pause()
-      v.currentTime = 0
-    }
+    if (isVideo) setPlaying(false)
   }
 
   const ariaLabel = t('artwork.openAria', {
@@ -62,14 +67,16 @@ export const ArtworkCard = memo(function ArtworkCard({
       {/* Uploaded media fills the card; the `color` background shows through
           only while it loads or when a work has no media. */}
       {artwork.mediaUrl ? (
-        artwork.mediaType === 'video' ? (
+        isVideo && (playing || !poster) ? (
           <video
-            ref={videoRef}
             src={artwork.mediaUrl}
             muted
             loop
             playsInline
-            preload="metadata"
+            // Autoplay on mount: the element only exists while hovered. Without
+            // a poster (non-Cloudinary URL) it stays mounted as before.
+            autoPlay={playing}
+            preload={playing ? 'auto' : 'metadata'}
             // A native drag on the media would fight the canvas pan.
             draggable={false}
             onError={(e) => {
@@ -79,7 +86,7 @@ export const ArtworkCard = memo(function ArtworkCard({
           />
         ) : (
           <img
-            src={artwork.mediaUrl}
+            src={isVideo ? poster : artwork.mediaUrl}
             alt=""
             loading="lazy"
             draggable={false}

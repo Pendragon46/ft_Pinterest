@@ -4,6 +4,7 @@ import { I18nextProvider } from 'react-i18next'
 import { BrowserRouter } from 'react-router-dom'
 
 import { ToastViewport } from '@/components/ui/ToastViewport'
+import { ArtworkSyncProvider } from '@/features/artworks/ArtworkSyncProvider'
 import { AuthGate } from '@/features/auth/AuthGate'
 import { ChatProvider } from '@/features/chat/ChatProvider'
 import { PresenceProvider } from '@/features/presence/PresenceProvider'
@@ -40,7 +41,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         <BrowserRouter>
           <AuthGate>
             <PresenceProvider>
-              <ChatProvider>{children}</ChatProvider>
+              <ArtworkSyncProvider>
+                <ChatProvider>{children}</ChatProvider>
+              </ArtworkSyncProvider>
             </PresenceProvider>
           </AuthGate>
           <ToastViewport />
