@@ -109,7 +109,6 @@ export class ChatService {
     }
     const other = convo.participants.find((p) => p.userId !== userId);
     if (other && !(await this.friends.areMutuals(userId, other.userId))) {
-      // 2xx result (not 403) so the browser logs no network error.
       return { ok: false as const, reason: 'not_mutual' };
     }
     if (!dto.content && !dto.artworkId) {
@@ -146,15 +145,6 @@ export class ChatService {
     return payload;
   }
 
-  /**
-   * Ouvre la conversation d'une paire devenue mutuelle et y pose le marqueur
-   * d'amitié. Appelé par FollowService, jamais par un contrôleur — d'où
-   * l'absence de garde de participation : la mutualité a déjà été vérifiée.
-   *
-   * Le texte n'est pas stocké : on persiste `systemKey`, le frontend rend
-   * t('chat.system.<key>'). Sinon le message resterait figé dans la langue
-   * de création, alors que l'app tient trois locales en parité.
-   */
   async createMutualFollowMarker(a: string, b: string): Promise<void> {
     const pairKey = [a, b].sort().join(':');
     let convo = await this.prisma.conversation.findUnique({ where: { pairKey } });
@@ -167,8 +157,6 @@ export class ChatService {
       });
     }
 
-    // Garde anti-toggle : un follow/unfollow répété ne doit pas empiler les
-    // marqueurs. Une remutualisation APRÈS un vrai échange en repose un.
     const last = await this.prisma.message.findFirst({
       where: { conversationId: convo.id },
       orderBy: { createdAt: 'desc' },
@@ -261,8 +249,6 @@ export class ChatService {
     const unreadCount = await this.prisma.message.count({
       where: {
         conversationId: c.id,
-        // Un message système n'a pas d'expéditeur : `senderId != moi` ne suffit
-        // plus. Sans ce OR, le marqueur d'amitié n'allumerait pas la pastille.
         OR: [{ kind: 'SYSTEM' }, { senderId: { not: userId } }],
         ...(me?.lastReadAt ? { createdAt: { gt: me.lastReadAt } } : {}),
       },

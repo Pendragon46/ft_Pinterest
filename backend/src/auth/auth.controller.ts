@@ -36,7 +36,6 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  // Protégé par le JwtAuthGuard global (pas de @Public, sinon req.user undefined → 500).
   @Get('me')
   async me(@Req() req: { user: { id: string } }) {
     return this.authService.me(req.user.id);

@@ -12,16 +12,16 @@ export interface SharedArtwork {
   author: { id: string; username: string; fullname: string | null }
 }
 
-/** USER : écrit par une personne. SYSTEM : événement de l'app (amitié…). */
+/** USER : ecrit par une personne. SYSTEM : evenement de l'app (amitie…). */
 export type MessageKind = 'USER' | 'SYSTEM'
 
 export interface ChatMessage {
   id: string
   conversationId: string
-  /** null pour un message système : il n'a pas d'expéditeur humain. */
+  /** null pour un message systeme : il n'a pas d'expediteur humain. */
   senderId: string | null
   kind: MessageKind
-  /** Clé i18n rendue via t('chat.system.<key>'). Le texte n'est pas stocké. */
+  /** Cle i18n rendue via t('chat.system.<key>'). Le texte n'est pas stocke. */
   systemKey: string | null
   content: string | null
   createdAt: string

@@ -4,7 +4,7 @@
   },
   "intro": {
     "wordLead": "Perds-toi",
-    "wordTrail": "exprès",
+    "wordTrail": "expres",
     "welcome": "Bienvenue"
   },
   "presence": {
@@ -12,11 +12,11 @@
     "offline": "Hors ligne"
   },
   "edit": {
-    "title": "Éditer l'œuvre",
-    "subtitle": "Modifie le titre, la description et les tags. Le média est conservé.",
+    "title": "Editer l'œuvre",
+    "subtitle": "Modifie le titre, la description et les tags. Le media est conserve.",
     "save": "Enregistrer",
-    "saved": "Modifications enregistrées",
-    "mediaKept": "Le média téléversé est conservé."
+    "saved": "Modifications enregistrees",
+    "mediaKept": "Le media televerse est conserve."
   },
   "chat": {
     "title": "Messages",
@@ -29,24 +29,24 @@
     "newMessage": "Mes amis",
     "newMessageTitle": "Mes amis",
     "you": "Vous : ",
-    "sharedArtworkPreview": "Vous a envoyé une publication",
-    "sharedArtworkSent": "Vous avez envoyé une publication",
+    "sharedArtworkPreview": "Vous a envoye une publication",
+    "sharedArtworkSent": "Vous avez envoye une publication",
     "openArtwork": "Voir l'œuvre",
     "artworkBy": "{{title}} · {{author}}",
     "today": "Aujourd'hui",
     "yesterday": "Hier",
     "readAt": "Lu · {{time}}",
     "online": "En ligne",
-    "composerPlaceholder": "Écrire un message…",
+    "composerPlaceholder": "Ecrire un message…",
     "send": "Envoyer",
-    "sendFailed": "Message non envoyé",
+    "sendFailed": "Message non envoye",
     "notMutual": "Vous devez vous suivre mutuellement pour discuter.",
     "slowDown": "Vous envoyez trop vite — patientez un instant.",
-    "retry": "Réessayer",
+    "retry": "Reessayer",
     "loading": "Chargement des conversations…",
     "loadingMessages": "Chargement des messages…",
     "loadError": "Impossible de charger les conversations",
-    "loadMore": "Charger les messages précédents",
+    "loadMore": "Charger les messages precedents",
     "emptyTitle": "Aucun message",
     "emptyBody": "Vos conversations apparaîtront ici.",
     "emptyThread": "Dites bonjour.",
@@ -58,10 +58,10 @@
     "conversationWith": "Conversation avec {{name}}",
     "viewProfile": "Voir le profil de {{name}}",
     "message": "Message",
-    "typing": "{{name}} écrit…",
+    "typing": "{{name}} ecrit…",
     "system": {
-      "mutualFollow": "Vous êtes maintenant amis. Vous pouvez vous écrire.",
-      "unknown": "Mise à jour de la conversation"
+      "mutualFollow": "Vous êtes maintenant amis. Vous pouvez vous ecrire.",
+      "unknown": "Mise a jour de la conversation"
     },
     "searchFriends": "Rechercher un ami",
     "friendsHint": "Vos amis sont les personnes que vous suivez mutuellement."
@@ -73,16 +73,16 @@
     "signIn": "Se connecter",
     "signUp": "S'inscrire",
     "continueWithGoogle": "Continuer avec Google",
-    "signOut": "Se déconnecter",
+    "signOut": "Se deconnecter",
     "dismiss": "Ignorer",
-    "edit": "Éditer"
+    "edit": "Editer"
   },
   "auth": {
     "avatarAlt": "Avatar de {{username}}",
     "menuLabel": "Menu du compte",
     "invalidCredentials": "E-mail ou mot de passe incorrect.",
-    "emailTaken": "Cet e-mail est déjà utilisé.",
-    "usernameTaken": "Ce nom d’utilisateur est déjà pris.",
+    "emailTaken": "Cet e-mail est deja utilise.",
+    "usernameTaken": "Ce nom d’utilisateur est deja pris.",
     "googleSoon": "La connexion Google arrive bientôt.",
     "loadingSession": "Restauration de votre session…"
   },
@@ -90,40 +90,40 @@
     "emailLabel": "E-mail",
     "emailPlaceholder": "vous@atlaas.app",
     "passwordLabel": "Mot de passe",
-    "passwordPlaceholder": "8+ caractères, lettres, chiffres et symboles",
+    "passwordPlaceholder": "8+ caracteres, lettres, chiffres et symboles",
     "usernameLabel": "Nom d'utilisateur",
     "usernamePlaceholder": "votre_pseudo",
     "showPassword": "Afficher le mot de passe",
     "hidePassword": "Masquer le mot de passe",
-    "consent": "En continuant, vous acceptez nos <terms>Conditions</terms> et notre <privacy>Politique de confidentialité</privacy>."
+    "consent": "En continuant, vous acceptez nos <terms>Conditions</terms> et notre <privacy>Politique de confidentialite</privacy>."
   },
   "create": {
     "title": "Publier une œuvre",
-    "subtitle": "Partagez une de vos créations avec la communauté.",
-    "cta": "Créer",
-    "dropzoneIdle": "Glissez une image ou une vidéo ici, ou cliquez pour parcourir",
-    "dropzoneActive": "Déposez pour téléverser",
-    "dropzoneHint": "JPEG, PNG, GIF, WebP ou MP4 — jusqu'à 10 Mo",
+    "subtitle": "Partagez une de vos creations avec la communaute.",
+    "cta": "Creer",
+    "dropzoneIdle": "Glissez une image ou une video ici, ou cliquez pour parcourir",
+    "dropzoneActive": "Deposez pour televerser",
+    "dropzoneHint": "JPEG, PNG, GIF, WebP ou MP4 — jusqu'a 10 Mo",
     "replace": "Remplacer",
     "clear": "Effacer",
     "fieldTitle": "Titre",
     "fieldDescription": "Description",
-    "fieldTags": "Étiquettes",
-    "tagPlaceholder": "Ajoutez une étiquette et appuyez sur Entrée",
-    "removeTag": "Retirer l'étiquette {{tag}}",
+    "fieldTags": "Etiquettes",
+    "tagPlaceholder": "Ajoutez une etiquette et appuyez sur Entree",
+    "removeTag": "Retirer l'etiquette {{tag}}",
     "publish": "Publier",
     "cancel": "Annuler",
-    "published": "Œuvre publiée",
-    "videoBadge": "Vidéo",
+    "published": "Œuvre publiee",
+    "videoBadge": "Video",
     "errors": {
-      "fileRequired": "Ajoutez une image ou une vidéo pour publier.",
+      "fileRequired": "Ajoutez une image ou une video pour publier.",
       "fileType": "Utilisez un fichier JPEG, PNG, GIF, WebP ou MP4.",
       "fileTooLarge": "Le fichier doit faire 10 Mo ou moins.",
       "titleRequired": "Un titre est requis.",
-      "titleLength": "Le titre doit contenir entre 3 et 100 caractères.",
-      "descriptionLength": "La description doit contenir 2000 caractères ou moins.",
-      "tagsMin": "Ajoutez au moins une étiquette.",
-      "tagsMax": "Utilisez au maximum 5 étiquettes."
+      "titleLength": "Le titre doit contenir entre 3 et 100 caracteres.",
+      "descriptionLength": "La description doit contenir 2000 caracteres ou moins.",
+      "tagsMin": "Ajoutez au moins une etiquette.",
+      "tagsMax": "Utilisez au maximum 5 etiquettes."
     }
   },
   "divider": {
@@ -131,54 +131,54 @@
   },
   "errors": {
     "usernameRequired": "Le nom d'utilisateur est requis.",
-    "usernameLength": "Le nom d'utilisateur doit contenir entre 3 et 30 caractères.",
-    "fullnameLength": "Le nom d'affichage doit contenir 50 caractères ou moins.",
-    "bioLength": "La bio doit contenir 280 caractères ou moins.",
+    "usernameLength": "Le nom d'utilisateur doit contenir entre 3 et 30 caracteres.",
+    "fullnameLength": "Le nom d'affichage doit contenir 50 caracteres ou moins.",
+    "bioLength": "La bio doit contenir 280 caracteres ou moins.",
     "emailRequired": "L'e-mail est requis.",
     "emailInvalid": "Saisissez une adresse e-mail valide.",
     "passwordRequired": "Le mot de passe est requis.",
-    "passwordWeak": "8+ caractères avec majuscules et minuscules, un chiffre et un symbole.",
-    "network": "Erreur réseau — vérifiez votre connexion.",
+    "passwordWeak": "8+ caracteres avec majuscules et minuscules, un chiffre et un symbole.",
+    "network": "Erreur reseau — verifiez votre connexion.",
     "fileTooLarge": "Fichier trop volumineux (10 Mo maximum).",
     "fileType": "Format de fichier non pris en charge."
   },
   "gdpr": {
-    "nav": "Confidentialité",
+    "nav": "Confidentialite",
     "section": {
-      "title": "Mes données & confidentialité",
-      "description": "Consultez, téléchargez ou supprimez les données personnelles que nous détenons."
+      "title": "Mes donnees & confidentialite",
+      "description": "Consultez, telechargez ou supprimez les donnees personnelles que nous detenons."
     },
     "view": {
-      "button": "Voir mes données",
+      "button": "Voir mes donnees",
       "loading": "Chargement…",
-      "summary": "{{artworks}} œuvres · {{comments}} commentaires · {{likes}} likes · {{following}} abonnements · {{followers}} abonnés"
+      "summary": "{{artworks}} œuvres · {{comments}} commentaires · {{likes}} likes · {{following}} abonnements · {{followers}} abonnes"
     },
     "download": {
       "hint": "Un fichier JSON ou CSV lisible avec tout ce que nous stockons — jamais votre mot de passe.",
-      "json": "Télécharger (JSON)",
-      "csv": "Télécharger (CSV)"
+      "json": "Telecharger (JSON)",
+      "csv": "Telecharger (CSV)"
     },
     "danger": {
       "title": "Supprimer le compte",
-      "description": "Supprime définitivement votre compte et tout son contenu. Irréversible.",
+      "description": "Supprime definitivement votre compte et tout son contenu. Irreversible.",
       "button": "Supprimer mon compte"
     },
     "delete": {
       "title": "Supprimer votre compte ?",
-      "warning": "Cette action est définitive. Votre compte et tout son contenu seront effacés.",
-      "willDelete": "Vos œuvres, commentaires, likes et abonnements seront tous supprimés.",
+      "warning": "Cette action est definitive. Votre compte et tout son contenu seront effaces.",
+      "willDelete": "Vos œuvres, commentaires, likes et abonnements seront tous supprimes.",
       "confirmLabel": "Saisissez votre nom d'utilisateur ({{username}}) pour confirmer",
       "confirmPlaceholder": "votre nom d'utilisateur",
       "cancel": "Annuler",
       "confirm": "Supprimer le compte",
       "deleting": "Suppression…",
-      "error": "Impossible de supprimer votre compte. Réessayez.",
+      "error": "Impossible de supprimer votre compte. Reessayez.",
       "lastAdmin": "Vous êtes le dernier administrateur. Promouvez un autre administrateur avant de supprimer votre compte."
     }
   },
   "userModal": {
     "works": "Œuvres",
-    "followers": "Abonnés",
+    "followers": "Abonnes",
     "following": "Abonnements",
     "viewFull": "Voir le profil complet",
     "noWorks": "Aucune œuvre pour l'instant."
@@ -193,16 +193,16 @@
       "artworks": "Œuvres",
       "other": "Autre",
       "overview": "Vue d'ensemble",
-      "status": "État"
+      "status": "Etat"
     },
     "title": "Utilisateurs",
-    "subtitle": "Gérez les utilisateurs, leurs rôles et leurs accès.",
+    "subtitle": "Gerez les utilisateurs, leurs rôles et leurs acces.",
     "refresh": "Actualiser",
     "stats": {
       "total": "Total utilisateurs",
       "admins": "Administrateurs",
       "members": "Utilisateurs",
-      "guests": "Invités"
+      "guests": "Invites"
     },
     "search": {
       "label": "Rechercher des utilisateurs",
@@ -214,7 +214,7 @@
     },
     "sort": {
       "label": "Trier par",
-      "recent": "Plus récent",
+      "recent": "Plus recent",
       "oldest": "Plus ancien",
       "name": "Nom"
     },
@@ -223,13 +223,13 @@
       "email": "E-mail",
       "role": "Rôle",
       "joined": "Inscription",
-      "updated": "Modifié",
+      "updated": "Modifie",
       "artworks": "Œuvres",
       "actions": "Actions"
     },
     "role": {
       "user": "Utilisateur",
-      "guest": "Invité",
+      "guest": "Invite",
       "admin": "Admin"
     },
     "action": {
@@ -237,64 +237,64 @@
       "delete": "Supprimer l'utilisateur"
     },
     "pagination": {
-      "showing": "Affichage de {{from}} à {{to}} sur {{total}}",
+      "showing": "Affichage de {{from}} a {{to}} sur {{total}}",
       "perPage": "{{n}} / page",
-      "previous": "Page précédente",
+      "previous": "Page precedente",
       "next": "Page suivante"
     },
     "empty": {
-      "title": "Aucun utilisateur trouvé",
-      "body": "Aucun utilisateur ne correspond à votre recherche ou à vos filtres."
+      "title": "Aucun utilisateur trouve",
+      "body": "Aucun utilisateur ne correspond a votre recherche ou a vos filtres."
     },
     "error": {
       "title": "Impossible de charger les utilisateurs",
-      "body": "Une erreur est survenue. Vérifiez votre connexion, puis réessayez.",
-      "retry": "Réessayer",
-      "roleRefused": "Le serveur a refusé ce changement (dernier administrateur ou auto-rétrogradation)."
+      "body": "Une erreur est survenue. Verifiez votre connexion, puis reessayez.",
+      "retry": "Reessayer",
+      "roleRefused": "Le serveur a refuse ce changement (dernier administrateur ou auto-retrogradation)."
     },
     "add": {
       "button": "Ajouter un utilisateur",
       "title": "Ajouter un utilisateur",
-      "subtitle": "Créez un compte et attribuez-lui un rôle.",
+      "subtitle": "Creez un compte et attribuez-lui un rôle.",
       "fullname": "Nom complet",
       "username": "Nom d'utilisateur",
       "email": "Adresse e-mail",
       "password": "Mot de passe",
-      "passwordHint": "8+ caractères, majuscules et minuscules, un chiffre et un symbole.",
+      "passwordHint": "8+ caracteres, majuscules et minuscules, un chiffre et un symbole.",
       "role": "Rôle",
       "cancel": "Annuler",
-      "submit": "Créer l'utilisateur"
+      "submit": "Creer l'utilisateur"
     },
     "delete": {
       "title": "Supprimer l'utilisateur ?",
-      "body": "Cette action est irréversible. « {{name}} » (@{{handle}}) perdra définitivement l'accès à son compte et à toutes ses données.",
+      "body": "Cette action est irreversible. « {{name}} » (@{{handle}}) perdra definitivement l'acces a son compte et a toutes ses donnees.",
       "cancel": "Annuler",
       "confirm": "Supprimer"
     },
     "artworks": {
       "title": "Œuvres",
-      "subtitle": "Parcourez et modérez toutes les œuvres publiées.",
+      "subtitle": "Parcourez et moderez toutes les œuvres publiees.",
       "search": "Rechercher par titre ou auteur…",
       "by": "par {{author}}",
-      "empty": "Aucune œuvre trouvée",
+      "empty": "Aucune œuvre trouvee",
       "delete": "Supprimer l'œuvre",
       "deleteTitle": "Supprimer l'œuvre ?",
-      "deleteBody": "Cette action est irréversible. « {{title}} » ainsi que tous ses j'aime et commentaires seront supprimés.",
+      "deleteBody": "Cette action est irreversible. « {{title}} » ainsi que tous ses j'aime et commentaires seront supprimes.",
       "deleteCancel": "Annuler",
       "deleteConfirm": "Supprimer"
     },
     "analytics": {
       "title": "Vue d'ensemble",
-      "subtitle": "L'activité de la plateforme en un coup d'œil.",
+      "subtitle": "L'activite de la plateforme en un coup d'œil.",
       "artworks": "Œuvres",
       "likes": "Total des likes",
       "comments": "Total des commentaires",
       "userGrowth": "Croissance des membres",
       "contentGrowth": "Croissance du contenu",
       "roles": "Rôles",
-      "topCreators": "Meilleurs créateurs",
+      "topCreators": "Meilleurs createurs",
       "topTags": "Tags populaires",
-      "empty": "Aucune donnée",
+      "empty": "Aucune donnee",
       "exportCsv": "Exporter CSV",
       "print": "Imprimer / PDF",
       "range": "Plage de dates",
@@ -303,78 +303,78 @@
       "tagFilter": "Filtrer par tag",
       "allRoles": "Tous les rôles",
       "allTags": "Tous les tags",
-      "updatedAt": "Mis à jour {{time}}"
+      "updatedAt": "Mis a jour {{time}}"
     },
     "status": {
-      "title": "État du système",
-      "subtitle": "Santé en direct du backend et de la base de données.",
+      "title": "Etat du systeme",
+      "subtitle": "Sante en direct du backend et de la base de donnees.",
       "refresh": "Actualiser",
-      "loading": "Chargement de l'état…",
-      "error": "Impossible de récupérer l'état du système.",
-      "overall": "État global",
+      "loading": "Chargement de l'etat…",
+      "error": "Impossible de recuperer l'etat du systeme.",
+      "overall": "Etat global",
       "backend": "Backend",
-      "database": "Base de données",
+      "database": "Base de donnees",
       "version": "Version",
-      "uptime": "Disponibilité",
-      "checkedAt": "Vérifié à {{time}} · actualisation toutes les {{seconds}} s"
+      "uptime": "Disponibilite",
+      "checkedAt": "Verifie a {{time}} · actualisation toutes les {{seconds}} s"
     },
-    "artworkDeleted": "Œuvre supprimée",
-    "userDeleted": "Utilisateur supprimé",
-    "userCreated": "Utilisateur créé",
-    "roleUpdated": "Rôle mis à jour"
+    "artworkDeleted": "Œuvre supprimee",
+    "userDeleted": "Utilisateur supprime",
+    "userCreated": "Utilisateur cree",
+    "roleUpdated": "Rôle mis a jour"
   },
   "home": {
-    "heroLine1": "L'inspiration ne défile pas.",
+    "heroLine1": "L'inspiration ne defile pas.",
     "heroLine2": "Elle se navigue.",
     "searchPlaceholder": "Que cherche-t-on aujourd'hui ?",
     "searchAction": "Chercher",
     "searchShortcut": "Ctrl + K",
     "suggestedLabel": "Suggestions :",
     "refocus": "Recentrer",
-    "canvasLabel": "Carte de découverte. Faites glisser pour explorer, Ctrl + molette pour zoomer, flèches pour vous déplacer, touche Début pour recentrer."
+    "canvasLabel": "Carte de decouverte. Faites glisser pour explorer, Ctrl + molette pour zoomer, fleches pour vous deplacer, touche Debut pour recentrer."
   },
   "artwork": {
     "views": "{{views}} vues",
     "openAria": "Ouvrir « {{title}} » de {{author}}",
-    "badgeAi": "Assisté par IA",
-    "badgeSponsor": "Sponsorisé",
+    "badgeAi": "Assiste par IA",
+    "badgeSponsor": "Sponsorise",
     "follow": "Suivre",
-    "following": "Abonné",
+    "following": "Abonne",
     "like": "J'aime",
-    "liked": "Aimé",
+    "liked": "Aime",
     "save": "Enregistrer",
-    "saved": "Enregistré",
+    "saved": "Enregistre",
     "share": "Partager",
-    "linkCopied": "Lien copié !",
+    "linkCopied": "Lien copie !",
     "commentsTitle": "Commentaires",
     "commentPlaceholder": "Ajouter un commentaire…",
     "post": "Publier",
-    "reply": "Répondre",
+    "reply": "Repondre",
     "deleteComment": "Supprimer",
     "delete": "Supprimer l'œuvre",
     "deleteTitle": "Supprimer cette œuvre ?",
-    "deleteBody": "« {{title}} » sera définitivement supprimée. Action irréversible.",
+    "deleteBody": "« {{title}} » sera definitivement supprimee. Action irreversible.",
     "deleteConfirm": "Supprimer",
     "deleteCancel": "Annuler",
-    "deleted": "Œuvre supprimée",
-    "timeNow": "à l'instant",
+    "deleted": "Œuvre supprimee",
+    "timeNow": "a l'instant",
     "timeHours": "{{hours}} h",
     "close": "Fermer",
     "loading": "Chargement de l'œuvre…",
     "notFoundTitle": "Œuvre introuvable",
     "notFoundBody": "Cette œuvre n'existe pas ou n'est plus disponible.",
-    "backHome": "Retour à la carte",
-    "commentsEmpty": "Soyez le premier à commenter.",
-    "commentPosted": "Commentaire publié.",
-    "commentMinLength": "Au moins 3 caractères.",
-    "commentFailed": "Échec de l'envoi du commentaire.",
-    "retry": "Réessayer",
+    "backHome": "Retour a la carte",
+    "commentsEmpty": "Soyez le premier a commenter.",
+    "commentPosted": "Commentaire publie.",
+    "commentMinLength": "Au moins 3 caracteres.",
+    "commentFailed": "Echec de l'envoi du commentaire.",
+    "retry": "Reessayer",
     "unfollow": "Ne plus suivre",
-    "commentDeleted": "Commentaire supprimé"
+    "commentDeleted": "Commentaire supprime"
   },
   "category": {
     "portrait": "Portrait",
-    "editorial": "Éditorial",
+    "editorial": "Editorial",
     "typography": "Typographie",
     "uxui": "UX / UI",
     "photography": "Photographie",
@@ -384,154 +384,154 @@
   },
   "login": {
     "title": "Content de vous revoir",
-    "subtitle": "Connectez-vous pour aimer, enregistrer et créer.",
+    "subtitle": "Connectez-vous pour aimer, enregistrer et creer.",
     "noAccount": "Nouveau ici ?",
-    "registerLink": "Créer un compte"
+    "registerLink": "Creer un compte"
   },
   "register": {
-    "title": "Créer un compte",
-    "subtitle": "Rejoignez Atlaas et partagez vos créations.",
-    "haveAccount": "Vous avez déjà un compte ?",
+    "title": "Creer un compte",
+    "subtitle": "Rejoignez Atlaas et partagez vos creations.",
+    "haveAccount": "Vous avez deja un compte ?",
     "loginLink": "Se connecter"
   },
   "profile": {
     "title": "Profil",
     "tabWorks": "Œuvres",
-    "tabLiked": "Aimés",
+    "tabLiked": "Aimes",
     "edit": "Modifier le profil",
     "share": "Partager",
     "likes": "{{likes}} j'aime",
-    "worksEmptyOwn": "Votre atlas est vide — publiez votre première œuvre.",
-    "worksEmptyOther": "Ce créateur n'a pas encore publié d'œuvre.",
-    "likedEmpty": "Aucune œuvre aimée pour l'instant.",
+    "worksEmptyOwn": "Votre atlas est vide — publiez votre premiere œuvre.",
+    "worksEmptyOther": "Ce createur n'a pas encore publie d'œuvre.",
+    "likedEmpty": "Aucune œuvre aimee pour l'instant.",
     "loadError": "Impossible de charger ce profil.",
     "stats": {
       "works": "œuvres",
-      "followers": "abonnés",
+      "followers": "abonnes",
       "following": "abonnements"
     }
   },
   "notFound": {
-    "title": "Vous avez quitté la carte",
-    "subtitle": "Il n'y a rien à découvrir à cette coordonnée. La boussole pointe toujours vers l'accueil",
+    "title": "Vous avez quitte la carte",
+    "subtitle": "Il n'y a rien a decouvrir a cette coordonnee. La boussole pointe toujours vers l'accueil",
     "action": "Recentrer sur l'accueil"
   },
   "legal": {
-    "privacy": "Confidentialité",
+    "privacy": "Confidentialite",
     "terms": "Conditions",
-    "back": "Retour à l'accueil"
+    "back": "Retour a l'accueil"
   },
   "privacy": {
-    "title": "Politique de confidentialité",
-    "subtitle": "Comment Atlaas collecte, utilise et protège vos données.",
-    "toc": "Table des matières",
-    "updated": "Dernière mise à jour : {{date}}",
+    "title": "Politique de confidentialite",
+    "subtitle": "Comment Atlaas collecte, utilise et protege vos donnees.",
+    "toc": "Table des matieres",
+    "updated": "Derniere mise a jour : {{date}}",
     "sections": [
       {
         "heading": "1. Introduction",
-        "body": "Atlaas est une plateforme d'inspiration créative où chacun découvre, publie et commente des œuvres visuelles. La présente Politique de confidentialité explique quelles informations Atlaas collecte, pourquoi, comment elles sont utilisées et protégées, ainsi que les choix et les droits dont vous disposez. En créant un compte ou en utilisant Atlaas, vous acceptez les pratiques décrites ici."
+        "body": "Atlaas est une plateforme d'inspiration creative ou chacun decouvre, publie et commente des œuvres visuelles. La presente Politique de confidentialite explique quelles informations Atlaas collecte, pourquoi, comment elles sont utilisees et protegees, ainsi que les choix et les droits dont vous disposez. En creant un compte ou en utilisant Atlaas, vous acceptez les pratiques decrites ici."
       },
       {
         "heading": "2. Informations que nous collectons",
-        "body": "Nous ne collectons que ce qui est nécessaire au fonctionnement du service : les informations de votre compte (nom d'utilisateur, adresse e-mail et mot de passe, ce dernier n'étant jamais conservé en clair, mais uniquement sous forme d'empreinte sécurisée) ; les informations de base de votre profil Google si vous choisissez de vous connecter avec Google ; les détails de votre profil, tels qu'une biographie et un avatar ; le contenu que vous créez (œuvres, commentaires et mentions « j'aime ») ; les personnes que vous suivez ; ainsi que les informations techniques de base transmises par votre navigateur et strictement nécessaires pour vous maintenir connecté. Nous ne collectons pas sciemment d'informations concernant les enfants de moins de {{minAge}} ans."
+        "body": "Nous ne collectons que ce qui est necessaire au fonctionnement du service : les informations de votre compte (nom d'utilisateur, adresse e-mail et mot de passe, ce dernier n'etant jamais conserve en clair, mais uniquement sous forme d'empreinte securisee) ; les informations de base de votre profil Google si vous choisissez de vous connecter avec Google ; les details de votre profil, tels qu'une biographie et un avatar ; le contenu que vous creez (œuvres, commentaires et mentions « j'aime ») ; les personnes que vous suivez ; ainsi que les informations techniques de base transmises par votre navigateur et strictement necessaires pour vous maintenir connecte. Nous ne collectons pas sciemment d'informations concernant les enfants de moins de {{minAge}} ans."
       },
       {
         "heading": "3. Comment nous utilisons vos informations",
-        "body": "Nous utilisons vos informations pour créer et sécuriser votre compte, vous maintenir connecté, afficher votre profil et votre contenu aux autres utilisateurs comme prévu, alimenter votre fil de découverte, exploiter et améliorer la plateforme, la protéger contre les abus et respecter nos obligations légales. Nous ne vendons pas vos informations personnelles et ne les utilisons pas à des fins de publicité pour le compte de tiers."
+        "body": "Nous utilisons vos informations pour creer et securiser votre compte, vous maintenir connecte, afficher votre profil et votre contenu aux autres utilisateurs comme prevu, alimenter votre fil de decouverte, exploiter et ameliorer la plateforme, la proteger contre les abus et respecter nos obligations legales. Nous ne vendons pas vos informations personnelles et ne les utilisons pas a des fins de publicite pour le compte de tiers."
       },
       {
         "heading": "4. Partage de vos informations",
-        "body": "Votre contenu public — les œuvres publiées, votre nom d'utilisateur, vos commentaires et votre profil public — est visible par les autres utilisateurs, ce qui constitue la raison d'être de la plateforme. Au-delà de cela, nous ne partageons vos informations personnelles qu'avec les prestataires de services qui hébergent ou exploitent Atlaas pour notre compte, avec Google dans la mesure nécessaire à la connexion facultative, et lorsque la loi l'exige ou pour protéger les utilisateurs et le service. Nous ne partageons vos données personnelles dans aucune autre situation."
+        "body": "Votre contenu public — les œuvres publiees, votre nom d'utilisateur, vos commentaires et votre profil public — est visible par les autres utilisateurs, ce qui constitue la raison d'être de la plateforme. Au-dela de cela, nous ne partageons vos informations personnelles qu'avec les prestataires de services qui hebergent ou exploitent Atlaas pour notre compte, avec Google dans la mesure necessaire a la connexion facultative, et lorsque la loi l'exige ou pour proteger les utilisateurs et le service. Nous ne partageons vos donnees personnelles dans aucune autre situation."
       },
       {
         "heading": "5. Vos droits et vos choix",
-        "body": "Selon votre lieu de résidence, vous pouvez disposer du droit d'accéder à vos données personnelles, de les rectifier, de les supprimer, de les exporter ou d'en limiter le traitement, ainsi que de retirer votre consentement. Vous pouvez modifier votre profil à tout moment. Pour exercer l'un de ces droits, contactez-nous à l'adresse {{contactEmail}}. Vous pouvez également introduire une réclamation auprès de votre autorité locale de protection des données."
+        "body": "Selon votre lieu de residence, vous pouvez disposer du droit d'acceder a vos donnees personnelles, de les rectifier, de les supprimer, de les exporter ou d'en limiter le traitement, ainsi que de retirer votre consentement. Vous pouvez modifier votre profil a tout moment. Pour exercer l'un de ces droits, contactez-nous a l'adresse {{contactEmail}}. Vous pouvez egalement introduire une reclamation aupres de votre autorite locale de protection des donnees."
       },
       {
-        "heading": "6. Sécurité des données",
-        "body": "Nous prenons des mesures techniques et organisationnelles raisonnables pour protéger vos données, notamment le hachage des mots de passe, l'utilisation de connexions chiffrées (HTTPS) et la restriction de l'accès aux informations personnelles. Aucune méthode de transmission ou de stockage n'étant totalement sûre, nous ne pouvons garantir une sécurité absolue. Nous ne conservons vos données que le temps où votre compte reste actif ou aussi longtemps que nécessaire pour fournir le service et respecter nos obligations légales ; lorsque vous supprimez votre compte, nous supprimons ou anonymisons vos données personnelles dans un délai raisonnable."
+        "heading": "6. Securite des donnees",
+        "body": "Nous prenons des mesures techniques et organisationnelles raisonnables pour proteger vos donnees, notamment le hachage des mots de passe, l'utilisation de connexions chiffrees (HTTPS) et la restriction de l'acces aux informations personnelles. Aucune methode de transmission ou de stockage n'etant totalement sûre, nous ne pouvons garantir une securite absolue. Nous ne conservons vos donnees que le temps ou votre compte reste actif ou aussi longtemps que necessaire pour fournir le service et respecter nos obligations legales ; lorsque vous supprimez votre compte, nous supprimons ou anonymisons vos donnees personnelles dans un delai raisonnable."
       },
       {
-        "heading": "7. Modifications de la présente Politique",
-        "body": "Nous pouvons mettre à jour la présente Politique de confidentialité de temps à autre. En cas de modifications importantes, nous mettrons à jour la date ci-dessus et, le cas échéant, nous vous en informerons dans l'application. En continuant d'utiliser Atlaas après l'entrée en vigueur des modifications, vous acceptez la politique révisée. Des questions ? Écrivez-nous à l'adresse {{contactEmail}}."
+        "heading": "7. Modifications de la presente Politique",
+        "body": "Nous pouvons mettre a jour la presente Politique de confidentialite de temps a autre. En cas de modifications importantes, nous mettrons a jour la date ci-dessus et, le cas echeant, nous vous en informerons dans l'application. En continuant d'utiliser Atlaas apres l'entree en vigueur des modifications, vous acceptez la politique revisee. Des questions ? Ecrivez-nous a l'adresse {{contactEmail}}."
       }
     ]
   },
   "terms": {
     "title": "Conditions d'utilisation",
-    "subtitle": "Les règles d'utilisation d'Atlaas.",
-    "toc": "Table des matières",
-    "updated": "Dernière mise à jour : {{date}}",
+    "subtitle": "Les regles d'utilisation d'Atlaas.",
+    "toc": "Table des matieres",
+    "updated": "Derniere mise a jour : {{date}}",
     "sections": [
       {
         "heading": "1. Acceptation des conditions",
-        "body": "Les présentes Conditions d'utilisation régissent votre accès à Atlaas ainsi que votre utilisation de la plateforme. En créant un compte ou en utilisant la plateforme, vous acceptez les présentes Conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser Atlaas."
+        "body": "Les presentes Conditions d'utilisation regissent votre acces a Atlaas ainsi que votre utilisation de la plateforme. En creant un compte ou en utilisant la plateforme, vous acceptez les presentes Conditions. Si vous ne les acceptez pas, veuillez ne pas utiliser Atlaas."
       },
       {
-        "heading": "2. Éligibilité et comptes",
-        "body": "Vous devez être âgé d'au moins {{minAge}} ans pour utiliser Atlaas. Vous êtes responsable des informations que vous fournissez, de la confidentialité de votre mot de passe et de toute activité effectuée sous votre compte. Informez-nous à l'adresse {{contactEmail}} si vous pensez que votre compte a été compromis. Vous pouvez vous connecter à l'aide d'une adresse e-mail et d'un mot de passe, ou avec Google."
+        "heading": "2. Eligibilite et comptes",
+        "body": "Vous devez être age d'au moins {{minAge}} ans pour utiliser Atlaas. Vous êtes responsable des informations que vous fournissez, de la confidentialite de votre mot de passe et de toute activite effectuee sous votre compte. Informez-nous a l'adresse {{contactEmail}} si vous pensez que votre compte a ete compromis. Vous pouvez vous connecter a l'aide d'une adresse e-mail et d'un mot de passe, ou avec Google."
       },
       {
         "heading": "3. Votre contenu",
-        "body": "Vous conservez la propriété des œuvres, commentaires et autres contenus que vous publiez. En publiant sur Atlaas, vous nous accordez une licence non exclusive, mondiale et gratuite pour héberger, stocker et afficher votre contenu, uniquement dans la mesure nécessaire à l'exploitation et à la promotion de la plateforme, par exemple pour présenter votre œuvre dans le fil de découverte et sur votre profil. Vous êtes responsable de votre contenu et vous confirmez disposer des droits nécessaires pour le publier."
+        "body": "Vous conservez la propriete des œuvres, commentaires et autres contenus que vous publiez. En publiant sur Atlaas, vous nous accordez une licence non exclusive, mondiale et gratuite pour heberger, stocker et afficher votre contenu, uniquement dans la mesure necessaire a l'exploitation et a la promotion de la plateforme, par exemple pour presenter votre œuvre dans le fil de decouverte et sur votre profil. Vous êtes responsable de votre contenu et vous confirmez disposer des droits necessaires pour le publier."
       },
       {
         "heading": "4. Utilisation acceptable",
-        "body": "Vous vous engagez à ne pas publier de contenu illégal, contrefaisant, haineux, harcelant ou sexuellement explicite ; à ne pas usurper l'identité d'autrui ; à ne pas téléverser de logiciels malveillants ni tenter de porter atteinte à la sécurité ; à ne pas extraire ni collecter de données de la plateforme sans autorisation ; et à ne pas envoyer de spam ni abuser des autres utilisateurs. Nous pouvons retirer tout contenu et suspendre ou clôturer les comptes qui enfreignent ces règles, et les administrateurs peuvent modérer les contenus afin de faire respecter les présentes Conditions."
+        "body": "Vous vous engagez a ne pas publier de contenu illegal, contrefaisant, haineux, harcelant ou sexuellement explicite ; a ne pas usurper l'identite d'autrui ; a ne pas televerser de logiciels malveillants ni tenter de porter atteinte a la securite ; a ne pas extraire ni collecter de donnees de la plateforme sans autorisation ; et a ne pas envoyer de spam ni abuser des autres utilisateurs. Nous pouvons retirer tout contenu et suspendre ou clôturer les comptes qui enfreignent ces regles, et les administrateurs peuvent moderer les contenus afin de faire respecter les presentes Conditions."
       },
       {
-        "heading": "5. Propriété intellectuelle",
-        "body": "Atlaas — y compris son nom, son logo, son design et son logiciel — appartient à ses exploitants et est protégé par la législation applicable. Les présentes Conditions ne vous accordent aucun droit d'utiliser notre marque sans autorisation écrite préalable. Votre contenu demeure le vôtre, sous réserve de la licence décrite dans la section « Votre contenu »."
+        "heading": "5. Propriete intellectuelle",
+        "body": "Atlaas — y compris son nom, son logo, son design et son logiciel — appartient a ses exploitants et est protege par la legislation applicable. Les presentes Conditions ne vous accordent aucun droit d'utiliser notre marque sans autorisation ecrite prealable. Votre contenu demeure le vôtre, sous reserve de la licence decrite dans la section « Votre contenu »."
       },
       {
         "heading": "6. Services tiers",
-        "body": "Atlaas s'appuie sur des services tiers pour fonctionner, tels que Google pour la connexion facultative et notre hébergeur. Votre utilisation de ces services peut être soumise à leurs propres conditions et politiques de confidentialité, et nous ne sommes pas responsables des services tiers que nous ne contrôlons pas."
+        "body": "Atlaas s'appuie sur des services tiers pour fonctionner, tels que Google pour la connexion facultative et notre hebergeur. Votre utilisation de ces services peut être soumise a leurs propres conditions et politiques de confidentialite, et nous ne sommes pas responsables des services tiers que nous ne contrôlons pas."
       },
       {
-        "heading": "7. Résiliation",
-        "body": "Vous pouvez cesser d'utiliser Atlaas et supprimer votre compte à tout moment. Nous pouvons suspendre ou résilier votre accès si vous enfreignez les présentes Conditions ou afin de protéger la plateforme et ses utilisateurs. Les sections qui, par leur nature, doivent survivre à la résiliation — telles que la propriété intellectuelle, les exclusions de garantie et la limitation de responsabilité — continuent de s'appliquer."
+        "heading": "7. Resiliation",
+        "body": "Vous pouvez cesser d'utiliser Atlaas et supprimer votre compte a tout moment. Nous pouvons suspendre ou resilier votre acces si vous enfreignez les presentes Conditions ou afin de proteger la plateforme et ses utilisateurs. Les sections qui, par leur nature, doivent survivre a la resiliation — telles que la propriete intellectuelle, les exclusions de garantie et la limitation de responsabilite — continuent de s'appliquer."
       },
       {
-        "heading": "8. Exclusions de garantie et limitation de responsabilité",
-        "body": "Atlaas est fourni « en l'état » et « selon disponibilité », sans garantie d'aucune sorte, dans toute la mesure permise par la loi. Nous ne garantissons pas que le service sera ininterrompu, exempt d'erreurs ou sécurisé. Dans toute la mesure permise par la loi, nous ne sommes pas responsables des dommages indirects, accessoires ou consécutifs résultant de votre utilisation de la plateforme, laquelle peut être modifiée, suspendue ou interrompue à tout moment."
+        "heading": "8. Exclusions de garantie et limitation de responsabilite",
+        "body": "Atlaas est fourni « en l'etat » et « selon disponibilite », sans garantie d'aucune sorte, dans toute la mesure permise par la loi. Nous ne garantissons pas que le service sera ininterrompu, exempt d'erreurs ou securise. Dans toute la mesure permise par la loi, nous ne sommes pas responsables des dommages indirects, accessoires ou consecutifs resultant de votre utilisation de la plateforme, laquelle peut être modifiee, suspendue ou interrompue a tout moment."
       },
       {
-        "heading": "9. Modifications des présentes Conditions",
-        "body": "Nous pouvons mettre à jour les présentes Conditions de temps à autre. En cas de modifications importantes, nous mettrons à jour la date ci-dessus et, le cas échéant, nous vous en informerons dans l'application. En continuant d'utiliser le service après l'entrée en vigueur des modifications, vous acceptez les Conditions révisées."
+        "heading": "9. Modifications des presentes Conditions",
+        "body": "Nous pouvons mettre a jour les presentes Conditions de temps a autre. En cas de modifications importantes, nous mettrons a jour la date ci-dessus et, le cas echeant, nous vous en informerons dans l'application. En continuant d'utiliser le service apres l'entree en vigueur des modifications, vous acceptez les Conditions revisees."
       },
       {
         "heading": "10. Droit applicable et contact",
-        "body": "Les présentes Conditions sont régies par le droit de {{jurisdiction}}, et tout litige relèvera de ses tribunaux. Pour toute question concernant les présentes Conditions, contactez-nous à l'adresse {{contactEmail}}."
+        "body": "Les presentes Conditions sont regies par le droit de {{jurisdiction}}, et tout litige relevera de ses tribunaux. Pour toute question concernant les presentes Conditions, contactez-nous a l'adresse {{contactEmail}}."
       }
     ]
   },
   "search": {
     "emptyTitle": "Rien par ici",
-    "emptyBody": "Rien trouvé pour ça — essaie une autre direction ?",
+    "emptyBody": "Rien trouve pour ça — essaie une autre direction ?",
     "searching": "Recherche…",
     "groupDisciplines": "Disciplines",
-    "groupCreators": "Créateurs",
+    "groupCreators": "Createurs",
     "groupTags": "Tags",
     "tagCount": "{{count}} œuvres",
-    "nearestRegion": "Région la plus proche",
+    "nearestRegion": "Region la plus proche",
     "exploringTitle1": "Exploration",
     "exploringTitle2": "Univers {{niche}}",
     "creatorUniverse": "Univers de {{name}}",
-    "whereNext": "Tu as tout exploré de {{niche}}. Et après ?",
-    "whereNextShort": "Et après ?",
+    "whereNext": "Tu as tout explore de {{niche}}. Et apres ?",
+    "whereNextShort": "Et apres ?",
     "refreshNeighbours": "Voir d'autres voisins"
   },
   "settings": {
-    "title": "Paramètres",
+    "title": "Parametres",
     "navAccount": "Compte",
     "navAppearance": "Apparence",
     "profileHeading": "Profil",
     "changeAvatar": "Changer d'avatar",
-    "displayName": "Nom affiché",
+    "displayName": "Nom affiche",
     "username": "Nom d'utilisateur",
     "bio": "Bio",
     "save": "Enregistrer les modifications",
-    "saved": "Modifications enregistrées",
+    "saved": "Modifications enregistrees",
     "emailPasswordHeading": "E-mail et mot de passe",
     "email": "E-mail",
     "newPassword": "Nouveau mot de passe",
@@ -539,13 +539,13 @@
     "passwordMismatch": "Les mots de passe ne correspondent pas.",
     "appearanceHeading": "Apparence",
     "language": "Langue",
-    "savedShort": "Enregistré"
+    "savedShort": "Enregistre"
   },
   "toast": {
     "saveFailed": "Impossible d'enregistrer votre modification."
   },
   "follow": {
-    "nowFollowing": "Vous suivez désormais ce créateur",
-    "unfollowed": "Vous ne suivez plus ce créateur"
+    "nowFollowing": "Vous suivez desormais ce createur",
+    "unfollowed": "Vous ne suivez plus ce createur"
   }
 }

@@ -43,7 +43,7 @@ export const AUTHORS: readonly AuthorSummary[] = [
   { id: 'u1', username: 'Sedra Rabe', handle: 'sedra', color: '#3b5bdb' },
   { id: 'u2', username: 'Kai Mori', handle: 'kaimori', color: '#c47b1c' },
   { id: 'u3', username: 'Nova Idris', handle: 'novaidris', color: '#0ca678' },
-  { id: 'u4', username: 'Léa Fontaine', handle: 'leafont', color: '#9c36b5' },
+  { id: 'u4', username: 'Lea Fontaine', handle: 'leafont', color: '#9c36b5' },
   { id: 'u5', username: 'Yuki Tanaka', handle: 'yukita', color: '#e8590c' },
   { id: 'u6', username: 'Omar Haddad', handle: 'omarh', color: '#1971c2' },
   { id: 'u7', username: 'June Park', handle: 'junepark', color: '#e64980' },

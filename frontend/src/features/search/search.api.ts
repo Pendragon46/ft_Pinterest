@@ -32,16 +32,16 @@ export const searchKeys = {
   contextualTags: () => ['search', 'contextual-tags'] as const,
 }
 
-// Forme de GET /search : trois listes renvoyées en parallèle.
+// Forme de GET /search : trois listes renvoyees en parallele.
 interface ServerSearchAll {
   artworks: { id: string; title: string }[]
   users: ServerUser[]
   tags: { id: string; tags?: { name: string }[] }[]
 }
 
-/** Autocomplétion. Le backend fournit une recherche plate ; les
-    disciplines restent résolues côté client (ce sont des niches du module
-    canvas, absentes du modèle serveur), les créateurs viennent de l'API. */
+/** Autocompletion. Le backend fournit une recherche plate ; les
+    disciplines restent resolues côte client (ce sont des niches du module
+    canvas, absentes du modele serveur), les createurs viennent de l'API. */
 export async function fetchSuggestions(
   query: string,
 ): Promise<SuggestionGroups> {
@@ -76,18 +76,18 @@ export async function fetchSuggestions(
       previews: [colorFromId(tg.name)],
     }))
 
-    // Disciplines locales (niches) + tags réels de la base + créateurs réels.
+    // Disciplines locales (niches) + tags reels de la base + createurs reels.
     return { disciplines: local.disciplines, tags, creators }
   } catch {
     // La recherche ne doit jamais casser la barre de saisie : en cas
-    // d'échec réseau on retombe sur les suggestions locales.
+    // d'echec reseau on retombe sur les suggestions locales.
     return local
   }
 }
 
 /** Cartes d'une tuile de niche. Le slug sert de tag de recherche ; si le
     serveur ne connaît pas ce tag, on retombe sur la niche locale pour que
-    le canvas reste peuplé. */
+    le canvas reste peuple. */
 export async function fetchNicheTile(
   slug: string,
   tx: number,

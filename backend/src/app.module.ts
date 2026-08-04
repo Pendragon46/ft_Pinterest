@@ -13,7 +13,6 @@ import { FollowModule } from './follow/follow.module';
 import { LikesModule } from './likes/likes.module';
 import { HealthService } from './health/health.service';
 import { HealthModule } from './health/health.module';
-import { MetricsService } from './metrics/metrics.service';
 import { MetricsModule } from './metrics/metrics.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MetricsInterceptor } from './metrics/metrics.interceptor';

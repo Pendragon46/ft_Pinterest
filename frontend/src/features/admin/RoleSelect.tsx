@@ -14,9 +14,9 @@ interface Props {
   canEdit: boolean
 }
 
-// Sélecteur de rôle par ligne. `<select>` natif (accessible clavier/mobile
-// gratuitement) stylé en pastille ; mise à jour optimiste avec rollback si le
-// serveur refuse (dernier admin, auto-rétrogradation).
+// Selecteur de rôle par ligne. `<select>` natif (accessible clavier/mobile
+// gratuitement) style en pastille ; mise a jour optimiste avec rollback si le
+// serveur refuse (dernier admin, auto-retrogradation).
 export function RoleSelect({ user, canEdit }: Props) {
   const { t } = useTranslation('common')
   const qc = useQueryClient()

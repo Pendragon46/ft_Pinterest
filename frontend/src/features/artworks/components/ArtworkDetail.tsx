@@ -360,8 +360,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
     // while a post is in flight so concurrent posts can't clobber each other (§2.5).
     if (postMutation.isPending) return
     const content = draft.trim()
-    // Le serveur exige 3 caractères (@MinLength(3)) : refuser plus tôt côté
-    // client évite un aller-retour en 400 sur Entrée comme sur le bouton.
+    // Le serveur exige 3 caracteres (@MinLength(3)) : refuser plus tôt côte
+    // client evite un aller-retour en 400 sur Entree comme sur le bouton.
     if (content.length < 3) return
     requireAuth(() => {
       if (!selfAuthor()) return // requireAuth guarantees a user; narrow for TS
@@ -655,8 +655,8 @@ export function ArtworkDetail({ artwork, onClose }: ArtworkDetailProps) {
         </div>
 
         <div className="border-t border-neutral-100 p-3">
-          {/* Explique le bouton grisé plutôt que de laisser l'utilisateur deviner :
-              visible seulement quand il a commencé à taper mais reste sous 3. */}
+          {/* Explique le bouton grise plutôt que de laisser l'utilisateur deviner :
+              visible seulement quand il a commence a taper mais reste sous 3. */}
           {draft.trim().length > 0 && draft.trim().length < COMMENT_MIN ? (
             <p className="mt-1.5 px-1 text-xs text-neutral-500">
               {t('artwork.commentMinLength')}

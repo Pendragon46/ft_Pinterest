@@ -46,11 +46,7 @@ rebuild: stop build
 
 restart: stop start
 
-# Peuple la base via l'API (stack déjà démarrée). Node 18+ requis sur l'hôte ;
-# lit les manifestes de seed-data/ et publie le réseau de démo (18 auteurs).
-# NODE_EXTRA_CA_CERTS fait confiance au seul certificat de nginx, au lieu de
-# couper la vérification TLS du process entier (NODE_TLS_REJECT_UNAUTHORIZED=0),
-# qui faisait afficher un avertissement de sécurité à chaque `make`.
+
 seed: env certs
 	NODE_EXTRA_CA_CERTS=nginx/ssl/nginx.crt node seed-network.mjs
 

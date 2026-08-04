@@ -27,12 +27,7 @@ export class CloudinaryService {
     });
   }
 
-  // Copy a remote image into Cloudinary and serve it from our own CDN. Used for
-  // Google OAuth avatars: lh3.googleusercontent.com sends no
-  // Access-Control-Allow-Origin and rate-limits hotlinking (429), so handing
-  // that URL to the browser is what made avatars disappear. The SDK fetches the
-  // URL server-side, so nothing cross-origin reaches the client.
-  // Returns null on failure — a missing avatar must never block a sign-in.
+
   async uploadRemote(
     url: string,
     folder = 'avatars',

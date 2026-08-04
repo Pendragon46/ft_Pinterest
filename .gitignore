@@ -15,5 +15,7 @@ seed-network-credentials.json
 nginx/ssl/*.key
 nginx/ssl/*.crt
 
+.mailmap
+
 
 

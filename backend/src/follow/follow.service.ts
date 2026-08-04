@@ -17,14 +17,6 @@ export class FollowService {
     private readonly chat: ChatService,
   ) {}
 
-  /**
-   * Devenir (ou cesser d'être) mutuels change la LISTE d'amis, pas le statut
-   * en ligne de qui que ce soit : `friendStatusChange` ne couvre pas ce cas.
-   * On demande aux deux clients de re-semer leur ensemble de présence.
-   *
-   * Best-effort : le follow est déjà écrit en base, une notification perdue
-   * ne doit jamais faire échouer la requête.
-   */
   private notifyFriendsChanged(a: string, b: string): void {
     try {
       this.gateway.emitToUser(a, 'friendsChanged', null);
@@ -62,12 +54,8 @@ export class FollowService {
       },
     });
 
-    // Seulement si le lien vient de devenir réciproque : un follow
-    // unilatéral ne change la liste d'amis de personne.
     if (await this.friends.areMutuals(currentuser, target)) {
       this.notifyFriendsChanged(currentuser, target);
-      // Best-effort : un échec ici ne doit pas faire échouer le follow,
-      // déjà écrit en base.
       void this.chat
         .createMutualFollowMarker(currentuser, target)
         .catch((error) =>
@@ -78,7 +66,6 @@ export class FollowService {
     return created;
   }
 
-  // Relations inversées dans le schéma : user.followers = comptes suivis, user.following = abonnés.
   async getFollowers(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -144,8 +131,6 @@ export class FollowService {
       throw new NotFoundException('Follow relationship not found');
     }
 
-    // Mutualité lue AVANT la suppression : après, areMutuals renverrait
-    // toujours false et on ne saurait plus s'il y a un point vert à éteindre.
     const wereMutuals = await this.friends.areMutuals(currentuser, target);
 
     const removed = await this.prisma.follow.delete({
@@ -157,8 +142,6 @@ export class FollowService {
       },
     });
 
-    // Casser la mutualité doit éteindre le point vert tout de suite.
-    // La conversation et son historique sont conservés (décision D8).
     if (wereMutuals) {
       this.notifyFriendsChanged(currentuser, target);
     }

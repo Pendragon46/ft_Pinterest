@@ -21,8 +21,8 @@ interface Props {
   onViewProfile: (id: string) => void
 }
 
-// Recherche, filtre, tri et pagination — tout côté client : GET /users renvoie
-// la liste complète, il n'y a pas de pagination serveur.
+// Recherche, filtre, tri et pagination — tout côte client : GET /users renvoie
+// la liste complete, il n'y a pas de pagination serveur.
 export function AdminUsersTable({ users, canAdmin, onDelete, onViewProfile }: Props) {
   const { t, i18n } = useTranslation('common')
   const [query, setQuery] = useState('')

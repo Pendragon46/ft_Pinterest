@@ -20,8 +20,8 @@ interface Props {
   user: User
 }
 
-// Suppression de compte — irréversible. La saisie du nom d'utilisateur est
-// exigée pour écarter les clics accidentels (exigence RGPD « deletion with
+// Suppression de compte — irreversible. La saisie du nom d'utilisateur est
+// exigee pour ecarter les clics accidentels (exigence RGPD « deletion with
 // confirmation »).
 export function DeleteAccountDialog({ isOpen, onClose, user }: Props) {
   const { t } = useTranslation('common')
@@ -36,8 +36,8 @@ export function DeleteAccountDialog({ isOpen, onClose, user }: Props) {
   const mutation = useMutation({
     mutationFn: () => deleteMyAccount(user.id),
     onSuccess: (result) => {
-      // 2xx ne veut pas dire supprimé : le serveur refuse en 200 pour garder la
-      // console propre. Sans ce test on déconnectait l'utilisateur alors que son
+      // 2xx ne veut pas dire supprime : le serveur refuse en 200 pour garder la
+      // console propre. Sans ce test on deconnectait l'utilisateur alors que son
       // compte existait toujours.
       if (!result.ok) {
         toast({

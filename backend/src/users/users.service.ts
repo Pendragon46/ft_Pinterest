@@ -42,10 +42,6 @@ export class UsersService {
       orderBy: {
         username: 'asc',
       },
-      // No email/role: this is a lookup by partial username open to every
-      // authenticated account, so it would hand out the address and privilege
-      // level of anyone whose name you can guess. findOneById already omits
-      // both for the same reason.
       select: {id: true,username: true,fullname: true,bio: true,avatarUrl: true,createdAt: true,},
     });
     if (!user || user.length === 0) {
@@ -83,7 +79,6 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // Public profile: drop the email too (PII) — the profile view never shows it.
     const { password, googleId, role, provider, email, ...result } = user;
     return result;
   }
@@ -98,7 +93,6 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // Rôle de l'acteur, pas de la cible (sinon un USER pourrait éditer un ADMIN).
     if (id !== loggedUserId) {
       const actor = await this.prisma.user.findUnique({
         where: { id: loggedUserId },
@@ -109,11 +103,6 @@ export class UsersService {
         );
       }
     }
-    // Avatar fields are server-derived from the uploaded file, never taken from
-    // the body. Accepting them let a caller point their own row at somebody
-    // else's Cloudinary publicId; the next avatar upload then destroyed that
-    // asset as if it were the previous one, leaving the victim's artwork or
-    // avatar as a dead URL nobody could restore.
     delete (data as { avatarUrl?: unknown }).avatarUrl;
     delete (data as { avatarPublicId?: unknown }).avatarPublicId;
 
@@ -237,13 +226,11 @@ export class UsersService {
         'You are not authorized to delete this user',
       );
     }
-    // Empêche la suppression du dernier administrateur (soi-même ou par un admin).
     if (user.role === Role.ADMIN) {
       const adminCount = await this.prisma.user.count({
         where: { role: Role.ADMIN },
       });
       if (adminCount <= 1) {
-        // 2xx result (not 403) so the browser logs no network error.
         return { ok: false as const, reason: 'last_admin' };
       }
     }
@@ -271,8 +258,6 @@ export class UsersService {
         }
       }
     }
-    // Capture the user's conversations before the delete (participant rows
-    // cascade with the user), then drop them so none is left orphaned.
     const convoIds = (
       await this.prisma.conversationParticipant.findMany({
         where: { userId: id },
@@ -304,7 +289,6 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // 2xx results (not 403) so the browser logs no network error.
     if (id === actorId && role !== Role.ADMIN) {
       return { ok: false as const, reason: 'self_demote' };
     }
@@ -323,7 +307,6 @@ export class UsersService {
     return { ok: true as const };
   }
 
-  // Export RGPD (type GdprExport côté frontend), sans le mot de passe.
   async exportUserData(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -357,7 +340,6 @@ export class UsersService {
           },
         },
         likes: { select: { id: true, artworkId: true, createdAt: true } },
-        // Relations nommées à l'envers : `followers` = comptes suivis ; `following` = abonnés.
         followers: { select: { followingId: true, createdAt: true } },
         following: { select: { followerId: true, createdAt: true } },
         _count: {
@@ -394,14 +376,14 @@ export class UsersService {
       artworks,
       comments,
       likes,
-      following: followers, // comptes que l'utilisateur suit (relation inversée)
-      followers: following, // abonnés de l'utilisateur (relation inversée)
+      following: followers, // comptes que l'utilisateur suit (relation inversee)
+      followers: following, // abonnés de l'utilisateur (relation inversee)
       counts: {
         artworks: _count.artworks,
         comments: _count.comments,
         likes: _count.likes,
-        following: _count.followers, // inversé
-        followers: _count.following, // inversé
+        following: _count.followers, // inverse
+        followers: _count.following, // inverse
       },
     };
   }

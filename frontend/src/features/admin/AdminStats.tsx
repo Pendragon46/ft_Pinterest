@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 
 import type { AdminUserRow } from './admin.api'
 
-// Statistiques dérivées de la liste déjà chargée (pas d'endpoint dédié).
+// Statistiques derivees de la liste deja chargee (pas d'endpoint dedie).
 export function AdminStats({
   users,
   loading,

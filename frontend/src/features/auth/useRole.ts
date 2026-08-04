@@ -1,6 +1,6 @@
 import { useAuthStore } from './auth.store'
 
-// Un visiteur non connecté n'a pas de rôle (lecture seule) ; sinon USER ou ADMIN.
+// Un visiteur non connecte n'a pas de rôle (lecture seule) ; sinon USER ou ADMIN.
 export type AppRole = 'USER' | 'ADMIN'
 
 export function useRole() {

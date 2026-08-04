@@ -1,12 +1,8 @@
 import {
   Controller,
   Get,
-  Post,
-  Delete,
-  Param,
+
   Req,
-  Patch,
-  ParseUUIDPipe,
 } from '@nestjs/common';
 import { FriendsService } from './friends.service';
 

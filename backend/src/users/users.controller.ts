@@ -30,7 +30,6 @@ export class UsersController {
     return this.usersService.getCurrentUser(req.user.id);
   }
 
-  // Avant @Get(':id') pour que "me/export" ne soit pas pris pour un id.
   @Get('me/export')
   exportMyData(@Req() req) {
     return this.usersService.exportUserData(req.user.id);
@@ -48,7 +47,6 @@ export class UsersController {
     return this.usersService.findOneByUsername(username);
   }
 
-  // Public profile: a guest can view any profile (no email is exposed).
   @Public()
   @Get(':id')
   findOneById(@Param('id') id: string) {

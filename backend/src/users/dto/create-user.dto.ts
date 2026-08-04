@@ -9,9 +9,6 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-// Trim AVANT les validateurs de longueur : des espaces de fin ne doivent pas
-// consommer le quota MaxLength ni faire passer une chaîne vide. Vide → null,
-// comme côté client (SettingsPage fait déjà bio.trim() || null).
 const trim = () =>
   Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() || null : value,

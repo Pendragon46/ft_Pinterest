@@ -51,8 +51,6 @@ export class ArtworkService {
         id: userId,
       },
     });
-
-    // Replace with the actual user ID from the request context and check if the user exists in the database
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -88,8 +86,6 @@ export class ArtworkService {
             }),
         },
       });
-      // Real-time propagation: mirror artwork:deleted so every open canvas
-      // refreshes when a new piece is published, without a manual reload.
       this.gateway.broadcast('artwork:created', artwork);
       return artwork;
     } catch (error) {
@@ -263,8 +259,6 @@ export class ArtworkService {
         id: id,
       },
     });
-    // Tell every open window the work is gone, so a stale grid elsewhere drops
-    // it instead of letting the user click a card whose GET would 404.
     this.gateway.broadcast('artwork:deleted', { id });
     return { message: 'Artwork deleted successfully' };
   }
@@ -278,11 +272,6 @@ export class ArtworkService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    // Authorize on the CALLER's role, never the target's. Testing
-    // `user.role !== 'ADMIN'` here read the victim's row: any signed-in user
-    // passed the check whenever the target happened to be an admin (so anyone
-    // could wipe an admin's gallery), while a real admin acting on an ordinary
-    // user was refused. Same shape as remove() above and users.service.
     const caller = await this.prisma.user.findUnique({
       where: { id: connectedUserId },
     });

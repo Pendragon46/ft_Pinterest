@@ -1,6 +1,6 @@
-// Miroir du document renvoyé par GET /users/me/export. Le backend est
-// l'autorité sur cette forme ; ces types servent au téléchargement et à
-// l'affichage du récapitulatif.
+// Miroir du document renvoye par GET /users/me/export. Le backend est
+// l'autorite sur cette forme ; ces types servent au telechargement et a
+// l'affichage du recapitulatif.
 
 export interface GdprExportCounts {
   artworks: number

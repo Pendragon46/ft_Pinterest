@@ -29,8 +29,8 @@ export function downloadExport(data: GdprExport, username: string): void {
 }
 
 /**
- * Un export RGPD couvre plusieurs catégories (compte, compteurs, œuvres,
- * commentaires, …) : chacune devient un tableau titré, séparé par une ligne
+ * Un export RGPD couvre plusieurs categories (compte, compteurs, œuvres,
+ * commentaires, …) : chacune devient un tableau titre, separe par une ligne
  * vide, dans un seul fichier lisible en tableur.
  */
 export function downloadExportCsv(data: GdprExport, username: string): void {
@@ -59,11 +59,11 @@ export function downloadExportCsv(data: GdprExport, username: string): void {
   downloadFile(`\uFEFF${csv}`, exportFilename(username, 'csv'), 'text/csv')
 }
 
-/** Irréversible : l'appelant doit avoir obtenu une confirmation explicite.
+/** Irreversible : l'appelant doit avoir obtenu une confirmation explicite.
  *
- *  Le serveur répond 2xx même lorsqu'il refuse (dernier administrateur), pour
- *  ne pas écrire d'erreur réseau dans la console — d'où le résultat à tester.
- *  Ignorer ce corps déconnectait l'utilisateur en annonçant une suppression qui
+ *  Le serveur repond 2xx même lorsqu'il refuse (dernier administrateur), pour
+ *  ne pas ecrire d'erreur reseau dans la console — d'ou le resultat a tester.
+ *  Ignorer ce corps deconnectait l'utilisateur en annonçant une suppression qui
  *  n'avait pas eu lieu. */
 export async function deleteMyAccount(
   userId: string,

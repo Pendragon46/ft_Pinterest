@@ -50,9 +50,6 @@ export class CommentService {
       where: { id: artworkId },
       include: {
         comments: {
-          // Newest first, decided by the server: the client used to sort on an
-          // hour-floored age, so every comment posted in the same hour tied and
-          // a fresh one could land anywhere in the list.
           orderBy: { createdAt: 'desc' },
           include: {
             user: {

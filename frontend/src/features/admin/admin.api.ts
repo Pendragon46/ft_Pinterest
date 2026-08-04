@@ -29,9 +29,9 @@ export const adminKeys = {
   artworks: () => ['admin', 'artworks'] as const,
 }
 
-// Toutes les œuvres (modération admin + analytics) — réutilise /search/artworks.
+// Toutes les œuvres (moderation admin + analytics) — reutilise /search/artworks.
 // Fenêtre haute (le endpoint ne plafonne pas `limit`) pour que les totaux du
-// dashboard restent exacts à l'échelle du projet.
+// dashboard restent exacts a l'echelle du projet.
 export async function fetchAllArtworks(): Promise<AdminArtworkRow[]> {
   const { data } = await http.get<AdminArtworkRow[]>('/search/artworks', {
     params: { page: 1, limit: 1000, sort: 'recent' },
@@ -39,7 +39,7 @@ export async function fetchAllArtworks(): Promise<AdminArtworkRow[]> {
   return data
 }
 
-/** Supprime n'importe quelle œuvre (admin autorisé, 403 sinon). */
+/** Supprime n'importe quelle œuvre (admin autorise, 403 sinon). */
 export async function deleteArtworkAsAdmin(id: string): Promise<void> {
   await http.delete(`/artworks/${id}`)
 }
@@ -53,7 +53,7 @@ export async function fetchAllUsers(): Promise<AdminUserRow[]> {
 // 2xx result (not 403) so the browser logs no network error.
 export type AdminActionResult = { ok: true } | { ok: false; reason: string }
 
-/** Change le rôle. Résultat `ok:false` si auto-rétrogradation ou dernier admin. */
+/** Change le rôle. Resultat `ok:false` si auto-retrogradation ou dernier admin. */
 export async function updateUserRole(
   id: string,
   role: AppRole,
@@ -78,7 +78,7 @@ export interface CreateUserInput {
   role: AppRole
 }
 
-/** Décode le `sub` (id) d'un JWT sans dépendance (base64url). */
+/** Decode le `sub` (id) d'un JWT sans dependance (base64url). */
 function jwtSub(token: string): string | null {
   try {
     const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
@@ -93,7 +93,7 @@ export type CreateUserResult =
   | { ok: true }
   | { ok: false; fieldErrors?: Record<string, string> }
 
-/** Crée un compte via l'inscription, puis applique le rôle si ≠ USER (id lu dans le JWT). */
+/** Cree un compte via l'inscription, puis applique le rôle si ≠ USER (id lu dans le JWT). */
 export async function createUserAsAdmin(
   input: CreateUserInput,
 ): Promise<CreateUserResult> {

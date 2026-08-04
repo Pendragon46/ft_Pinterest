@@ -1,4 +1,4 @@
-// Frontière unique entre les formes NestJS et les types frontend : un changement
+// Frontiere unique entre les formes NestJS et les types frontend : un changement
 // de champ backend se corrige ici et nulle part ailleurs.
 
 import type {
@@ -10,8 +10,8 @@ import type {
 } from '@/features/artworks/artwork.types'
 import type { User } from '@/features/auth/auth.types'
 
-// Formes serveur : déclarées ici (pas importées des types frontend) car elles
-// décrivent le contrat HTTP ; les garder distinctes évite qu'une évolution
+// Formes serveur : declarees ici (pas importees des types frontend) car elles
+// decrivent le contrat HTTP ; les garder distinctes evite qu'une evolution
 // backend se propage silencieusement dans les composants.
 
 export interface ServerUser {
@@ -35,7 +35,7 @@ export interface ServerArtwork {
   authorId: string
   createdAt: string
   updatedAt: string
-  // Présents uniquement si le service a posé un include (ticket T2).
+  // Presents uniquement si le service a pose un include (ticket T2).
   author?: Partial<ServerUser>
   tags?: { name: string }[]
   _count?: { likes: number; comments: number }
@@ -63,7 +63,7 @@ export interface ServerFollow {
   createdAt: string
 }
 
-/** Couleur stable dérivée d'un id : même entrée → même teinte. Repli quand
+/** Couleur stable derivee d'un id : même entree → même teinte. Repli quand
     aucune image n'est disponible. */
 export function colorFromId(id: string): string {
   let hash = 0
@@ -73,8 +73,8 @@ export function colorFromId(id: string): string {
   return `hsl(${Math.abs(hash) % 360} 58% 62%)`
 }
 
-/** Le backend ne stocke pas le type de média ; on le déduit de l'URL Cloudinary
-    (chemin ou extension) car le rendu image/vidéo diffère partout. */
+/** Le backend ne stocke pas le type de media ; on le deduit de l'URL Cloudinary
+    (chemin ou extension) car le rendu image/video differe partout. */
 export function mediaTypeFromUrl(url?: string | null): MediaType {
   if (!url) return 'image'
   // Cloudinary : type dans le chemin (/video/upload/), pas d'extension ; repli sur l'extension.
@@ -82,10 +82,10 @@ export function mediaTypeFromUrl(url?: string | null): MediaType {
   return /\.(mp4|webm|mov|m4v)(\?|$)/i.test(url) ? 'video' : 'image'
 }
 
-/** Vignette JPEG d'une vidéo Cloudinary (première image, `so_0`). Un vrai
-    `<video preload="metadata">` par carte déclenche une requête Range dont
+/** Vignette JPEG d'une video Cloudinary (premiere image, `so_0`). Un vrai
+    `<video preload="metadata">` par carte declenche une requête Range dont
     Chrome rate parfois la relecture — `ERR_CACHE_READ_FAILURE` (issue #24).
-    Renvoie `undefined` hors vidéo Cloudinary : l'appelant retombe sur `<video>`. */
+    Renvoie `undefined` hors video Cloudinary : l'appelant retombe sur `<video>`. */
 export function videoPosterUrl(url?: string | null): string | undefined {
   if (!url) return undefined
   const marker = '/video/upload/'
@@ -96,8 +96,8 @@ export function videoPosterUrl(url?: string | null): string | undefined {
   return `${head}so_0,f_jpg,q_auto/${tail}.jpg`
 }
 
-/** Âge en heures depuis un timestamp ISO. Le frontend raisonne en
-    `hoursAgo` (0 = à l'instant), le backend en dates absolues. */
+/** Age en heures depuis un timestamp ISO. Le frontend raisonne en
+    `hoursAgo` (0 = a l'instant), le backend en dates absolues. */
 export function hoursSince(iso: string): number {
   const ms = Date.now() - new Date(iso).getTime()
   return Math.max(0, Math.floor(ms / 3_600_000))
@@ -115,7 +115,7 @@ export function toUser(s: ServerUser): User {
   }
 }
 
-/** Auteur réduit. Sans l'include (ticket T2) on retombe sur `authorId` :
+/** Auteur reduit. Sans l'include (ticket T2) on retombe sur `authorId` :
     la carte reste affichable, simplement sans nom lisible. */
 export function toAuthorSummary(
   author: Partial<ServerUser> | undefined,
@@ -156,9 +156,9 @@ export function toArtworkDetail(s: ServerArtwork): ArtworkDetail {
     author: toAuthorSummary(s.author, s.authorId),
     likeCount: s._count?.likes ?? 0,
     commentCount: s._count?.comments ?? 0,
-    // Pas de compteur de vues en base : neutre plutôt qu'inventé.
+    // Pas de compteur de vues en base : neutre plutôt qu'invente.
     viewCount: 0,
-    // `category` et `kind` n'existent que côté canvas : laissés absents.
+    // `category` et `kind` n'existent que côte canvas : laisses absents.
   }
 }
 
@@ -167,7 +167,7 @@ export function toArtworkComment(s: ServerComment): ArtworkComment {
     id: s.id,
     author: toAuthorSummary(s.user, s.authorId),
     content: s.content,
-    // Le schéma Prisma n'a pas de likes sur les commentaires.
+    // Le schema Prisma n'a pas de likes sur les commentaires.
     likeCount: 0,
     hoursAgo: hoursSince(s.createdAt),
     createdAt: s.createdAt,
@@ -175,7 +175,7 @@ export function toArtworkComment(s: ServerComment): ArtworkComment {
 }
 
 /** Les ids de cartes du canvas ont la forme `<id>@<tx>.<ty>.<i>` : une même
-    œuvre peut occuper plusieurs emplacements. Extrait l'id réel en base. */
+    œuvre peut occuper plusieurs emplacements. Extrait l'id reel en base. */
 export function realArtworkId(id: string): string {
   return id.split('@')[0]
 }

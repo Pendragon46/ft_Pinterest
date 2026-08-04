@@ -37,8 +37,6 @@ export class SearchService {
                     some: { name: { contains: q, mode: 'insensitive' } },
                   },
                 },
-                // Chercher un créateur doit ramener SES œuvres : l'utilisateur
-                // cherche du contenu, pas une fiche (SEARCH_SPEC D1).
                 { author: { username: { contains: q, mode: 'insensitive' } } },
                 { author: { fullname: { contains: q, mode: 'insensitive' } } },
               ],
@@ -75,10 +73,6 @@ export class SearchService {
     if (page < 1 || limit < 1) {
       throw new BadRequestException('Page and limit must be greater than 0');
     }
-    // Whitelist the columns instead of blacklisting a few: search is @Public(),
-    // so anything left in the row is handed to anonymous callers. The previous
-    // destructure dropped password/googleId/role/provider but kept `email`,
-    // publishing every account's address to unauthenticated requests.
     const result = await this.prisma.user.findMany({
       where: q ? {
               OR: [
@@ -138,9 +132,6 @@ export class SearchService {
     return artworks;
   }
 
-  // Suggestions de tags triées par POPULARITÉ (nombre d'œuvres portant le tag),
-  // pas alphabétiquement : un tag sur 40 œuvres est plus utile qu'un orphelin qui
-  // commence pareil. Seul endpoint de la famille à retourner des tags (D6).
   async suggestTags(q: string, limit = 8) {
     const take = Math.min(Math.max(1, limit), 20);
     const tags = await this.prisma.tag.findMany({
@@ -149,7 +140,6 @@ export class SearchService {
       orderBy: { artworks: { _count: 'desc' } },
       take,
     });
-    // Un tag sans œuvre ne doit jamais être suggéré : il mènerait à du vide.
     return tags
       .filter((t) => t._count.artworks > 0)
       .map((t) => ({ name: t.name, count: t._count.artworks }));

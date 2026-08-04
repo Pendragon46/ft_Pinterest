@@ -29,9 +29,9 @@ interface Props {
   onClose: () => void
 }
 
-// Création d'un compte par un admin. Le backend n'a pas d'endpoint dédié : on
-// réutilise l'inscription (POST /users), qui EXIGE un mot de passe fort — d'où
-// le champ mot de passe absent de la maquette mais nécessaire ici.
+// Creation d'un compte par un admin. Le backend n'a pas d'endpoint dedie : on
+// reutilise l'inscription (POST /users), qui EXIGE un mot de passe fort — d'ou
+// le champ mot de passe absent de la maquette mais necessaire ici.
 export function AddUserDialog({ isOpen, onClose }: Props) {
   const { t } = useTranslation('common')
   const qc = useQueryClient()

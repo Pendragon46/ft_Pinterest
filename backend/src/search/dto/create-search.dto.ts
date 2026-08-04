@@ -29,9 +29,6 @@ export class CreateSearchDto {
   @IsEnum(sort)
   sort: sort = sort.RECENT;
 
-  // Bounded so an anonymous caller cannot ask for the whole table in one query.
-  // 1000 rather than something smaller because the app itself asks for 1000 when
-  // counting artworks and when filling the admin table.
   @IsOptional()
   @Type(() => Number)
   @IsInt()

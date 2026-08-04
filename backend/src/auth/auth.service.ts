@@ -15,8 +15,6 @@ export class AuthService {
     private cloudinary: CloudinaryService,
   ) {}
 
-  // One place that mints the token so login and register stay in sync. `role`
-  // travels in the payload so the JwtStrategy can hand it to RolesGuard.
   private signToken(user: User): { access_token: string } {
     const payload = { sub: user.id, username: user.username, role: user.role };
     return { access_token: this.jwtService.sign(payload) };
@@ -39,9 +37,6 @@ export class AuthService {
       // after signup, then calls GET /auth/me for the fresh profile.
       return this.signToken(user);
     } catch (error) {
-      // Unique constraint hit (email or username already taken). Turn Prisma's
-      // raw P2002 into a clean 409 tagged with the offending field, so the
-      // frontend maps it to the right input (see http.ts fieldErrors).
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2002'
@@ -50,7 +45,6 @@ export class AuthService {
         const field = Array.isArray(target)
           ? String(target[0])
           : String(target);
-        // 2xx result (not 409) so the browser logs no network error.
         if (field.includes('username'))
           return { fieldErrors: { username: 'auth.usernameTaken' } };
         return { fieldErrors: { email: 'auth.emailTaken' } };
@@ -63,8 +57,6 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
-
-    // 2xx result (not 401) so the browser logs no network error.
     if (!user || !user.password) {
       return { error: 'invalid_credentials' as const };
     }
@@ -86,14 +78,7 @@ export class AuthService {
     return result;
   }
 
-  // --- Google additions below ---
 
-  // Google hands us a lh3.googleusercontent.com URL. Never persist it: that host
-  // sends no CORS header and rate-limits hotlinking, so the browser ends up with
-  // a blank avatar (429 in Chrome, an aborted request in Firefox). Copy it into
-  // Cloudinary once and store our own URL instead. On failure we return
-  // undefined, so the caller falls back to the schema default rather than the
-  // unusable Google URL.
   private async adoptGoogleAvatar(
     remoteUrl?: string,
   ): Promise<{ avatarUrl: string; avatarPublicId: string } | undefined> {
@@ -116,8 +101,6 @@ export class AuthService {
       where: { googleId: googleUser.googleId },
     });
     if (user) {
-      // A returning Google user whose stored avatar is still a Google URL (or
-      // was never set) predates this copy step — heal it on the next sign-in.
       if (!user.avatarPublicId && googleUser.avatarUrl) {
         const avatar = await this.adoptGoogleAvatar(googleUser.avatarUrl);
         if (avatar) {
@@ -134,8 +117,6 @@ export class AuthService {
       where: { email: googleUser.email },
     });
     if (user) {
-      // Linking Google to an existing local account: adopt the photo too, but
-      // only if the user never set one of their own.
       const avatar = user.avatarPublicId
         ? undefined
         : await this.adoptGoogleAvatar(googleUser.avatarUrl);

@@ -22,9 +22,6 @@ export class FriendsService {
     const iFollowIds = iFollow.map((f) => f.followingId);
     const mutuals = await this.Prisma.follow.findMany({
       where: { followerId: { in: iFollowIds }, followingId: ConnectedUserId },
-      // Whitelist rather than strip: the blacklist above dropped password,
-      // role, googleId and provider but kept `email`, so the friends list
-      // handed out every mutual's address. The UI only needs identity + avatar.
       include: {
         follower: {
           select: {
@@ -47,8 +44,7 @@ export class FriendsService {
     return onlineFriends;
   }
 
-  // True when a and b follow each other — the chat access rule (CHAT_SPEC D1).
-  // Two targeted lookups rather than getFriends(), which loads the whole list.
+  // True when a and b follow each other — the chat access rule (CHAT_SPEC).
   async areMutuals(a: string, b: string): Promise<boolean> {
     const [ab, ba] = await Promise.all([
       this.Prisma.follow.findUnique({

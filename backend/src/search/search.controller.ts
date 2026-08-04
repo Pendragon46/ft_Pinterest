@@ -31,7 +31,6 @@ export class SearchController {
     return this.searchService.findTag(query);
   }
 
-  // Complète la saisie : renvoie de vrais tags (nom + compteur), pas des œuvres.
   @Public()
   @Get('suggest')
   suggestTags(@Query('q') q?: string, @Query('limit') limit?: string) {

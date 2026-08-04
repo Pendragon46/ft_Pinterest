@@ -1,7 +1,7 @@
-// Le backend renvoie des listes plates, sans coordonnées. Ce module les
-// place dans le plan du canvas de façon déterministe : une même tuile
-// produit toujours la même disposition, donc la caméra peut revenir en
-// arrière sans que le contenu ne saute.
+// Le backend renvoie des listes plates, sans coordonnees. Ce module les
+// place dans le plan du canvas de façon deterministe : une même tuile
+// produit toujours la même disposition, donc la camera peut revenir en
+// arriere sans que le contenu ne saute.
 
 import type { CanvasArtwork, Category } from '@/features/artworks/artwork.types'
 import {
@@ -19,8 +19,8 @@ import {
   type ServerArtwork,
 } from '@/lib/mappers'
 
-// PRNG à graine (mulberry32). Indispensable : Math.random() ferait varier
-// la mise en page à chaque rendu, et les cartes danseraient sous la caméra.
+// PRNG a graine (mulberry32). Indispensable : Math.random() ferait varier
+// la mise en page a chaque rendu, et les cartes danseraient sous la camera.
 function seeded(seed: number): () => number {
   let a = seed >>> 0
   return function () {
@@ -31,22 +31,22 @@ function seeded(seed: number): () => number {
   }
 }
 
-// Deux entiers signés → une graine unique. Le décalage évite que (2,3) et
+// Deux entiers signes → une graine unique. Le decalage evite que (2,3) et
 // (3,2) produisent la même valeur.
 function tileSeed(tx: number, ty: number): number {
   return ((tx & 0xffff) << 16) ^ (ty & 0xffff) ^ 0x9e3779b9
 }
 
-/** Page de résultats à demander pour une tuile donnée. Déterministe :
+/** Page de resultats a demander pour une tuile donnee. Deterministe :
     même tuile → même page → même contenu. */
 export function pageForTile(tx: number, ty: number, totalPages = 5): number {
   const rnd = seeded(tileSeed(tx, ty))
   return Math.floor(rnd() * totalPages) + 1
 }
 
-/** Rectangle (coin haut-gauche) occupé par la carte d'une cellule, ou null si
-    la cellule tombe dans la zone du héros — qu'on garde dégagée, exactement
-    comme le mock. Coordonnées MONDE : la carte est centrée sur le point de
+/** Rectangle (coin haut-gauche) occupe par la carte d'une cellule, ou null si
+    la cellule tombe dans la zone du heros — qu'on garde degagee, exactement
+    comme le mock. Coordonnees MONDE : la carte est centree sur le point de
     grille `(cx·CELL_W, cy·CELL_H)`. */
 function cellSlot(cx: number, cy: number): { x: number; y: number } | null {
   const x = cx * CELL_W - CARD_W / 2
@@ -60,8 +60,8 @@ function cellSlot(cx: number, cy: number): { x: number; y: number } | null {
 }
 
 /** Place des artworks serveur dans la tuile (tx, ty). Reproduit la grille du
-    mock : cartes de **taille fixe** (CARD_W × CARD_H) centrées sur leur
-    cellule, et cellules du héros **laissées vides**. Seul le contenu (quelle
+    mock : cartes de **taille fixe** (CARD_W × CARD_H) centrees sur leur
+    cellule, et cellules du heros **laissees vides**. Seul le contenu (quelle
     œuvre dans quelle cellule) vient du serveur. */
 export function layoutTile(
   items: ServerArtwork[],
@@ -72,11 +72,11 @@ export function layoutTile(
   if (items.length === 0) return []
 
   const cards: CanvasArtwork[] = []
-  let n = 0 // index dans `items`, avancé seulement pour les cellules remplies
+  let n = 0 // index dans `items`, avance seulement pour les cellules remplies
   for (let row = 0; row < TILE_CELLS; row += 1) {
     for (let col = 0; col < TILE_CELLS; col += 1) {
       const slot = cellSlot(tx * TILE_CELLS + col, ty * TILE_CELLS + row)
-      if (!slot) continue // cellule du héros : laissée vide
+      if (!slot) continue // cellule du heros : laissee vide
       // Si le serveur renvoie moins d'items que de cellules, on boucle.
       const src = items[n % items.length]
       n += 1
@@ -88,7 +88,7 @@ export function layoutTile(
         category: (slug ?? 'illustration') as Category,
         kind: 'standard' as const,
         color: colorFromId(src.id),
-        // Média réel : la carte affiche l'image, pas seulement `color`.
+        // Media reel : la carte affiche l'image, pas seulement `color`.
         mediaUrl: src.mediaUrl,
         mediaType: mediaTypeFromUrl(src.mediaUrl),
         viewCount: 0,
