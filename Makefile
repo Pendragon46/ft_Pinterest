@@ -80,4 +80,14 @@ recover:
 health:
 	docker exec ft_pinterest_backup /scripts/health_check.sh
 
-.PHONY: certs build start stop rebuild restart seed logs ps clean-volumes fclean backup restore recover health
+.PHONY: certs build start stop rebuild restart seed logs ps clean-volumes fclean backup restore recover health render-build render-start
+
+# Build frontend React + backend NestJS
+render-build:
+	cd frontend && npm ci && npm run build
+	cd backend && npm ci && npx prisma generate && npm run build
+
+# Apply database migrations and start NestJS
+render-start:
+	cd backend && npx prisma migrate deploy && npm run start:prod
+
