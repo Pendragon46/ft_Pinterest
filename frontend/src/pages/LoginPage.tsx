@@ -84,7 +84,7 @@ export function LoginPage() {
   }
 
   const handleGoogle = () => {
-    window.location.href = '/api/auth/google'
+    window.location.href = '/auth/google'
   }
 
   return (

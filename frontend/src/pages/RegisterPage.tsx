@@ -108,7 +108,7 @@ export function RegisterPage() {
   }
 
   const handleGoogle = () => {
-    window.location.href = '/api/auth/google'
+    window.location.href = '/auth/google'
   }
 
   return (
